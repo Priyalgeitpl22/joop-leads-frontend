@@ -28,7 +28,6 @@ function ChatBot({ settings }: any) {
 
   return (
     <Box sx={{ 
-      minHeight: '100vh', 
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -47,19 +46,27 @@ function ChatBot({ settings }: any) {
           </Header>
 
           <ChatBody>
-            <Box sx={{ color: '#6c757d', textAlign: 'center', mb: 2 }}>
-              September 5
-            </Box>
-            <Message>
-              Hi there! Let me know if you have any questions about the product or pricing.
+           {/* First message is from bot */}
+           <div style={{ display: 'flex', flexDirection: 'column' }}>
+           <Message style={{ backgroundColor: '#e9ecef' }}>
+           Hello! How can I help you?
             </Message>
+              <span style={{ fontSize: '10px',color:'#6b7280', marginBlock:'0.5rem'}}>10:30 AM</span>
+              </div>
+            {/* Second message is from user */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+            <Message style={{ backgroundColor: settings.selectedColor, color: '#fff' }}>
+            I need assistance with my order.
+            </Message>
+            <span style={{ fontSize: '10px', color:'#6b7280', marginBlock:'0.5rem'}}>10:31 AM</span>
+            </div>
           </ChatBody>
 
           <InputContainer>
             <StyledTextField
               fullWidth
               variant="outlined"
-              placeholder="Write a message"
+              placeholder="Type a message..."
               size="small"
               value={message}
               onChange={(e: any) => setMessage(e.target.value)}
@@ -68,7 +75,7 @@ function ChatBot({ settings }: any) {
                   <>
                     {settings.allowEmoji && (
                       <>
-                        <IconButton onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
+                        <IconButton sx={{ padding: '3px' }} onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
                           <InsertEmoticon />
                         </IconButton>
                         {showEmojiPicker && (
@@ -83,13 +90,13 @@ function ChatBot({ settings }: any) {
                     )}
                     
                     {settings.allowFileUpload && (
-                      <IconButton component="label">
+                      <IconButton sx={{ padding: '3px' }} component="label">
                         <AttachFile />
                         <input type="file" hidden />
                       </IconButton>
                     )}
 
-                    <IconButton color="primary">
+                    <IconButton sx={{ padding: '3px' }}>
                       <Send />
                     </IconButton>
                   </>
