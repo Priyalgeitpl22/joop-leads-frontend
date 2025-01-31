@@ -1,8 +1,8 @@
-import styled from '@emotion/styled';
-import { Box, TextField, IconButton } from '@mui/material';
+import styled from "@emotion/styled";
+import { Box, TextField, IconButton } from "@mui/material";
 
 export const ChatContainer = styled(Box)`
-  max-width: 350px;
+  width: 360px;
   margin: 10px auto;
   border-radius: 8px;
   overflow: hidden;
@@ -22,37 +22,49 @@ export const Header = styled(Box)<{ bgcolor: string }>`
 `;
 
 export const Logo = styled.img`
-  width: 28px;
-  height: 28px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
 `;
 
 export const ChatBody = styled(Box)`
-  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
   height: 350px;
   overflow-y: auto;
+  margin-top:10px;
 `;
 
 export const Message = styled(Box)`
-  background-color: #e9ecef;
-  padding: 10px 14px;
-  border-radius: 12px;
-  max-width: 80%;
-  margin-bottom: 12px;
-  color: #495057;
+  background-color: #f1f1f1;
+  padding: 8px;
+  border-radius: 8px;
+  max-width: 70%;
+  word-break: break-all;
+  color: #000000;
 `;
 
 export const InputContainer = styled(Box)`
   padding: 10px;
-  background: white;
   position: relative;
 `;
 
 export const StyledTextField = styled(TextField)`
   .MuiOutlinedInput-root {
-    border-radius: 20px;
-    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 4px 8px;
   }
+
+  .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+    border: 1px solid #ddd;
+  }
+  &:hover .MuiOutlinedInput-notchedOutline {
+    border: 1px solid #ddd;  // Remove border color on hover
+  }
+
+
 `;
 
 export const OpenButton = styled(IconButton)<{ bgcolor: string }>`
@@ -61,9 +73,10 @@ export const OpenButton = styled(IconButton)<{ bgcolor: string }>`
   right: 20px;
   background-color: ${({ bgcolor }) => bgcolor || "#343a40"};
   color: white;
-  z-index:10;
+  z-index: 10;
   &:hover {
-    background-color: ${({ bgcolor }) => bgcolor ? `${bgcolor}aa` : "#5a6268"};
+    background-color: ${({ bgcolor }) =>
+      bgcolor ? `${bgcolor}aa` : "#5a6268"};
   }
 `;
 
