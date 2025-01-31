@@ -6,7 +6,6 @@ export const DashboardContainer = styled.div`
   display: flex;
   width: 100%;
   height: 100vh;
-  background-color: #f8fafc;
 `;
 
 export const SidebarContainer = styled(motion.aside)`
@@ -15,8 +14,9 @@ export const SidebarContainer = styled(motion.aside)`
   border-right: 1px solid #e2e8f0;
   padding: 1.5rem;
   position: fixed;
-  height: 100vh;
   z-index: 40;
+  height: 100vh;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 `;
 
 export const HeaderContainer = styled.header`
@@ -38,10 +38,9 @@ export const MainContainer = styled.main`
   position:relative;
   padding: 2rem;
   margin-left: 260px;
-  background-color: #f8fafc;
   margin-top: 64px;
-  width: 100%;
-  height: 100%;
+  width: fit-content;
+  height: fit-content;
 `;
 
 export const Logo = styled.div`

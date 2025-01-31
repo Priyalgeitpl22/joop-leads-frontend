@@ -1,10 +1,10 @@
 import styled from "@emotion/styled";
 
 export const SettingsContainer = styled.div`
-  max-width: 800px;
-  margin: 0 auto;
   height: fit-content;  
-  position: relative;
+  display: flex;
+  align-items: center;
+  gap:5rem;
 `;
 
 export const Section = styled.section`
@@ -81,7 +81,6 @@ export const ColorCheckBox = styled.input`
   font-weight: bold;
   padding: 8px 24px;
   position:absolute;
-  right: 40px;   
   border: none;
   border-radius: 6px;
   color: #fff;

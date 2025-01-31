@@ -11,6 +11,7 @@ import {
   SaveButton
 } from "./setting.styled";
 import { FormControl, FormControlLabel, RadioGroup, Radio, Typography, Checkbox } from "@mui/material";
+import ChatBot from "../../components/ChatBot/ChatBot";
 
 const Settings = () => {
   const [settings, setSettings] = useState({
@@ -141,6 +142,7 @@ const Settings = () => {
           Save
         </SaveButton>
       </motion.div>
+      <ChatBot settings={settings}/>
     </SettingsContainer>
   );
 };
