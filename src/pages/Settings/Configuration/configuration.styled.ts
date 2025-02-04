@@ -1,16 +1,16 @@
 import styled from "@emotion/styled";
+import { Tab, Tabs } from "@mui/material";
 
 export const SettingsContainer = styled.div`
-  height: fit-content;  
   display: flex;
-  align-items: center;
-  gap:5rem;
+  padding: 10px 20px;
+  justify-content: space-between;
 `;
 
 export const Section = styled.section`
   background: var(--surface);
   border-radius: 8px;
-  padding: 10px;
+  padding: 0px 10px;
   border: 1px solid var(--border);
 `;
 
@@ -18,14 +18,12 @@ export const SectionTitle = styled.h2`
   font-size: 18px;
   font-weight: 600;
   color: #35495c;
-  margin-bottom: 16px;
   display: flex;
 `;
 
 export const ColorGrid = styled.div`
   display: flex;
   gap: 16px;
-  margin-bottom: 24px;
 `;
 
 export const ColorOption = styled.button<{ color: string; isSelected: boolean }>`
@@ -90,6 +88,36 @@ export const ColorCheckBox = styled.input`
 
   :hover {
     background-color: #7ed8d6;
+    opacity: 0.8;
+  }
+`;
+export const CustomTabs = styled(Tabs)`
+  border-bottom: 2px solid #ddd;
+  min-height: 40px;
+
+  .MuiTabs-indicator {
+    background-color: #33475b; 
+    height: 4px;
+    border-radius: 4px;
+  }
+`;
+
+export const CustomTab = styled(Tab)`
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: none;
+  color: #33475b;
+  padding: 8px 16px;
+  min-height: 40px;
+  transition: all 0.3s ease-in-out;
+
+  &.Mui-selected {
+    color: #33475b; 
+    font-weight: bold;
+  }
+
+  &:hover {
+    color:#33475b;
     opacity: 0.8;
   }
 `;

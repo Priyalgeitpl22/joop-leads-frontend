@@ -35,8 +35,9 @@ function Login() {
 
           <StyledTextField fullWidth label="Email Address" variant="outlined" type="email" />
           <StyledTextField fullWidth label="Password" variant="outlined" type="password" />
-
+          <RouterLink to="/forgot-password" style={{ textDecoration: 'none',marginBottom:'10px', color: '#1976d2' }}>
           <ForgotPasswordLink>Forgot Password?</ForgotPasswordLink>
+          </RouterLink>
 
           <StyledButton variant="contained" fullWidth>
             SIGN IN

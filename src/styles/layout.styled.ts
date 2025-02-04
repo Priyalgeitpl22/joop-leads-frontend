@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 export const DashboardContainer = styled.div`
   display: flex;
@@ -36,11 +36,10 @@ export const HeaderContainer = styled.header`
 
 export const MainContainer = styled.main` 
   position:relative;
-  padding: 2rem;
+  padding: 0.5rem 1rem;
   margin-left: 260px;
   margin-top: 64px;
-  width: fit-content;
-  height: fit-content;
+  width: auto;
 `;
 
 export const Logo = styled.div`
@@ -72,6 +71,38 @@ export const NavItem = styled(Link)`
 
   &.active {
     background-color: #7ed8d6 ;
+    color: #1e293b;
+  }
+`;
+
+
+export const SubmenuWrapper = styled(motion.div)`
+  margin-left: 20px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+`;
+
+export const SubNavItem = styled(NavLink)`
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  color: #1e293b;
+  text-decoration: none;
+  font-size: 14px;
+  border-radius: 5px;
+  transition: background 0.3s ease;
+
+  svg {
+    margin-right: 10px;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  &.active {
+    background: #e5f5f7;
     color: #1e293b;
   }
 `;

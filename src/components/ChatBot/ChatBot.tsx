@@ -31,7 +31,6 @@ function ChatBot({ settings }: any) {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      position: "relative"
     }}>
       {isOpen ? (
         <ChatContainer>
@@ -106,7 +105,6 @@ function ChatBot({ settings }: any) {
           </InputContainer>
         </ChatContainer>
       ) : (
-        // Open Button at Bottom Right Corner
         <OpenButton bgcolor={settings.selectedColor} onClick={() => setIsOpen(true)}>
           <Chat />
         </OpenButton>

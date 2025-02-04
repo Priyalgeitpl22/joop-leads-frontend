@@ -8,21 +8,23 @@ import {
   ColorOption,
   ColorInput,
   CheckAccessibility,
-  SaveButton
-} from "./setting.styled";
-import { FormControl, FormControlLabel, RadioGroup, Radio, Typography, Checkbox } from "@mui/material";
-import ChatBot from "../../components/ChatBot/ChatBot";
+  SaveButton,
+  CustomTabs,
+  CustomTab
+} from "./configuration.styled";
+import { FormControl, FormControlLabel, RadioGroup, Radio, Typography, Checkbox, Box } from "@mui/material";
+import ChatBot from "../../../components/ChatBot/ChatBot";
 
-const Settings = () => {
+const Configuration = () => {
+    console.log("Configuration::::::::::::")
   const [settings, setSettings] = useState({
-    selectedColor: "#ff505a",
+    selectedColor: "#7ed8d7",
     chatbotPosition: "bottom-right",
     allowEmoji: false,
     allowFileUpload: false
   });
-
+  const [activeTab, setActiveTab] = useState("configure");
   const colors = ["#45607c", "#7ed8d7", "#b15194", "#f8b771", "#546db9"];
-
 
   const handleChange = (field: string, value: any) => {
     setSettings((prev) => ({
@@ -35,19 +37,20 @@ const Settings = () => {
     console.log("Settings:", settings);
   };
 
- 
-
   return (
+    <Box sx={{ width:'auto'}}>
+      {/* Tabs for switching between Configure & Availability */}
+      <CustomTabs value={activeTab} onChange={(_, newValue) => setActiveTab(newValue)}>
+        <CustomTab label="Configure" value="configure" />
+        <CustomTab label="Availability" value="availability" />
+      </CustomTabs>
+      {activeTab === "configure" && (
     <SettingsContainer>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-      >
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <SectionTitle>Display</SectionTitle>
         <Section>
-          <SectionTitle>Display</SectionTitle>
           <div>
-            <Typography variant="h6" fontSize={16} fontWeight={600} sx={{ mb: 2, color: "#35495c" }}>
+            <Typography variant="h6" fontSize={16} fontWeight={600} sx={{color: "#35495c" }}>
               Color
             </Typography>
             <Typography sx={{ color: "#3e5164", mb: 2 }}>Choose an accent color</Typography>
@@ -78,10 +81,12 @@ const Settings = () => {
 
         {/* Chatbot Position Section */}
         <Section>
-          <Typography variant="h6" fontSize={16} fontWeight={600} sx={{ mb: 2, color: "#35495c" }}>
+          <Typography variant="h6" fontSize={16} fontWeight={600} sx={{ color: "#35495c" }}>
             Chat widget placement
           </Typography>
-            <div style={{ color: "#3e5164", fontSize: "14px", marginBottom:'5px'}}>Determine what side of your website you would like your chat widget to <br /> appear on.</div>
+          <div style={{ color: "#3e5164", fontSize: "14px", marginBottom: "5px" }}>
+            Determine what side of your website you would like your chat widget to <br /> appear on.
+          </div>
           <FormControl component="fieldset">
             <RadioGroup
               aria-label="chatbot-position"
@@ -105,8 +110,9 @@ const Settings = () => {
           </FormControl>
         </Section>
 
+        {/* Additional Settings */}
         <Section>
-          <Typography variant="h6" fontSize={16} fontWeight={600} sx={{ mb: 2, color: "#35495c" }}>
+          <Typography variant="h6" fontSize={16} fontWeight={600} sx={{ color: "#35495c" }}>
             Additional Settings
           </Typography>
           <FormControl component="fieldset">
@@ -135,16 +141,22 @@ const Settings = () => {
           </FormControl>
         </Section>
 
-        <SaveButton
-          color="#7ed8d7"
-          onClick={handleSave}
-        >
-          Save
-        </SaveButton>
+        {/* Save Button */}
+        <Section>
+          <SaveButton color="#7ed8d7" onClick={handleSave}>
+            Save
+          </SaveButton>
+        </Section>
       </motion.div>
-      <ChatBot settings={settings}/>
+
+      {/* Chatbot Preview */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <ChatBot settings={settings} />
+      </motion.div>
     </SettingsContainer>
+      )}
+    </Box>
   );
 };
 
-export default Settings;
+export default Configuration;

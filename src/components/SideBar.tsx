@@ -1,15 +1,31 @@
-import { HomeIcon, Settings,  Bot } from 'lucide-react';
-import { SidebarContainer, Logo, NavItem } from '../styles/layout.styled';
-import { useLocation } from 'react-router-dom';
+import { useState } from "react";
+import {
+  HomeIcon,
+  Settings,
+  Bot,
+  ChevronDown,
+  ChevronUp,
+  Sliders,
+  Users,
+} from "lucide-react";
+import {
+  SidebarContainer,
+  Logo,
+  NavItem,
+  SubNavItem,
+  SubmenuWrapper,
+} from "../styles/layout.styled";
+import { useLocation } from "react-router-dom";
 
 const sidebarAnimation = {
   initial: { x: -260 },
   animate: { x: 0 },
-  transition: { type: "spring", stiffness: 100 }
+  transition: { type: "spring", stiffness: 100 },
 };
 
 const Sidebar = () => {
   const location = useLocation();
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   return (
     <SidebarContainer
@@ -22,20 +38,51 @@ const Sidebar = () => {
         ChatDash
       </Logo>
       <nav>
-        <NavItem 
-          to="/"
-          className={location.pathname === '/' ? 'active' : ''}
-        >
+        {/* Home Item */}
+        <NavItem to="/" className={location.pathname === "/" ? "active" : ""}>
           <HomeIcon size={20} />
           Home
         </NavItem>
-        <NavItem
-          to="/settings"
-          className={location.pathname === '/settings' ? 'active' : ''}
-        >
-          <Settings size={20} />
-          Settings
-        </NavItem>
+
+        {/* Settings Dropdown */}
+        <div onClick={() => setIsSettingsOpen(!isSettingsOpen)}>
+          <NavItem
+            to="#"
+            className={location.pathname.includes("/settings") ? "active" : ""}
+          >
+            <Settings size={20} />
+            Settings
+            {isSettingsOpen ? (
+              <ChevronUp size={16} style={{ marginLeft: "auto" }} />
+            ) : (
+              <ChevronDown size={16} style={{ marginLeft: "auto" }} />
+            )}
+          </NavItem>
+        </div>
+
+        {/* Submenu Items (Shown when expanded) */}
+        {isSettingsOpen && (
+          <SubmenuWrapper>
+            <SubNavItem
+              to="/settings/configuration"
+              className={
+                location.pathname === "/settings/configuration" ? "active" : ""
+              }
+            >
+              <Sliders size={18} />
+              Configuration
+            </SubNavItem>
+            <SubNavItem
+              to="/settings/agents"
+              className={
+                location.pathname === "/settings/agents" ? "active" : ""
+              }
+            >
+              <Users size={18} />
+              Agents
+            </SubNavItem>
+          </SubmenuWrapper>
+        )}
       </nav>
     </SidebarContainer>
   );

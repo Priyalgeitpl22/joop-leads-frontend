@@ -5,7 +5,7 @@ export const PageContainer = styled(Box)`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  height: 100vh;
 `;
 
 export const LoginCard = styled(Box)`

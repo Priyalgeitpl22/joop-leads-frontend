@@ -5,7 +5,7 @@ export const PageContainer = styled(Box)`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  height: 100vh;
 `;
 
 export const RegisterCard = styled(Box)`
@@ -21,7 +21,7 @@ export const RegisterCard = styled(Box)`
 export const IllustrationSection = styled(Box)`
   flex: 1;
   background: #f8fbff;
-  padding: 40px;
+  padding: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -33,18 +33,17 @@ export const IllustrationSection = styled(Box)`
 
 export const FormSection = styled(Box)`
   flex: 1;
-  padding: 48px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   justify-content: center;
 `;
 
 export const StyledTextField = styled(TextField)`
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   
   .MuiOutlinedInput-root {
     border-radius: 10px;
-    // background: #eef2f7;
     transition: all 0.3s ease-in-out;
   }
 
@@ -78,7 +77,7 @@ export const SocialButtonsContainer = styled(Box)`
   display: flex;
   gap: 16px;
   justify-content: center;
-  margin-top: 24px;
+  margin-top: 10px;
 `;
 
 export const SocialButton = styled(IconButton)`
@@ -110,7 +109,6 @@ export const SignupLink = styled.a`
   text-decoration: none;
   font-size: 14px;
   text-align: center;
-  margin-top: 16px;
   cursor: pointer;
   transition: color 0.3s ease-in-out;
 

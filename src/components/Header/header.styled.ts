@@ -31,6 +31,7 @@ export const NotificationBell = styled.button`
   padding: 0.5rem;
   border-radius: 0.375rem;
   transition: all 0.2s;
+  margin-right: 0.5rem;
 
   &:hover {
     background-color: #f1f5f9;

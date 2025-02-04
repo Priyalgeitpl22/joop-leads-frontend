@@ -1,11 +1,11 @@
 import { Bell, Search } from 'lucide-react';
 import { HeaderContainer } from '../../styles/layout.styled';
-import  {SearchBar, NotificationBell, ProfileIcon} from '../Header/header.styled';
+import  {SearchBar, NotificationBell} from '../Header/header.styled';
+import UserProfileMenu from '../User-Profile/UserProfile';
 
 
 
 const Header = () => {
-    const userImage = 'https://i.pravatar.cc/300';
   return (
     <HeaderContainer>
       <SearchBar>
@@ -15,9 +15,7 @@ const Header = () => {
       <NotificationBell>
         <Bell size={20} />
       </NotificationBell>
-      <ProfileIcon>
-      <img src={userImage} alt="User Profile" />
-        </ProfileIcon>
+      <UserProfileMenu />
     </HeaderContainer>
   );
 };
