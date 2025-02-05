@@ -33,6 +33,7 @@
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     font-size: 16px;
     outline: none;
+    letter-spacing: 1px;
 
     &:hover {
       background: linear-gradient(135deg, #4ca4a5, #378f8f);

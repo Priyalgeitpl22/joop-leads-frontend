@@ -9,6 +9,8 @@ import ForgotPassword from "./pages/Forgot-Password/Forgot_Password";
 import VerifyOtp from "./pages/Verify-OTP/VerifyOtp";
 import Configuration from "./pages/Settings/Configuration/Configuration";
 import Agents from "./pages/Settings/Agents/Agents";
+import ChangePassword from "./components/Change-Password/ChangePassword";
+import Chats from "./components/Chats/Chats";
 
 const App: React.FC = () => {
   return (
@@ -18,6 +20,7 @@ const App: React.FC = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/verify-otp" element={<VerifyOtp />} />
+        <Route path="/change-password" element={<ChangePassword />} />
         <Route
           path="/*"
           element={
@@ -28,6 +31,7 @@ const App: React.FC = () => {
               <MainContainer>
                 <Routes>
                   <Route path="/" element={<Home />} />
+                  <Route path='/chats' element={<Chats />} />
                   <Route path="/settings/configuration" element={<Configuration />} />
                   <Route path="/settings/agents" element={<Agents />} />
                 </Routes>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Menu, Typography, Box } from "@mui/material";
 import { ProfileIcon, StyledMenuItem } from "./UserProfile.styled";
+import { Link } from "react-router-dom";
 
 const UserProfileMenu = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null); 
@@ -40,9 +41,11 @@ const UserProfileMenu = () => {
           </Typography>
         </StyledMenuItem>
         <StyledMenuItem onClick={handleClose}>
+          <Link to="/change-password" style={{ textDecoration: "none", color: "inherit" }}>
           <Typography variant="body2" color="textSecondary">
-            Settings
+            Change Password
           </Typography>
+          </Link>
         </StyledMenuItem>
         <StyledMenuItem onClick={handleClose}>
           <Typography variant="body2" color="textSecondary">

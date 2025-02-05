@@ -1,11 +1,11 @@
 import styled from "@emotion/styled";
-import { Box, Button, TextField, IconButton, Typography } from "@mui/material";
+import { Box, Button, TextField, Typography } from "@mui/material";
 
 export const PageContainer = styled(Box)`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  height: 100vh;
 `;
 
 export const VerifyCard = styled(Box)`
@@ -13,11 +13,9 @@ export const VerifyCard = styled(Box)`
   border-radius: 20px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   width: 100%;
-  max-width: 500px;
-  padding: 24px;
+  max-width: 800px;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  overflow: hidden;
 `;
 
 export const EmailSection = styled(Box)`
@@ -70,6 +68,7 @@ export const StyledButton = styled(Button)`
   background: #0d899b;
   color: white;
   width: 100%;
+  max-width: 300px;
 
   &:hover {
     background: #4ca4a5;
@@ -83,3 +82,22 @@ export const TimerText = styled(Typography)`
   margin-top: 10px;
 `;
 
+export const IllustrationSection = styled(Box)`
+  flex: 1;
+  background: #f8fbff;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @media (max-width: 900px) {
+    display: none;
+  }
+`;
+export const FormSection = styled(Box)`
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;

@@ -1,6 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Typography } from "@mui/material";
 import { Facebook, Linkedin } from "lucide-react";
+import { useDispatch} from "react-redux";
+import { registerUser } from "../../redux/slice/userSlice";
+import { useNavigate } from "react-router-dom";
+import { AppDispatch } from "../../redux/store/store"; 
 import {
   PageContainer,
   RegisterCard,
@@ -21,6 +25,7 @@ interface FormData {
   domain: string;
   country: string;
   phone: string;
+  password:string;
 }
 
 const formFields: { name: keyof FormData; label: string; type: string }[] = [
@@ -30,9 +35,12 @@ const formFields: { name: keyof FormData; label: string; type: string }[] = [
   { name: "domain", label: "Domain", type: "text" },
   { name: "country", label: "Country", type: "text" },
   { name: "phone", label: "Phone Number", type: "tel" },
+  { name: "password", label: "Password", type: "text" },
 ];
 
 const Register = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate(); 
   const [formData, setFormData] = useState<FormData>({
     fullName: "",
     email: "",
@@ -40,15 +48,35 @@ const Register = () => {
     domain: "",
     country: "",
     phone: "",
+    password: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = () => {
-    console.log("Registration Data:", formData);
+  
+  const [submitted, setSubmitted] = useState<boolean>(false);
+  const handleSubmit = async() => {
+    setSubmitted(true);
   };
+
+  useEffect(() => {
+    if (submitted) {
+      dispatch(registerUser(formData))
+        .unwrap() 
+        .then((result) => {
+          console.log("Registration successful:", result);
+          navigate("/verify-otp", { state: { email: formData.email } });
+        })
+        .catch((err) => {
+          console.error("Registration failed:", err);
+        })
+        .finally(() => {
+          setSubmitted(false);
+        });
+    }
+  }, [submitted, dispatch, formData, navigate]);
 
   return (
     <PageContainer>
@@ -65,7 +93,7 @@ const Register = () => {
           <Typography variant="h4" fontWeight="bold" mb={1}>
             Create an Account
           </Typography>
-          <Typography variant="body1" color="black" mb={3}>
+          <Typography variant="body1" color="black" mb={2}>
             Register with your details
           </Typography>
 
@@ -76,7 +104,7 @@ const Register = () => {
               label={label}
               type={type}
               variant="outlined"
-              value={formData[name]} // No TypeScript error now
+              value={formData[name]}
               onChange={handleChange}
             />
           ))}

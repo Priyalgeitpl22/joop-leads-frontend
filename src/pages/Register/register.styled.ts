@@ -40,8 +40,7 @@ export const FormSection = styled(Box)`
 `;
 
 export const StyledTextField = styled(TextField)`
-  margin-bottom: 5px;
-  
+  margin-bottom: 10px;
   .MuiOutlinedInput-root {
     border-radius: 10px;
     transition: all 0.3s ease-in-out;
@@ -77,7 +76,6 @@ export const SocialButtonsContainer = styled(Box)`
   display: flex;
   gap: 16px;
   justify-content: center;
-  margin-top: 10px;
 `;
 
 export const SocialButton = styled(IconButton)`

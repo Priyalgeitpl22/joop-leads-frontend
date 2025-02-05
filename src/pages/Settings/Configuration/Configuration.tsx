@@ -16,7 +16,6 @@ import { FormControl, FormControlLabel, RadioGroup, Radio, Typography, Checkbox,
 import ChatBot from "../../../components/ChatBot/ChatBot";
 
 const Configuration = () => {
-    console.log("Configuration::::::::::::")
   const [settings, setSettings] = useState({
     selectedColor: "#7ed8d7",
     chatbotPosition: "bottom-right",

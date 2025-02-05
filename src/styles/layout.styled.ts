@@ -15,7 +15,7 @@ export const SidebarContainer = styled(motion.aside)`
   padding: 1.5rem;
   position: fixed;
   z-index: 40;
-  height: 100vh;
+  height: -webkit-fill-available;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 `;
 
@@ -63,10 +63,14 @@ export const NavItem = styled(Link)`
   transition: all 0.2s;
   cursor: pointer;
   margin-bottom: 0.5rem;
+  background-color: transparent;
+  border: 1px solid #ddd;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 
   &:hover {
     background-color: #e5f5f7;
     color: #1e293b;
+    border:none;
   }
 
   &.active {
@@ -75,12 +79,24 @@ export const NavItem = styled(Link)`
   }
 `;
 
-
+export const SettingsWrapper = styled.div`
+  position: absolute;
+  bottom: 20px;
+  width:210px;
+`;
 export const SubmenuWrapper = styled(motion.div)`
-  margin-left: 20px;
+  position: absolute;
+  bottom: 75px; 
+  left: 0;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  z-index: 10;
+  background-color: transparent;
+  border: 1px solid #ddd;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 `;
 
 export const SubNavItem = styled(NavLink)`

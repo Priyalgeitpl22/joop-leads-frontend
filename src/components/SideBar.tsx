@@ -7,6 +7,7 @@ import {
   ChevronUp,
   Sliders,
   Users,
+  MessageSquare,
 } from "lucide-react";
 import {
   SidebarContainer,
@@ -14,6 +15,7 @@ import {
   NavItem,
   SubNavItem,
   SubmenuWrapper,
+  SettingsWrapper,
 } from "../styles/layout.styled";
 import { useLocation } from "react-router-dom";
 
@@ -38,13 +40,15 @@ const Sidebar = () => {
         ChatDash
       </Logo>
       <nav>
-        {/* Home Item */}
         <NavItem to="/" className={location.pathname === "/" ? "active" : ""}>
           <HomeIcon size={20} />
           Home
         </NavItem>
-
-        {/* Settings Dropdown */}
+        <NavItem to="/chats" className={location.pathname === "/chats" ? "active" : ""}>
+          <MessageSquare size={20} />
+          Chats
+        </NavItem>
+        <SettingsWrapper>
         <div onClick={() => setIsSettingsOpen(!isSettingsOpen)}>
           <NavItem
             to="#"
@@ -60,7 +64,6 @@ const Sidebar = () => {
           </NavItem>
         </div>
 
-        {/* Submenu Items (Shown when expanded) */}
         {isSettingsOpen && (
           <SubmenuWrapper>
             <SubNavItem
@@ -83,6 +86,7 @@ const Sidebar = () => {
             </SubNavItem>
           </SubmenuWrapper>
         )}
+        </SettingsWrapper>
       </nav>
     </SidebarContainer>
   );

@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { Box, IconButton } from '@mui/material';
 import { Send, AttachFile, InsertEmoticon, Chat } from '@mui/icons-material';
-import Picker from '@emoji-mart/react';
-import data from '@emoji-mart/data';
 import { ChevronDown } from 'lucide-react';
 import {
   ChatContainer,
@@ -13,17 +11,15 @@ import {
   InputContainer,
   StyledTextField,
   OpenButton,
-  EmojiPickerContainer,
   DropdownIconButton
-} from './chatBot.styled'; // Import styled components
+} from './chatBot.styled'; 
 
 function ChatBot({ settings }: any) {
   const [message, setMessage] = useState('');
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [isOpen, setIsOpen] = useState(true);
 
   const handleMenuClick = () => {
-    setIsOpen(false);  // Close the chatbot directly
+    setIsOpen(false);  
   };
 
   return (
@@ -45,14 +41,12 @@ function ChatBot({ settings }: any) {
           </Header>
 
           <ChatBody>
-           {/* First message is from bot */}
            <div style={{ display: 'flex', flexDirection: 'column' }}>
            <Message style={{ backgroundColor: '#e9ecef' }}>
            Hello! How can I help you?
             </Message>
               <span style={{ fontSize: '10px',color:'#6b7280', marginBlock:'0.5rem'}}>10:30 AM</span>
               </div>
-            {/* Second message is from user */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
             <Message style={{ backgroundColor: settings.selectedColor, color: '#fff' }}>
             I need assistance with my order.
@@ -74,24 +68,15 @@ function ChatBot({ settings }: any) {
                   <>
                     {settings.allowEmoji && (
                       <>
-                        <IconButton sx={{ padding: '3px' }} onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
+                        <IconButton sx={{ padding: '3px' }} >
                           <InsertEmoticon />
                         </IconButton>
-                        {showEmojiPicker && (
-                          <EmojiPickerContainer>
-                            <Picker 
-                              data={data} 
-                              onEmojiSelect={(emoji: any) => setMessage((prev) => prev + emoji.native)} 
-                            />
-                          </EmojiPickerContainer>
-                        )}
                       </>
                     )}
                     
                     {settings.allowFileUpload && (
                       <IconButton sx={{ padding: '3px' }} component="label">
                         <AttachFile />
-                        <input type="file" hidden />
                       </IconButton>
                     )}
 
