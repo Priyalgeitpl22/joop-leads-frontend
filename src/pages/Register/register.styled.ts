@@ -5,7 +5,6 @@ export const PageContainer = styled(Box)`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh;
 `;
 
 export const RegisterCard = styled(Box)`

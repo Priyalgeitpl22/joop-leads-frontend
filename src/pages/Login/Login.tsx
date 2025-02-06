@@ -14,7 +14,7 @@ import {
 } from './login.styled';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { loginUser } from '../../redux/slice/userSlice';
+import { getUserDetails, loginUser } from '../../redux/slice/userSlice';
 import { AppDispatch, RootState } from '../../redux/store/store';
 
 function Login() {
@@ -29,18 +29,15 @@ function Login() {
   const navigate = useNavigate();
 
   // Retrieve login-related state from Redux.
-  const { user, loading, error } = useSelector((state: RootState) => state.user);
-  console.log(user);
+  const {loading, error } = useSelector((state: RootState) => state.user);
 
+ 
   useEffect(() => {
     if (loginSubmitted) {
       dispatch(loginUser({ email, password }))
         .unwrap()
-        .then((result) => {
-          console.log('Login successful:', result);
-          // You can redirect after a successful login.
-          navigate('/');
-        })
+        .then(() => dispatch(getUserDetails()).unwrap()) 
+        .then(() => navigate('/'))
         .catch((err) => {
           console.error('Login failed:', err);
         })
@@ -49,6 +46,9 @@ function Login() {
         });
     }
   }, [loginSubmitted, dispatch, email, password, navigate]);
+  
+
+
 
   const handleSignIn = () => {
     setLoginSubmitted(true);

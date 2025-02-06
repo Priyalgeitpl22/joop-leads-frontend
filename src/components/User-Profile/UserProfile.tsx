@@ -1,11 +1,16 @@
 import React, { useState } from "react";
 import { Menu, Typography, Box } from "@mui/material";
 import { ProfileIcon, StyledMenuItem } from "./UserProfile.styled";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { logoutUser } from "../../redux/slice/userSlice"; 
+import { AppDispatch } from "../../redux/store/store";
 
 const UserProfileMenu = () => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null); 
-  const userImage = "https://i.pravatar.cc/300"; 
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+  const userImage = "https://i.pravatar.cc/300";
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -14,6 +19,14 @@ const UserProfileMenu = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const handleLogout = async () => {
+    await dispatch(logoutUser());
+    localStorage.setItem("logout", Date.now().toString()); 
+    handleClose();
+    navigate("/login");
+  };
+  
 
   return (
     <Box>
@@ -42,12 +55,12 @@ const UserProfileMenu = () => {
         </StyledMenuItem>
         <StyledMenuItem onClick={handleClose}>
           <Link to="/change-password" style={{ textDecoration: "none", color: "inherit" }}>
-          <Typography variant="body2" color="textSecondary">
-            Change Password
-          </Typography>
+            <Typography variant="body2" color="textSecondary">
+              Change Password
+            </Typography>
           </Link>
         </StyledMenuItem>
-        <StyledMenuItem onClick={handleClose}>
+        <StyledMenuItem onClick={handleLogout}>
           <Typography variant="body2" color="textSecondary">
             Logout
           </Typography>
@@ -56,7 +69,5 @@ const UserProfileMenu = () => {
     </Box>
   );
 };
-
-
 
 export default UserProfileMenu;
