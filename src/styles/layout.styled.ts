@@ -5,7 +5,6 @@ import { Link, NavLink } from "react-router-dom";
 export const DashboardContainer = styled.div`
   display: flex;
   width: 100%;
-  height: 100vh;
 `;
 
 export const SidebarContainer = styled(motion.aside)`

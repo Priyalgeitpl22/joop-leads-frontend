@@ -1,11 +1,14 @@
 import { Box, MenuItem, styled } from "@mui/material";
 
 export const ProfileIcon = styled(Box)`
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   cursor: pointer;
   border-radius: 50%;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   img {
     width: 100%;

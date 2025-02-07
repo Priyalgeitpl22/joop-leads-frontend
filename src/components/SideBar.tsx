@@ -8,6 +8,7 @@ import {
   Sliders,
   Users,
   MessageSquare,
+  Building,
 } from "lucide-react";
 import {
   SidebarContainer,
@@ -47,6 +48,10 @@ const Sidebar = () => {
         <NavItem to="/chats" className={location.pathname === "/chats" ? "active" : ""}>
           <MessageSquare size={20} />
           Chats
+        </NavItem>
+        <NavItem to="/organization" className={location.pathname === "/organization" ? "active" : ""}>
+          <Building size={20} />
+          Organization
         </NavItem>
         <SettingsWrapper>
         <div onClick={() => setIsSettingsOpen(!isSettingsOpen)}>

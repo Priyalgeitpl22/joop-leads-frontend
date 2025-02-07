@@ -37,6 +37,20 @@ export const FormSection = styled(Box)`
   flex-direction: column;
   justify-content: center;
 `;
+export const PreviewContainer = styled(Box)`
+text-align: center;
+  margin-bottom: 10px;
+`;
+
+export const PreviewImage = styled('img')`
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #1976d2;
+  margin-bottom: 8px;
+`;
+
 
 export const StyledTextField = styled(TextField)`
   margin-bottom: 10px;

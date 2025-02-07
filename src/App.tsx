@@ -7,8 +7,8 @@ import Login from "./pages/Login/Login";
 import Register from "./pages/Register/Register";
 import ForgotPassword from "./pages/Forgot-Password/Forgot_Password";
 import VerifyOtp from "./pages/Verify-OTP/VerifyOtp";
-import Configuration from "./pages/Settings/Configuration/Configuration";
-import Agents from "./pages/Settings/Agents/Agents";
+import Configuration from "./components/Settings/Configuration/Configuration";
+import Agents from "./components/Settings/Agents/Agents";
 import ChangePassword from "./components/Change-Password/ChangePassword";
 import Chats from "./components/Chats/Chats";
 import { useDispatch } from "react-redux";
@@ -16,6 +16,7 @@ import Cookies from "js-cookie";
 import { useEffect } from "react";
 import { AppDispatch } from "./redux/store/store";
 import { getUserDetails } from "./redux/slice/userSlice";
+import Organization from "./components/Organization/Organization";
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -61,6 +62,7 @@ const App: React.FC = () => {
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/chats" element={<Chats />} />
+                  <Route path="/organization" element={<Organization />} />
                   <Route path="/settings/configuration" element={<Configuration />} />
                   <Route path="/settings/agents" element={<Agents />} />
                 </Routes>

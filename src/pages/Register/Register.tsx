@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import { Typography } from "@mui/material";
 import { Facebook, Linkedin } from "lucide-react";
-import { useDispatch} from "react-redux";
+import { useDispatch } from "react-redux";
 import { registerUser } from "../../redux/slice/userSlice";
 import { useNavigate } from "react-router-dom";
 import { AppDispatch } from "../../redux/store/store"; 
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import {
   PageContainer,
   RegisterCard,
@@ -14,21 +15,23 @@ import {
   StyledButton,
   SocialButtonsContainer,
   SocialButton,
+  PreviewContainer,
+  PreviewImage,
 } from "./register.styled";
 import { Link as RouterLink } from "react-router-dom";
 
-// Define TypeScript Interface for form data
-interface FormData {
+interface RegisterFormData {
+  profilePicture: File | null;
   fullName: string;
   email: string;
   orgName: string;
   domain: string;
   country: string;
   phone: string;
-  password:string;
+  password: string;
 }
 
-const formFields: { name: keyof FormData; label: string; type: string }[] = [
+const formFields: { name: keyof Omit<RegisterFormData, "profilePicture">; label: string; type: string }[] = [
   { name: "fullName", label: "Full Name", type: "text" },
   { name: "email", label: "Email Address", type: "email" },
   { name: "orgName", label: "Organization Name", type: "text" },
@@ -41,7 +44,10 @@ const formFields: { name: keyof FormData; label: string; type: string }[] = [
 const Register = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate(); 
-  const [formData, setFormData] = useState<FormData>({
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const [formData, setFormData] = useState<RegisterFormData>({
+    profilePicture: null,
     fullName: "",
     email: "",
     orgName: "",
@@ -51,32 +57,49 @@ const Register = () => {
     password: "",
   });
 
+  // State to store the preview image URL
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+
+  // Handler for text input fields
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  
-  const [submitted, setSubmitted] = useState<boolean>(false);
-  const handleSubmit = async() => {
-    setSubmitted(true);
+  // Handler for file input (profile picture)
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setFormData({ ...formData, profilePicture: file });
+      // Create and set the preview URL for the selected file
+      setPreviewImage(URL.createObjectURL(file));
+    }
   };
 
-  useEffect(() => {
-    if (submitted) {
-      dispatch(registerUser(formData))
-        .unwrap() 
-        .then((result) => {
-          console.log("Registration successful:", result);
-          navigate("/verify-otp", { state: { email: formData.email } });
-        })
-        .catch((err) => {
-          console.error("Registration failed:", err);
-        })
-        .finally(() => {
-          setSubmitted(false);
-        });
+  // Handle submit by converting our state into FormData
+  const handleSubmit = async () => {
+    const payload = new FormData();
+    payload.append("fullName", formData.fullName);
+    payload.append("email", formData.email);
+    payload.append("orgName", formData.orgName);
+    payload.append("domain", formData.domain);
+    payload.append("country", formData.country);
+    payload.append("phone", formData.phone);
+    payload.append("password", formData.password);
+    if (formData.profilePicture) {
+      payload.append("profilePicture", formData.profilePicture);
     }
-  }, [submitted, dispatch, formData, navigate]);
+    
+    try {
+      const result = await dispatch(registerUser(payload)).unwrap();
+      console.log("Registration successful:", result);
+      navigate("/verify-otp", { state: { email: formData.email } });
+    } catch (err) {
+      console.error("Registration failed:", err);
+    }
+  };
+  const handleIconClick = () => {
+    fileInputRef.current?.click();
+  };
 
   return (
     <PageContainer>
@@ -97,6 +120,26 @@ const Register = () => {
             Register with your details
           </Typography>
 
+          {/* Profile picture upload input */}
+          <PreviewContainer>
+            {previewImage ? (
+              <PreviewImage src={previewImage} alt="Profile preview" onClick={handleIconClick} style={{ cursor: 'pointer' }} />
+            ) : (
+              <AccountCircleIcon
+                style={{ fontSize: "50px", color: "#1976d2", marginBottom: "8px", cursor: 'pointer' }}
+                onClick={handleIconClick}
+              />
+            )}
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              ref={fileInputRef}
+              style={{ display: 'none' }}
+            />
+          </PreviewContainer>
+
+          {/* Render other text fields */}
           {formFields.map(({ name, label, type }) => (
             <StyledTextField
               key={name}

@@ -1,16 +1,17 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import api from "../../services/api";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 
-interface UserData {
-  email: string;
-  fullName: string;
-  orgName: string;
-  domain: string;
-  country: string;
-  phone: string;
-  password: string;
-}
+// interface UserData {
+//   profilePicture: File | null;
+//   email: string;
+//   fullName: string;
+//   orgName: string;
+//   domain: string;
+//   country: string;
+//   phone: string;
+//   password: string;
+// }
 
 interface LoginData {
   email: string;
@@ -45,14 +46,19 @@ interface AuthState {
   passwordChangeSuccess: boolean;
 }
 
+// Updated registerUser thunk to accept FormData
 export const registerUser = createAsyncThunk(
   "auth/register",
-  async (userData: UserData, { rejectWithValue }) => {
+  async (formData: FormData, { rejectWithValue }) => {
     try {
-      const response = await api.post("/auth/register", userData); 
-      return response.data;  
+      const response = await api.post("/auth/register", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || "Network error");
+      return rejectWithValue(
+        error.response?.data?.message || "Network error"
+      );
     }
   }
 );
@@ -61,10 +67,12 @@ export const verifyOtp = createAsyncThunk(
   "auth/verifyOtp",
   async (otpData: OtpData, { rejectWithValue }) => {
     try {
-      const response = await api.post("/auth/verify-otp", otpData); 
+      const response = await api.post("/auth/verify-otp", otpData);
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || "Network error");
+      return rejectWithValue(
+        error.response?.data?.message || "Network error"
+      );
     }
   }
 );
@@ -73,10 +81,12 @@ export const resetPassword = createAsyncThunk(
   "auth/resetPassword",
   async (data: ResetPasswordData, { rejectWithValue }) => {
     try {
-      const response = await api.post("/auth/resetPassword", data); 
+      const response = await api.post("/auth/resetPassword", data);
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || "Network error");
+      return rejectWithValue(
+        error.response?.data?.message || "Network error"
+      );
     }
   }
 );
@@ -85,25 +95,20 @@ export const changePassword = createAsyncThunk(
   "auth/changePassword",
   async (data: ChangePasswordData, { rejectWithValue }) => {
     try {
-
       const token = Cookies.get("access_token");
       if (!token) throw new Error("No authentication token found");
 
-      const response = await api.post(
-        "/auth/change-password",  
-        data,  
-        {
-          headers: { Authorization: `Bearer ${token}` },  
-        }
-      );
+      const response = await api.post("/auth/change-password", data, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       if (response.status !== 200) {
         throw new Error(response.data?.message || "Failed to change password");
       }
-      
-
-      return { success: true }; 
+      return { success: true };
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || "Network error");
+      return rejectWithValue(
+        error.response?.data?.message || "Network error"
+      );
     }
   }
 );
@@ -113,14 +118,13 @@ export const loginUser = createAsyncThunk(
   async (loginData: LoginData, { rejectWithValue }) => {
     try {
       const response = await api.post("/auth/login", loginData);
-      
       const { token } = response.data;
-
-      Cookies.set("access_token", token, { expires: 7, path: "" });  
-
+      Cookies.set("access_token", token, { expires: 7, path: "" });
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || "Network error");
+      return rejectWithValue(
+        error.response?.data?.message || "Network error"
+      );
     }
   }
 );
@@ -135,10 +139,11 @@ export const getUserDetails = createAsyncThunk(
       const response = await api.get("/user", {
         headers: { Authorization: `Bearer ${token}` },
       });
-
-      return response.data.user; 
+      return response.data.user;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || "Failed to fetch user details");
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch user details"
+      );
     }
   }
 );
@@ -150,29 +155,25 @@ export const logoutUser = createAsyncThunk(
       const token = Cookies.get("access_token");
       if (!token) throw new Error("No authentication token found");
 
-      await api.post("/auth/logout", {}, { 
-        headers: { Authorization: `Bearer ${token}` } 
-      });
-
+      await api.post("/auth/logout", {}, { headers: { Authorization: `Bearer ${token}` } });
       Cookies.remove("access_token");
-
       return { success: true };
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || "Logout failed");
+      return rejectWithValue(
+        error.response?.data?.message || "Logout failed"
+      );
     }
   }
 );
-
-
 
 const userSlice = createSlice({
   name: "user",
   initialState: {
     user: null,
-    token:  Cookies.get("access_token") ?? null,
+    token: Cookies.get("access_token") ?? null,
     loading: false,
     error: null,
-    passwordChangeSuccess:false,
+    passwordChangeSuccess: false,
   } as AuthState,
   reducers: {
     logout: (state) => {
@@ -192,9 +193,9 @@ const userSlice = createSlice({
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
         if (action.payload) {
-          state.error = action.payload as string; 
+          state.error = action.payload as string;
         } else if (action.error.message) {
-          state.error = action.error.message; 
+          state.error = action.error.message;
         }
       })
       .addCase(loginUser.pending, (state) => {
@@ -207,9 +208,9 @@ const userSlice = createSlice({
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
         if (action.payload) {
-          state.error = action.payload as string; 
+          state.error = action.payload as string;
         } else if (action.error.message) {
-          state.error = action.error.message; 
+          state.error = action.error.message;
         }
       })
       .addCase(logoutUser.pending, (state) => {
@@ -219,7 +220,7 @@ const userSlice = createSlice({
         state.loading = false;
         state.user = null;
         state.token = null;
-        Cookies.remove("access_token"); 
+        Cookies.remove("access_token");
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.loading = false;
@@ -239,12 +240,11 @@ const userSlice = createSlice({
       .addCase(getUserDetails.rejected, (state, action) => {
         state.loading = false;
         if (action.payload) {
-          state.error = action.payload as string; 
+          state.error = action.payload as string;
         } else if (action.error.message) {
-          state.error = action.error.message; 
+          state.error = action.error.message;
         }
       })
-      
       .addCase(verifyOtp.pending, (state) => {
         state.loading = true;
       })
@@ -254,9 +254,9 @@ const userSlice = createSlice({
       .addCase(verifyOtp.rejected, (state, action) => {
         state.loading = false;
         if (action.payload) {
-          state.error = action.payload as string; 
+          state.error = action.payload as string;
         } else if (action.error.message) {
-          state.error = action.error.message; 
+          state.error = action.error.message;
         }
       })
       .addCase(resetPassword.pending, (state) => {
@@ -268,9 +268,9 @@ const userSlice = createSlice({
       .addCase(resetPassword.rejected, (state, action) => {
         state.loading = false;
         if (action.payload) {
-          state.error = action.payload as string; 
+          state.error = action.payload as string;
         } else if (action.error.message) {
-          state.error = action.error.message; 
+          state.error = action.error.message;
         }
       })
       .addCase(changePassword.pending, (state) => {
@@ -285,9 +285,9 @@ const userSlice = createSlice({
         state.loading = false;
         state.passwordChangeSuccess = false;
         if (action.payload) {
-          state.error = action.payload as string; 
+          state.error = action.payload as string;
         } else if (action.error.message) {
-          state.error = action.error.message; 
+          state.error = action.error.message;
         }
       });
   },
