@@ -2,17 +2,6 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import api from "../../services/api";
 import Cookies from "js-cookie";
 
-// interface UserData {
-//   profilePicture: File | null;
-//   email: string;
-//   fullName: string;
-//   orgName: string;
-//   domain: string;
-//   country: string;
-//   phone: string;
-//   password: string;
-// }
-
 interface LoginData {
   email: string;
   password: string;
@@ -38,6 +27,7 @@ interface AuthState {
     id: string;
     fullName: string;
     email: string;
+    orgId: string;
     role: string;
   } | null;
   token: string | null;
