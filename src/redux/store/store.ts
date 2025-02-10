@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userReducer from "../slice/userSlice";
 import organizationReducer from "../slice/organizationSlice";
+import agentsReducer from '../slice/agentsSlice';
 
 export const store = configureStore({
   reducer: {
     user: userReducer, 
-    organization: organizationReducer
+    organization: organizationReducer,
+    agents: agentsReducer
   },
 });
 
