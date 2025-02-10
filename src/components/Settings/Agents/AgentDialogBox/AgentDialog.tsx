@@ -14,10 +14,12 @@ import {
   InputLabel,
   FormControl,
   IconButton,
-  SelectChangeEvent
+  SelectChangeEvent,
 } from "@mui/material";
 import { AddAPhoto } from "@mui/icons-material";
 import { motion } from "framer-motion";
+import { useDispatch, useSelector } from "react-redux";
+import { createAgent} from "../../../../redux/slice/agentsSlice"; 
 import {
   DialogContainer,
   TabPanel,
@@ -25,6 +27,7 @@ import {
   AvatarWrapper,
   AvailabilityContainer,
 } from "./AgentDialog.styled";
+import {AppDispatch, RootState} from '../../../../redux/store/store';
 
 interface Availability {
   day: string;
@@ -44,7 +47,6 @@ export interface Agent {
 interface AgentDialogProps {
   open: boolean;
   onClose: () => void;
-  onSave: (agent: Omit<Agent, "id">) => void;
   agent?: Agent | null;
 }
 
@@ -57,9 +59,13 @@ const defaultAgent: Agent = {
   availability: [{ day: "Monday", from: "09:00", to: "17:00" }],
 };
 
-const AgentDialog: React.FC<AgentDialogProps> = ({ open, onClose, onSave, agent }) => {
+const AgentDialog: React.FC<AgentDialogProps> = ({ open, onClose, agent }) => {
   const [tab, setTab] = useState<number>(0);
   const [formData, setFormData] = useState<Agent>(defaultAgent);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const {user} = useSelector((state:RootState)=>state.user);
+
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     if (agent) {
@@ -78,9 +84,13 @@ const AgentDialog: React.FC<AgentDialogProps> = ({ open, onClose, onSave, agent 
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSelectChange = (e: SelectChangeEvent<string>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  const handleSelectChange = (
+    event: SelectChangeEvent<string>
+  ) => {
+    const { name, value } = event.target;
+    if (name) {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleAddAvailability = () => {
@@ -100,9 +110,24 @@ const AgentDialog: React.FC<AgentDialogProps> = ({ open, onClose, onSave, agent 
   };
 
   const handleSave = () => {
-    console.log("Saving agent:", formData);
-    onSave(formData);
-    // Reset the form data and tab after saving.
+    const payload = {
+      email: formData.email,
+      fullName: formData.name,
+      phone: formData.phone,
+      orgId: user!.orgId,
+      profilePicture: selectedFile || undefined,
+    };
+
+    dispatch(createAgent(payload) as any)
+      .unwrap()
+      .then(() => {
+        console.log("Agent created successfully");
+        window.location.reload();
+      })
+      .catch((error : any) => {
+        console.error("Error creating agent:", error);
+      });
+
     setFormData(defaultAgent);
     setTab(0);
     onClose();
@@ -117,7 +142,6 @@ const AgentDialog: React.FC<AgentDialogProps> = ({ open, onClose, onSave, agent 
             <Tab label="Schedule" />
           </Tabs>
         </DialogTitle>
-
         <DialogContent>
           {tab === 0 && (
             <TabPanel key={tab}>
@@ -132,6 +156,7 @@ const AgentDialog: React.FC<AgentDialogProps> = ({ open, onClose, onSave, agent 
                       onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (file) {
+                          setSelectedFile(file);
                           setFormData((prev) => ({
                             ...prev,
                             avatar: URL.createObjectURL(file),
@@ -150,7 +175,6 @@ const AgentDialog: React.FC<AgentDialogProps> = ({ open, onClose, onSave, agent 
               </motion.div>
             </TabPanel>
           )}
-
           {tab === 1 && (
             <TabPanel key={tab}>
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
@@ -161,7 +185,6 @@ const AgentDialog: React.FC<AgentDialogProps> = ({ open, onClose, onSave, agent 
                     <MenuItem value="UTC -08:00 Pacific Time">UTC -08:00 Pacific Time</MenuItem>
                   </Select>
                 </FormControl>
-
                 <AvailabilityContainer>
                   {formData.availability.map((slot, index) => (
                     <div key={index} className="availability-row">
@@ -193,7 +216,6 @@ const AgentDialog: React.FC<AgentDialogProps> = ({ open, onClose, onSave, agent 
             </TabPanel>
           )}
         </DialogContent>
-
         <DialogActions>
           {tab === 0 ? (
             <Button variant="contained" onClick={() => setTab(1)}>
