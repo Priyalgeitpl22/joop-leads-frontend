@@ -37,7 +37,7 @@ const Configuration = () => {
   };
 
   return (
-    <Box sx={{ width:'auto'}}>
+    <Box sx={{ width:'auto', marginLeft: '15px', marginTop: '10px' }}>
       {/* Tabs for switching between Configure & Availability */}
       <CustomTabs value={activeTab} onChange={(_, newValue) => setActiveTab(newValue)}>
         <CustomTab label="Configure" value="configure" />

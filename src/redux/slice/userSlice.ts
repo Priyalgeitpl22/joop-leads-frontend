@@ -28,6 +28,7 @@ interface AuthState {
     fullName: string;
     email: string;
     orgId: string;
+    profilePicture:string;
     role: string;
   } | null;
   token: string | null;

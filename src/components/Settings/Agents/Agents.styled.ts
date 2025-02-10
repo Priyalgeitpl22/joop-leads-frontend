@@ -5,6 +5,7 @@
   export const AgentsContainer = styled.div`
     width:100%;
     height: 100%;
+    margin-left:15px;
   `;
 
   export const AgentHeader = styled.section`

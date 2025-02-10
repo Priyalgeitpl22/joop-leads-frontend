@@ -92,7 +92,7 @@ export const SocialButton = styled(IconButton)`
   }
 `;
 
-export const ForgotPasswordLink = styled.a`
+export const ForgotPasswordLink = styled.div`
   color: #0066cc;
   text-decoration: none;
   font-size: 14px;

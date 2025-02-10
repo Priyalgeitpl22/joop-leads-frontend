@@ -2,15 +2,17 @@ import React, { useState } from "react";
 import { Menu, Typography, Box} from "@mui/material";
 import { ProfileIcon, StyledMenuItem } from "./UserProfile.styled";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../../redux/slice/userSlice"; 
-import { AppDispatch } from "../../redux/store/store";
+import { AppDispatch, RootState } from "../../redux/store/store";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const UserProfileMenu = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const {user} = useSelector((state: RootState) => state.user);
+  
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -31,7 +33,13 @@ const UserProfileMenu = () => {
   return (
     <Box>
       <ProfileIcon onClick={handleClick}>
-        <AccountCircleIcon sx={{ color: "#64748b", width: "30px", height: "30px", cursor: "pointer", objectFit: "cover" }} />
+        {
+          user?.profilePicture ?(
+            <img src={user?.profilePicture} alt="Profile" style={{ width: "40px", height: "40px", cursor: "pointer", objectFit: "cover" }} />
+          ):(
+            <AccountCircleIcon sx={{ color: "#64748b", width: "30px", height: "30px", cursor: "pointer", objectFit: "cover" }} />
+          )
+        }
       </ProfileIcon>
 
       <Menu

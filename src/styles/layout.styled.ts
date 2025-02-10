@@ -36,8 +36,8 @@ export const HeaderContainer = styled.header`
 export const MainContainer = styled.main` 
   position:relative;
   padding: 0.5rem 1rem;
-  margin-left: 260px;
-  margin-top: 64px;
+  margin-left: 240px;
+  margin-top: 50px;
   width: auto;
 `;
 
@@ -87,7 +87,7 @@ export const SubmenuWrapper = styled(motion.div)`
   position: absolute;
   bottom: 75px; 
   left: 0;
-  width: 100%;
+  width: -webkit-fill-available;
   display: flex;
   flex-direction: column;
   border-radius: 0.5rem;

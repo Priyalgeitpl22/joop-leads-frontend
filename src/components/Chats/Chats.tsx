@@ -1,8 +1,14 @@
+import ChatArea from './ChatArea/ChatArea';
+import ChatList from './ChatList/ChatList';
+import { ChatContainer } from './Chats.styled';
+import ChatSideBar from './ChatSideBar/ChatSideBar';
 
 export default function Chats() {
   return (
-    <div>
-      <h1>Chats</h1>
-    </div>
+      <ChatContainer>
+        <ChatSideBar/>
+        <ChatList />
+        <ChatArea />
+      </ChatContainer>
   )
 }
