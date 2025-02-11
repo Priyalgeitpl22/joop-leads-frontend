@@ -1,127 +1,87 @@
-import React, { useState } from 'react';
-import {
-  Avatar,
-  Box,
-  Typography,
-  TextField,
-  IconButton,
-  Menu,
-  MenuItem,
-} from '@mui/material';
-import {
-  MoreVertical,
-  Paperclip,
-  Plus,
-  Send,
-  SmilePlus,
-} from 'lucide-react';
-import { motion } from 'framer-motion';
-
+import React, { useState, useEffect } from "react";
+import { Avatar, Box, Typography, TextField, IconButton } from "@mui/material";
+import { Send } from "lucide-react";
+import { motion } from "framer-motion";
+import { useSelector, useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "../../../redux/store/store";
+import { getchats } from "../../../redux/slice/chatSlice";
+import { useSocket } from "../../../context/SocketContext";
 import {
   ChatContainer,
   ChatHeader,
   ChatMessages,
   Message,
-  ReassignmentNote,
   ChatInputContainer,
-} from './chatArea.styled';
+} from "./chatArea.styled";
 
 interface ChatData {
-  id: number;
-  type: 'message' | 'note';
-  sender?: string;
-  timestamp?: string;
-  isBot?: boolean;
+  id: string;
+  sender: string;
+  threadId : string;
   content: string;
+  timestamp: string;
+  isBot?: boolean;
 }
 
-const chatData: ChatData[] = [
-  {
-    id: 1,
-    type: 'message',
-    sender: 'GOA1',
-    timestamp: '7:05 PM',
-    isBot: true,
-    content: 'What is a good email address to contact you with?',
-  },
-  {
-    id: 2,
-    type: 'message',
-    sender: 'Priyal',
-    timestamp: '7:05 PM',
-    isBot: false,
-    content: 'priyal@goldeneagle.ai',
-  },
-  {
-    id: 3,
-    type: 'message',
-    sender: 'GOA1',
-    timestamp: '7:05 PM',
-    isBot: true,
-    content:
-      'Would you like to? Sent quick reply options: Connect me with agent, Book Meeting',
-  },
-  {
-    id: 4,
-    type: 'note',
-    content: 'GOA1 reassigned this thread on 7 Feb 2023 7:05 PM',
-  },
-  {
-    id: 5,
-    type: 'message',
-    sender: 'GOA1',
-    timestamp: '7:05 PM',
-    isBot: true,
-    content:
-      "Thanks. We've passed along this information. A member of our team will be in touch soon.",
-  },
-];
+interface ChatAreaProps {
+  selectedThreadId: string | null;
+}
 
-// Motion variants for message content.
 const motionVariants = {
   hidden: { opacity: 0, y: 10 },
   visible: { opacity: 1, y: 0 },
 };
 
-export default function ChatArea(): JSX.Element {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+export default function ChatArea({
+  selectedThreadId,
+}: ChatAreaProps): JSX.Element {
+  const dispatch = useDispatch<AppDispatch>();
+  const { socket } = useSocket();
+  const { chats, loading } = useSelector((state: RootState) => state.chats);
+  const [inputMessage, setInputMessage] = useState("");
+  const [messages, setChats] = useState<ChatData[]>([]);
 
-  const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
-
-  const renderChatItem = (item: ChatData) => {
-    if (item.type === 'note') {
-      return (
-        <ReassignmentNote key={item.id}>
-          {item.content}
-        </ReassignmentNote>
-      );
+  useEffect(() => {
+    if (selectedThreadId) {
+      dispatch(getchats(selectedThreadId));
     }
-    return (
-      <Message key={item.id} isbot={item.isBot}>
-        <Avatar sx={{ bgcolor: item.isBot ? '#2196f3' : undefined, width: 32, height: 32 }}>
-          {item.sender ? item.sender[0] : ''}
-        </Avatar>
-        <Box>
-          <Typography variant="body2" color="textSecondary" gutterBottom>
-            {item.sender} • {item.timestamp}
-          </Typography>
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={motionVariants}
-            className="message-content"
-          >
-            <Typography>{item.content}</Typography>
-          </motion.div>
-        </Box>
-      </Message>
-    );
+  }, [dispatch, selectedThreadId]);
+
+  useEffect(() => {
+    console.log("Chats from Redux:", chats);
+    if (chats.length > 0) {
+      setChats(chats);
+    }
+  }, [chats]);
+
+  useEffect(() => {
+    if (!socket || !selectedThreadId) return;
+
+    socket.on("newMessage", (newMessage: ChatData) => {
+      console.log("Received message:", newMessage);
+      dispatch({ type: "chat/addMessage", payload: newMessage });
+    });
+
+    return () => {
+      socket.off("newMessage");
+    };
+  }, [socket, selectedThreadId, dispatch]);
+
+  const sendMessage = () => {
+    if (!socket || !selectedThreadId || !inputMessage.trim()) return;
+
+    const messageData: ChatData = {
+      id: Date.now().toString(),
+      threadId: selectedThreadId,
+      sender: "User",
+      content: inputMessage,
+      timestamp: new Date().toISOString(),
+    };
+
+    socket.emit("sendMessage", messageData);
+    setChats((prevChats) => [...prevChats, messageData]);
+
+    setInputMessage("");
   };
 
   return (
@@ -130,45 +90,65 @@ export default function ChatArea(): JSX.Element {
         <Box display="flex" alignItems="center" gap={2}>
           <Avatar>P</Avatar>
           <Box>
-            <Typography variant="subtitle1">Priyal</Typography>
+            <Typography variant="subtitle1">
+              Chat Thread {selectedThreadId}
+            </Typography>
           </Box>
         </Box>
-        <IconButton onClick={handleMenuClick}>
-          <MoreVertical />
-        </IconButton>
-        <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
-          <MenuItem onClick={handleMenuClose}>View Profile</MenuItem>
-          <MenuItem onClick={handleMenuClose}>Block User</MenuItem>
-        </Menu>
       </ChatHeader>
 
       <ChatMessages>
-        {chatData.map((item) => renderChatItem(item))}
+        {loading ? (
+          <Typography>Loading...</Typography>
+        ) : chats.length > 0 ? (
+          chats?.map((chat) => (
+            <Message key={chat.id} isbot={chat.sender === "Bot"}>
+              <Avatar
+                sx={{
+                  bgcolor: chat.sender === "Bot" ? "#2196f3" : undefined,
+                  width: 32,
+                  height: 32,
+                }}
+              >
+                {chat.sender[0]}
+              </Avatar>
+              <Box>
+                <Typography variant="body2" color="textSecondary" gutterBottom>
+                  {chat.sender} •{" "}
+                  {new Date(chat.createdAt).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </Typography>
+                <motion.div
+                  initial="hidden"
+                  animate="visible"
+                  variants={motionVariants}
+                >
+                  <Typography>{chat.content}</Typography>
+                </motion.div>
+              </Box>
+            </Message>
+          ))
+        ) : (
+          <Typography>No messages yet.</Typography>
+        )}
       </ChatMessages>
 
       <ChatInputContainer>
         <TextField
           fullWidth
           variant="outlined"
-          placeholder="Write a message."
+          placeholder="Write a message..."
           multiline
           maxRows={4}
+          value={inputMessage}
+          onChange={(e) => setInputMessage(e.target.value)}
           InputProps={{
             endAdornment: (
-              <Box display="flex" gap={1}>
-                <IconButton>
-                  <Paperclip size={20} />
-                </IconButton>
-                <IconButton>
-                  <SmilePlus size={20} />
-                </IconButton>
-                <IconButton>
-                  <Plus size={20} />
-                </IconButton>
-                <IconButton color="primary">
-                  <Send size={20} />
-                </IconButton>
-              </Box>
+              <IconButton color="primary" onClick={sendMessage}>
+                <Send size={20} />
+              </IconButton>
             ),
           }}
         />

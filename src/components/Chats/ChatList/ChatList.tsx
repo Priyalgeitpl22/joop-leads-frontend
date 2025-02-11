@@ -15,72 +15,65 @@ import {
   TimeStamp,
   MessagePreview,
 } from './chatList.styled';
+import { useSocket } from '../../../context/SocketContext';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../../redux/store/store';
+import { getAllThreads } from '../../../redux/slice/threadSlice';
 
 const listItemVariants = {
   hidden: { opacity: 0, x: -20 },
   visible: { opacity: 1, x: 0 },
 };
 
-interface Chat {
-  id: number;
-  name: string;
-  message: string;
-  time: string;
-  path: string;
-  isNew?: boolean;
+interface ChatListProps {
+  threads: any[];
+  onSelectThread: (threadId: string) => void;
 }
 
-export default function ChatList(): JSX.Element {
+export default function ChatList({ threads, onSelectThread }: ChatListProps): JSX.Element {
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch<AppDispatch>(); 
+  const { socket } = useSocket();
+  
+  const [threadId, setThreadId] = useState<string | null>(null);
 
-  const chats: Chat[] = [
-    {
-      id: 1,
-      name: 'Priyal',
-      message: "Thanks. We've passed along this inf...",
-      time: 'Now',
-      path: '/chat/1',
-      isNew: true,
-    },
-    {
-      id: 2,
-      name: 'Unknown Visitor',
-      message: "Thanks. We've passed along this inf...",
-      time: '2 Jan',
-      path: '/chat/2',
-    },
-    {
-      id: 3,
-      name: 'Unknown Visitor',
-      message: "Thanks. We've passed along this inf...",
-      time: '2 Jan',
-      path: '/chat/3',
-    },
-    {
-      id: 4,
-      name: 'Maria Johnson',
-      message: 'You connected chat. Any new chats on...',
-      time: '2 Jan',
-      path: '/chat/4',
-    },
-  ];
+  useEffect(() => {
+    dispatch(getAllThreads());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on("chatStarted", (data) => {
+      console.log("Thread started with ID:", data.threadId);
+      setThreadId(data.threadId);
+    });
+
+    return () => {
+      socket.off("chatStarted");
+    };
+  }, [socket]);
 
   return (
     <ChatListContainer>
       <ChatListHeader>
-        <Typography variant="h6" sx={{fontFamily: 'cursive', fontWeight: 600}}>Inbox</Typography>
+        <Typography variant="h6" sx={{ fontFamily: 'cursive', fontWeight: 600 }}>
+          Inbox
+        </Typography>
       </ChatListHeader>
+
       <Box sx={{ overflowY: 'auto', flex: 1 }}>
         <AnimatePresence>
           <List disablePadding>
-            {chats.map((chat, index) => {
-              const isActive = location.pathname === chat.path;
+            {threads.map((thread, index) => {
+              const isActive = location.pathname === `/chat/${thread.id}`;
               return (
                 <ChatListItem
-                  key={chat.id}
+                  key={thread.id}
                   active={isActive}
-                  onClick={() => navigate(chat.path)}
+                  onClick={() => navigate(`/chat/${thread.id}`)}
                   variants={listItemVariants}
                   initial="hidden"
                   animate="visible"
@@ -88,25 +81,19 @@ export default function ChatList(): JSX.Element {
                   whileTap={{ scale: 0.98 }}
                 >
                   <ListItemAvatar>
-                    <Avatar
-                      sx={{
-                        bgcolor: chat.isNew ? '#7ed8d6' : '#9e9e9e',
-                        width: 32,
-                        height: 32,
-                      }}
-                    >
-                      {chat.name[0]}
+                    <Avatar sx={{ bgcolor: '#9e9e9e', width: 32, height: 32 }}>
+                      {thread.type[0].toUpperCase()}
                     </Avatar>
                   </ListItemAvatar>
                   <ListItemText
-                    primary={chat.name}
-                    secondary={<MessagePreview>{chat.message}</MessagePreview>}
+                    primary={`Unknown Visitor`}
+                    secondary={<MessagePreview>Click to view messages</MessagePreview>}
                     primaryTypographyProps={{
                       variant: 'body1',
                       fontSize: '0.9rem',
                     }}
                   />
-                  <TimeStamp>{chat.time}</TimeStamp>
+                  <TimeStamp>{new Date(thread.createdAt).toLocaleDateString()}</TimeStamp>
                 </ChatListItem>
               );
             })}

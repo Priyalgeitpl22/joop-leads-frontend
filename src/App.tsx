@@ -17,12 +17,12 @@ import { useEffect } from "react";
 import { AppDispatch } from "./redux/store/store";
 import { getUserDetails } from "./redux/slice/userSlice";
 import Organization from "./components/Organization/Organization";
+import { SocketProvider } from "./context/SocketContext";
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  // Handle logout across tabs
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === "logout") {
@@ -34,7 +34,6 @@ const App: React.FC = () => {
     return () => window.removeEventListener("storage", handleStorageChange);
   }, [navigate]);
 
-  // Fetch user details if token exists
   useEffect(() => {
     const token = Cookies.get("access_token");
     if (token) {
@@ -45,33 +44,46 @@ const App: React.FC = () => {
   }, [dispatch]);
 
   return (
-    <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/verify-otp" element={<VerifyOtp />} />
-      <Route path="/change-password" element={<ChangePassword />} />
-      <Route
-        path="/*"
-        element={
-          <DashboardContainer>
-            <Sidebar />
-            <div style={{ display: "flex", width: "100%", flexDirection: "column", height: "100%" }}>
-              <Header />
-              <MainContainer>
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/chats" element={<Chats />} />
-                  <Route path="/organization" element={<Organization />} />
-                  <Route path="/settings/configuration" element={<Configuration />} />
-                  <Route path="/settings/agents" element={<Agents />} />
-                </Routes>
-              </MainContainer>
-            </div>
-          </DashboardContainer>
-        }
-      />
-    </Routes>
+    <SocketProvider>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/verify-otp" element={<VerifyOtp />} />
+        <Route path="/change-password" element={<ChangePassword />} />
+        <Route
+          path="/*"
+          element={
+            <DashboardContainer>
+              <Sidebar />
+              <div
+                style={{
+                  display: "flex",
+                  width: "100%",
+                  flexDirection: "column",
+                  height: "100%",
+                }}
+              >
+                <Header />
+                <MainContainer>
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/chat" element={<Chats />} />
+                    <Route path="/chat/:threadId" element={<Chats />} />  {/* Dynamic thread ID */}
+                    <Route path="/organization" element={<Organization />} />
+                    <Route
+                      path="/settings/configuration"
+                      element={<Configuration />}
+                    />
+                    <Route path="/settings/agents" element={<Agents />} />
+                  </Routes>
+                </MainContainer>
+              </div>
+            </DashboardContainer>
+          }
+        />
+      </Routes>
+    </SocketProvider>
   );
 };
 

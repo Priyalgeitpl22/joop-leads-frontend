@@ -45,7 +45,7 @@ const Sidebar = () => {
           <HomeIcon size={20} />
           Home
         </NavItem>
-        <NavItem to="/chats" className={location.pathname === "/chats" ? "active" : ""}>
+        <NavItem to="/chat" className={location.pathname === "/chat" ? "active" : ""}>
           <MessageSquare size={20} />
           Chats
         </NavItem>
