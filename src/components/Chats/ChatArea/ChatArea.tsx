@@ -4,7 +4,7 @@ import { Send } from "lucide-react";
 import { motion } from "framer-motion";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../../../redux/store/store";
-import { getchats } from "../../../redux/slice/chatSlice";
+import { getchats, addchat } from "../../../redux/slice/chatSlice";
 import { useSocket } from "../../../context/SocketContext";
 import {
   ChatContainer,
@@ -17,10 +17,9 @@ import {
 interface ChatData {
   id: string;
   sender: string;
-  threadId : string;
+  threadId: string;
   content: string;
   timestamp: string;
-  isBot?: boolean;
 }
 
 interface ChatAreaProps {
@@ -39,7 +38,6 @@ export default function ChatArea({
   const { socket } = useSocket();
   const { chats, loading } = useSelector((state: RootState) => state.chats);
   const [inputMessage, setInputMessage] = useState("");
-  const [messages, setChats] = useState<ChatData[]>([]);
 
   useEffect(() => {
     if (selectedThreadId) {
@@ -48,39 +46,49 @@ export default function ChatArea({
   }, [dispatch, selectedThreadId]);
 
   useEffect(() => {
-    console.log("Chats from Redux:", chats);
-    if (chats.length > 0) {
-      setChats(chats);
-    }
-  }, [chats]);
-
-  useEffect(() => {
     if (!socket || !selectedThreadId) return;
-
-    socket.on("newMessage", (newMessage: ChatData) => {
+  
+    console.log("Listening for messages...");
+  
+    socket.on("receiveMessage", (newMessage) => {
       console.log("Received message:", newMessage);
-      dispatch({ type: "chat/addMessage", payload: newMessage });
+  
+      const messageData: ChatData = {
+        id: Date.now().toString(),
+        threadId: newMessage.threadId,
+        sender: "Bot",
+        content: newMessage.answer,
+        timestamp: new Date().toISOString(),
+      };
+  
+      dispatch(addchat(messageData));
     });
-
+  
+    socket.on("updateDashboard", (data) => {
+      console.log("Dashboard received:", data);
+      dispatch(addchat(data));
+    });
+  
     return () => {
-      socket.off("newMessage");
+      console.log("Cleaning up socket listeners...");
+      socket.off("receiveMessage");
+      socket.off("updateDashboard");
     };
   }, [socket, selectedThreadId, dispatch]);
-
+  
   const sendMessage = () => {
     if (!socket || !selectedThreadId || !inputMessage.trim()) return;
 
     const messageData: ChatData = {
       id: Date.now().toString(),
       threadId: selectedThreadId,
-      sender: "User",
+      sender: "Bot",
       content: inputMessage,
       timestamp: new Date().toISOString(),
     };
-
+    socket.emit("updateDashboard", { sender: "Bot", content: messageData.content, threadId: selectedThreadId });
     socket.emit("sendMessage", messageData);
-    setChats((prevChats) => [...prevChats, messageData]);
-
+    dispatch(addchat(messageData));
     setInputMessage("");
   };
 
@@ -101,7 +109,7 @@ export default function ChatArea({
         {loading ? (
           <Typography>Loading...</Typography>
         ) : chats.length > 0 ? (
-          chats?.map((chat) => (
+          chats.map((chat) => (
             <Message key={chat.id} isbot={chat.sender === "Bot"}>
               <Avatar
                 sx={{
@@ -110,12 +118,12 @@ export default function ChatArea({
                   height: 32,
                 }}
               >
-                {chat.sender[0]}
+                {chat?.sender ? chat.sender.charAt(0).toUpperCase() : "U"}
               </Avatar>
               <Box>
                 <Typography variant="body2" color="textSecondary" gutterBottom>
                   {chat.sender} •{" "}
-                  {new Date(chat.createdAt).toLocaleTimeString([], {
+                  {new Date(chat.timestamp).toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
                   })}

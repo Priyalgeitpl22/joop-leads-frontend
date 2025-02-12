@@ -30,7 +30,7 @@ function ChatBot({ settings }: any) {
     }}>
       {isOpen ? (
         <ChatContainer>
-          <Header bgcolor={settings.selectedColor}>
+          <Header bgcolor={settings.iconColor}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <Logo src="https://i.pravatar.cc/300" alt="Logo" />
               <span>ChatBot</span>
@@ -48,7 +48,7 @@ function ChatBot({ settings }: any) {
               <span style={{ fontSize: '10px',color:'#6b7280', marginBlock:'0.5rem'}}>10:30 AM</span>
               </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-            <Message style={{ backgroundColor: settings.selectedColor, color: '#fff' }}>
+            <Message style={{ backgroundColor: settings.iconColor, color: '#fff' }}>
             I need assistance with my order.
             </Message>
             <span style={{ fontSize: '10px', color:'#6b7280', marginBlock:'0.5rem'}}>10:31 AM</span>
@@ -66,7 +66,7 @@ function ChatBot({ settings }: any) {
               InputProps={{
                 endAdornment: (
                   <>
-                    {settings.allowEmoji && (
+                    {settings.allowEmojis && (
                       <>
                         <IconButton sx={{ padding: '3px' }} >
                           <InsertEmoticon />
@@ -90,7 +90,7 @@ function ChatBot({ settings }: any) {
           </InputContainer>
         </ChatContainer>
       ) : (
-        <OpenButton bgcolor={settings.selectedColor} onClick={() => setIsOpen(true)}>
+        <OpenButton bgcolor={settings.iconColor} onClick={() => setIsOpen(true)}>
           <Chat />
         </OpenButton>
       )}

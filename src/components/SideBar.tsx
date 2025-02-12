@@ -45,52 +45,78 @@ const Sidebar = () => {
           <HomeIcon size={20} />
           Home
         </NavItem>
-        <NavItem to="/chat" className={location.pathname === "/chat" ? "active" : ""}>
+        <NavItem
+          to="/chat"
+          className={location.pathname === "/chat" ? "active" : ""}
+        >
           <MessageSquare size={20} />
           Chats
         </NavItem>
-        <NavItem to="/organization" className={location.pathname === "/organization" ? "active" : ""}>
+        <NavItem
+          to="/organization"
+          className={location.pathname === "/organization" ? "active" : ""}
+        >
           <Building size={20} />
           Organization
         </NavItem>
+        <NavItem
+          to="/settings/configuration"
+          className={
+            location.pathname === "/settings/configuration" ? "active" : ""
+          }
+        >
+          <Sliders size={18} />
+          Configuration
+        </NavItem>
+        <NavItem
+          to="/settings/agents"
+          className={location.pathname === "/settings/agents" ? "active" : ""}
+        >
+          <Users size={18} />
+          Agents
+        </NavItem>
         <SettingsWrapper>
-        <div onClick={() => setIsSettingsOpen(!isSettingsOpen)}>
-          <NavItem
-            to="#"
-            className={location.pathname.includes("/settings") ? "active" : ""}
-          >
-            <Settings size={20} />
-            Settings
-            {isSettingsOpen ? (
-              <ChevronUp size={16} style={{ marginLeft: "auto" }} />
-            ) : (
-              <ChevronDown size={16} style={{ marginLeft: "auto" }} />
-            )}
-          </NavItem>
-        </div>
+          <div onClick={() => setIsSettingsOpen(!isSettingsOpen)}>
+            <NavItem
+              to="#"
+              className={
+                location.pathname.includes("/settings") ? "active" : ""
+              }
+            >
+              <Settings size={20} />
+              Settings
+              {isSettingsOpen ? (
+                <ChevronUp size={16} style={{ marginLeft: "auto" }} />
+              ) : (
+                <ChevronDown size={16} style={{ marginLeft: "auto" }} />
+              )}
+            </NavItem>
+          </div>
 
-        {isSettingsOpen && (
-          <SubmenuWrapper>
-            <SubNavItem
-              to="/settings/configuration"
-              className={
-                location.pathname === "/settings/configuration" ? "active" : ""
-              }
-            >
-              <Sliders size={18} />
-              Configuration
-            </SubNavItem>
-            <SubNavItem
-              to="/settings/agents"
-              className={
-                location.pathname === "/settings/agents" ? "active" : ""
-              }
-            >
-              <Users size={18} />
-              Agents
-            </SubNavItem>
-          </SubmenuWrapper>
-        )}
+          {isSettingsOpen && (
+            <SubmenuWrapper>
+              <SubNavItem
+                to="/settings/configuration"
+                className={
+                  location.pathname === "/settings/configuration"
+                    ? "active"
+                    : ""
+                }
+              >
+                <Sliders size={18} />
+                Configuration
+              </SubNavItem>
+              <SubNavItem
+                to="/settings/agents"
+                className={
+                  location.pathname === "/settings/agents" ? "active" : ""
+                }
+              >
+                <Users size={18} />
+                Agents
+              </SubNavItem>
+            </SubmenuWrapper>
+          )}
         </SettingsWrapper>
       </nav>
     </SidebarContainer>

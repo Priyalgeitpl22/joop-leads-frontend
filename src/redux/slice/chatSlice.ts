@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import api from "../../services/api";
 
 interface Chat {
-  createdAt: string | number | Date;
   id: string;
   threadId: string;
   sender: string;

@@ -53,7 +53,8 @@ export const ColorInput = styled.input`
 
 export const CheckAccessibility = styled.button`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
   gap: 5px;
   padding: 4px 16px;
   border: none;
@@ -80,9 +81,8 @@ export const CodeInput = styled.textarea`
   border-radius: 4px;
   background: var(--surface);
   color: var(--text);
-  width: 620px;
-  height: 80px;
-  margin-right: 12px;
+  width: 800px;
+  height: 470px;
   font-size: 14px;
   white-space: pre-wrap;
   font-family: monospace;
