@@ -45,24 +45,28 @@ export default function ChatArea({
     const messageTime = new Date(createdAt);
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+    const yesterday = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() - 1
+    );
 
     if (messageTime >= today) {
       // Message from today: display time in 12-hour format with AM/PM.
-      return messageTime.toLocaleTimeString([], { 
-        hour: '2-digit', 
-        minute: '2-digit', 
-        hour12: true 
+      return messageTime.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
       });
     } else if (messageTime >= yesterday && messageTime < today) {
       // Message from yesterday
       return "Yesterday";
     } else {
       // Older messages: display date (e.g., "25 Mar, 2025")
-      return messageTime.toLocaleDateString([], { 
-        day: '2-digit', 
-        month: 'short', 
-        year: 'numeric' 
+      return messageTime.toLocaleDateString([], {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
       });
     }
   };
@@ -75,37 +79,42 @@ export default function ChatArea({
 
   useEffect(() => {
     if (!socket || !selectedThreadId) return;
-  
+
     console.log("Listening for messages...");
-  
+
     socket.on("receiveMessage", (newMessage) => {
       console.log("Received message:", newMessage);
-  
-      const messageData: ChatData = {
-        id: Date.now().toString(),
-        threadId: newMessage.threadId,
-        sender: "Bot",
-        content: newMessage.answer,
-        createdAt: new Date().toISOString(),
-      };
-  
-      dispatch(addchat(messageData));
+
+      if (
+        newMessage.sender === "Bot" &&
+        newMessage.threadId === selectedThreadId
+      ) {
+        const messageData: ChatData = {
+          id: Date.now().toString(),
+          threadId: newMessage.threadId,
+          sender: "Bot",
+          content: newMessage.answer,
+          createdAt: new Date().toISOString(),
+        };
+
+        dispatch(addchat(messageData));
+      }
     });
-  
+
     socket.on("updateDashboard", (data) => {
-      if (data.sender === 'User') {
+      if (data.sender === "User" && data.threadId === selectedThreadId) {
         console.log("Dashboard received:", data);
         dispatch(addchat(data));
       }
     });
-  
+
     return () => {
       console.log("Cleaning up socket listeners...");
       socket.off("receiveMessage");
       socket.off("updateDashboard");
     };
   }, [socket, selectedThreadId, dispatch]);
-  
+
   const sendMessage = () => {
     if (!socket || !selectedThreadId || !inputMessage.trim()) return;
 
@@ -116,7 +125,11 @@ export default function ChatArea({
       content: inputMessage,
       createdAt: new Date().toISOString(),
     };
-    socket.emit("updateDashboard", { sender: "Bot", content: messageData.content, threadId: selectedThreadId });
+    socket.emit("updateDashboard", {
+      sender: "Bot",
+      content: messageData.content,
+      threadId: selectedThreadId,
+    });
     dispatch(addchat(messageData));
     setInputMessage("");
   };
@@ -125,10 +138,10 @@ export default function ChatArea({
     <ChatContainer>
       {!selectedThreadId ? (
         <PlaceholderContainer>
-          <img 
-            src="https://img.freepik.com/free-vector/cartoon-style-robot-vectorart_78370-4103.jpg?t=st=1739357006~exp=1739360606~hmac=e1fcb2b59ef4d4a633ffe4346f7f80fd2e9ae62c5066c1ae5e90bf119b508b6f&w=1060" 
-            alt="No conversation selected" 
-            width="300" 
+          <img
+            src="https://img.freepik.com/free-vector/cartoon-style-robot-vectorart_78370-4103.jpg?t=st=1739357006~exp=1739360606~hmac=e1fcb2b59ef4d4a633ffe4346f7f80fd2e9ae62c5066c1ae5e90bf119b508b6f&w=1060"
+            alt="No conversation selected"
+            width="300"
           />
           <Typography sx={{ color: "#000000" }}>
             Select a conversation to start chatting
@@ -161,7 +174,11 @@ export default function ChatArea({
                     {chat?.sender ? chat.sender.charAt(0).toUpperCase() : "U"}
                   </Avatar>
                   <Box>
-                    <Typography variant="body2" color="textSecondary" gutterBottom>
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      gutterBottom
+                    >
                       {chat.sender} • {formatTimestamp(chat.createdAt)}
                     </Typography>
                     <motion.div
