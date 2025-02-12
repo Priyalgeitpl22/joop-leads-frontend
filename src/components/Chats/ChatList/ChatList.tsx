@@ -39,6 +39,33 @@ const ChatList: React.FC<ChatListProps> = ({ threads, onSelectThread, type }) =>
   const location = useLocation();
   const { socket } = useSocket();
   const dispatch = useDispatch<AppDispatch>();
+  // Helper function to format the timestamp similar to WhatsApp
+const formatTimestamp = (createdAt: string): string => {
+  const messageTime = new Date(createdAt);
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+
+  if (messageTime >= today) {
+    // If the message is from today, return time in 12-hour format with AM/PM.
+    return messageTime.toLocaleTimeString([], { 
+      hour: '2-digit', 
+      minute: '2-digit', 
+      hour12: true 
+    });
+  } else if (messageTime >= yesterday && messageTime < today) {
+    // If the message is from yesterday, show "Yesterday".
+    return "Yesterday";
+  } else {
+    // Otherwise, return a formatted date, e.g., "25 Mar, 2025"
+    return messageTime.toLocaleDateString([], { 
+      day: '2-digit', 
+      month: 'short', 
+      year: 'numeric' 
+    });
+  }
+};
+
 
   useEffect(() => {
     if (!socket) return;
@@ -95,7 +122,7 @@ const ChatList: React.FC<ChatListProps> = ({ threads, onSelectThread, type }) =>
                       secondary={<MessagePreview>Click to view messages</MessagePreview>}
                       primaryTypographyProps={{ variant: 'body1', fontSize: '0.9rem' }}
                     />
-                    <TimeStamp>{new Date(createdAt).toLocaleDateString()}</TimeStamp>
+                    <TimeStamp>{formatTimestamp(createdAt)}</TimeStamp>
                   </MotionChatListItem>
                 );
               })}

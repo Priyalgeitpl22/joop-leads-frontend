@@ -57,22 +57,6 @@ const Sidebar = () => {
           <Building size={20} />
           Organization
         </NavItem>
-        <NavItem
-          to="/settings/configuration"
-          className={
-            location.pathname === "/settings/configuration" ? "active" : ""
-          }
-        >
-          <Sliders size={18} />
-          Configuration
-        </NavItem>
-        <NavItem
-          to="/settings/agents"
-          className={location.pathname === "/settings/agents" ? "active" : ""}
-        >
-          <Users size={18} />
-          Agents
-        </NavItem>
         <SettingsWrapper>
           <div onClick={() => setIsSettingsOpen(!isSettingsOpen)}>
             <NavItem

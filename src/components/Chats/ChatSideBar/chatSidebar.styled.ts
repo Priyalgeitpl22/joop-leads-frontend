@@ -26,10 +26,10 @@ export const SidebarItem = styled(ListItem, {
   shouldForwardProp: (prop) => prop !== 'active',
 })<SidebarItemProps>(({ active }) => ({
   '&:hover': {
-    backgroundColor: 'rgba(0, 0, 0, 0.04)',
+    backgroundColor: '#e5f5f7',
     cursor: 'pointer',
   },
-  backgroundColor: active ? 'rgba(33, 150, 243, 0.08)' : 'transparent',
+  backgroundColor: active ? '#e5f5f7' : 'transparent',
   position: 'relative',
 }));
 

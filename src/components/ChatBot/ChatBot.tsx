@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, IconButton } from '@mui/material';
+import { Box, IconButton, Typography } from '@mui/material';
 import { Send, AttachFile, InsertEmoticon, Chat } from '@mui/icons-material';
 import { ChevronDown } from 'lucide-react';
 import {
@@ -12,18 +12,18 @@ import {
   StyledTextField,
   OpenButton,
   DropdownIconButton
-} from './chatBot.styled'; 
+} from './chatBot.styled';
 
 function ChatBot({ settings }: any) {
   const [message, setMessage] = useState('');
   const [isOpen, setIsOpen] = useState(true);
 
   const handleMenuClick = () => {
-    setIsOpen(false);  
+    setIsOpen(false);
   };
 
   return (
-    <Box sx={{ 
+    <Box sx={{
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -33,25 +33,28 @@ function ChatBot({ settings }: any) {
           <Header bgcolor={settings.iconColor}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <Logo src="https://i.pravatar.cc/300" alt="Logo" />
-              <span>ChatBot</span>
+              <Typography style={{ display: "flex", flexDirection:'column' }}>
+                <span>ChatBot</span>
+                <span style={{fontSize:'10px'}}>{settings?.availability ? "Online" : "Offline"}</span>
+              </Typography>
             </div>
             <DropdownIconButton onClick={handleMenuClick}>
               <ChevronDown />
             </DropdownIconButton>
           </Header>
 
-          <ChatBody>
-           <div style={{ display: 'flex', flexDirection: 'column' }}>
-           <Message style={{ backgroundColor: '#e9ecef' }}>
-           Hello! How can I help you?
-            </Message>
-              <span style={{ fontSize: '10px',color:'#6b7280', marginBlock:'0.5rem'}}>10:30 AM</span>
-              </div>
+          <ChatBody bgcolor={settings.chatWindowColor}>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <Message style={{ backgroundColor: '#e9ecef' }} color={settings.fontColor}>
+                Hello! How can I help you?
+              </Message>
+              <span style={{ fontSize: '10px', color: '#6b7280', marginBlock: '0.5rem' }}>10:30 AM</span>
+            </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-            <Message style={{ backgroundColor: settings.iconColor, color: '#fff' }}>
-            I need assistance with my order.
-            </Message>
-            <span style={{ fontSize: '10px', color:'#6b7280', marginBlock:'0.5rem'}}>10:31 AM</span>
+              <Message style={{ backgroundColor: settings.iconColor, color: '#fff' }}>
+                I need assistance with my order.
+              </Message>
+              <span style={{ fontSize: '10px', color: '#6b7280', marginBlock: '0.5rem' }}>10:31 AM</span>
             </div>
           </ChatBody>
 
@@ -73,7 +76,7 @@ function ChatBot({ settings }: any) {
                         </IconButton>
                       </>
                     )}
-                    
+
                     {settings.allowFileUpload && (
                       <IconButton sx={{ padding: '3px' }} component="label">
                         <AttachFile />

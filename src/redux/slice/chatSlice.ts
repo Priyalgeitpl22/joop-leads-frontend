@@ -6,7 +6,7 @@ interface Chat {
   threadId: string;
   sender: string;
   content: string;
-  timestamp: string;
+  createdAt: string;
 }
 
 interface chatState {

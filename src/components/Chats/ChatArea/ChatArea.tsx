@@ -1,4 +1,4 @@
-import{ useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Avatar, Box, Typography, TextField, IconButton } from "@mui/material";
 import { Send } from "lucide-react";
 import { motion } from "framer-motion";
@@ -20,7 +20,7 @@ interface ChatData {
   sender: string;
   threadId: string;
   content: string;
-  timestamp: string;
+  createdAt: string;
 }
 
 interface ChatAreaProps {
@@ -39,6 +39,33 @@ export default function ChatArea({
   const { socket } = useSocket();
   const { chats, loading } = useSelector((state: RootState) => state.chats);
   const [inputMessage, setInputMessage] = useState("");
+
+  // Helper function to format the createdAt timestamp
+  const formatTimestamp = (createdAt: string): string => {
+    const messageTime = new Date(createdAt);
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+
+    if (messageTime >= today) {
+      // Message from today: display time in 12-hour format with AM/PM.
+      return messageTime.toLocaleTimeString([], { 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        hour12: true 
+      });
+    } else if (messageTime >= yesterday && messageTime < today) {
+      // Message from yesterday
+      return "Yesterday";
+    } else {
+      // Older messages: display date (e.g., "25 Mar, 2025")
+      return messageTime.toLocaleDateString([], { 
+        day: '2-digit', 
+        month: 'short', 
+        year: 'numeric' 
+      });
+    }
+  };
 
   useEffect(() => {
     if (selectedThreadId) {
@@ -59,14 +86,14 @@ export default function ChatArea({
         threadId: newMessage.threadId,
         sender: "Bot",
         content: newMessage.answer,
-        timestamp: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
       };
   
       dispatch(addchat(messageData));
     });
   
     socket.on("updateDashboard", (data) => {
-      if(data.sender === 'User') {
+      if (data.sender === 'User') {
         console.log("Dashboard received:", data);
         dispatch(addchat(data));
       }
@@ -87,7 +114,7 @@ export default function ChatArea({
       threadId: selectedThreadId,
       sender: "Bot",
       content: inputMessage,
-      timestamp: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
     };
     socket.emit("updateDashboard", { sender: "Bot", content: messageData.content, threadId: selectedThreadId });
     dispatch(addchat(messageData));
@@ -95,85 +122,90 @@ export default function ChatArea({
   };
 
   return (
-    <ChatContainer>{!selectedThreadId?(
-      <PlaceholderContainer>
-          <img src="https://img.freepik.com/free-vector/cartoon-style-robot-vectorart_78370-4103.jpg?t=st=1739357006~exp=1739360606~hmac=e1fcb2b59ef4d4a633ffe4346f7f80fd2e9ae62c5066c1ae5e90bf119b508b6f&w=1060" alt="No conversation selected" width="300" />
-          <Typography  sx={{color:'#000000'}}>
+    <ChatContainer>
+      {!selectedThreadId ? (
+        <PlaceholderContainer>
+          <img 
+            src="https://img.freepik.com/free-vector/cartoon-style-robot-vectorart_78370-4103.jpg?t=st=1739357006~exp=1739360606~hmac=e1fcb2b59ef4d4a633ffe4346f7f80fd2e9ae62c5066c1ae5e90bf119b508b6f&w=1060" 
+            alt="No conversation selected" 
+            width="300" 
+          />
+          <Typography sx={{ color: "#000000" }}>
             Select a conversation to start chatting
           </Typography>
         </PlaceholderContainer>
-    ):(
-      <>
-      <ChatHeader>
-        <Box display="flex" alignItems="center" gap={2}>
-          <Avatar>U</Avatar>
-          <Box>
-            <Typography variant="subtitle1">
-              Unknown Visitor
-            </Typography>
-          </Box>
-        </Box>
-      </ChatHeader>
-
-      <ChatMessages>
-        {loading ? (
-          <Typography>Loading...</Typography>
-        ) : chats.length > 0 ? (
-          chats.map((chat) => (
-            <Message key={chat.id} isbot={chat.sender === "Bot"}>
-              <Avatar
-                sx={{
-                  bgcolor: chat.sender === "Bot" ? "#2196f3" : undefined,
-                  width: 32,
-                  height: 32,
-                }}
-              >
-                {chat?.sender ? chat.sender.charAt(0).toUpperCase() : "U"}
-              </Avatar>
+      ) : (
+        <>
+          <ChatHeader>
+            <Box display="flex" alignItems="center" gap={2}>
+              <Avatar>U</Avatar>
               <Box>
-                <Typography variant="body2" color="textSecondary" gutterBottom>
-                  {chat.sender} •{" "}
-                  {new Date(chat.timestamp).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </Typography>
-                <motion.div
-                  initial="hidden"
-                  animate="visible"
-                  variants={motionVariants}
-                >
-                  <Typography>{chat.content}</Typography>
-                </motion.div>
+                <Typography variant="subtitle1">Unknown Visitor</Typography>
               </Box>
-            </Message>
-          ))
-        ) : (
-          <Typography>No messages yet.</Typography>
-        )}
-      </ChatMessages>
+            </Box>
+          </ChatHeader>
 
-      <ChatInputContainer>
-        <TextField
-          fullWidth
-          variant="outlined"
-          placeholder="Write a message..."
-          multiline
-          maxRows={4}
-          value={inputMessage}
-          onChange={(e) => setInputMessage(e.target.value)}
-          InputProps={{
-            endAdornment: (
-              <IconButton color="primary" onClick={sendMessage}>
-                <Send size={20} />
-              </IconButton>
-            ),
-          }}
-        />
-      </ChatInputContainer>
-      </>
-    )
-  }
+          <ChatMessages>
+            {loading ? (
+              <Typography>Loading...</Typography>
+            ) : chats.length > 0 ? (
+              chats.map((chat) => (
+                <Message key={chat.id} isbot={chat.sender === "Bot"}>
+                  <Avatar
+                    sx={{
+                      bgcolor: chat.sender === "Bot" ? "#2196f3" : undefined,
+                      width: 32,
+                      height: 32,
+                    }}
+                  >
+                    {chat?.sender ? chat.sender.charAt(0).toUpperCase() : "U"}
+                  </Avatar>
+                  <Box>
+                    <Typography variant="body2" color="textSecondary" gutterBottom>
+                      {chat.sender} • {formatTimestamp(chat.createdAt)}
+                    </Typography>
+                    <motion.div
+                      initial="hidden"
+                      animate="visible"
+                      variants={motionVariants}
+                    >
+                      <Typography>{chat.content}</Typography>
+                    </motion.div>
+                  </Box>
+                </Message>
+              ))
+            ) : (
+              <Typography>No messages yet.</Typography>
+            )}
+          </ChatMessages>
+
+          <ChatInputContainer>
+            <TextField
+              fullWidth
+              variant="outlined"
+              placeholder="Write a message..."
+              multiline
+              maxRows={4}
+              value={inputMessage}
+              onChange={(e) => setInputMessage(e.target.value)}
+              onKeyDown={(e) => {
+                // If user presses Enter without Shift, send the message.
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  sendMessage();
+                }
+              }}
+              InputProps={{
+                endAdornment: (
+                  <IconButton color="primary" onClick={sendMessage}>
+                    <Send size={20} />
+                  </IconButton>
+                ),
+              }}
+            />
+          </ChatInputContainer>
+        </>
+      )}
     </ChatContainer>
   );
 }

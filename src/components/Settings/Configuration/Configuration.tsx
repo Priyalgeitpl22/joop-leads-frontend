@@ -1,4 +1,4 @@
-import { SetStateAction, useEffect, useState } from "react";
+import { SetStateAction, useState } from "react";
 import { motion } from "framer-motion";
 import {
   SettingsContainer,
@@ -6,13 +6,12 @@ import {
   SectionTitle,
   ColorGrid,
   ColorOption,
-  ColorInput,
-  CheckAccessibility,
   SaveButton,
   CustomTabs,
   CustomTab,
   TrackingCode,
   CodeInput,
+  CustomMuiColorInput,
 } from "./configuration.styled";
 import {
   FormControl,
@@ -30,9 +29,12 @@ import ChatBot from "../../../components/ChatBot/ChatBot";
 const Configuration = () => {
   const [settings, setSettings] = useState({
     iconColor: "#7ed8d7",
+    chatWindowColor: "#ffffff", // New field for chat window background color
+    fontColor: "#333333",       // New field for font color
     position: "bottom-right",
     allowEmojis: false,
     allowFileUpload: false,
+    availability: true,         // New field for availability
   });
   const [activeTab, setActiveTab] = useState("configure");
   const [embedCode, setEmbedCode] = useState("");
@@ -76,6 +78,8 @@ const Configuration = () => {
     if (newValue === "tracking_code") fetchScript();
   };
 
+  console.log(settings, "Settings")
+
   return (
     <Box sx={{ width: "auto", ml: "15px", mt: "10px" }}>
       <CustomTabs value={activeTab} onChange={handleTabChange}>
@@ -85,47 +89,114 @@ const Configuration = () => {
 
       {activeTab === "configure" && (
         <SettingsContainer>
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
             <SectionTitle>Display</SectionTitle>
             <Section>
-              <Typography variant="h6" fontSize={16} fontWeight={600} sx={{ color: "#35495c" }}>Color</Typography>
-              <Typography sx={{ color: "#3e5164", mb: 2 }}>Choose an accent color</Typography>
+              <Typography variant="h6" fontSize={16} fontWeight={600} sx={{ color: "#35495c" }}>
+                Color
+              </Typography>
+              <Typography sx={{ color: "#3e5164", mb: 2 }}>
+                Choose an accent color
+              </Typography>
               <ColorGrid>
                 {colors.map((color) => (
-                  <ColorOption key={color} color={color} isSelected={settings.iconColor === color} onClick={() => handleChange("iconColor", color)} />
-                ))}
-                <CheckAccessibility>
-                  <ColorInput
-                    type="text"
-                    value={settings.iconColor}
-                    onChange={(e) => handleChange("iconColor", `#${e.target.value}`)}
+                  <ColorOption
+                    key={color}
+                    color={color}
+                    isSelected={settings.iconColor === color}
+                    onClick={() => handleChange("iconColor", color)}
                   />
-                </CheckAccessibility>
+                ))}
               </ColorGrid>
             </Section>
 
-            <Section>
-              <Typography variant="h6" fontSize={16} fontWeight={600} sx={{ color: "#35495c" }}>Chat widget placement</Typography>
+            <Section style={{ marginTop: '1.5rem' }}>
+              <Typography variant="h6" fontSize={16} fontWeight={600} sx={{ color: "#35495c", mt: 1 }}>
+                Chat widget placement
+              </Typography>
               <Typography sx={{ color: "#3e5164", fontSize: "14px", mb: 1 }}>
                 Choose where to display your chat widget.
               </Typography>
               <FormControl>
-                <RadioGroup row value={settings.position} onChange={(e) => handleChange("position", e.target.value)}>
+                <RadioGroup
+                  row
+                  value={settings.position}
+                  onChange={(e) => handleChange("position", e.target.value)}
+                >
                   <FormControlLabel value="bottom-left" control={<Radio />} label="Bottom-Left" />
                   <FormControlLabel value="bottom-right" control={<Radio />} label="Bottom-Right" />
                 </RadioGroup>
               </FormControl>
             </Section>
 
-            <Section>
-              <Typography variant="h6" fontSize={16} fontWeight={600} sx={{ color: "#35495c" }}>Additional Settings</Typography>
-              <FormControl>
-                <FormControlLabel control={<Checkbox checked={settings.allowEmojis} onChange={(e) => handleChange("allowEmojis", e.target.checked)} />} label="Allow Emoji" />
-                <FormControlLabel control={<Checkbox checked={settings.allowFileUpload} onChange={(e) => handleChange("allowFileUpload", e.target.checked)} />} label="Allow File Upload" />
+            {/* Additional settings */}
+            <Section style={{ marginTop: '1.5rem' }}>
+              <Typography variant="h6" fontSize={16} fontWeight={600} sx={{ color: "#35495c" }}>
+                Additional Settings
+              </Typography>
+              <FormControl sx={{ display: 'flex', flexDirection: 'row' }}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={settings.allowEmojis}
+                      onChange={(e) => handleChange("allowEmojis", e.target.checked)}
+                    />
+                  }
+                  label="Allow Emoji"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={settings.allowFileUpload}
+                      onChange={(e) => handleChange("allowFileUpload", e.target.checked)}
+                    />
+                  }
+                  label="Allow File Upload"
+                />
               </FormControl>
             </Section>
 
-            <SaveButton color="#7ed8d7" onClick={handleSave}>Save</SaveButton>
+            {/* New Chat Window Customization settings */}
+            <Section style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: '1rem' }}>
+              <Typography variant="h6" fontSize={16} fontWeight={600} sx={{ color: "#35495c" }}>
+                Chat Window Color
+              </Typography>
+              <CustomMuiColorInput format="hex" value={settings.chatWindowColor} onChange={(newValue: string) => handleChange("chatWindowColor", newValue)} />
+            </Section>
+
+            <Section style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: '1rem' }}>
+              <Typography variant="h6" fontSize={16} fontWeight={600} sx={{ color: "#35495c" }}>
+                Font Color
+              </Typography>
+              <CustomMuiColorInput format="hex" value={settings.fontColor} onChange={(newValue: string) => handleChange("fontColor", newValue)} />
+            </Section>
+
+            <Section>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={settings.availability}
+                    onChange={(e) => handleChange("availability", e.target.checked)}
+                  />
+                }
+                label="Available"
+                sx={{
+                  "& .MuiFormControlLabel-label": {
+                    color: "#35495c",
+                    fontSize: "16px",
+                    fontWeight: 600,
+                  },
+                }}
+              />
+            </Section>
+
+            <SaveButton color="#7ed8d7" onClick={handleSave}>
+              Save
+            </SaveButton>
           </motion.div>
           <ChatBot settings={settings} />
         </SettingsContainer>
@@ -133,23 +204,24 @@ const Configuration = () => {
 
       {activeTab === "tracking_code" && (
         <SettingsContainer>
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-            {/* <SectionTitle>Install the tracking code</SectionTitle> */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
             <Section>
               <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <Typography variant="h6" fontSize={14} fontWeight={500} sx={{ color: "#35495c" }}>
                   Place the code before the end of the &lt;body&gt; tag.
                 </Typography>
                 <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-
-                <Typography variant="h6" fontSize={14} fontWeight={600} sx={{ color: "#35495c" }}>
-                  Copy Code
-                </Typography>
-                <IconButton onClick={copyToClipboard}>
-                  <ContentCopy />
-                </IconButton>
+                  <Typography variant="h6" fontSize={14} fontWeight={600} sx={{ color: "#35495c" }}>
+                    Copy Code
+                  </Typography>
+                  <IconButton onClick={copyToClipboard}>
+                    <ContentCopy />
+                  </IconButton>
                 </Box>
-
               </Box>
               <TrackingCode>
                 <CodeInput value={embedCode} readOnly />

@@ -34,7 +34,6 @@ export const ChatBody = styled(Box)`
   padding: 10px;
   height: 350px;
   overflow-y: auto;
-  margin-top:10px;
 `;
 
 export const Message = styled(Box)`
@@ -43,7 +42,6 @@ export const Message = styled(Box)`
   border-radius: 8px;
   max-width: 70%;
   word-break: break-all;
-  color: #000000;
 `;
 
 export const InputContainer = styled(Box)`

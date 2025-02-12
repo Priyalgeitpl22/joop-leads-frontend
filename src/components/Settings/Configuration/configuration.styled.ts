@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import { Tab, Tabs } from "@mui/material";
+import { MuiColorInput } from "mui-color-input";
 
 export const SettingsContainer = styled.div`
   display: flex;
@@ -40,16 +41,15 @@ export const ColorOption = styled.button<{ color: string; isSelected: boolean }>
 `;
 
 
-export const ColorInput = styled.input`
-  padding: 8px 12px;
-  border: 1px solid #cfd9e5;
-  border-radius: 4px;
-  background: var(--surface);
-  color: var(--text);
-  width: 60px;
-  margin-right: 12px;
-  font-size: 14px;
-`;
+export const CustomMuiColorInput = styled(MuiColorInput)({
+  width: "130px",
+  "& .MuiInputBase-input.MuiOutlinedInput-input": {
+      padding: '10px', 
+    },
+  "& .MuiInputBase-input": {
+    color: "#000",
+  },
+});
 
 export const CheckAccessibility = styled.button`
   display: flex;
