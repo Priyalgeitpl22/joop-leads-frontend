@@ -68,8 +68,7 @@ const App: React.FC = () => {
                 <MainContainer>
                   <Routes>
                     <Route path="/" element={<Home />} />
-                    <Route path="/chat" element={<Chats />} />
-                    <Route path="/chat/:threadId" element={<Chats />} />  {/* Dynamic thread ID */}
+                    <Route path="/chats/:type?/:threadId?" element={<Chats />} />
                     <Route path="/organization" element={<Organization />} />
                     <Route
                       path="/settings/configuration"

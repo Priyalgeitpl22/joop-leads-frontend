@@ -6,36 +6,37 @@ import ChatArea from './ChatArea/ChatArea';
 import ChatList from './ChatList/ChatList';
 import { ChatContainer } from './Chats.styled';
 import ChatSideBar from './ChatSideBar/ChatSideBar';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 export default function Chats() {
   const dispatch = useDispatch<AppDispatch>(); 
-  const { threads, loading, error } = useSelector((state: RootState) => state.thread);
-  const { threadId } = useParams();
-
-  const [selectedThreadId, setSelectedThreadId] = useState<string | null>(null);
+  const { threads } = useSelector((state: RootState) => state.thread);
+  const { type, threadId } = useParams<{ type: string; threadId: string }>();
+  const navigate = useNavigate();
+  
+  // Local state for the selected thread ID.
+  const [selectedThreadId, setSelectedThreadId] = useState<string | null>(threadId || null);
 
   useEffect(() => {
     dispatch(getAllThreads());
   }, [dispatch]);
 
   useEffect(() => {
-    console.log("Threads updated:", threads);
     if (threads.length > 0) {
-      setSelectedThreadId(threadId ?? threads[0].id);
+      const currentType = type || "unassigned";
+      navigate(`/chats/${currentType}`, { replace: true });
     }
-  }, [threads, threadId]);
+  }, [threads, type, threadId, navigate]);
 
   return (
     <ChatContainer>
-      <ChatSideBar />
-      
+      <ChatSideBar selectedType={type || "unassigned"} />
       <ChatList 
-        threads={threads} 
-        onSelectThread={setSelectedThreadId}
+        threads={threads.filter(thread => thread.type === (type || "unassigned"))} 
+        onSelectThread={(newThreadId: string) => setSelectedThreadId(newThreadId)}
+        type={type || "unassigned"}
       />
-
-      {selectedThreadId && <ChatArea selectedThreadId={selectedThreadId} />}
+      <ChatArea selectedThreadId={selectedThreadId} />
     </ChatContainer>
   );
 }

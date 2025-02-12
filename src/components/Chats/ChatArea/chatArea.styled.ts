@@ -63,3 +63,11 @@ export const QuickReplyButton = styled(Button)({
   borderColor: '#e0e0e0',
   color: '#000',      
 });
+export const PlaceholderContainer = styled(Box)({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  height: "100%",
+  textAlign: "center",
+});

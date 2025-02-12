@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import{ useState, useEffect } from "react";
 import { Avatar, Box, Typography, TextField, IconButton } from "@mui/material";
 import { Send } from "lucide-react";
 import { motion } from "framer-motion";
@@ -12,6 +12,7 @@ import {
   ChatMessages,
   Message,
   ChatInputContainer,
+  PlaceholderContainer,
 } from "./chatArea.styled";
 
 interface ChatData {
@@ -65,8 +66,10 @@ export default function ChatArea({
     });
   
     socket.on("updateDashboard", (data) => {
-      console.log("Dashboard received:", data);
-      dispatch(addchat(data));
+      if(data.sender === 'User') {
+        console.log("Dashboard received:", data);
+        dispatch(addchat(data));
+      }
     });
   
     return () => {
@@ -87,19 +90,26 @@ export default function ChatArea({
       timestamp: new Date().toISOString(),
     };
     socket.emit("updateDashboard", { sender: "Bot", content: messageData.content, threadId: selectedThreadId });
-    socket.emit("sendMessage", messageData);
     dispatch(addchat(messageData));
     setInputMessage("");
   };
 
   return (
-    <ChatContainer>
+    <ChatContainer>{!selectedThreadId?(
+      <PlaceholderContainer>
+          <img src="https://img.freepik.com/free-vector/cartoon-style-robot-vectorart_78370-4103.jpg?t=st=1739357006~exp=1739360606~hmac=e1fcb2b59ef4d4a633ffe4346f7f80fd2e9ae62c5066c1ae5e90bf119b508b6f&w=1060" alt="No conversation selected" width="300" />
+          <Typography  sx={{color:'#000000'}}>
+            Select a conversation to start chatting
+          </Typography>
+        </PlaceholderContainer>
+    ):(
+      <>
       <ChatHeader>
         <Box display="flex" alignItems="center" gap={2}>
-          <Avatar>P</Avatar>
+          <Avatar>U</Avatar>
           <Box>
             <Typography variant="subtitle1">
-              Chat Thread {selectedThreadId}
+              Unknown Visitor
             </Typography>
           </Box>
         </Box>
@@ -161,6 +171,9 @@ export default function ChatArea({
           }}
         />
       </ChatInputContainer>
+      </>
+    )
+  }
     </ChatContainer>
   );
 }

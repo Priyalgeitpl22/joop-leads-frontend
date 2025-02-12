@@ -45,13 +45,11 @@ const Sidebar = () => {
           <HomeIcon size={20} />
           Home
         </NavItem>
-        <NavItem
-          to="/chat"
-          className={location.pathname === "/chat" ? "active" : ""}
-        >
+        <NavItem to="/chats" className={location.pathname.startsWith("/chats") ? "active" : ""}>
           <MessageSquare size={20} />
           Chats
         </NavItem>
+
         <NavItem
           to="/organization"
           className={location.pathname === "/organization" ? "active" : ""}

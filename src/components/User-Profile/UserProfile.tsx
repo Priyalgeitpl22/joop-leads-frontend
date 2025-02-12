@@ -35,7 +35,7 @@ const UserProfileMenu = () => {
       <ProfileIcon onClick={handleClick}>
         {
           user?.profilePicture ?(
-            <img src={user?.profilePicture} alt="Profile" style={{ width: "40px", height: "40px", cursor: "pointer", objectFit: "cover" }} />
+            <img src={user?.profilePicture} alt="Profile" style={{ width: "40px", height: "40px", cursor: "pointer", borderRadius: '50%',objectFit: "cover" }} />
           ):(
             <AccountCircleIcon sx={{ color: "#64748b", width: "30px", height: "30px", cursor: "pointer", objectFit: "cover" }} />
           )

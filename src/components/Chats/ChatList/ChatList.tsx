@@ -1,13 +1,7 @@
-import {
-  List,
-  ListItemAvatar,
-  Avatar,
-  ListItemText,
-  Box,
-  Typography,
-} from '@mui/material';
+import React, { useEffect } from 'react';
+import { List, ListItemAvatar, Avatar, ListItemText, Box, Typography } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   ChatListContainer,
   ChatListHeader,
@@ -16,45 +10,51 @@ import {
   MessagePreview,
 } from './chatList.styled';
 import { useSocket } from '../../../context/SocketContext';
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../../../redux/store/store';
+import { useDispatch } from 'react-redux';
 import { getAllThreads } from '../../../redux/slice/threadSlice';
+import { AppDispatch } from '../../../redux/store/store';
 
 const listItemVariants = {
   hidden: { opacity: 0, x: -20 },
   visible: { opacity: 1, x: 0 },
 };
 
-interface ChatListProps {
-  threads: any[];
-  onSelectThread: (threadId: string) => void;
+interface Thread {
+  id: string;
+  type: string;
+  createdAt: string;
+  // Include other thread properties if needed.
 }
 
-export default function ChatList({ threads, onSelectThread }: ChatListProps): JSX.Element {
+interface ChatListProps {
+  threads: Thread[];
+  onSelectThread: (threadId: string) => void;
+  type: string;
+}
+
+const MotionChatListItem = motion(ChatListItem);
+
+const ChatList: React.FC<ChatListProps> = ({ threads, onSelectThread, type }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const dispatch = useDispatch<AppDispatch>(); 
   const { socket } = useSocket();
-  
-  const [threadId, setThreadId] = useState<string | null>(null);
-
-  useEffect(() => {
-    dispatch(getAllThreads());
-  }, [dispatch]);
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     if (!socket) return;
-
-    socket.on("chatStarted", (data) => {
-      console.log("Thread started with ID:", data.threadId);
-      setThreadId(data.threadId);
-    });
-
-    return () => {
-      socket.off("chatStarted");
+    
+    const handleChatStarted = (data: { threadId: string }) => {
+      console.log("New thread started with ID:", data.threadId);
+      dispatch(getAllThreads());
+      onSelectThread(data.threadId);
+      navigate(`/chats/${type}/${data.threadId}`);
     };
-  }, [socket]);
+
+    socket.on("chatStarted", handleChatStarted);
+    return () => {
+      socket.off("chatStarted", handleChatStarted);
+    };
+  }, [socket, dispatch, onSelectThread, navigate, type]);
 
   return (
     <ChatListContainer>
@@ -63,43 +63,58 @@ export default function ChatList({ threads, onSelectThread }: ChatListProps): JS
           Inbox
         </Typography>
       </ChatListHeader>
-
       <Box sx={{ overflowY: 'auto', flex: 1 }}>
-        <AnimatePresence>
-          <List disablePadding>
-            {threads.map((thread, index) => {
-              const isActive = location.pathname === `/chat/${thread.id}`;
-              return (
-                <ChatListItem
-                  key={thread.id}
-                  active={isActive}
-                  onClick={() => navigate(`/chat/${thread.id}`)}
-                  variants={listItemVariants}
-                  initial="hidden"
-                  animate="visible"
-                  transition={{ delay: index * 0.1 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <ListItemAvatar>
-                    <Avatar sx={{ bgcolor: '#9e9e9e', width: 32, height: 32 }}>
-                      {thread.type[0].toUpperCase()}
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={`Unknown Visitor`}
-                    secondary={<MessagePreview>Click to view messages</MessagePreview>}
-                    primaryTypographyProps={{
-                      variant: 'body1',
-                      fontSize: '0.9rem',
+        {threads && threads.length > 0 ? (
+          <AnimatePresence>
+            <List disablePadding>
+              {threads.map((thread, index) => {
+                const { id, type: threadType, createdAt } = thread;
+                const threadUrl = `/chats/${type}?/${id}`;
+                const isActive = location.pathname === threadUrl;
+                return (
+                  <MotionChatListItem
+                    key={id}
+                    active={isActive}
+                    onClick={() => {
+                      onSelectThread(id);
+                      navigate(threadUrl);
                     }}
-                  />
-                  <TimeStamp>{new Date(thread.createdAt).toLocaleDateString()}</TimeStamp>
-                </ChatListItem>
-              );
-            })}
-          </List>
-        </AnimatePresence>
+                    variants={listItemVariants}
+                    initial="hidden"
+                    animate="visible"
+                    transition={{ delay: index * 0.1 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <ListItemAvatar>
+                      <Avatar sx={{ bgcolor: '#9e9e9e', width: 32, height: 32 }}>
+                        {threadType[0].toUpperCase()}
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary="Unknown Visitor"
+                      secondary={<MessagePreview>Click to view messages</MessagePreview>}
+                      primaryTypographyProps={{ variant: 'body1', fontSize: '0.9rem' }}
+                    />
+                    <TimeStamp>{new Date(createdAt).toLocaleDateString()}</TimeStamp>
+                  </MotionChatListItem>
+                );
+              })}
+            </List>
+          </AnimatePresence>
+        ) : (
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%',
+            }}
+          >
+            <Typography variant="body1">No threads available</Typography>
+          </Box>
+        )}
       </Box>
     </ChatListContainer>
   );
-}
+};
+export default ChatList;
