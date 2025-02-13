@@ -36,6 +36,7 @@ interface CreateAgentPayload {
   phone: string;
   orgId: string;
   profilePicture?: File;
+  schedule?:any
 }
 
 // Async thunk to fetch agents by organization ID

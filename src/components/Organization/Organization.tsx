@@ -142,7 +142,13 @@ const OrganizationForm: React.FC = () => {
                 name={field.key}
                 label={field.label}
                 variant="outlined"
-                value={values[field.key as keyof OrganizationData]}
+                value={
+                  field.key === "zip"
+                    ? values.zip === null
+                      ? ""
+                      : values.zip.toString()
+                    : values[field.key as keyof OrganizationData]
+                }
                 onChange={handleChange}
                 {...(field.multiline ? { multiline: true, rows: field.rows } : {})}
               />
