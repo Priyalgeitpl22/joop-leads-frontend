@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Box } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchOrganization } from '../../redux/slice/organizationSlice';
+import { fetchOrganization, updateOrganization } from '../../redux/slice/organizationSlice';
 import {
   FormContainer,
   FormTitle,
@@ -40,7 +40,7 @@ interface OrganizationData {
   city: string;
   state: string;
   country: string;
-  zip: string;
+  zip: number | null;
   description: string;
   industry: string;
   domain: string;
@@ -59,7 +59,7 @@ const OrganizationForm: React.FC = () => {
     city: '',
     state: '',
     country: '',
-    zip: '',
+    zip: null,
     description: '',
     industry: '',
     domain: ''
@@ -82,7 +82,7 @@ const OrganizationForm: React.FC = () => {
         city: data.city || '',
         state: data.state || '',
         country: data.country || '',
-        zip: data.zip || '',
+        zip: data.zip || null,
         description: data.description || '',
         industry: data.industry || '',
         domain: data.domain || ''
@@ -100,9 +100,18 @@ const OrganizationForm: React.FC = () => {
   };
 
   // Handler for form submission
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log('Form Values:', values);
+  const handleSubmit = async (event: React.FormEvent) => {
+    console.log(values)
+    event.preventDefault();
+    if (!user) return;
+
+    const response = await dispatch(updateOrganization({ orgId: user.orgId, data: {...values, aiOrgId: user.aiOrgId} }));
+
+    if (updateOrganization.fulfilled.match(response)) {
+      alert("Organization updated successfully!");
+    } else {
+      alert(`Update failed: ${response.payload}`);
+    }
   };
 
   if (loading || !data) {

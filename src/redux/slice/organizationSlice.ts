@@ -3,11 +3,18 @@ import api from "../../services/api";
 import { AxiosError } from "axios";
 
 interface Organization {
-  id: string;
-  name: string;
-  domain: string;
-  country: string;
-  phone: string;
+  id?: string;
+  aiOrgId?: string;
+  name?: string;
+  phone?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  zip?: number | null;
+  domain?: string;
+  industry?: string;
+  description?: string;
 }
 
 interface OrganizationState {
@@ -24,6 +31,23 @@ export const fetchOrganization = createAsyncThunk<
 >("organization/fetchOrganization", async (orgId, { rejectWithValue }) => {
   try {
     const response = await api.get(`/org/?orgId=${orgId}`);
+    return response.data;
+  } catch (error: unknown) {
+    let errorMessage = "Something went wrong";
+    if (error instanceof AxiosError) {
+      errorMessage = (error.response?.data as string) || errorMessage;
+    }
+    return rejectWithValue(errorMessage);
+  }
+});
+
+export const updateOrganization = createAsyncThunk<
+  { data: Organization },
+  { orgId: string; data: Organization },
+  { rejectValue: string }
+>("organization/updateOrganization", async ({ orgId, data }, { rejectWithValue }) => {
+  try {
+    const response = await api.put(`/org/?orgId=${orgId}`, data);
     return response.data;
   } catch (error: unknown) {
     let errorMessage = "Something went wrong";
