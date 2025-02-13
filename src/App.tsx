@@ -18,6 +18,7 @@ import { AppDispatch } from "./redux/store/store";
 import { getUserDetails } from "./redux/slice/userSlice";
 import Organization from "./components/Organization/Organization";
 import { SocketProvider } from "./context/SocketContext";
+import ActivateAccount from "./components/ActivateAccount/ActivateAccount";
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -51,6 +52,7 @@ const App: React.FC = () => {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/verify-otp" element={<VerifyOtp />} />
         <Route path="/change-password" element={<ChangePassword />} />
+        <Route path="/activate-account" element={<ActivateAccount />} />
         <Route
           path="/*"
           element={

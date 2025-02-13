@@ -32,7 +32,7 @@ function ChatBot({ settings }: any) {
         <ChatContainer>
           <Header bgcolor={settings.iconColor}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Logo src="https://i.pravatar.cc/300" alt="Logo" />
+              <Logo src="https://img.freepik.com/premium-psd/robot-isolated-png-with-transparent-background_68880-68988.jpg" alt="Logo" />
               <Typography style={{ display: "flex", flexDirection:'column' }}>
                 <span>ChatBot</span>
                 <span style={{fontSize:'10px'}}>{settings?.availability ? "Online" : "Offline"}</span>

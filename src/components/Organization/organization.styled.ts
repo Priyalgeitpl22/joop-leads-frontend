@@ -2,19 +2,17 @@ import styled from '@emotion/styled';
 import { Box, Typography, TextField, Button } from '@mui/material';
 
 export const FormContainer = styled(Box)({
-  maxWidth: '600px',
-  margin: '0.5rem auto',
+  width:'85%',
+  margin: '0.5rem',
   padding: '20px',
   borderRadius: '16px',
-  boxShadow: '0 10px 20px rgba(0,0,0,0.2)'
 });
 
 export const FormTitle = styled(Typography)({
   marginBottom: '30px',
-  textAlign: 'center',
   fontSize: '2rem',
   fontWeight: 700,
-  color: '#333'
+  color: '#333',
 });
 
 export const StyledTextField = styled(TextField)({
@@ -33,6 +31,7 @@ export const StyledTextField = styled(TextField)({
 });
 
 export const StyledButton = styled(Button)({
+  width:'150px',
   borderRadius: '30px',
   padding: '12px 24px',
   background: `linear-gradient(135deg, #7ed8d6, #4ca4a5)`,
