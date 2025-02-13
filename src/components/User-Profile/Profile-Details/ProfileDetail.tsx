@@ -1,6 +1,6 @@
 // src/components/UserProfile/ProfileDetail.tsx
-import React, { useState, useEffect } from "react";
-import { Dialog, TextField, Button, Typography, Box } from "@mui/material";
+import React, { useState, useEffect, useRef } from "react";
+import { Dialog, TextField, Button, Box } from "@mui/material";
 import {
   DialogHeader,
   StyledTitle,
@@ -11,6 +11,7 @@ import {
   ProfileImage,
 } from "./profileDetail.styled";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import EditIcon from "@mui/icons-material/Edit";
 
 interface UserData {
   id: string;
@@ -47,6 +48,9 @@ const ProfileDetail: React.FC<ProfileDetailProps> = ({
   const [formData, setFormData] = useState<FormData>(initialFormState);
   // Separate state for the new profile photo preview
   const [newProfilePicture, setNewProfilePicture] = useState<string>("");
+
+  // Ref for the hidden file input
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Reset form when dialog opens or userData changes
   useEffect(() => {
@@ -99,23 +103,41 @@ const ProfileDetail: React.FC<ProfileDetailProps> = ({
       {/* Grey Box above header */}
       <Box sx={{ width: "100%", height: "80px", backgroundColor: "#dddddd" }}></Box>
 
-      {/* Header Area: Always displays the original profile image from userData */}
+      {/* Header Area: Display profile image with edit icon overlay */}
       <DialogHeader>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-start",
-          }}
-        >
-          {userData?.profilePicture ? (
-            <ProfileImage src={userData.profilePicture} alt="User profile" />
-          ) : (
-            <AccountCircleIcon />
-          )}
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent:'center', width:'100%' }}>
+          <Box sx={{ position: "relative", display: "inline-block" }}>
+            {newProfilePicture || userData?.profilePicture ? (
+              <ProfileImage
+                src={newProfilePicture || userData?.profilePicture}
+                alt="User profile"
+              />
+            ) : (
+              <AccountCircleIcon sx={{ fontSize: 80 }} />
+            )}
+            <EditIcon
+              sx={{
+                position: "absolute",
+                bottom: 0,
+                right: 0,
+                backgroundColor: "white",
+                borderRadius: "50%",
+                cursor: "pointer",
+                padding: "2px",
+              }}
+              onClick={() => fileInputRef.current?.click()}
+            />
+            <input
+              type="file"
+              accept="image/*"
+              hidden
+              ref={fileInputRef}
+              onChange={handleFileChange}
+            />
+          </Box>
           <StyledTitle variant="h6">{userData?.fullName || "User"}</StyledTitle>
           <StyledEmail>{userData?.email}</StyledEmail>
-        </div>
+        </Box>
       </DialogHeader>
 
       {/* Form Fields */}
@@ -152,31 +174,6 @@ const ProfileDetail: React.FC<ProfileDetailProps> = ({
             disabled
           />
         </FieldWrapper>
-
-        <FieldWrapper>
-          <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
-            Profile photo
-          </Typography>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            {/* Show preview of new image if available */}
-            {newProfilePicture && (
-              <ProfileImage
-                src={newProfilePicture}
-                alt="Preview"
-                style={{ width: "50px", height: "50px" }}
-              />
-            )}
-            <Button variant="outlined" component="label">
-              Upload Pic
-              <input
-                hidden
-                accept="image/*"
-                type="file"
-                onChange={handleFileChange}
-              />
-            </Button>
-          </Box>
-        </FieldWrapper>
       </DialogBody>
 
       {/* Footer (Actions) */}
@@ -184,7 +181,7 @@ const ProfileDetail: React.FC<ProfileDetailProps> = ({
         <Button variant="outlined" onClick={handleCancel} sx={{ mr: 1 }}>
           Cancel
         </Button>
-        <Button variant="contained" onClick={handleSave}>
+        <Button variant="contained" sx={{backgroundColor:'#66bfbe', fontWeight:600}} onClick={handleSave}>
           Save changes
         </Button>
       </DialogFooter>

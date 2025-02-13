@@ -22,7 +22,7 @@ export const StyledEmail = styled(Typography)(() => ({
   }));
 
 export const DialogBody = styled(DialogContent)(() => ({
-  // Add custom styles if needed
+  border:'none !important'
 }));
 
 export const DialogFooter = styled(DialogActions)(({ theme }) => ({
