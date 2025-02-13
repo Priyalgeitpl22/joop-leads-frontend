@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Avatar, Box, Typography, TextField, IconButton } from "@mui/material";
+import { Avatar, Box, Typography, TextField, IconButton, CircularProgress } from "@mui/material";
 import { Send } from "lucide-react";
 import { motion } from "framer-motion";
 import { useSelector, useDispatch } from "react-redux";
@@ -32,37 +32,42 @@ const motionVariants = {
   visible: { opacity: 1, y: 0 },
 };
 
-export default function ChatArea({
-  selectedThreadId,
-}: ChatAreaProps): JSX.Element {
+export default function ChatArea({ selectedThreadId }: ChatAreaProps): JSX.Element {
   const dispatch = useDispatch<AppDispatch>();
   const { socket } = useSocket();
   const { chats, loading } = useSelector((state: RootState) => state.chats);
   const [inputMessage, setInputMessage] = useState("");
 
-  // Helper function to format the createdAt timestamp
+  // Local state to ensure the loader is shown for at least 1 second.
+  const [delayedLoading, setDelayedLoading] = useState(loading);
+
+  useEffect(() => {
+    if (!loading) {
+      const timer = setTimeout(() => {
+        setDelayedLoading(false);
+      }, 1000);
+      return () => clearTimeout(timer);
+    } else {
+      setDelayedLoading(true);
+    }
+  }, [loading]);
+
+  // Helper function to format the createdAt timestamp.
   const formatTimestamp = (createdAt: string): string => {
     const messageTime = new Date(createdAt);
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const yesterday = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate() - 1
-    );
+    const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
 
     if (messageTime >= today) {
-      // Message from today: display time in 12-hour format with AM/PM.
       return messageTime.toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
         hour12: true,
       });
     } else if (messageTime >= yesterday && messageTime < today) {
-      // Message from yesterday
       return "Yesterday";
     } else {
-      // Older messages: display date (e.g., "25 Mar, 2025")
       return messageTime.toLocaleDateString([], {
         day: "2-digit",
         month: "short",
@@ -84,11 +89,7 @@ export default function ChatArea({
 
     socket.on("receiveMessage", (newMessage) => {
       console.log("Received message:", newMessage);
-
-      if (
-        newMessage.sender === "Bot" &&
-        newMessage.threadId === selectedThreadId
-      ) {
+      if (newMessage.sender === "Bot" && newMessage.threadId === selectedThreadId) {
         const messageData: ChatData = {
           id: Date.now().toString(),
           threadId: newMessage.threadId,
@@ -96,7 +97,6 @@ export default function ChatArea({
           content: newMessage.answer,
           createdAt: new Date().toISOString(),
         };
-
         dispatch(addchat(messageData));
       }
     });
@@ -117,7 +117,6 @@ export default function ChatArea({
 
   const sendMessage = () => {
     if (!socket || !selectedThreadId || !inputMessage.trim()) return;
-
     const messageData: ChatData = {
       id: Date.now().toString(),
       threadId: selectedThreadId,
@@ -159,8 +158,18 @@ export default function ChatArea({
           </ChatHeader>
 
           <ChatMessages>
-            {loading ? (
-              <Typography>Loading...</Typography>
+            {delayedLoading ? (
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "auto",
+                  py: 2,
+                }}
+              >
+                <CircularProgress size={24} />
+              </Box>
             ) : chats.length > 0 ? (
               chats.map((chat) => (
                 <Message key={chat.id} isbot={chat.sender === "Bot"}>
@@ -174,18 +183,10 @@ export default function ChatArea({
                     {chat?.sender ? chat.sender.charAt(0).toUpperCase() : "U"}
                   </Avatar>
                   <Box>
-                    <Typography
-                      variant="body2"
-                      color="textSecondary"
-                      gutterBottom
-                    >
+                    <Typography variant="body2" color="textSecondary" gutterBottom>
                       {chat.sender} • {formatTimestamp(chat.createdAt)}
                     </Typography>
-                    <motion.div
-                      initial="hidden"
-                      animate="visible"
-                      variants={motionVariants}
-                    >
+                    <motion.div initial="hidden" animate="visible" variants={motionVariants}>
                       <Typography>{chat.content}</Typography>
                     </motion.div>
                   </Box>
@@ -206,7 +207,6 @@ export default function ChatArea({
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyDown={(e) => {
-                // If user presses Enter without Shift, send the message.
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
                   sendMessage();

@@ -19,6 +19,7 @@ import {
   PreviewImage,
 } from "./register.styled";
 import { Link as RouterLink } from "react-router-dom";
+import Loader from "../../components/Loader"; 
 
 interface RegisterFormData {
   profilePicture: File | null;
@@ -59,6 +60,8 @@ const Register = () => {
 
   // State to store the preview image URL
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  // State to control the full screen loader
+  const [isLoading, setIsLoading] = useState(false);
 
   // Handler for text input fields
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -77,6 +80,7 @@ const Register = () => {
 
   // Handle submit by converting our state into FormData
   const handleSubmit = async () => {
+    setIsLoading(true);
     const payload = new FormData();
     payload.append("fullName", formData.fullName);
     payload.append("email", formData.email);
@@ -95,8 +99,11 @@ const Register = () => {
       navigate("/verify-otp", { state: { email: formData.email } });
     } catch (err) {
       console.error("Registration failed:", err);
+    } finally {
+      setIsLoading(false);
     }
   };
+
   const handleIconClick = () => {
     fileInputRef.current?.click();
   };
@@ -184,6 +191,8 @@ const Register = () => {
           </SocialButtonsContainer>
         </FormSection>
       </RegisterCard>
+
+      {isLoading && <Loader />}
     </PageContainer>
   );
 };

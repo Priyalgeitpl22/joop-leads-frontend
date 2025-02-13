@@ -16,6 +16,7 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserDetails, loginUser } from '../../redux/slice/userSlice';
 import { AppDispatch, RootState } from '../../redux/store/store';
+import Loader from '../../components/Loader';
 
 function Login() {
   // Local state for controlled inputs.
@@ -29,9 +30,8 @@ function Login() {
   const navigate = useNavigate();
 
   // Retrieve login-related state from Redux.
-  const {loading, error } = useSelector((state: RootState) => state.user);
+  const { loading, error } = useSelector((state: RootState) => state.user);
 
- 
   useEffect(() => {
     if (loginSubmitted) {
       dispatch(loginUser({ email, password }))
@@ -47,9 +47,6 @@ function Login() {
     }
   }, [loginSubmitted, dispatch, email, password, navigate]);
   
-
-
-
   const handleSignIn = () => {
     setLoginSubmitted(true);
   };
@@ -97,7 +94,6 @@ function Login() {
             <ForgotPasswordLink>Forgot Password?</ForgotPasswordLink>
           </RouterLink>
           
-
           <StyledButton 
             variant="contained" 
             fullWidth 
@@ -141,6 +137,8 @@ function Login() {
           </SocialButtonsContainer>
         </FormSection>
       </LoginCard>
+
+      {loading && <Loader />}
     </PageContainer>
   );
 }

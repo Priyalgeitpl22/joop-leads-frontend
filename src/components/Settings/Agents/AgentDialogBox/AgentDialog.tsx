@@ -36,13 +36,14 @@ interface Availability {
 }
 
 export interface Agent {
-  name: string;
+  fullName: string;
   email: string;
   phone: string;
-  avatar: string;
+  profilePicture: string;
   timezone: string;
   availability: Availability[];
 }
+
 
 interface AgentDialogProps {
   open: boolean;
@@ -51,10 +52,10 @@ interface AgentDialogProps {
 }
 
 const defaultAgent: Agent = {
-  name: "",
+  fullName: "",
   email: "",
   phone: "",
-  avatar: "",
+  profilePicture: "",
   timezone: "UTC -05:00 Eastern Time",
   availability: [{ day: "Monday", from: "09:00", to: "17:00" }],
 };
@@ -112,7 +113,7 @@ const AgentDialog: React.FC<AgentDialogProps> = ({ open, onClose, agent }) => {
   const handleSave = () => {
     const payload = {
       email: formData.email,
-      fullName: formData.name,
+      fullName: formData.fullName,
       phone: formData.phone,
       orgId: user!.orgId,
       profilePicture: selectedFile || undefined,
@@ -147,7 +148,7 @@ const AgentDialog: React.FC<AgentDialogProps> = ({ open, onClose, agent }) => {
             <TabPanel key={tab}>
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                 <AvatarWrapper>
-                  <Avatar src={formData.avatar} sx={{ width: 80, height: 80 }} />
+                  <Avatar src={formData.profilePicture} sx={{ width: 80, height: 80 }} />
                   <IconButton component="label">
                     <input
                       type="file"
@@ -168,7 +169,7 @@ const AgentDialog: React.FC<AgentDialogProps> = ({ open, onClose, agent }) => {
                   </IconButton>
                 </AvatarWrapper>
                 <FormGroup>
-                  <TextField label="Name" name="name" value={formData.name} onChange={handleInputChange} fullWidth />
+                  <TextField label="Name" name="name" value={formData.fullName} onChange={handleInputChange} fullWidth />
                   <TextField label="Email" name="email" value={formData.email} onChange={handleInputChange} fullWidth />
                   <TextField label="Phone" name="phone" value={formData.phone} onChange={handleInputChange} fullWidth />
                 </FormGroup>

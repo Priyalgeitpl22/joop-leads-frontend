@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import { Avatar, Table, TableBody, TableRow, Paper } from "@mui/material";
 import {
   AgentsContainer,
@@ -13,14 +14,12 @@ import {
   CustomEditIconButton,
 } from "./Agents.styled";
 import { Edit, Delete } from "@mui/icons-material";
-import { useEffect, useState } from "react";
 import AgentDialog from "./AgentDialogBox/AgentDialog";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../redux/store/store";
-// Import Agent type from your Redux slice to ensure consistency
 import { Agent, fetchAgents } from "../../../redux/slice/agentsSlice";
 
-export default function Agents() {
+const Agents: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [agents, setAgents] = useState<Agent[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
@@ -29,7 +28,11 @@ export default function Agents() {
 
   useEffect(() => {
     const fetchAndSetAgents = async () => {
-      const resultAction = await dispatch(fetchAgents(user!.orgId));
+      if (!user) {
+        console.error("User is not defined");
+        return;
+      }
+      const resultAction = await dispatch(fetchAgents(user.orgId));
       // Check if the action is fulfilled before updating local state
       if (fetchAgents.fulfilled.match(resultAction)) {
         setAgents(resultAction.payload.data || []);
@@ -39,8 +42,6 @@ export default function Agents() {
     };
     fetchAndSetAgents();
   }, [dispatch, user?.orgId]);
-
-  console.log("agents", agents);
 
   const handleOpenDialog = () => {
     setEditingAgent(null);
@@ -53,9 +54,9 @@ export default function Agents() {
   };
 
   const handleSaveAgent = (newAgent: Omit<Agent, "id">) => {
-    const agentWithId = {
+    const agentWithId: Agent = {
       ...newAgent,
-      id: editingAgent ? editingAgent.id : agents.length + 1 + "",
+      id: editingAgent ? editingAgent.id : (agents.length + 1).toString(),
     };
 
     if (editingAgent) {
@@ -73,7 +74,7 @@ export default function Agents() {
     setIsDialogOpen(false);
   };
 
-  const handleDeleteAgent = (id: number | string) => {
+  const handleDeleteAgent = (id: string) => {
     setAgents(agents.filter((agent) => agent.id !== id));
   };
 
@@ -105,10 +106,10 @@ export default function Agents() {
               </StyledTableHead>
               <TableBody>
                 {agents.length > 0 ? (
-                  agents.map((agent,index) => (
+                  agents.map((agent, index) => (
                     <TableRow key={agent.id}>
                       <StyledTableCell sx={{ textAlign: "center" }}>
-                        {index+1}
+                        {index + 1}
                       </StyledTableCell>
                       <StyledTableCell>
                         <div
@@ -127,12 +128,14 @@ export default function Agents() {
                           {agent.fullName}
                         </div>
                       </StyledTableCell>
-                      <StyledTableCell>{agent.phone || 'N/A'}</StyledTableCell>
+                      <StyledTableCell>
+                        {agent.phone || "N/A"}
+                      </StyledTableCell>
                       <StyledTableCell>{agent.email}</StyledTableCell>
                       <StyledTableCell>
                         {agent.availability && agent.availability.length > 0 ? (
-                          agent.availability.map((slot, index) => (
-                            <div key={index}>
+                          agent.availability.map((slot, idx) => (
+                            <div key={idx}>
                               {slot.day} from {slot.from} to {slot.to}
                             </div>
                           ))
@@ -168,4 +171,6 @@ export default function Agents() {
       </AgentTable>
     </AgentsContainer>
   );
-}
+};
+
+export default Agents;

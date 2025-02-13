@@ -14,6 +14,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { verifyOtp } from "../../redux/slice/userSlice";
 import { AppDispatch } from "../../redux/store/store";
+import Loader from "../../components/Loader";
 
 const VerifyOtp = () => {
   const { state } = useLocation();
@@ -22,10 +23,12 @@ const VerifyOtp = () => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [timer, setTimer] = useState(60);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const [otpSubmitted, setOtpSubmitted] = useState<boolean>(false);
-  const otpRefs = useRef<(HTMLInputElement|null)[]>([]);
+  const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
+
   useEffect(() => {
     if (isTimerRunning && timer > 0) {
       const interval = setInterval(() => {
@@ -50,13 +53,9 @@ const VerifyOtp = () => {
         otpRefs.current[index + 1]?.focus();
       }
     }
-
   };
 
-  const handleKeyDown = (
-    e: React.KeyboardEvent<HTMLInputElement>,
-    index: number
-  ) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
     if (e.key === "Backspace") {
       if (!otp[index] && index > 0) {
         otpRefs.current[index - 1]?.focus();
@@ -70,10 +69,10 @@ const VerifyOtp = () => {
     }
   };
 
-
   const handleVerifyOtp = () => {
     const otpString = otp.join("");
     if (otpString.length === 6) {
+      setIsLoading(true);
       setOtpSubmitted(true);
     } else {
       console.log("Please enter a valid OTP");
@@ -94,8 +93,8 @@ const VerifyOtp = () => {
           console.error("OTP verification failed:", err);
         })
         .finally(() => {
-          // Reset the submission flag whether the verification succeeded or failed.
           setOtpSubmitted(false);
+          setIsLoading(false);
         });
     }
   }, [otpSubmitted, dispatch, email, otp, navigate]);
@@ -103,7 +102,7 @@ const VerifyOtp = () => {
   return (
     <PageContainer>
       <VerifyCard>
-      <IllustrationSection>
+        <IllustrationSection>
           <img
             src="https://cdn.dribbble.com/users/2058540/screenshots/8225403/media/bc617eec455a72c77feab587e09daa96.gif"
             alt="Auth illustration"
@@ -111,15 +110,15 @@ const VerifyOtp = () => {
           />
         </IllustrationSection>
         <FormSection>
-        <Typography variant="h4" fontWeight="bold" mb={1}>
+          <Typography variant="h4" fontWeight="bold" mb={1}>
             Verify OTP
           </Typography>
-        <Typography variant="h6" sx={{ marginBottom: 2 }}>
-          Enter the OTP sent to your email
-        </Typography>
+          <Typography variant="h6" sx={{ marginBottom: 2 }}>
+            Enter the OTP sent to your email
+          </Typography>
 
-        <OtpFieldsContainer>
-        {otp.map((digit, index) => (
+          <OtpFieldsContainer>
+            {otp.map((digit, index) => (
               <OtpField
                 key={index}
                 value={digit}
@@ -135,19 +134,19 @@ const VerifyOtp = () => {
                 }}
               />
             ))}
-        </OtpFieldsContainer>
+          </OtpFieldsContainer>
 
-        <StyledButton variant="contained" onClick={handleVerifyOtp}>
-          VERIFY OTP
-        </StyledButton>
+          <StyledButton variant="contained" onClick={handleVerifyOtp}>
+            VERIFY OTP
+          </StyledButton>
 
-        <Box sx={{ marginTop: 2 }}>
-          {isTimerRunning &&(
-            <TimerText>Time remaining: {timer}s</TimerText>
-          ) }
-        </Box>
+          <Box sx={{ marginTop: 2 }}>
+            {isTimerRunning && <TimerText>Time remaining: {timer}s</TimerText>}
+          </Box>
         </FormSection>
       </VerifyCard>
+
+      {isLoading && <Loader />}
     </PageContainer>
   );
 };
