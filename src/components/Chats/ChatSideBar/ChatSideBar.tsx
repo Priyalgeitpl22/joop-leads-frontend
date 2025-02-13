@@ -2,7 +2,7 @@ import { List, ListItemText, ListItemIcon, Typography, Box, Divider, Switch } fr
 import { MessageCircle, Users, Bot, UserCheck, MessageSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { SidebarContainer, StatusIndicator, SidebarItem, ActiveIndicator, CountBadge } from "./chatSidebar.styled";
+import { SidebarContainer, StatusIndicator, SidebarItem, ActiveIndicator, CountBadge, Count } from "./chatSidebar.styled";
 import { useState } from "react";
 
 interface MenuItem {
@@ -28,23 +28,13 @@ interface ChatSideBarProps {
 
 const ChatSideBar = ({ selectedType }: ChatSideBarProps) => {
   const navigate = useNavigate();
-  const [checked, setChecked] = useState(true);
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked(event.target.checked);
-  };
 
   return (
     <SidebarContainer>
-      <Box sx={{ padding: "0px 20px" }} display="flex" alignItems="flex-start" flexDirection={"column"}>
+      <Box sx={{ padding: "16px" }} display="flex" alignItems="center" flexDirection={"column"}>
         <Typography variant="h6" sx={{ fontFamily: "cursive", fontWeight: 600 }}>
-          Conversations
+          Inbox
         </Typography>
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <StatusIndicator />
-          <Typography variant="subtitle2">You're available</Typography>
-          <Switch checked={checked} onChange={handleChange} inputProps={{ "aria-label": "controlled" }} />
-        </div>
       </Box>
       <Divider />
       <List>
@@ -68,7 +58,9 @@ const ChatSideBar = ({ selectedType }: ChatSideBarProps) => {
               )}
               <ListItemIcon sx={{ minWidth: 40 }}>{item.icon}</ListItemIcon>
               <ListItemText primary={item.text} />
-              {typeof item.count === "number" && <CountBadge variant="body2">{item.count}</CountBadge>}
+              {/* <CountBadge> */}
+              {typeof item.count === "number" && <Count variant="body2">{item.count}</Count>}
+              {/* </CountBadge> */}
             </MotionSidebarItem>
           );
         })}

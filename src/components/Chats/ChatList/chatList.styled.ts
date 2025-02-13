@@ -15,6 +15,7 @@ export const ChatListHeader = styled(Box)({
   borderBottom: '1px solid rgba(0, 0, 0, 0.12)', 
   backgroundColor: '#fff', 
   display: 'flex',
+  justifyContent: 'center',
   alignItems: 'center',
   gap: '8px', 
 });

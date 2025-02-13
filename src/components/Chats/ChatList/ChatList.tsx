@@ -87,7 +87,7 @@ const formatTimestamp = (createdAt: string): string => {
     <ChatListContainer>
       <ChatListHeader>
         <Typography variant="h6" sx={{ fontFamily: 'cursive', fontWeight: 600 }}>
-          Inbox
+          Conversations  
         </Typography>
       </ChatListHeader>
       <Box sx={{ overflowY: 'auto', flex: 1 }}>
@@ -113,7 +113,7 @@ const formatTimestamp = (createdAt: string): string => {
                     whileTap={{ scale: 0.98 }}
                   >
                     <ListItemAvatar>
-                      <Avatar sx={{ bgcolor: '#9e9e9e', width: 32, height: 32 }}>
+                      <Avatar sx={{ bgcolor: '#5db4b2', width: 32, height: 32 }}>
                         {threadType[0].toUpperCase()}
                       </Avatar>
                     </ListItemAvatar>

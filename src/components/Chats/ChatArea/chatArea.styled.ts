@@ -10,7 +10,7 @@ export const ChatContainer = styled(Box)({
 });
 
 export const ChatHeader = styled(Box)({
-  padding: '16px', 
+  padding: '12px', 
   borderBottom: '1px solid #e0e0e0',
   display: 'flex',
   alignItems: 'center',

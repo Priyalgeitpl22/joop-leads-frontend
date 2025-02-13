@@ -28,8 +28,8 @@ export const ColorGrid = styled.div`
 `;
 
 export const ColorOption = styled.button<{ color: string; isSelected: boolean }>`
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   background-color: ${(props) => props.color};
   border: 2px solid ${(props) => (props.isSelected ? "#ffffff" : "transparent")};

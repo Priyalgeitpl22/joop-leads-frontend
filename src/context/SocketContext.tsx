@@ -7,6 +7,7 @@ interface SocketContextType {
   socket: Socket | null;
 }
 
+// Create a context with a default value of null
 const SocketContext = createContext<SocketContextType>({ socket: null });
 
 export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -32,4 +33,5 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   return <SocketContext.Provider value={{ socket }}>{children}</SocketContext.Provider>;
 };
 
+// Custom hook to use the socket context
 export const useSocket = () => useContext(SocketContext);

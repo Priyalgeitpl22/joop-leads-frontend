@@ -25,20 +25,23 @@ import {
 } from "@mui/material";
 import { ContentCopy } from "@mui/icons-material";
 import ChatBot from "../../../components/ChatBot/ChatBot";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/store/store";
 
 const Configuration = () => {
   const [settings, setSettings] = useState({
     iconColor: "#7ed8d7",
-    chatWindowColor: "#ffffff", // New field for chat window background color
-    fontColor: "#333333",       // New field for font color
+    chatWindowColor: "#ffffff",
+    fontColor: "#333333",
     position: "bottom-right",
     allowEmojis: false,
     allowFileUpload: false,
-    availability: true,         // New field for availability
+    availability: true,
   });
   const [activeTab, setActiveTab] = useState("configure");
   const [embedCode, setEmbedCode] = useState("");
   const colors = ["#45607c", "#7ed8d7", "#b15194", "#f8b771", "#546db9"];
+  const { user } = useSelector((state: RootState) => state.user);
 
   const handleChange = (field: string, value: string | boolean) => {
     setSettings((prev) => ({ ...prev, [field]: value }));
@@ -60,7 +63,7 @@ const Configuration = () => {
       const response = await fetch("http://localhost:5003/api/chat/config/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(settings),
+        body: JSON.stringify({...settings, orgId: user?.orgId, aiOrgId: user?.aiOrgId}),
       });
       fetchScript();
       if (response.ok) setActiveTab("tracking_code");

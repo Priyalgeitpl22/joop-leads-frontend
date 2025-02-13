@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 
 interface SidebarItemProps {
   active?: boolean;
+  online?: boolean
 }
 
 export const SidebarContainer = styled(Box)({
@@ -14,13 +15,14 @@ export const SidebarContainer = styled(Box)({
   overflowY: 'auto',
 });
 
-export const StatusIndicator = styled('div')({
-  width: 8,
-  height: 8,
-  borderRadius: '50%',
-  backgroundColor: '#4caf50',
-  marginRight: 8,
-});
+export const StatusIndicator = styled("div", {
+  shouldForwardProp: (prop) => prop !== "online",
+})<SidebarItemProps>(({ online }) => ({
+  width: 12,
+  height: 12,
+  borderRadius: "50%",
+  backgroundColor: online ? "#4caf50" : "red",
+}));
 
 export const SidebarItem = styled(ListItem, {
   shouldForwardProp: (prop) => prop !== 'active',
@@ -43,7 +45,15 @@ export const ActiveIndicator = styled(motion.div)({
   borderRadius: '0 4px 4px 0',
 });
 
-export const CountBadge = styled(Typography)({
+export const Count = styled(Typography)({
   marginLeft: 'auto',
   color: '#757575', 
+});
+
+export const CountBadge = styled(motion.div)({
+  color: '#757575', 
+  backgroundColor: '#7dd1e3',
+  width: '18px',
+  height: '20px',
+  borderRadius: '10px'
 });
