@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box } from '@mui/material';
+import { Box, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchOrganization, updateOrganization } from '../../redux/slice/organizationSlice';
@@ -10,6 +10,10 @@ import {
   StyledButton
 } from './organization.styled';
 import { AppDispatch, RootState } from '../../redux/store/store';
+// Import industries JSON file
+import industriesData from './Industry.json';
+// Import SelectChangeEvent for proper typing
+import { SelectChangeEvent } from '@mui/material/Select';
 
 interface Field {
   label: string;
@@ -51,7 +55,6 @@ const OrganizationForm: React.FC = () => {
   const { user } = useSelector((state: RootState) => state.user);
   const { data, loading } = useSelector((state: RootState) => state.organization);
 
-  // Initialize state with empty values
   const [values, setValues] = useState<OrganizationData>({
     name: '',
     phone: '',
@@ -65,14 +68,12 @@ const OrganizationForm: React.FC = () => {
     domain: ''
   });
 
-  // Fetch organization data
   useEffect(() => {
     if (user) {
       dispatch(fetchOrganization(user.orgId));
     }
   }, [dispatch, user]);
 
-  // Once data is fetched, update state
   useEffect(() => {
     if (data) {
       setValues({
@@ -90,7 +91,7 @@ const OrganizationForm: React.FC = () => {
     }
   }, [data]);
 
-  // Handler for input changes
+  // For text fields
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setValues(prevValues => ({
@@ -99,13 +100,22 @@ const OrganizationForm: React.FC = () => {
     }));
   };
 
-  // Handler for form submission
+  // Separate handler for Select component using proper event type
+  const handleSelectChange = (event: SelectChangeEvent<string>) => {
+    const { name, value } = event.target;
+    setValues(prevValues => ({
+      ...prevValues,
+      [name]: value,
+    }));
+  };
+
   const handleSubmit = async (event: React.FormEvent) => {
-    console.log(values)
     event.preventDefault();
     if (!user) return;
 
-    const response = await dispatch(updateOrganization({ orgId: user.orgId, data: {...values, aiOrgId: user.aiOrgId} }));
+    const response = await dispatch(
+      updateOrganization({ orgId: user.orgId, data: { ...values, aiOrgId: user.aiOrgId } })
+    );
 
     if (updateOrganization.fulfilled.match(response)) {
       alert("Organization updated successfully!");
@@ -137,21 +147,46 @@ const OrganizationForm: React.FC = () => {
         <Grid container spacing={3}>
           {fields.map((field, index) => (
             <Grid size={field.sm} key={index}>
-              <StyledTextField
-                fullWidth
-                name={field.key}
-                label={field.label}
-                variant="outlined"
-                value={
-                  field.key === "zip"
-                    ? values.zip === null
-                      ? ""
-                      : values.zip.toString()
-                    : values[field.key as keyof OrganizationData]
-                }
-                onChange={handleChange}
-                {...(field.multiline ? { multiline: true, rows: field.rows } : {})}
-              />
+              {field.key === "industry" ? (
+                <FormControl fullWidth>
+                  <InputLabel>Industry</InputLabel>
+                  <Select
+                    name="industry"
+                    value={values.industry}
+                    onChange={handleSelectChange}
+                    label="Industry"
+                    MenuProps={{
+                      PaperProps: {
+                        style: {
+                          maxHeight: 250,
+                        },
+                      },
+                    }}
+                  >
+                    {industriesData.industries.map((industry: string, idx: number) => (
+                      <MenuItem key={idx} value={industry}>
+                        {industry}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              ) : (
+                <StyledTextField
+                  fullWidth
+                  name={field.key}
+                  label={field.label}
+                  variant="outlined"
+                  value={
+                    field.key === "zip"
+                      ? values.zip === null
+                        ? ""
+                        : values.zip.toString()
+                      : values[field.key as keyof OrganizationData]
+                  }
+                  onChange={handleChange}
+                  {...(field.multiline ? { multiline: true, rows: field.rows } : {})}
+                />
+              )}
             </Grid>
           ))}
         </Grid>
