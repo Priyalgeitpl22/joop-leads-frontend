@@ -10,9 +10,12 @@ import {
   ChatContainer,
   ChatHeader,
   ChatMessages,
-  Message,
   ChatInputContainer,
   PlaceholderContainer,
+  BotMessage,
+  BotMessageBubble,
+  UserMessage,
+  UserMessageBubble,
 } from "./chatArea.styled";
 
 interface ChatData {
@@ -38,21 +41,17 @@ export default function ChatArea({ selectedThreadId }: ChatAreaProps): JSX.Eleme
   const { chats, loading } = useSelector((state: RootState) => state.chats);
   const [inputMessage, setInputMessage] = useState("");
 
-  // Local state to ensure the loader is shown for at least 1 second.
+  // Ensure the loader shows for at least 1 second.
   const [delayedLoading, setDelayedLoading] = useState(loading);
-
   useEffect(() => {
     if (!loading) {
-      const timer = setTimeout(() => {
-        setDelayedLoading(false);
-      }, 1000);
+      const timer = setTimeout(() => setDelayedLoading(false), 1000);
       return () => clearTimeout(timer);
     } else {
       setDelayedLoading(true);
     }
   }, [loading]);
 
-  // Helper function to format the createdAt timestamp.
   const formatTimestamp = (createdAt: string): string => {
     const messageTime = new Date(createdAt);
     const now = new Date();
@@ -60,19 +59,11 @@ export default function ChatArea({ selectedThreadId }: ChatAreaProps): JSX.Eleme
     const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
 
     if (messageTime >= today) {
-      return messageTime.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
-      });
+      return messageTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true });
     } else if (messageTime >= yesterday && messageTime < today) {
       return "Yesterday";
     } else {
-      return messageTime.toLocaleDateString([], {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-      });
+      return messageTime.toLocaleDateString([], { day: "2-digit", month: "short", year: "numeric" });
     }
   };
 
@@ -85,10 +76,7 @@ export default function ChatArea({ selectedThreadId }: ChatAreaProps): JSX.Eleme
   useEffect(() => {
     if (!socket || !selectedThreadId) return;
 
-    console.log("Listening for messages...");
-
     socket.on("receiveMessage", (newMessage) => {
-      console.log("Received message:", newMessage);
       if (newMessage.sender === "Bot" && newMessage.threadId === selectedThreadId) {
         const messageData: ChatData = {
           id: Date.now().toString(),
@@ -103,13 +91,11 @@ export default function ChatArea({ selectedThreadId }: ChatAreaProps): JSX.Eleme
 
     socket.on("updateDashboard", (data) => {
       if (data.sender === "User" && data.threadId === selectedThreadId) {
-        console.log("Dashboard received:", data);
         dispatch(addchat(data));
       }
     });
 
     return () => {
-      console.log("Cleaning up socket listeners...");
       socket.off("receiveMessage");
       socket.off("updateDashboard");
     };
@@ -138,60 +124,59 @@ export default function ChatArea({ selectedThreadId }: ChatAreaProps): JSX.Eleme
       {!selectedThreadId ? (
         <PlaceholderContainer>
           <img
-            src="https://img.freepik.com/free-vector/cartoon-style-robot-vectorart_78370-4103.jpg?t=st=1739357006~exp=1739360606~hmac=e1fcb2b59ef4d4a633ffe4346f7f80fd2e9ae62c5066c1ae5e90bf119b508b6f&w=1060"
+            src="https://img.freepik.com/free-vector/cartoon-style-robot-vectorart_78370-4103.jpg"
             alt="No conversation selected"
             width="300"
           />
-          <Typography sx={{ color: "#000000" }}>
-            Select a conversation to start chatting
-          </Typography>
+          <Typography sx={{ color: "#000000" }}>Select a conversation to start chatting</Typography>
         </PlaceholderContainer>
       ) : (
         <>
           <ChatHeader>
             <Box display="flex" alignItems="center" gap={2}>
               <Avatar>U</Avatar>
-              <Box>
-                <Typography variant="subtitle1">Unknown Visitor</Typography>
-              </Box>
+              <Typography variant="subtitle1">Unknown Visitor</Typography>
             </Box>
           </ChatHeader>
 
           <ChatMessages>
             {delayedLoading ? (
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  height: "auto",
-                  py: 2,
-                }}
-              >
+              <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", py: 2 }}>
                 <CircularProgress size={24} />
               </Box>
             ) : chats.length > 0 ? (
-              chats.map((chat) => (
-                <Message key={chat.id} isbot={chat.sender === "Bot"}>
-                  <Avatar
-                    sx={{
-                      bgcolor: chat.sender === "Bot" ? "#2196f3" : undefined,
-                      width: 32,
-                      height: 32,
-                    }}
-                  >
-                    {chat?.sender ? chat.sender.charAt(0).toUpperCase() : "U"}
+              chats.map((chat) => {
+                const isBot = chat.sender === "Bot";
+                return isBot ? (
+                  <BotMessage key={chat.id}>  
+                  <Box sx={{display:'flex', gap:'8px'}}>
+                    <Typography variant="body2" color="textSecondary" gutterBottom>
+                      {chat.sender} • {formatTimestamp(chat.createdAt)}
+                    </Typography>
+                  <Avatar sx={{ bgcolor: "#7ed8d6", width: 32, height: 32 }}>
+                    {chat.sender.charAt(0).toUpperCase()}
+                  </Avatar>
+                  </Box>
+                  <motion.div initial="hidden" animate="visible" variants={motionVariants}>
+                      <BotMessageBubble>{chat.content}</BotMessageBubble>
+                    </motion.div>
+                </BotMessage>
+                ) : (
+                  <UserMessage key={chat.id}>
+                  <Avatar sx={{ bgcolor: "#bdbdbd", width: 32, height: 32 }}>
+                    {chat.sender.charAt(0).toUpperCase()}
                   </Avatar>
                   <Box>
                     <Typography variant="body2" color="textSecondary" gutterBottom>
                       {chat.sender} • {formatTimestamp(chat.createdAt)}
                     </Typography>
                     <motion.div initial="hidden" animate="visible" variants={motionVariants}>
-                      <Typography>{chat.content}</Typography>
+                      <UserMessageBubble>{chat.content}</UserMessageBubble>
                     </motion.div>
                   </Box>
-                </Message>
-              ))
+                </UserMessage>
+                );
+              })
             ) : (
               <Typography>No messages yet.</Typography>
             )}

@@ -10,12 +10,12 @@ export const ChatContainer = styled(Box)({
 });
 
 export const ChatHeader = styled(Box)({
-  padding: '12px', 
+  padding: '12px',
   borderBottom: '1px solid #e0e0e0',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  backgroundColor: '#fff', 
+  backgroundColor: '#7ed8d6',
 });
 
 export const ChatMessages = styled(Box)({
@@ -24,50 +24,83 @@ export const ChatMessages = styled(Box)({
   padding: '20px',
 });
 
-
-export const Message = styled(Box, {
-  shouldForwardProp: (prop) => prop !== 'isbot',
-})<{ isbot?: boolean }>(({ isbot }) => ({
-  display: 'flex',
-  gap: '8px',
-  marginBottom: '24px',
-  '& .message-content': {
-    backgroundColor: isbot ? '#f5f5f5' : '#7ed8d6',
-    color: isbot ? '#000' : '#fff',
-    padding: '12px 16px',
-    borderRadius: '12px',
-    maxWidth: '100%',
-  },
-}));
-
-
 export const ReassignmentNote = styled(Typography)({
-  color: '#757575',      
+  color: '#757575',
   fontSize: '0.875rem',
   textAlign: 'center',
-  margin: '16px 0',       
-  padding: '8px',          
+  margin: '16px 0',
+  padding: '8px',
   backgroundColor: '#fafafa',
-  borderRadius: '8px',    
+  borderRadius: '8px',
 });
 
 export const ChatInputContainer = styled(Box)({
-  padding: '16px', 
-  borderTop: '1px solid #e0e0e0',
+  padding: '16px',
   backgroundColor: '#fff',
+  '& .MuiOutlinedInput-root': {
+    borderRadius: '10px',
+    padding: '10px',
+    backgroundColor: '#f1f1f1',
+    '& fieldset': {
+      borderColor: 'transparent',
+    },
+    '&:hover fieldset': {
+      borderColor: '#ccc',
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: '#1976d2',
+    },
+  },
 });
 
 export const QuickReplyButton = styled(Button)({
-  marginRight: '8px',  
-  marginBottom: '8px',  
+  marginRight: '8px',
+  marginBottom: '8px',
   borderColor: '#e0e0e0',
-  color: '#000',      
+  color: '#000',
 });
+
 export const PlaceholderContainer = styled(Box)({
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "center",
-  height: "100%",
-  textAlign: "center",
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  height: '100%',
+  textAlign: 'center',
+});
+
+export const BotMessage = styled(Box)({
+  display: 'flex',
+  flexDirection:'column',
+  alignItems:'flex-end',
+  gap: '8px',
+  marginBottom: '24px',
+  
+});
+
+export const BotMessageBubble = styled(Box)({
+  backgroundColor: '#7ed8d7',
+  color: '#ffffff',
+  padding: '12px 16px',
+  borderRadius: '12px',
+  wordWrap: 'break-word',
+  maxWidth:'80%',
+});
+
+export const UserMessage = styled(Box)({
+  display: 'flex',
+  justifyContent: 'flex-start',
+  alignItems: 'flex-start',
+  gap: '8px',
+  marginBottom: '24px',
+});
+
+// User Message Bubble
+export const UserMessageBubble = styled(Box)({
+  backgroundColor: '#e9ecef',
+  color: '#000000',
+  padding: '12px 16px',
+  borderRadius: '12px',
+  maxWidth: '80%',
+  wordWrap: 'break-word',
 });
