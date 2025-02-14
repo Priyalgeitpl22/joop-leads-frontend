@@ -133,10 +133,10 @@ const Agents: React.FC = () => {
                       </StyledTableCell>
                       <StyledTableCell>{agent.email}</StyledTableCell>
                       <StyledTableCell>
-                        {agent.availability && agent.availability.length > 0 ? (
-                          agent.availability.map((slot, idx) => (
+                        {agent.schedule && agent.schedule.schedule.length > 0 ? (
+                          agent.schedule.schedule.map((slot, idx) => (
                             <div key={idx}>
-                              {slot.day} from {slot.from} to {slot.to}
+                              {slot.day} from {slot.hours[0].startTime} to {slot.hours[0].endTime}
                             </div>
                           ))
                         ) : (

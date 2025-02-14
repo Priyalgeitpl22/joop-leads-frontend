@@ -35,6 +35,7 @@ interface AuthState {
   token: string | null;
   loading: boolean;
   error: string | null;
+  success: string | null;
   passwordChangeSuccess: boolean;
 }
 
@@ -50,6 +51,22 @@ export const registerUser = createAsyncThunk(
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message || "Network error"
+      );
+    }
+  }
+);
+
+export const activateAccount = createAsyncThunk(
+  "auth/activate",
+  async (data: any, { rejectWithValue }) => {
+    try {
+      const response = await api.post("/auth/activate", data, {
+        headers: { "Content-Type": "application/json" },
+      });
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error?.response?.data?.message || error.message || "Network error"
       );
     }
   }
@@ -165,6 +182,7 @@ const userSlice = createSlice({
     token: Cookies.get("access_token") ?? null,
     loading: false,
     error: null,
+    success: null,
     passwordChangeSuccess: false,
   } as AuthState,
   reducers: {
@@ -281,7 +299,24 @@ const userSlice = createSlice({
         } else if (action.error.message) {
           state.error = action.error.message;
         }
-      });
+      })
+      .addCase(activateAccount.pending, (state) => {
+        state.loading = true;
+        state.success = null;
+      })
+      .addCase(activateAccount.fulfilled, (state) => {
+        state.loading = false;
+        state.success = "Account activated successfully!";
+      })
+      .addCase(activateAccount.rejected, (state, action) => {
+        state.loading = false;
+        state.success = null;
+        if (action.payload) {
+          state.error = action.payload as string;
+        } else if (action.error.message) {
+          state.error = action.error.message;
+        }
+      })
   },
 });
 

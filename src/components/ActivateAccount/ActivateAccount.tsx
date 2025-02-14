@@ -1,14 +1,58 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Typography } from "@mui/material";
-import { PageContainer, AuthCard, IllustrationSection, FormSection, StyledTextField, StyledButton } from "./activateAccount.styled"; // Import styled components
+import { useDispatch, useSelector } from "react-redux";
+import {
+  PageContainer,
+  AuthCard,
+  IllustrationSection,
+  FormSection,
+  StyledTextField,
+  StyledButton,
+} from "./activateAccount.styled";
+import { activateAccount } from "../../redux/slice/userSlice";
+import { AppDispatch, RootState } from "../../redux/store/store";
 
 const ActivateAccount = () => {
   const [password, setPassword] = useState("");
+  const [token, setToken] = useState<string | null>(null);
+  const [email, setEmail] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const dispatch = useDispatch<AppDispatch>();
+
+  const { loading, error, success } = useSelector((state: RootState) => state.user);
+
+  useEffect(() => {
+    const token = searchParams.get("token");
+    const email = searchParams.get("email");
+
+    if (token && email) {
+      setToken(token);
+      setEmail(email);
+    } else {
+      navigate("/login");
+    }
+  }, [searchParams, navigate]);
+
+  useEffect(() => {
+    if (success) {
+      navigate("/login");
+    }
+  }, [success, navigate]);
 
   const handleSubmitPassword = () => {
-    console.log("Reset link sent to:", password);
+    if (!password || !token || !email) {
+      return;
+    }
+    
+    const payload = {
+      token, 
+      password,
+      email
+    }
+    dispatch(activateAccount(payload)).unwrap();
   };
-
 
   return (
     <PageContainer>
@@ -16,29 +60,32 @@ const ActivateAccount = () => {
         <IllustrationSection>
           <img
             src="https://cdn.dribbble.com/users/2058540/screenshots/8225403/media/bc617eec455a72c77feab587e09daa96.gif"
-            alt="Forgot Password Illustration"
+            alt="Account Activation Illustration"
           />
         </IllustrationSection>
 
         <FormSection>
-              <Typography variant="h4" fontWeight="bold" mb={1}>
-                Activate Account
-              </Typography>
-              <Typography variant="body1" color="black" mb={3}>
-                Enter your new password to activate your account.
-              </Typography>
+          <Typography variant="h4" fontWeight="bold" mb={1}>
+            Activate Account
+          </Typography>
+          <Typography variant="body1" color="black" mb={3}>
+            Enter your new password to activate your account.
+          </Typography>
 
-              <StyledTextField
-                label="New Password"
-                variant="outlined"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+          {error && <Typography color="error">{error}</Typography>}
 
-              <StyledButton fullWidth onClick={handleSubmitPassword}>
-                Activate Account
-              </StyledButton>
+          <StyledTextField
+            label="New Password"
+            variant="outlined"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            disabled={loading}
+          />
+
+          <StyledButton fullWidth onClick={handleSubmitPassword} disabled={loading}>
+            {loading ? "Activating..." : "Activate Account"}
+          </StyledButton>
         </FormSection>
       </AuthCard>
     </PageContainer>

@@ -20,7 +20,7 @@ import {
 import { AddAPhoto } from "@mui/icons-material";
 import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
-import { createAgent } from "../../../../redux/slice/agentsSlice";
+import { createAgent, updateAgent } from "../../../../redux/slice/agentsSlice";
 import {
   DialogContainer,
   TabPanel,
@@ -36,16 +36,36 @@ interface Availability {
   to: string;
 }
 
+interface ScheduleSlot {
+  day: string;
+  hours: { startTime: string; endTime: string }[];
+}
+// export interface Agent {
+//   id?: string;
+//   fullName: string;
+//   email: string;
+//   phone: string;
+//   profilePicture: string;
+//   role: string;
+//   schedule: {
+//     timeZone: string;
+//     schedule: ScheduleSlot[];
+//   };
+// }
+
 export interface Agent {
+  id: string;
   fullName: string;
   email: string;
-  phone: string;
-  profilePicture: string;
-  timezone: string;
   role: string;
-  availability: Availability[];
+  orgId: string;
+  profilePicture: string;
+  phone?: string;
+  schedule: {
+    timeZone: string;
+    schedule: ScheduleSlot[];
+  };
 }
-
 interface AgentDialogProps {
   open: boolean;
   onClose: () => void;
@@ -57,9 +77,16 @@ const defaultAgent: Agent = {
   email: "",
   phone: "",
   profilePicture: "",
-  timezone: "UTC -05:00 Eastern Time",
+  // timezone: "UTC -05:00 Eastern Time",
   role: "Agent",
-  availability: [{ day: "Monday", from: "09:00", to: "17:00" }],
+  schedule: {
+    timeZone: "UTC -05:00 Eastern Time",
+    schedule: [
+      { day: "Monday", hours: [{ startTime: "09:00", endTime: "17:00" }] },
+    ],
+  },
+  id: "",
+  orgId: "",
 };
 
 const steps = ["Personal Details", "Schedule"];
@@ -104,26 +131,56 @@ const AgentDialog: React.FC<AgentDialogProps> = ({ open, onClose, agent }) => {
   };
 
   // Add a new availability slot
-  const handleAddAvailability = () => {
+  const handleAddSchedule = () => {
     setFormData((prev) => ({
       ...prev,
-      availability: [
-        ...prev.availability,
-        { day: "Monday", from: "", to: "" },
-      ],
+      schedule: {
+        ...prev.schedule,
+        schedule: [
+          ...prev.schedule.schedule,
+          { day: "Monday", hours: [{ startTime: "", endTime: "" }] },
+        ],
+      },
     }));
   };
 
-  const handleAvailabilityChange = (
+  const handleScheduleChange = (
     index: number,
-    field: keyof Availability,
+    field: keyof ScheduleSlot,
     value: string
   ) => {
     setFormData((prev) => {
-      const updatedAvailability = prev.availability.map((slot, i) =>
+      const updatedSchedule = prev.schedule.schedule.map((slot, i) =>
         i === index ? { ...slot, [field]: value } : slot
       );
-      return { ...prev, availability: updatedAvailability };
+      return {
+        ...prev,
+        schedule: { ...prev.schedule, schedule: updatedSchedule },
+      };
+    });
+  };
+
+  const handleHoursChange = (
+    index: number,
+    hourIndex: number,
+    field: keyof ScheduleSlot["hours"][0],
+    value: string
+  ) => {
+    setFormData((prev) => {
+      const updatedSchedule = prev.schedule.schedule.map((slot, i) => {
+        if (i === index) {
+          const updatedHours = slot.hours.map((hour, hIndex) =>
+            hIndex === hourIndex ? { ...hour, [field]: value } : hour
+          );
+          return { ...slot, hours: updatedHours };
+        }
+        return slot;
+      });
+
+      return {
+        ...prev,
+        schedule: { ...prev.schedule, schedule: updatedSchedule },
+      };
     });
   };
 
@@ -131,41 +188,43 @@ const AgentDialog: React.FC<AgentDialogProps> = ({ open, onClose, agent }) => {
   const handleBack = () => setActiveStep((prev) => prev - 1);
 
   const handleSave = () => {
-    const scheduleData = {
-      timeZone: formData.timezone,
-      schedule: formData.availability.map((slot) => ({
-        day: slot.day, hours: [{
-          startTime: slot.from, endTime: slot.to
-        }]
-      }))
-    };
-
     const payload = {
       email: formData.email,
       fullName: formData.fullName,
       phone: formData.phone,
       role: formData.role,
       orgId: user!.orgId,
+      aiOrgId: user?.aiOrgId,
       profilePicture: selectedFile || undefined,
-      schedule: scheduleData
+      schedule: formData.schedule,
     };
-    console.log(payload,"payload")
 
-    dispatch(createAgent(payload) as any)
-      .unwrap()
-      .then(() => {
-        console.log("Agent created successfully");
-        window.location.reload();
-      })
-      .catch((error: any) => {
-        console.error("Error creating agent:", error);
-      });
-
+    if (agent) {
+      dispatch(updateAgent({ agentId: agent.id ?? "", data: payload }) as any)
+        .unwrap()
+        .then(() => {
+          console.log("Agent updated successfully");
+          window.location.reload();
+        })
+        .catch((error: any) => {
+          console.error("Error updating agent:", error);
+        });
+    } else {
+      dispatch(createAgent(payload) as any)
+        .unwrap()
+        .then(() => {
+          console.log("Agent created successfully");
+          window.location.reload();
+        })
+        .catch((error: any) => {
+          console.error("Error creating agent:", error);
+        });
+    }
     setFormData(defaultAgent);
     setActiveStep(0);
     onClose();
   };
-  console.log(formData, "formData")
+  console.log(formData, "formData");
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogContainer>
@@ -250,7 +309,7 @@ const AgentDialog: React.FC<AgentDialogProps> = ({ open, onClose, agent }) => {
                   <Select
                     label="Time Zone"
                     name="timezone"
-                    value={formData.timezone}
+                    value={formData.schedule.timeZone}
                     onChange={handleSelectChange}
                   >
                     <MenuItem value="UTC -05:00 Eastern Time">
@@ -263,12 +322,12 @@ const AgentDialog: React.FC<AgentDialogProps> = ({ open, onClose, agent }) => {
                 </FormControl>
                 <AvailabilityContainer>
                   <InputLabel>Availability</InputLabel>
-                  {formData.availability.map((slot, index) => (
+                  {formData.schedule.schedule.map((slot, index) => (
                     <div key={index} className="availability-row">
                       <Select
                         value={slot.day}
                         onChange={(e) =>
-                          handleAvailabilityChange(index, "day", e.target.value)
+                          handleScheduleChange(index, "day", e.target.value)
                         }
                         variant="outlined"
                       >
@@ -284,27 +343,32 @@ const AgentDialog: React.FC<AgentDialogProps> = ({ open, onClose, agent }) => {
                       </Select>
                       <TextField
                         type="time"
-                        value={slot.from}
+                        value={slot.hours[0].startTime}
                         onChange={(e) =>
-                          handleAvailabilityChange(index, "from", e.target.value)
+                          handleHoursChange(
+                            index,
+                            0,
+                            "startTime",
+                            e.target.value
+                          )
                         }
                         variant="outlined"
                       />
                       <TextField
                         type="time"
-                        value={slot.to}
+                        value={slot.hours[0].endTime}
                         onChange={(e) =>
-                          handleAvailabilityChange(index, "to", e.target.value)
+                          handleHoursChange(index, 0, "endTime", e.target.value)
                         }
                         variant="outlined"
                       />
                     </div>
                   ))}
                   <Button
-                    onClick={handleAddAvailability}
+                    onClick={handleAddSchedule}
                     variant="outlined"
                     sx={{
-                      width: '150px'
+                      width: "150px",
                     }}
                   >
                     + Add Hours
@@ -338,7 +402,7 @@ const AgentDialog: React.FC<AgentDialogProps> = ({ open, onClose, agent }) => {
               <Button
                 variant="contained"
                 onClick={handleSave}
-                sx={{ textTransform: "none", backgroundColor: '#6fc8c7' }}
+                sx={{ textTransform: "none", backgroundColor: "#6fc8c7" }}
               >
                 Save
               </Button>
