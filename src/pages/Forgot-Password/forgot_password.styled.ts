@@ -42,6 +42,7 @@ export const FormSection = styled(Box)`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items:
 `;
 
 export const StyledTextField = styled(TextField)`

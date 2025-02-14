@@ -5,7 +5,7 @@ import Header from "./components/Header/Header";
 import Home from "./pages/Home";
 import Login from "./pages/Login/Login";
 import Register from "./pages/Register/Register";
-import ForgotPassword from "./pages/Forgot-Password/Forgot_Password";
+import ForgotPassword from "./pages/Forgot-Password/ForgotPassword";
 import VerifyOtp from "./pages/Verify-OTP/VerifyOtp";
 import Configuration from "./components/Settings/Configuration/Configuration";
 import Agents from "./components/Settings/Agents/Agents";
@@ -19,6 +19,8 @@ import { getUserDetails } from "./redux/slice/userSlice";
 import Organization from "./components/Organization/Organization";
 import { SocketProvider } from "./context/SocketContext";
 import ActivateAccount from "./components/ActivateAccount/ActivateAccount";
+import PasswordResetConfirmation from "./pages/Forgot-Password/PasswordResetConfirmation";
+import ResetPassword from "./pages/Forgot-Password/ResetPassword";
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -50,7 +52,9 @@ const App: React.FC = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/verify-otp" element={<VerifyOtp />} />
+        <Route path="/confirmation" element={<PasswordResetConfirmation />} />
         <Route path="/change-password" element={<ChangePassword />} />
         <Route path="/activate-account" element={<ActivateAccount />} />
         <Route
