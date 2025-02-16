@@ -6,7 +6,7 @@ export const PageContainer = styled(Box)`
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: #f5f5f5;
+  background: #ffffff;
 `;
 
 export const ChangePasswordCard = styled(Card)`

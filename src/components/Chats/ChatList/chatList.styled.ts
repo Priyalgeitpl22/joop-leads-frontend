@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 export const ChatListContainer = styled(Box)({
   width: 300,
   borderRight: '1px solid rgba(0, 0, 0, 0.12)',
-  height: '600px',
+  height: '100%',
   display: 'flex',
   flexDirection: 'column',
 });
@@ -28,11 +28,11 @@ export const ChatListItem = styled(motion.create(ListItem), {
   shouldForwardProp: (prop) => prop !== 'active',
 })<ChatListItemProps>(({ active }) => ({
   '&:hover': {
-    backgroundColor: '#e5f5f7',
+    backgroundColor: 'var(--theme-color)',
     cursor: 'pointer',
   },
   padding: '12px 16px',
-  backgroundColor: active ? '#e5f5f7' : 'transparent',
+  backgroundColor: active ? 'var(--theme-color)' : 'transparent',
   borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
 }));
 

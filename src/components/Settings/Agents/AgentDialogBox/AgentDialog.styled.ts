@@ -21,8 +21,6 @@ export const FormGroup = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-top: 10px;
-
 `;
 
 export const AvatarWrapper = styled.div`
@@ -37,7 +35,6 @@ export const AvailabilityContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
-  margin-top: 24px;
 
   .availability-row {
     display: flex;

@@ -1,26 +1,35 @@
-import { Bell, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { HeaderContainer } from "../../styles/layout.styled";
-import { SearchBar, NotificationBell } from "../Header/header.styled";
+import {
+  AppSubtitle,
+  AppTitle,
+  LogoContainer,
+  ProfileNameContainer,
+  SearchBar,
+  TitleContainer,
+} from "../Header/header.styled";
 import UserProfileMenu from "../User-Profile/UserProfile";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState, AppDispatch } from "../../redux/store/store";
-import { useEffect, useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
-import Cookies from "js-cookie";
-import { getUserDetails } from "../../redux/slice/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../redux/store/store";
+import { useState, useCallback, useEffect } from "react";
 import { StatusIndicator } from "../Chats/ChatSideBar/chatSidebar.styled";
 import { Switch, Typography } from "@mui/material";
 import { useSocket } from "../../context/SocketContext";
+import Cookies from "js-cookie";
+import { getUserDetails } from "../../redux/slice/userSlice";
+import { useNavigate } from "react-router-dom";
+import NotificationComponent from "../Notification/NotificationComponent";
+import logo from "../../../public/logo3.png";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 const Header = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.user);
   const { socket } = useSocket();
-  const [isOnline, setIsOnline] = useState(true);
+  const [isOnline, setIsOnline] = useState<boolean>(false);
   const [onlineUsers, setOnlineUsers] = useState<Record<string, boolean>>({});
+  const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
 
-  // Handle status change toggle
   const handleStatusChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const online = event.target.checked;
@@ -33,28 +42,30 @@ const Header = () => {
         });
       }
     },
-    [socket, user?.id]
+    [socket, user?.id, isOnline]
   );
 
-  // Fetch user details if not available
   useEffect(() => {
     const token = Cookies.get("access_token");
     if (!user && token) {
-      dispatch(getUserDetails()).catch(() => navigate("/login"));
+      dispatch(getUserDetails(token)).catch(() => navigate("/login"));
     } else if (!token) {
       navigate("/login");
     }
   }, [user, dispatch, navigate]);
 
-  // Handle socket connection for online status tracking
   useEffect(() => {
     if (!socket || !user?.id) return;
 
-    socket.emit("agentOnline", {
-      id: user.id,
-      online: isOnline,
-      name: user.fullName,
-    });
+    setIsOnline(user.online);
+
+    if (user.online) {
+      socket.emit("agentOnline", {
+        id: user.id,
+        online: isOnline,
+        name: user.fullName,
+      });
+    }
 
     const handleAgentStatusUpdate = ({
       userId,
@@ -75,34 +86,58 @@ const Header = () => {
 
   return (
     <HeaderContainer>
+      <LogoContainer>
+        <img src={logo} style={{ width: "75px", height: "75px" }}></img>
+        <TitleContainer>
+          <AppTitle>Golden Bot</AppTitle>
+          <AppSubtitle>Automate, Assist, Accelerate</AppSubtitle>
+        </TitleContainer>
+      </LogoContainer>
       <SearchBar>
         <Search size={20} color="#64748b" />
         <input placeholder="Search conversations..." />
       </SearchBar>
-      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-        <StatusIndicator online={isOnline} />
-        <Typography variant="subtitle2">
-          {isOnline ? "You're available" : "You're offline"}
-        </Typography>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          flexDirection: "column",
+          padding: "6px",
+        }}
+      >
         <Switch
           checked={isOnline}
           onChange={handleStatusChange}
           inputProps={{ "aria-label": "controlled" }}
         />
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: "2px",
+          }}
+        >
+          <Typography variant="h6" sx={{ mt: 0.5, fontSize: "14px" }}>
+            {isOnline ? "Online" : "Offline"}
+          </Typography>
+          <StatusIndicator online={isOnline} />
+        </div>
       </div>
-      <NotificationBell>
-        <Bell size={20} />
-      </NotificationBell>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        {user && <p>{user.fullName}</p>}
-        <UserProfileMenu />
-      </div>
+      <NotificationComponent />
+      {user && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <LogoContainer>
+            <UserProfileMenu />
+          </LogoContainer>
+        </div>
+      )}
     </HeaderContainer>
   );
 };

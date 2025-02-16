@@ -15,7 +15,7 @@ export const AuthCard = styled(Box)`
   width: 100%;
   max-width: 900px;
   display: flex;
-  overflow: hidden;
+  overflow: auto;
 `;
 
 export const IllustrationSection = styled(Box)`

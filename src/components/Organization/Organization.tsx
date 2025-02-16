@@ -91,7 +91,6 @@ const OrganizationForm: React.FC = () => {
     }
   }, [data]);
 
-  // For text fields
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setValues(prevValues => ({
@@ -100,7 +99,6 @@ const OrganizationForm: React.FC = () => {
     }));
   };
 
-  // Separate handler for Select component using proper event type
   const handleSelectChange = (event: SelectChangeEvent<string>) => {
     const { name, value } = event.target;
     setValues(prevValues => ({

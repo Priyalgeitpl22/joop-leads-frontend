@@ -1,14 +1,20 @@
-  import styled from "@emotion/styled";
-  import { IconButton, TableCell, TableContainer, TableHead} from "@mui/material";
-  import {motion} from 'framer-motion';
+import styled from "@emotion/styled";
+import { IconButton, TableCell, TableContainer, TableHead } from "@mui/material";
+import { motion } from 'framer-motion';
 
-  export const AgentsContainer = styled.div`
-    width:100%;
-    height: 100%;
-    margin-left:15px;
-  `;
-
-  export const AgentHeader = styled.section`
+export const AgentsContainer = styled.div`
+  width: 100%;
+  height: 98%;
+  display: flex;
+  border-radius: 8px;
+  overflow: auto;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background: white;
+  position: relative;
+  flex-direction: column;
+  background: red;
+`;
+export const AgentHeader = styled.section`
     width:100%;
     display: flex;
     align-items: center;
@@ -16,18 +22,18 @@
     border-radius: 8px;
   `;
 
-  export const SectionTitle = styled.h2`
+export const SectionTitle = styled.h2`
     font-size: 2rem;
     font-weight: 600;
     color: #35495c;
     display: flex;
   `;
-  export const CreateAgent = styled(motion.button)`
+export const CreateAgent = styled(motion.button)`
     font-weight: bold;
     padding: 12px;
     border: none;
     border-radius: 8px;
-    background: linear-gradient(135deg, #7ed8d6, #4ca4a5);
+    background: linear-gradient(135deg, var(--theme-color), #4ca4a5);
     color: #ffffff;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
@@ -47,15 +53,14 @@
       box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
     }
   `;
-  export const AgentTable = styled.div`
+export const AgentTable = styled.div`
     width: 100%;
-    margin-top: 20px;
     display: flex;
     flex-direction: column;
     box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.4);
-  `;  
+  `;
 
-  export const StyledTableContainer = styled(TableContainer)`
+export const StyledTableContainer = styled(TableContainer)`
     max-height: 400px;
     overflow-y: auto;
     &::-webkit-scrollbar {
@@ -67,7 +72,7 @@
     }
   
     &::-webkit-scrollbar-thumb {
-      background: linear-gradient(135deg, #7ed8d6, #4ca4a5);
+      background: linear-gradient(135deg, var(--theme-color), #4ca4a5);
       opacity: 0.5;
       border-radius: 10px; 
     }
@@ -77,20 +82,20 @@
     }
   `;
 
-  export const StyledTableHead = styled(TableHead)`
+export const StyledTableHead = styled(TableHead)`
     background-color: transparent;
     position: sticky;
     top: 0;
     z-index: 1;
   `;
 
-  export const StyledTableHeadCell = styled(TableCell)`
+export const StyledTableHeadCell = styled(TableCell)`
     color: #282828;
     font-weight: 600;
     font-size: 16px;
     background-color: #fafafa;
   `;
-  export const StyledTableCell = styled(TableCell)`
+export const StyledTableCell = styled(TableCell)`
   color: #222222;
   font-weight: 500;
   font-size: 16px;

@@ -1,44 +1,23 @@
 import styled from "@emotion/styled";
+import { Box } from "@mui/material";
 import { motion } from "framer-motion";
 import { Link, NavLink } from "react-router-dom";
 
-export const DashboardContainer = styled.div`
-  display: flex;
-  width: 100%;
-`;
-
 export const SidebarContainer = styled(motion.aside)`
-  width: 210px;
+  width: 220px;
+  padding: 20px;
+  height: 100vh !important;
   background-color: #ffffff;
   border-right: 1px solid #e2e8f0;
-  padding: 1.5rem;
-  position: fixed;
-  z-index: 40;
-  height: -webkit-fill-available;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 `;
 
 export const HeaderContainer = styled.header`
-  position: fixed;
-  top: 0;
-  left: 260px;
   height: 64px;
-  background-color: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
+  gap: 8px;
   display: flex;
   align-items: center;
-  padding: 0 2rem;
-  z-index: 30;
-  width: calc(100% - 300px);
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-`;
-
-export const MainContainer = styled.main` 
-  position:relative;
-  padding: 0.5rem 1rem;
-  margin-left: 240px;
-  margin-top: 50px;
-  width: auto;
+  padding: 10px;
+  background: var(--white-fade-gradient);
 `;
 
 export const Logo = styled.div`
@@ -67,13 +46,13 @@ export const NavItem = styled(Link)`
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 
   &:hover {
-    background-color: #e5f5f7;
+    background-color: var(--theme-color);
     color: #1e293b;
     border:none;
   }
 
   &.active {
-    background-color: #7ed8d6 ;
+    background-color: var(--theme-color) ;
     color: #1e293b;
   }
 `;
@@ -117,7 +96,35 @@ export const SubNavItem = styled(NavLink)`
   }
 
   &.active {
-    background: #e5f5f7;
+    background: var(--theme-color);
     color: #1e293b;
   }
+`;
+
+export const DashboardContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* Take full viewport height */
+  width: 100vw;
+  background: #ffffff; /* Change from red to a neutral background */
+`;
+
+export const MainContainer = styled.div`
+  display: flex;
+  flex: 1; /* Take available space */
+  width: 100%;
+  overflow: hidden;
+`;
+
+export const Sidebar = styled.div`
+  width: 250px; /* Fixed sidebar width */
+  background-color: #fff;
+  border-right: 1px solid #ddd;
+`;
+
+export const ContentArea = styled.div`
+  height: 100%;
+  flex-grow: 1;
+  padding: 5px 10px;
+  background-color: white;
 `;

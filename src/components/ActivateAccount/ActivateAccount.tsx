@@ -10,8 +10,8 @@ import {
   StyledTextField,
   StyledButton,
 } from "./activateAccount.styled";
-import { activateAccount } from "../../redux/slice/userSlice";
 import { AppDispatch, RootState } from "../../redux/store/store";
+import { activateAccount } from "../../redux/slice/authSlice";
 
 const ActivateAccount = () => {
   const [password, setPassword] = useState("");

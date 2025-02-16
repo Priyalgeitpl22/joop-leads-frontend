@@ -15,7 +15,7 @@ export const VerifyCard = styled(Box)`
   width: 100%;
   max-width: 800px;
   display: flex;
-  overflow: hidden;
+  overflow: auto;
 `;
 
 export const EmailSection = styled(Box)`

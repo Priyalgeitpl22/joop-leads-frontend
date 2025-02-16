@@ -25,8 +25,10 @@ import {
 } from "@mui/material";
 import { ContentCopy } from "@mui/icons-material";
 import ChatBot from "../../../components/ChatBot/ChatBot";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../redux/store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../redux/store/store";
+import { getScript, saveConfigurations } from "../../../redux/slice/chatSlice";
+import { ContentContainer } from "./configuration.styled";
 
 const Configuration = () => {
   const [settings, setSettings] = useState({
@@ -42,6 +44,7 @@ const Configuration = () => {
   const [embedCode, setEmbedCode] = useState("");
   const colors = ["#45607c", "#7ed8d7", "#b15194", "#f8b771", "#546db9"];
   const { user } = useSelector((state: RootState) => state.user);
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleChange = (field: string, value: string | boolean) => {
     setSettings((prev) => ({ ...prev, [field]: value }));
@@ -49,24 +52,22 @@ const Configuration = () => {
 
   const fetchScript = async () => {
     try {
-      const response = await fetch("http://localhost:5003/api/chat/config/script");
-      const scriptText = response.ok ? await response.text() : "// Failed to load script";
-      setEmbedCode(scriptText);
+      const response = await dispatch(getScript()).unwrap();
+      setEmbedCode(response);
     } catch (error) {
       console.error("Error fetching script:", error);
       setEmbedCode("// Error loading script");
     }
   };
-
+  
   const handleSave = async () => {
     try {
-      const response = await fetch("http://localhost:5003/api/chat/config/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({...settings, orgId: user?.orgId, aiOrgId: user?.aiOrgId}),
-      });
-      fetchScript();
-      if (response.ok) setActiveTab("tracking_code");
+      const response = await dispatch(
+        saveConfigurations({ ...settings, orgId: user?.orgId, aiOrgId: user?.aiOrgId })
+      ).unwrap();
+  
+      await fetchScript();
+      setActiveTab("tracking_code");
     } catch (error) {
       console.error("Error saving settings:", error);
     }
@@ -81,10 +82,8 @@ const Configuration = () => {
     if (newValue === "tracking_code") fetchScript();
   };
 
-  console.log(settings, "Settings")
-
   return (
-    <Box sx={{ width: "auto", ml: "15px", mt: "10px" }}>
+    <ContentContainer>
       <CustomTabs value={activeTab} onChange={handleTabChange}>
         <CustomTab label="Configure" value="configure" />
         <CustomTab label="Tracking code" value="tracking_code" />
@@ -233,7 +232,7 @@ const Configuration = () => {
           </motion.div>
         </SettingsContainer>
       )}
-    </Box>
+    </ContentContainer>
   );
 };
 

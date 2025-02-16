@@ -33,5 +33,4 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   return <SocketContext.Provider value={{ socket }}>{children}</SocketContext.Provider>;
 };
 
-// Custom hook to use the socket context
 export const useSocket = () => useContext(SocketContext);

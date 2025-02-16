@@ -11,7 +11,7 @@ export const SidebarContainer = styled(Box)({
   width: 240,
   backgroundColor: '#ffffff',
   borderRight: '1px solid #e0e0e0', 
-  height: '600px',
+  height: '100vh',
   overflowY: 'auto',
 });
 
@@ -22,16 +22,17 @@ export const StatusIndicator = styled("div", {
   height: 12,
   borderRadius: "50%",
   backgroundColor: online ? "#4caf50" : "red",
+  marginTop: '4px'
 }));
 
 export const SidebarItem = styled(ListItem, {
   shouldForwardProp: (prop) => prop !== 'active',
 })<SidebarItemProps>(({ active }) => ({
   '&:hover': {
-    backgroundColor: '#e5f5f7',
+    backgroundColor: 'var(--theme-color)',
     cursor: 'pointer',
   },
-  backgroundColor: active ? '#e5f5f7' : 'transparent',
+  backgroundColor: active ? 'var(--theme-color)' : 'transparent',
   position: 'relative',
 }));
 
@@ -41,7 +42,7 @@ export const ActiveIndicator = styled(motion.div)({
   top: 0,
   bottom: 0,
   width: 4,
-  backgroundColor: '#e5f5f7', 
+  backgroundColor: 'var(--theme-color)', 
   borderRadius: '0 4px 4px 0',
 });
 
@@ -57,3 +58,15 @@ export const CountBadge = styled(motion.div)({
   height: '20px',
   borderRadius: '10px'
 });
+
+export const ChatContainer = styled(Box)`
+  width: 100%;
+  height: 98%;
+  display: flex;
+  border-radius: 8px;
+  overflow: auto;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background: white;
+  position: relative;
+  // background: var(--white-fade-gradient);
+`;

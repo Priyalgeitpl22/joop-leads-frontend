@@ -12,7 +12,7 @@ import {
 } from "./VerifyOtp.styled";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { verifyOtp } from "../../redux/slice/userSlice";
+import { verifyOtp } from "../../redux/slice/authSlice";
 import { AppDispatch } from "../../redux/store/store";
 import Loader from "../../components/Loader";
 

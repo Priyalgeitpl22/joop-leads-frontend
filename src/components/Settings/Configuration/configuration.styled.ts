@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Tab, Tabs } from "@mui/material";
+import { Box, Tab, Tabs } from "@mui/material";
 import { MuiColorInput } from "mui-color-input";
 
 export const SettingsContainer = styled.div`
@@ -108,12 +108,12 @@ export const ColorCheckBox = styled.input`
   border: none;
   border-radius: 6px;
   color: #fff;
-  background-color: #7ed8d6;
+  background-color: var(--theme-color);
   cursor: pointer;
   font-size: 16px;
 
   :hover {
-    background-color: #7ed8d6;
+    background-color: var(--theme-color);
     opacity: 0.8;
   }
 `;
@@ -123,13 +123,13 @@ font-weight: bold;
 border: none;
 border-radius: 6px;
 color: #fff;
-background-color: #7ed8d6;
+background-color: var(--theme-color);
 cursor: pointer;
 font-size: 16px;
 margin: 8px 6px;
 
 :hover {
-  background-color: #7ed8d6;
+  background-color: var(--theme-color);
   opacity: 0.8;
 }
 `;
@@ -137,7 +137,7 @@ margin: 8px 6px;
 export const CustomTabs = styled(Tabs)`
   border-bottom: 2px solid #ddd;
   min-height: 40px;
-
+  padding: 12px 12px 0px 12px;
   .MuiTabs-indicator {
     background-color: #33475b; 
     height: 4px;
@@ -163,4 +163,17 @@ export const CustomTab = styled(Tab)`
     color:#33475b;
     opacity: 0.8;
   }
+`;
+
+export const ContentContainer = styled(Box)`
+  width: 100%;
+  height: 98%;
+  display: flex;
+  border-radius: 8px;
+  overflow: auto;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background: white;
+  position: relative;
+  flex-direction: column;
+  // background: var(--white-fade-gradient);
 `;

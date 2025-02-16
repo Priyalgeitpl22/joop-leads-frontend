@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { Typography } from "@mui/material";
 import { Facebook, Linkedin } from "lucide-react";
 import { useDispatch } from "react-redux";
-import { registerUser } from "../../redux/slice/userSlice";
+import { registerUser } from "../../redux/slice/authSlice";
 import { useNavigate } from "react-router-dom";
 import { AppDispatch } from "../../redux/store/store"; 
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';

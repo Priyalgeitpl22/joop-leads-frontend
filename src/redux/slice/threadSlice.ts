@@ -1,8 +1,16 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api from "../../services/api";
+import Cookies from "js-cookie";
+import { ThreadType } from "../../enums";
 
+export interface Thread {
+    id: string,
+    user: string,
+    type: ThreadType,
+    createdAt: string,
+}
 interface ThreadState {
-    threads: any[];
+    threads: Thread[];
     loading: boolean;
     error: string | null;
 }
@@ -13,13 +21,27 @@ const initialState: ThreadState = {
     error: null,
 };
 
+const token = Cookies.get("access_token");
+
 export const getAllThreads = createAsyncThunk(
     "threads/getAll",
     async (_, { rejectWithValue }) => {
         try {
-            const response = await api.get("/thread");
-            return response.data.data.threads;
+            const response = await api.get("/thread", {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            console.log("API Response:", response.data);
+
+            const threads = response.data?.data?.threads;
+
+            if (!Array.isArray(threads)) {
+                return rejectWithValue("Invalid API response format");
+            }
+
+            return threads;
         } catch (error: any) {
+            console.error("API Error:", error);
             return rejectWithValue(error.response?.data?.message || "Network error");
         }
     }

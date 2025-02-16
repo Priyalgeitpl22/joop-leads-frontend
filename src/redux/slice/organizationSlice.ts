@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import api from "../../services/api";
 import { AxiosError } from "axios";
+import Cookies from "js-cookie";
 
 interface Organization {
   id?: string;
@@ -23,14 +24,17 @@ interface OrganizationState {
   error: string | null;
 }
 
-// Async thunk to fetch organization details
+const token = Cookies.get("access_token");
+
 export const fetchOrganization = createAsyncThunk<
   { data: Organization },
   string,
   { rejectValue: string }
 >("organization/fetchOrganization", async (orgId, { rejectWithValue }) => {
   try {
-    const response = await api.get(`/org/?orgId=${orgId}`);
+    const response = await api.get(`/org/?orgId=${orgId}`, {
+      headers: { Authorization: `Bearer ${token}`}
+    });
     return response.data;
   } catch (error: unknown) {
     let errorMessage = "Something went wrong";
@@ -47,7 +51,9 @@ export const updateOrganization = createAsyncThunk<
   { rejectValue: string }
 >("organization/updateOrganization", async ({ orgId, data }, { rejectWithValue }) => {
   try {
-    const response = await api.put(`/org/?orgId=${orgId}`, data);
+    const response = await api.put(`/org/?orgId=${orgId}`, data, {
+      headers: { Authorization: `Bearer ${token}`}
+    });
     return response.data;
   } catch (error: unknown) {
     let errorMessage = "Something went wrong";

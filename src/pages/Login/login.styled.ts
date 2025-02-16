@@ -15,7 +15,7 @@ export const LoginCard = styled(Box)`
   width: 100%;
   max-width: 900px;
   display: flex;
-  overflow: hidden;
+  overflow: auto;
 `;
 
 export const IllustrationSection = styled(Box)`
@@ -78,7 +78,6 @@ export const SocialButtonsContainer = styled(Box)`
   display: flex;
   gap: 16px;
   justify-content: center;
-  margin-top: 24px;
 `;
 
 export const SocialButton = styled(IconButton)`
@@ -87,7 +86,7 @@ export const SocialButton = styled(IconButton)`
   transition: all 0.3s ease-in-out;
   
   &:hover {
-    background-color: #f5f5f5;
+    background-color: #ffffff;
     transform: scale(1.1);
   }
 `;

@@ -2,13 +2,14 @@ import styled from "@emotion/styled";
 import { Box, TextField, IconButton } from "@mui/material";
 
 export const ChatContainer = styled(Box)`
-  width: 360px;
-  margin: 10px auto;
+  width: 350px;
+  height: 98%;
   border-radius: 8px;
-  overflow: hidden;
+  overflow: auto;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   background: white;
   position: relative;
+  // background: var(--white-fade-gradient);
 `;
 
 export const Header = styled(Box)<{ bgcolor: string }>`

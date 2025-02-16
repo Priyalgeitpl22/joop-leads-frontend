@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import api from "../../services/api";
 import { AxiosError } from "axios";
+import Cookies from "js-cookie";
+
 interface ScheduleSlot {
   day: string;
   hours: { startTime: string; endTime: string }[];
@@ -34,13 +36,17 @@ interface CreateAgentPayload {
   schedule?:any
 }
 
+const token = Cookies.get("access_token");
+
 export const fetchAgents = createAsyncThunk<
   { data: Agent[] },
   string,
   { rejectValue: string }
 >("agents/fetchAgents", async (orgId, { rejectWithValue }) => {
   try {
-    const response = await api.get(`/agent/org/${orgId}`);
+    const response = await api.get(`/agent/org/${orgId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return response.data;
   } catch (error: unknown) {
     let errorMessage = "Something went wrong";
@@ -58,7 +64,7 @@ export const createAgent = createAsyncThunk<
 >("agents/createAgent", async (payload, { rejectWithValue }) => {
   try {
     const response = await api.post("/agent", payload, {
-      headers: { "Content-Type": "multipart/form-data" },
+      headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}`}
     });
     return response.data;
   } catch (error: unknown) {
@@ -74,12 +80,11 @@ export const updateAgent = createAsyncThunk<
   { data: Agent },
   { agentId: string; data: any },
   { rejectValue: string }
->(
-  "organization/updateAgent",
+>("organization/updateAgent",
   async ({ agentId, data }, { rejectWithValue }) => {
     try {
       const response = await api.put(`/agent?id=${agentId}`, data, {
-        headers: { "Content-Type": "multipart/form-data" }, // ✅ Ensure correct headers
+        headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` },
       });
       return response.data;
     } catch (error: unknown) {

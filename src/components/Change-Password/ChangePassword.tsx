@@ -10,8 +10,8 @@ import {
   StyledTextField,
   StyledButton,
 } from "./ChangePassword.styled";
-import { changePassword } from "../../redux/slice/userSlice";
 import { RootState, AppDispatch } from "../../redux/store/store";
+import { changePassword } from "../../redux/slice/authSlice";
 
 const ChangePassword: React.FC = () => {
   const navigate = useNavigate();
@@ -47,8 +47,6 @@ const ChangePassword: React.FC = () => {
     );
   };
 
-
-  // Redirect to home page after successful password change
   useEffect(() => {
     if (passwordChangeSuccess) {
       navigate("/");

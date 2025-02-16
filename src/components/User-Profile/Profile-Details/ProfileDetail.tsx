@@ -1,5 +1,4 @@
-// src/components/UserProfile/ProfileDetail.tsx
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Dialog, TextField, Button, Box } from "@mui/material";
 import {
   DialogHeader,
@@ -12,106 +11,88 @@ import {
 } from "./profileDetail.styled";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import EditIcon from "@mui/icons-material/Edit";
-
-interface UserData {
-  id: string;
-  email: string;
-  fullName: string;
-  role: string;
-  profilePicture?: string;
-}
+import { updateUserDetails } from "../../../redux/slice/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../redux/store/store";
 
 interface ProfileDetailProps {
   open: boolean;
   onClose: () => void;
-  userData: UserData | null;
 }
 
-interface FormData {
-  name: string;
-  email: string;
-  role: string;
-}
-
-const ProfileDetail: React.FC<ProfileDetailProps> = ({
-  open,
-  onClose,
-  userData,
-}) => {
-  // Form fields (excluding the profile picture) are stored here
-  const initialFormState: FormData = {
+const ProfileDetail: React.FC<ProfileDetailProps> = ({ open, onClose }) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const userData = useSelector((state: RootState) => state.user.user);
+  const [formData, setFormData] = useState({
     name: userData?.fullName || "",
     email: userData?.email || "",
     role: userData?.role || "",
-  };
+  });
 
-  const [formData, setFormData] = useState<FormData>(initialFormState);
-  // Separate state for the new profile photo preview
-  const [newProfilePicture, setNewProfilePicture] = useState<string>("");
-
-  // Ref for the hidden file input
+  const [newProfilePicture, setNewProfilePicture] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(userData?.profilePicture || null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Reset form when dialog opens or userData changes
   useEffect(() => {
     setFormData({
       name: userData?.fullName || "",
       email: userData?.email || "",
       role: userData?.role || "",
     });
-    setNewProfilePicture("");
-  }, [userData, open]);
+    setPreview(userData?.profilePicture || null);
+  }, [userData]);
 
-  // Handle text input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle file input change for profile photo preview (only for the new image)
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      const previewUrl = URL.createObjectURL(file);
-      setNewProfilePicture(previewUrl);
+      setNewProfilePicture(file);
+      setPreview(URL.createObjectURL(file));
     }
   };
 
-  // When saving, log the combined data; the final profile picture is the new one if available, otherwise the original.
-  const handleSave = () => {
-    const finalData = {
-      ...formData,
-      profilePicture: newProfilePicture || userData?.profilePicture || "",
-    };
-    console.log("Form Data:", finalData);
-    onClose();
+  const handleSave = async () => {
+    const formDataToSend = new FormData();
+    formDataToSend.append("id", userData?.id || "");
+    formDataToSend.append("name", formData.name);
+    formDataToSend.append("email", formData.email);
+    formDataToSend.append("role", formData.role);
+    
+    if (newProfilePicture) {
+      formDataToSend.append("profilePicture", newProfilePicture);
+    }
+
+    try {
+      await dispatch(updateUserDetails({ userData: formDataToSend })).unwrap();
+      onClose(); // Close the dialog after saving
+    } catch (error) {
+      console.error("Error updating user details:", error);
+    }
   };
 
-  // On cancel, clear the new image preview and reset text fields.
   const handleCancel = () => {
     setFormData({
-      name: "",
-      email: "",
-      role: "",
+      name: userData?.fullName || "",
+      email: userData?.email || "",
+      role: userData?.role || "",
     });
-    setNewProfilePicture("");
+    setNewProfilePicture(null);
+    setPreview(userData?.profilePicture || null);
     onClose();
   };
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      {/* Grey Box above header */}
       <Box sx={{ width: "100%", height: "80px", backgroundColor: "#dddddd" }}></Box>
-
-      {/* Header Area: Display profile image with edit icon overlay */}
       <DialogHeader>
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent:'center', width:'100%' }}>
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", width: "100%" }}>
           <Box sx={{ position: "relative", display: "inline-block" }}>
-            {newProfilePicture || userData?.profilePicture ? (
-              <ProfileImage
-                src={newProfilePicture || userData?.profilePicture}
-                alt="User profile"
-              />
+            {preview ? (
+              <ProfileImage src={preview} alt="User profile" />
             ) : (
               <AccountCircleIcon sx={{ fontSize: 80 }} />
             )}
@@ -135,12 +116,11 @@ const ProfileDetail: React.FC<ProfileDetailProps> = ({
               onChange={handleFileChange}
             />
           </Box>
-          <StyledTitle variant="h6">{userData?.fullName || "User"}</StyledTitle>
-          <StyledEmail>{userData?.email}</StyledEmail>
+          <StyledTitle variant="h6">{formData.name || "User"}</StyledTitle>
+          <StyledEmail>{formData.email}</StyledEmail>
         </Box>
       </DialogHeader>
 
-      {/* Form Fields */}
       <DialogBody dividers>
         <FieldWrapper>
           <TextField
@@ -176,12 +156,11 @@ const ProfileDetail: React.FC<ProfileDetailProps> = ({
         </FieldWrapper>
       </DialogBody>
 
-      {/* Footer (Actions) */}
       <DialogFooter>
         <Button variant="outlined" onClick={handleCancel} sx={{ mr: 1 }}>
           Cancel
         </Button>
-        <Button variant="contained" sx={{backgroundColor:'#66bfbe', fontWeight:600}} onClick={handleSave}>
+        <Button variant="contained" sx={{ backgroundColor: "#66bfbe", fontWeight: 600 }} onClick={handleSave}>
           Save changes
         </Button>
       </DialogFooter>

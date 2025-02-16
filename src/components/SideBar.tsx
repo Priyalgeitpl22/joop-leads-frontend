@@ -36,16 +36,15 @@ const Sidebar = () => {
       animate={sidebarAnimation.animate}
       transition={sidebarAnimation.transition}
     >
-      <Logo>
-        <Bot size={24} />
-        ChatDash
-      </Logo>
       <nav>
         <NavItem to="/" className={location.pathname === "/" ? "active" : ""}>
           <HomeIcon size={20} />
           Home
         </NavItem>
-        <NavItem to="/chats" className={location.pathname.startsWith("/chats") ? "active" : ""}>
+        <NavItem
+          to="/chats"
+          className={location.pathname.startsWith("/chats") ? "active" : ""}
+        >
           <MessageSquare size={20} />
           Chats
         </NavItem>
@@ -54,8 +53,24 @@ const Sidebar = () => {
           to="/organization"
           className={location.pathname === "/organization" ? "active" : ""}
         >
-          <Building size={20} />
+          <Building/>
           Organization
+        </NavItem>
+        <NavItem
+          to="/settings/configuration"
+          className={
+            location.pathname === "/settings/configuration" ? "active" : ""
+          }
+        >
+          <Sliders size={18} />
+          Configuration
+        </NavItem>
+        <NavItem
+          to="/settings/agents"
+          className={location.pathname === "/settings/agents" ? "active" : ""}
+        >
+          <Users size={18} />
+          Agents
         </NavItem>
         <SettingsWrapper>
           <div onClick={() => setIsSettingsOpen(!isSettingsOpen)}>
@@ -65,12 +80,12 @@ const Sidebar = () => {
                 location.pathname.includes("/settings") ? "active" : ""
               }
             >
-              <Settings size={20} />
+              <Settings />
               Settings
               {isSettingsOpen ? (
-                <ChevronUp size={16} style={{ marginLeft: "auto" }} />
+                <ChevronUp style={{ marginLeft: "auto" }} />
               ) : (
-                <ChevronDown size={16} style={{ marginLeft: "auto" }} />
+                <ChevronDown style={{ marginLeft: "auto" }} />
               )}
             </NavItem>
           </div>

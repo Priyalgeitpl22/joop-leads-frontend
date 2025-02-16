@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import api from "../../services/api";
+import Cookies from "js-cookie";
 
 interface Chat {
   id: string;
@@ -21,14 +22,60 @@ const initialState: chatState = {
   error: null,
 };
 
-export const getchats = createAsyncThunk(
+const token = Cookies.get("access_token");
+
+export const getChats = createAsyncThunk(
   "chats/getchats",
   async (threadId: string, { rejectWithValue }) => {
     try {
-      const response = await api.get(`/message/${threadId}`);
+      const response = await api.get(`/message/${threadId}`, {
+        headers: { Authorization: `Bearer ${token}`}
+      });
       return response.data.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data || "Failed to fetch chats");
+    }
+  }
+);
+
+export const getScript = createAsyncThunk(
+  "getScript",
+  async (_, { rejectWithValue }) => {
+    try {
+      const token = Cookies.get("access_token");
+      if (!token) return rejectWithValue("No authentication token found");
+
+      const response = await api.get(`/chat/config/script`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      console.log("API Response:", response.data);
+
+      return response.data?.data || {};
+    } catch (error: any) {
+      console.error("API Error:", error);
+      return rejectWithValue(error.response?.data || "Failed to fetch script");
+    }
+  }
+);
+
+export const saveConfigurations = createAsyncThunk(
+  "saveConfigurations",
+  async (settings: any, { rejectWithValue }) => {
+    try {
+      const token = Cookies.get("access_token");
+      if (!token) return rejectWithValue("No authentication token found");
+
+      const response = await api.post(`/chat/config`, settings, { 
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      console.log("API Response:", response.data);
+
+      return response.data?.data || {};
+    } catch (error: any) {
+      console.error("API Error:", error);
+      return rejectWithValue(error.response?.data || "Failed to save configurations");
     }
   }
 );
@@ -43,15 +90,15 @@ const chatSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getchats.pending, (state) => {
+      .addCase(getChats.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(getchats.fulfilled, (state, action: PayloadAction<Chat[]>) => {
+      .addCase(getChats.fulfilled, (state, action: PayloadAction<Chat[]>) => {
         state.loading = false;
         state.chats = action.payload;
       })
-      .addCase(getchats.rejected, (state, action) => {
+      .addCase(getChats.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });

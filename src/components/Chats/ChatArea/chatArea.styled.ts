@@ -5,7 +5,7 @@ export const ChatContainer = styled(Box)({
   flex: 1,
   display: 'flex',
   flexDirection: 'column',
-  height: '600px',
+  height: '100%',
   backgroundColor: '#fff',
 });
 
@@ -15,7 +15,7 @@ export const ChatHeader = styled(Box)({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  backgroundColor: '#7ed8d6',
+  backgroundColor: 'var(--theme-color)',
 });
 
 export const ChatMessages = styled(Box)({
@@ -65,7 +65,7 @@ export const PlaceholderContainer = styled(Box)({
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-  height: '100%',
+  height: '-webkit-fill-available',
   textAlign: 'center',
 });
 

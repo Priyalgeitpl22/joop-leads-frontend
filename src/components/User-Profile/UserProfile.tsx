@@ -1,15 +1,18 @@
-// src/components/UserProfile/UserProfileMenu.tsx
 import React, { useState } from "react";
-import { Menu, Typography, Box } from "@mui/material";
-import { ProfileIcon, StyledMenuItem } from "./UserProfile.styled";
+import { Menu, Typography, Box, IconButton } from "@mui/material";
+import {
+  ProfileIcon,
+  ProfileNameContainer,
+  StyledMenuItem,
+  UserProfileContainer,
+} from "./UserProfile.styled";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { logoutUser } from "../../redux/slice/userSlice";
+import { logoutUser } from "../../redux/slice/authSlice";
 import { AppDispatch, RootState } from "../../redux/store/store";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ProfileDetail from "./Profile-Details/ProfileDetail";
-
-// Define a User interface if not already defined
+import SettingsIcon from '@mui/icons-material/Settings';
 export interface User {
   id: string;
   email: string;
@@ -28,23 +31,19 @@ const UserProfileMenu: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useSelector((state: RootState) => state.user);
 
-  // Open the MUI Menu
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
-  // Close the MUI Menu
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
 
-  // Helper to close the menu, then perform an action
   const handleMenuItemClick = (action: () => void) => {
     handleMenuClose();
     action();
   };
 
-  // Logout logic
   const handleLogout = async () => {
     await dispatch(logoutUser());
     localStorage.setItem("logout", Date.now().toString());
@@ -55,40 +54,46 @@ const UserProfileMenu: React.FC = () => {
   const isMenuOpen = Boolean(anchorEl);
 
   return (
-    <Box>
-      {/* Profile icon or fallback icon */}
-      <ProfileIcon onClick={handleMenuOpen}>
-        {user?.profilePicture ? (
-          <img
-            src={user.profilePicture}
-            alt="Profile"
-            style={{
-              width: "40px",
-              height: "40px",
-              cursor: "pointer",
-              borderRadius: "50%",
-              objectFit: "cover",
-            }}
-          />
-        ) : (
-          <AccountCircleIcon
-            sx={{
-              color: "#64748b",
-              width: "30px",
-              height: "30px",
-              cursor: "pointer",
-              objectFit: "cover",
-            }}
-          />
-        )}
-      </ProfileIcon>
+    <UserProfileContainer>
+      <Box display="flex" alignItems="center" gap={1}>
+        <ProfileIcon onClick={handleMenuOpen} style={{ cursor: "pointer" }}>
+          {user?.profilePicture ? (
+            <img
+              src={user.profilePicture}
+              alt="Profile"
+              style={{ width: "50px", height: "50px", borderRadius: "20%" }}
+            />
+          ) : (
+            <AccountCircleIcon style={{ width: "50px", height: "50px" }} />
+          )}
+        </ProfileIcon>
+        <ProfileNameContainer>
+          <Typography
+            sx={{ fontWeight: "500 !important", fontSize: 16 }}
+            variant="subtitle2"
+            alignSelf={"self-end"}
+          >
+            {user?.fullName}
+          </Typography>
+          <Typography
+            sx={{ fontWeight: "500", fontSize: 14 }}
+            variant="body2"
+            color="textSecondary"
+            alignSelf={"self-start"}
+          >
+            {user?.role}
+          </Typography>
+        </ProfileNameContainer>
+        <IconButton onClick={handleMenuOpen}>
+          <SettingsIcon />
+        </IconButton>
+      </Box>
 
-      {/* MUI Menu */}
       <Menu
         anchorEl={anchorEl}
         open={isMenuOpen}
         onClose={handleMenuClose}
-        MenuListProps={{ "aria-labelledby": "basic-button" }}
+        MenuListProps={{ "aria-labelledby": "profile-menu-button" }}
         sx={{
           "& .MuiMenu-paper": {
             minWidth: "200px",
@@ -122,13 +127,12 @@ const UserProfileMenu: React.FC = () => {
         </StyledMenuItem>
       </Menu>
 
-      {/* Profile Detail Dialog */}
       <ProfileDetail
         open={isProfileOpen}
         onClose={() => setIsProfileOpen(false)}
         userData={user as User | null}
       />
-    </Box>
+    </UserProfileContainer>
   );
 };
 

@@ -1,12 +1,15 @@
 import styled from '@emotion/styled';
 import { Box, Typography, TextField, Button } from '@mui/material';
 
-export const FormContainer = styled(Box)({
-  width:'85%',
-  margin: '0.5rem',
-  padding: '20px',
-  borderRadius: '16px',
-});
+export const FormContainer = styled(Box)(`
+  width: fit-content;
+  height: 98%;
+  padding: 20px;
+  border-radius: 8px;
+  overflow: auto;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  // background: var(--white-fade-gradient);
+`);
 
 export const FormTitle = styled(Typography)({
   marginBottom: '30px',
@@ -34,7 +37,7 @@ export const StyledButton = styled(Button)({
   width:'150px',
   borderRadius: '30px',
   padding: '12px 24px',
-  background: `linear-gradient(135deg, #7ed8d6, #4ca4a5)`,
+  background: `linear-gradient(135deg, var(--theme-color), #4ca4a5)`,
   color: '#ffffff',
   fontWeight: 700,
   textTransform: 'none',

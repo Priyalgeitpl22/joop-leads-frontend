@@ -11,20 +11,13 @@ import {
 } from './chatList.styled';
 import { useSocket } from '../../../context/SocketContext';
 import { useDispatch } from 'react-redux';
-import { getAllThreads } from '../../../redux/slice/threadSlice';
+import { getAllThreads, Thread } from '../../../redux/slice/threadSlice';
 import { AppDispatch } from '../../../redux/store/store';
 
 const listItemVariants = {
   hidden: { opacity: 0, x: -20 },
   visible: { opacity: 1, x: 0 },
 };
-
-interface Thread {
-  id: string;
-  type: string;
-  createdAt: string;
-  // Include other thread properties if needed.
-}
 
 interface ChatListProps {
   threads: Thread[];
@@ -39,25 +32,21 @@ const ChatList: React.FC<ChatListProps> = ({ threads, onSelectThread, type }) =>
   const location = useLocation();
   const { socket } = useSocket();
   const dispatch = useDispatch<AppDispatch>();
-  // Helper function to format the timestamp similar to WhatsApp
-const formatTimestamp = (createdAt: string): string => {
+  const formatTimestamp = (createdAt: string): string => {
   const messageTime = new Date(createdAt);
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
 
   if (messageTime >= today) {
-    // If the message is from today, return time in 12-hour format with AM/PM.
     return messageTime.toLocaleTimeString([], { 
       hour: '2-digit', 
       minute: '2-digit', 
       hour12: true 
     });
   } else if (messageTime >= yesterday && messageTime < today) {
-    // If the message is from yesterday, show "Yesterday".
     return "Yesterday";
   } else {
-    // Otherwise, return a formatted date, e.g., "25 Mar, 2025"
     return messageTime.toLocaleDateString([], { 
       day: '2-digit', 
       month: 'short', 
@@ -87,7 +76,7 @@ const formatTimestamp = (createdAt: string): string => {
     <ChatListContainer>
       <ChatListHeader>
         <Typography variant="h6" sx={{ fontFamily: 'cursive', fontWeight: 600 }}>
-          Conversations  
+          Threads  
         </Typography>
       </ChatListHeader>
       <Box sx={{ overflowY: 'auto', flex: 1 }}>
@@ -113,7 +102,7 @@ const formatTimestamp = (createdAt: string): string => {
                     whileTap={{ scale: 0.98 }}
                   >
                     <ListItemAvatar>
-                      <Avatar sx={{ bgcolor: '#5db4b2', width: 32, height: 32 }}>
+                      <Avatar sx={{ bgcolor: 'var(--theme-color)', width: 32, height: 32 }}>
                         {threadType[0].toUpperCase()}
                       </Avatar>
                     </ListItemAvatar>

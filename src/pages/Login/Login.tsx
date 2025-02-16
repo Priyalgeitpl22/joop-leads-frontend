@@ -14,9 +14,11 @@ import {
 } from './login.styled';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { getUserDetails, loginUser } from '../../redux/slice/userSlice';
+import { loginUser } from '../../redux/slice/authSlice';
 import { AppDispatch, RootState } from '../../redux/store/store';
 import Loader from '../../components/Loader';
+import Cookies from "js-cookie";
+import { getUserDetails } from '../../redux/slice/userSlice';
 
 function Login() {
   // Local state for controlled inputs.
@@ -34,19 +36,25 @@ function Login() {
 
   useEffect(() => {
     if (loginSubmitted) {
-      dispatch(loginUser({ email, password }))
-        .unwrap()
-        .then(() => dispatch(getUserDetails()).unwrap()) 
-        .then(() => navigate('/'))
-        .catch((err) => {
+      (async () => {
+        try {
+          await dispatch(loginUser({ email, password })).unwrap();
+
+          const token = Cookies.get("access_token");
+          if (token) {
+            await dispatch(getUserDetails(token)).unwrap();
+          }
+
+          navigate('/');
+        } catch (err) {
           console.error('Login failed:', err);
-        })
-        .finally(() => {
+        } finally {
           setLoginSubmitted(false);
-        });
+        }
+      })();
     }
-  }, [loginSubmitted, dispatch, email, password, navigate]);
-  
+  }, [loginSubmitted, dispatch, navigate]);
+
   const handleSignIn = () => {
     setLoginSubmitted(true);
   };
