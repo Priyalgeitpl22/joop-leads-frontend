@@ -19,6 +19,7 @@ import { AppDispatch, RootState } from '../../redux/store/store';
 import Loader from '../../components/Loader';
 import Cookies from "js-cookie";
 import { getUserDetails } from '../../redux/slice/userSlice';
+import toast, { Toaster } from "react-hot-toast";
 
 function Login() {
   // Local state for controlled inputs.
@@ -32,7 +33,7 @@ function Login() {
   const navigate = useNavigate();
 
   // Retrieve login-related state from Redux.
-  const { loading, error } = useSelector((state: RootState) => state.user);
+  const { loading } = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
     if (loginSubmitted) {
@@ -45,9 +46,11 @@ function Login() {
             await dispatch(getUserDetails(token)).unwrap();
           }
 
+          toast.success("Logged in successfully!");
           navigate('/');
         } catch (err) {
           console.error('Login failed:', err);
+          toast.error("Login failed. Please try again.");
         } finally {
           setLoginSubmitted(false);
         }
@@ -110,13 +113,6 @@ function Login() {
           >
             SIGN IN
           </StyledButton>
-
-          {error && (
-            <Typography variant="body2" color="error" align="center" sx={{ my: 2 }}>
-              {error}
-            </Typography>
-          )}
-
           <Typography variant="body2" color="black" align="center" sx={{ my: 2 }}>
             Don't have an account?{' '}
             <RouterLink to="/register" style={{ textDecoration: 'none', color: 'var(--theme-color-dark)' }}>
@@ -147,6 +143,7 @@ function Login() {
       </LoginCard>
 
       {loading && <Loader />}
+      <Toaster />
     </PageContainer>
   );
 }

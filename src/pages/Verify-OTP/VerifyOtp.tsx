@@ -15,6 +15,7 @@ import { useDispatch } from "react-redux";
 import { verifyOtp } from "../../redux/slice/authSlice";
 import { AppDispatch } from "../../redux/store/store";
 import Loader from "../../components/Loader";
+import toast, { Toaster } from "react-hot-toast";
 
 const VerifyOtp = () => {
   const { state } = useLocation();
@@ -87,10 +88,12 @@ const VerifyOtp = () => {
         .unwrap()
         .then(result => {
           console.log("OTP verified successfully:", result);
+          toast.success("OTP verified successfully!");
           navigate("/login");
         })
         .catch(err => {
           console.error("OTP verification failed:", err);
+          toast.error("OTP verification failed. Please try again.");
         })
         .finally(() => {
           setOtpSubmitted(false);
@@ -147,6 +150,7 @@ const VerifyOtp = () => {
       </VerifyCard>
 
       {isLoading && <Loader />}
+      <Toaster />
     </PageContainer>
   );
 };

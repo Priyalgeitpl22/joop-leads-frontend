@@ -146,7 +146,32 @@ const agentsSlice = createSlice({
       .addCase(createAgent.rejected, (state, action: PayloadAction<string | undefined>) => {
         state.loading = false;
         state.error = action.payload || "Something went wrong";
-      });
+      })
+      .addCase(updateAgent.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(
+        updateAgent.fulfilled,
+        (state, action: PayloadAction<{ data: Agent }>) => {
+          state.loading = false;
+          if (state.data) {
+            const index = state.data.findIndex(
+              (agent) => agent.id === action.payload.data.id
+            );
+            if (index !== -1) {
+              state.data[index] = action.payload.data;
+            }
+          }
+        }
+      )
+      .addCase(
+        updateAgent.rejected,
+        (state, action: PayloadAction<string | undefined>) => {
+          state.loading = false;
+          state.error = action.payload || "Something went wrong";
+        }
+      );
   },
 });
 

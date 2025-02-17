@@ -63,11 +63,12 @@ export const StyledButton = styled(Button)`
   font-weight: bold;
   text-transform: none;
   transition: all 0.3s ease-in-out;
-  background: #0D899B;
+  background:  var(--theme-color);
   color: white;
 
   &:hover {
-    background: #4CA4A5;
+    background:  var(--theme-color);
+    opacity: 0.9;
   }
   .MuiOutlinedInput-input {
     padding: 12px 10px !important; 

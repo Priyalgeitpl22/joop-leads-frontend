@@ -22,6 +22,7 @@ import Login from "./pages/Login/Login";
 import Sidebar from "./components/SideBar";
 import Home from "./pages/Home/Home";
 import { SocketProvider } from "./context/SocketContext";
+import { Toaster } from "react-hot-toast";
 
 const AuthGuard = ({ children }: { children: JSX.Element }) => {
   const token = Cookies.get("access_token");
@@ -53,6 +54,7 @@ function AppRoutes() {
 
   return (
     <SocketProvider>
+    <Toaster position="top-center" />
       <Routes>
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />

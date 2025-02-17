@@ -6,7 +6,6 @@ export const PageContainer = styled(Box)`
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: #ffffff;
 `;
 
 export const ChangePasswordCard = styled(Card)`
@@ -46,11 +45,12 @@ export const StyledButton = styled(Button)`
   font-weight: bold;
   text-transform: none;
   transition: all 0.3s ease-in-out;
-  background: #0d899b;
+  background: var(--theme-color);
   color: white;
   width: 100%;
 
   &:hover {
     background: var(--theme-color);
+    opacity: 0.9;
   }
 `;

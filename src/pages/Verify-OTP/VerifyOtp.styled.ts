@@ -65,13 +65,14 @@ export const StyledButton = styled(Button)`
   font-weight: bold;
   text-transform: none;
   transition: all 0.3s ease-in-out;
-  background: #0d899b;
+  background:  var(--theme-color);
   color: white;
   width: 100%;
   max-width: 300px;
 
   &:hover {
     background: var(--theme-color);
+    opacity: 0.9;
   }
 `;
 

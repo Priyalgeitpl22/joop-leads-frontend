@@ -12,6 +12,7 @@ import {
 } from "../../components/ActivateAccount/activateAccount.styled";
 import { resetPassword } from "../../redux/slice/authSlice";
 import { AppDispatch, RootState } from "../../redux/store/store";
+import toast, { Toaster } from "react-hot-toast";
 
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
@@ -48,9 +49,11 @@ const ResetPassword = () => {
 
     try {
       await dispatch(resetPassword({ token, password, email })).unwrap();
-      console.log("Password reset successful");
+      toast.success("Password reset successful!");
+      navigate("/login");
     } catch (err) {
       console.error("Error resetting password:", err);
+      toast.error("Error resetting password. Please try again.");
     }
   };
 
@@ -88,6 +91,7 @@ const ResetPassword = () => {
           </StyledButton>
         </FormSection>
       </AuthCard>
+      <Toaster />
     </PageContainer>
   );
 };

@@ -14,6 +14,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import { updateUserDetails } from "../../../redux/slice/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../redux/store/store";
+import toast, {Toaster} from 'react-hot-toast';
+import Loader from "../../Loader";
 
 interface ProfileDetailProps {
   open: boolean;
@@ -32,6 +34,7 @@ const ProfileDetail: React.FC<ProfileDetailProps> = ({ open, onClose }) => {
   const [newProfilePicture, setNewProfilePicture] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(userData?.profilePicture || null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setFormData({
@@ -56,6 +59,7 @@ const ProfileDetail: React.FC<ProfileDetailProps> = ({ open, onClose }) => {
   };
 
   const handleSave = async () => {
+    setLoading(true);
     const formDataToSend = new FormData();
     formDataToSend.append("id", userData?.id || "");
     formDataToSend.append("name", formData.name);
@@ -68,9 +72,12 @@ const ProfileDetail: React.FC<ProfileDetailProps> = ({ open, onClose }) => {
 
     try {
       await dispatch(updateUserDetails({ userData: formDataToSend })).unwrap();
-      onClose(); // Close the dialog after saving
+      toast.success("User details updated successfully!");
+      onClose(); 
+      window.location.reload();
+      setLoading(false);
     } catch (error) {
-      console.error("Error updating user details:", error);
+      toast.error("Failed to update user details!");
     }
   };
 
@@ -160,10 +167,12 @@ const ProfileDetail: React.FC<ProfileDetailProps> = ({ open, onClose }) => {
         <Button variant="outlined" onClick={handleCancel} sx={{ mr: 1 }}>
           Cancel
         </Button>
-        <Button variant="contained" sx={{ backgroundColor: "#66bfbe", fontWeight: 600 }} onClick={handleSave}>
+        <Button variant="contained" sx={{ backgroundColor: `var(--theme-color)`, fontWeight: 600 }} onClick={handleSave}>
           Save changes
         </Button>
       </DialogFooter>
+      {loading && <Loader />}
+      <Toaster />
     </Dialog>
   );
 };

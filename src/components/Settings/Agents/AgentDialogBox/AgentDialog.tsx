@@ -33,6 +33,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import toast, {Toaster} from "react-hot-toast";
 
 interface ScheduleSlot {
   day: string;
@@ -264,9 +265,10 @@ const AgentDialog: React.FC<AgentDialogProps> = ({ open, onClose, agent }) => {
         .unwrap()
         .then(() => {
           console.log("Agent updated successfully");
-          window.location.reload();
+          toast.success("Agent updated successfully");
         })
         .catch((error: any) => {
+          toast.error("Failed to update agent");
           console.error("Error updating agent:", error);
         });
     } else {
@@ -274,10 +276,12 @@ const AgentDialog: React.FC<AgentDialogProps> = ({ open, onClose, agent }) => {
         .unwrap()
         .then(() => {
           console.log("Agent created successfully");
-          window.location.reload();
+          toast.success("Agent created successfully");
+          
         })
         .catch((error: any) => {
           console.error("Error creating agent:", error);
+          toast.error("Failed to create agent");
         });
     }
     setFormData(defaultAgent);
@@ -465,6 +469,7 @@ const AgentDialog: React.FC<AgentDialogProps> = ({ open, onClose, agent }) => {
           </>
         )}
       </DialogActions>
+      <Toaster />
     </Dialog>
   );
 };

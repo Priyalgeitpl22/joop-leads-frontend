@@ -12,6 +12,7 @@ import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { forgetPassword } from "../../redux/slice/authSlice"; // Import Redux action
 import { AppDispatch } from "../../redux/store/store";
+import toast, { Toaster } from "react-hot-toast";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -24,19 +25,22 @@ const ForgotPassword = () => {
   
     if (!email.trim()) {
       setError("Email is required");
+      toast.error("Email is required");
       return;
     }
     setError("");
     try {
       const response = await dispatch(forgetPassword({ email })).unwrap();
-      if(response.code === 200) {
+      if (response.code === 200) {
+        toast.success("Reset link sent successfully!");
         navigate('/confirmation');
       }
     } catch (err) {
       console.error("Error sending reset link:", err);
       setError("Failed to send reset link. Please try again.");
+      toast.error("Failed to send reset link. Please try again.");
     }
-  };  
+  };
 
   return (
     <PageContainer>
@@ -83,6 +87,7 @@ const ForgotPassword = () => {
           </Typography>
         </FormSection>
       </AuthCard>
+      <Toaster/>
     </PageContainer>
   );
 };

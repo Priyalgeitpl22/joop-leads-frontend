@@ -20,6 +20,7 @@ import {
 } from "./register.styled";
 import { Link as RouterLink } from "react-router-dom";
 import Loader from "../../components/Loader"; 
+import toast, { Toaster } from "react-hot-toast";
 
 interface RegisterFormData {
   profilePicture: File | null;
@@ -92,13 +93,14 @@ const Register = () => {
     if (formData.profilePicture) {
       payload.append("profilePicture", formData.profilePicture);
     }
-    
     try {
       const result = await dispatch(registerUser(payload)).unwrap();
       console.log("Registration successful:", result);
+      toast.success("Registration successful!");
       navigate("/verify-otp", { state: { email: formData.email } });
     } catch (err) {
       console.error("Registration failed:", err);
+      toast.error("Registration failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -193,6 +195,7 @@ const Register = () => {
       </RegisterCard>
 
       {isLoading && <Loader />}
+      <Toaster />
     </PageContainer>
   );
 };

@@ -12,6 +12,7 @@ import {
 } from "./ChangePassword.styled";
 import { RootState, AppDispatch } from "../../redux/store/store";
 import { changePassword } from "../../redux/slice/authSlice";
+import toast,{Toaster} from "react-hot-toast";
 
 const ChangePassword: React.FC = () => {
   const navigate = useNavigate();
@@ -20,24 +21,24 @@ const ChangePassword: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState<string>("");
 
   const dispatch = useDispatch<AppDispatch>();
-  const { user, loading, error, passwordChangeSuccess } = useSelector((state: RootState) => state.user);
+  const { user, loading, passwordChangeSuccess } = useSelector((state: RootState) => state.user);
 
   const handleChangePassword = () => {
     if (!existingPassword || !newPassword || !confirmPassword) {
-      alert("All fields are required!");
+      toast.error("All fields are required!");
       return;
     }
-
+    
     if (newPassword !== confirmPassword) {
-      alert("New password and confirm password do not match!");
+      toast.error("New password and confirm password do not match!");
       return;
     }
-
+    
     if (!user) {
-      alert("User not found. Please log in again.");
+      toast.error("User not found. Please log in again.");
       return;
     }
-
+    
     dispatch(
       changePassword({
         email: user.email,
@@ -45,11 +46,15 @@ const ChangePassword: React.FC = () => {
         newPassword,
       })
     );
-  };
-
+  };  
   useEffect(() => {
-    if (passwordChangeSuccess) {
-      navigate("/");
+    try {  
+      if (passwordChangeSuccess) {
+        toast.success("Password changed successfully!");
+        navigate("/");
+      }
+    } catch (error) {
+      toast.error("Error changing password. Please try again."); 
     }
   }, [passwordChangeSuccess]);
 
@@ -97,11 +102,7 @@ const ChangePassword: React.FC = () => {
             onChange={(e) => setConfirmPassword(e.target.value)}
             margin="normal"
           />
-          {error && (
-            <Typography variant="body2" color="error" mt={1}>
-              {error}
-            </Typography>
-          )}
+          
           <StyledButton
             variant="contained"
             onClick={handleChangePassword}
@@ -111,6 +112,7 @@ const ChangePassword: React.FC = () => {
           </StyledButton>
         </FormSection>
       </ChangePasswordCard>
+      <Toaster />
     </PageContainer>
   );
 };

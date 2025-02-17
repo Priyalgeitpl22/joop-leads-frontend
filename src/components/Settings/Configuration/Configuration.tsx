@@ -30,6 +30,7 @@ import { AppDispatch, RootState } from "../../../redux/store/store";
 import { getScript, saveConfigurations } from "../../../redux/slice/chatSlice";
 import { ContentContainer } from "./configuration.styled";
 import Loader from "../../Loader";
+import toast, {Toaster} from "react-hot-toast";
 
 const Configuration = () => {
   const [settings, setSettings] = useState({
@@ -55,9 +56,13 @@ const Configuration = () => {
   const fetchScript = async () => {
     try {
       const response = await dispatch(getScript()).unwrap();
+      if(response){
+        toast.success("Script fetched successfully");
+      }
       setEmbedCode(response);
     } catch (error) {
       console.error("Error fetching script:", error);
+      toast.error("Error fetching script");
       setEmbedCode("// Error loading script");
     }
   };
@@ -65,7 +70,7 @@ const Configuration = () => {
   const handleSave = async () => {
     setLoading(true);
     try {
-      const response = await dispatch(
+      await dispatch(
         saveConfigurations({ ...settings, orgId: user?.orgId, aiOrgId: user?.aiOrgId })
       ).unwrap();
   
@@ -241,6 +246,7 @@ const Configuration = () => {
       {loading && (
         <Loader />
       )}
+      <Toaster />
     </ContentContainer>
   );
 };

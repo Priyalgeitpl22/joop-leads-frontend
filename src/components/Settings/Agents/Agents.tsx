@@ -19,6 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../redux/store/store";
 import { Agent, fetchAgents } from "../../../redux/slice/agentsSlice";
 import Loader from "../../../components/Loader";
+import toast, {Toaster} from "react-hot-toast";
 
 const Agents: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -27,26 +28,28 @@ const Agents: React.FC = () => {
   const [editingAgent, setEditingAgent] = useState<Agent | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const { user } = useSelector((state: RootState) => state.user);
+  const {data} = useSelector((state: RootState) => state.agents);
 
   useEffect(() => {
-    const fetchAndSetAgents = async () => {
-      if (!user) {
-        console.error("User is not defined");
-        return;
-      }
-      setLoading(true);
-      const resultAction = await dispatch(fetchAgents(user.orgId));
-      if (fetchAgents.fulfilled.match(resultAction)) {
-        setAgents(resultAction.payload.data || []);
-      } else {
-        console.error("Failed to fetch agents:", resultAction.payload);
-      }
-      setTimeout(() => {
-        setLoading(false);
-      }, 1000);
-    };
-    fetchAndSetAgents();
-  }, [dispatch, user?.orgId]);
+    if(data){
+      setAgents(data);
+    }
+  }, [data]);
+  useEffect(() => {
+    setLoading(true);
+    if (user) {
+      dispatch(fetchAgents(user.orgId))
+        .unwrap()
+        .then(() => {
+          setLoading(false);
+          toast.success("Agents fetched successfully");
+        })
+        .catch((error) => {
+          console.error("Failed to fetch agents:", error);
+          toast.error("Failed to fetch agents");
+        });
+    }
+  }, [dispatch, user]);
 
   const handleOpenDialog = () => {
     setEditingAgent(null);
@@ -177,6 +180,7 @@ const Agents: React.FC = () => {
           </Table>
         </StyledTableContainer>
       </AgentTable>
+      <Toaster />
     </AgentsContainer>
   );
 };
