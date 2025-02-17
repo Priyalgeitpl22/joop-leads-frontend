@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
   HomeIcon,
   Settings,
-  Bot,
   ChevronDown,
   ChevronUp,
   Sliders,
@@ -12,7 +11,6 @@ import {
 } from "lucide-react";
 import {
   SidebarContainer,
-  Logo,
   NavItem,
   SubNavItem,
   SubmenuWrapper,

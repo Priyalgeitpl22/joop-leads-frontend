@@ -102,15 +102,15 @@ export const ColorCheckBox = styled.input`
   `;
 
   export const SaveButton = styled.button`
-  font-weight: bold;
-  padding: 8px 24px;
-  position:absolute;
+  font-weight: semibold;
+  width:100px;
+  padding: 8px 12px;
   border: none;
   border-radius: 6px;
-  color: #fff;
-  background-color: var(--button-theme-color);
+  color: #1e293b;
+  background-color:var(--theme-color);
   cursor: pointer;
-  font-size: 16px;
+  font-size: 16px;  
 
   :hover {
     background-color: var(--theme-color);
@@ -135,7 +135,6 @@ margin: 8px 6px;
 `;
 
 export const CustomTabs = styled(Tabs)`
-  border-bottom: 2px solid #ddd;
   min-height: 40px;
   padding: 12px 12px 0px 12px;
   .MuiTabs-indicator {
@@ -167,7 +166,7 @@ export const CustomTab = styled(Tab)`
 
 export const ContentContainer = styled(Box)`
   width: 100%;
-  height: 98%;
+  height: 100%;
   display: flex;
   border-radius: 8px;
   overflow: auto;

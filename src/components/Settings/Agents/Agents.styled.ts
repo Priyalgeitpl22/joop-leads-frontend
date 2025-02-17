@@ -3,7 +3,7 @@ import { IconButton, TableCell, TableContainer, TableHead } from "@mui/material"
 import { motion } from 'framer-motion';
 
 export const AgentsContainer = styled.div`
-  width: fit-content;
+  width: 98%;
   height: 98%;
   display: flex;
   border-radius: 8px;

@@ -1,12 +1,9 @@
 import styled from "@emotion/styled";
-import { Box } from "@mui/material";
 import { motion } from "framer-motion";
 import { Link, NavLink } from "react-router-dom";
 
 export const SidebarContainer = styled(motion.aside)`
-  width: 220px;
   padding: 20px;
-  height: 100vh !important;
   background-color: #ffffff;
   border-right: 1px solid #e2e8f0;
   margin-top: 6px;
@@ -62,13 +59,12 @@ export const NavItem = styled(Link)`
 export const SettingsWrapper = styled.div`
   position: absolute;
   bottom: 20px;
-  width:210px;
+  width: auto;  
 `;
 export const SubmenuWrapper = styled(motion.div)`
   position: absolute;
   bottom: 75px; 
   left: 0;
-  width: -webkit-fill-available;
   display: flex;
   flex-direction: column;
   border-radius: 0.5rem;
@@ -119,13 +115,13 @@ export const MainContainer = styled.div`
 `;
 
 export const Sidebar = styled.div`
-  width: 250px; /* Fixed sidebar width */
+  width: 250px;
+  height: 100%;
   background-color: #fff;
   border-right: 1px solid #ddd;
 `;
 
 export const ContentArea = styled.div`
-  height: 100%;
   flex-grow: 1;
   padding: 5px 10px;
   background-color: var(--theme-color-light);

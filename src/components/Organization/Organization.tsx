@@ -10,10 +10,9 @@ import {
   StyledButton
 } from './organization.styled';
 import { AppDispatch, RootState } from '../../redux/store/store';
-// Import industries JSON file
 import industriesData from './Industry.json';
-// Import SelectChangeEvent for proper typing
 import { SelectChangeEvent } from '@mui/material/Select';
+import Loader from '../Loader';
 
 interface Field {
   label: string;
@@ -53,7 +52,8 @@ interface OrganizationData {
 const OrganizationForm: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.user);
-  const { data, loading } = useSelector((state: RootState) => state.organization);
+  const { data } = useSelector((state: RootState) => state.organization);
+  const [loading, setLoading] = useState(false);
 
   const [values, setValues] = useState<OrganizationData>({
     name: '',
@@ -111,23 +111,27 @@ const OrganizationForm: React.FC = () => {
     event.preventDefault();
     if (!user) return;
 
-    const response = await dispatch(
-      updateOrganization({ orgId: user.orgId, data: { ...values, aiOrgId: user.aiOrgId } })
-    );
+   
+    setLoading(true);
+    setTimeout(async () => {
+      const response = await dispatch(
+        updateOrganization({ orgId: user.orgId, data: { ...values, aiOrgId: user.aiOrgId } })
+      );
+      setLoading(false);
 
-    if (updateOrganization.fulfilled.match(response)) {
-      alert("Organization updated successfully!");
-    } else {
-      alert(`Update failed: ${response.payload}`);
-    }
+      if (updateOrganization.fulfilled.match(response)) {
+        alert("Organization updated successfully!");
+      } else {
+        alert(`Update failed: ${response.payload}`);
+      }
+    }, 1000);
   };
 
-  if (loading || !data) {
-    return <div>Loading...</div>;
-  }
+ 
 
   return (
     <FormContainer>
+       {loading && <Loader />}
       <Box
         sx={{
           display: 'flex',
@@ -146,7 +150,7 @@ const OrganizationForm: React.FC = () => {
           {fields.map((field, index) => (
             <Grid size={field.sm} key={index}>
               {field.key === "industry" ? (
-                <FormControl fullWidth>
+                <FormControl fullWidth sx={{backgroundColor: 'white'}}>
                   <InputLabel>Industry</InputLabel>
                   <Select
                     name="industry"

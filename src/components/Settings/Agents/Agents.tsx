@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, Table, TableBody, TableRow, Paper } from "@mui/material";
+import { Avatar, Table, TableBody, TableRow } from "@mui/material";
 import {
   AgentsContainer,
   AgentHeader,
@@ -18,12 +18,14 @@ import AgentDialog from "./AgentDialogBox/AgentDialog";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../redux/store/store";
 import { Agent, fetchAgents } from "../../../redux/slice/agentsSlice";
+import Loader from "../../../components/Loader";
 
 const Agents: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [agents, setAgents] = useState<Agent[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [editingAgent, setEditingAgent] = useState<Agent | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
   const { user } = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
@@ -32,12 +34,16 @@ const Agents: React.FC = () => {
         console.error("User is not defined");
         return;
       }
+      setLoading(true);
       const resultAction = await dispatch(fetchAgents(user.orgId));
       if (fetchAgents.fulfilled.match(resultAction)) {
         setAgents(resultAction.payload.data || []);
       } else {
         console.error("Failed to fetch agents:", resultAction.payload);
       }
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
     };
     fetchAndSetAgents();
   }, [dispatch, user?.orgId]);
@@ -79,6 +85,7 @@ const Agents: React.FC = () => {
 
   return (
     <AgentsContainer>
+      {loading && <Loader />}
       <AgentHeader>
         <SectionTitle>Agents</SectionTitle>
         <AgentDialog
@@ -90,95 +97,85 @@ const Agents: React.FC = () => {
         <CreateAgent onClick={handleOpenDialog}>Add User</CreateAgent>
       </AgentHeader>
       <AgentTable>
-        {/* <Paper> */}
-          <StyledTableContainer>
-            <Table>
-              <StyledTableHead>
-                <TableRow>
-                  <StyledTableHeadCell>S.No.</StyledTableHeadCell>
-                  <StyledTableHeadCell>Name</StyledTableHeadCell>
-                  <StyledTableHeadCell>Phone</StyledTableHeadCell>
-                  <StyledTableHeadCell>Email</StyledTableHeadCell>
-                  <StyledTableHeadCell>Availability</StyledTableHeadCell>
-                  <StyledTableHeadCell>Actions</StyledTableHeadCell>
-                </TableRow>
-              </StyledTableHead>
-              <TableBody style={{ background: '#ffff'}}>
-                {agents.length > 0 ? (
-                  agents.map((agent, index) => (
-                    <TableRow key={agent.id}>
-                      <StyledTableCell sx={{ textAlign: "center" }}>
-                        {index + 1}
-                      </StyledTableCell>
-                      <StyledTableCell>
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 8,
-                            cursor: "pointer",
-                          }}
-                        >
-                          <Avatar
-                            src={agent.profilePicture || ""}
-                            alt={agent.fullName}
-                            style={{ marginRight: 8, width: 32, height: 32 }}
-                          />
-                          {agent.fullName}
-                        </div>
-                      </StyledTableCell>
-                      <StyledTableCell>
-                        {agent.phone || "N/A"}
-                      </StyledTableCell>
-                      <StyledTableCell>{agent.email}</StyledTableCell>
-                      <StyledTableCell>
-                        {agent.schedule && agent.schedule.schedule.length > 0 ? (
-                          agent.schedule.schedule.map((slot, idx) => {
-                            // If the API returned the schedule in payload format, it may have
-                            // starttime and endTime fields directly instead of a nested "hours" array.
-                            const start =
-                              slot.hours && slot.hours.length > 0
-                                ? slot.hours[0].startTime
-                                : slot.starttime;
-                            const end =
-                              slot.hours && slot.hours.length > 0
-                                ? slot.hours[0].endTime
-                                : slot.endTime;
-                            return (
-                              <div key={idx}>
-                                {slot.day} from {start} to {end}
-                              </div>
-                            );
-                          })
-                        ) : (
-                          <div>offline</div>
-                        )}
-                      </StyledTableCell>
-                      <StyledTableCell>
-                        <CustomEditIconButton
-                          onClick={() => handleEditAgent(agent)}
-                        >
-                          <Edit />
-                        </CustomEditIconButton>
-                        <CustomDeleteIconButton
-                          onClick={() => handleDeleteAgent(agent.id)}
-                        >
-                          <Delete />
-                        </CustomDeleteIconButton>
-                      </StyledTableCell>
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <StyledTableCell colSpan={6} sx={{ textAlign: "center" }}>
-                      No agents found
+        <StyledTableContainer>
+          <Table>
+            <StyledTableHead>
+              <TableRow>
+                <StyledTableHeadCell>S.No.</StyledTableHeadCell>
+                <StyledTableHeadCell>Name</StyledTableHeadCell>
+                <StyledTableHeadCell>Phone</StyledTableHeadCell>
+                <StyledTableHeadCell>Email</StyledTableHeadCell>
+                <StyledTableHeadCell>Availability</StyledTableHeadCell>
+                <StyledTableHeadCell>Actions</StyledTableHeadCell>
+              </TableRow>
+            </StyledTableHead>
+            <TableBody style={{ background: '#ffff'}}>
+              {agents.length > 0 ? (
+                agents.map((agent, index) => (
+                  <TableRow key={agent.id}>
+                    <StyledTableCell sx={{ textAlign: "center" }}>
+                      {index + 1}
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 8,
+                          cursor: "pointer",
+                        }}
+                      >
+                        <Avatar
+                          src={agent.profilePicture || ""}
+                          alt={agent.fullName}
+                          style={{ marginRight: 8, width: 32, height: 32 }}
+                        />
+                        {agent.fullName}
+                      </div>
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      {agent.phone || "N/A"}
+                    </StyledTableCell>
+                    <StyledTableCell>{agent.email}</StyledTableCell>
+                    <StyledTableCell>
+                      {agent.schedule && agent.schedule.schedule.length > 0 ? (
+                        agent.schedule.schedule.map((slot, idx) => {
+                          const start = slot.hours?.[0]?.startTime || slot.startTime;
+                          const end = slot.hours?.[0]?.endTime || slot.endTime;
+                          return (
+                            <div key={idx}>
+                              {slot.day} from {start} to {end}
+                            </div>
+                          );
+                        })  
+                      ) : (
+                        <div>offline</div>
+                      )}
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      <CustomEditIconButton
+                        onClick={() => handleEditAgent(agent)}
+                      >
+                        <Edit />
+                      </CustomEditIconButton>
+                      <CustomDeleteIconButton
+                        onClick={() => handleDeleteAgent(agent.id)}
+                      >
+                        <Delete />
+                      </CustomDeleteIconButton>
                     </StyledTableCell>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </StyledTableContainer>
-        {/* </Paper> */}
+                ))
+              ) : (
+                <TableRow>
+                  <StyledTableCell colSpan={6} sx={{ textAlign: "center" }}>
+                    No agents found
+                  </StyledTableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </StyledTableContainer>
       </AgentTable>
     </AgentsContainer>
   );

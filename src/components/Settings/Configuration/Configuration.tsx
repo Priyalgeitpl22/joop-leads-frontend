@@ -29,6 +29,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../redux/store/store";
 import { getScript, saveConfigurations } from "../../../redux/slice/chatSlice";
 import { ContentContainer } from "./configuration.styled";
+import Loader from "../../Loader";
 
 const Configuration = () => {
   const [settings, setSettings] = useState({
@@ -45,6 +46,7 @@ const Configuration = () => {
   const colors = ["#45607c", "var(--theme-color)", "#b15194", "#f8b771", "#546db9"];
   const { user } = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch<AppDispatch>();
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (field: string, value: string | boolean) => {
     setSettings((prev) => ({ ...prev, [field]: value }));
@@ -61,15 +63,20 @@ const Configuration = () => {
   };
   
   const handleSave = async () => {
+    setLoading(true);
     try {
       const response = await dispatch(
         saveConfigurations({ ...settings, orgId: user?.orgId, aiOrgId: user?.aiOrgId })
       ).unwrap();
   
       await fetchScript();
-      setActiveTab("tracking_code");
+      setTimeout(() => {
+        setLoading(false);
+        setActiveTab("tracking_code");
+      }, 1000); 
     } catch (error) {
       console.error("Error saving settings:", error);
+      setLoading(false);
     }
   };
 
@@ -116,7 +123,7 @@ const Configuration = () => {
               </ColorGrid>
             </Section>
 
-            <Section style={{ marginTop: '1.5rem' }}>
+            <Section style={{ marginTop: '1.2rem' }}>
               <Typography variant="h6" fontSize={16} fontWeight={600} sx={{ color: "#35495c", mt: 1 }}>
                 Chat widget placement
               </Typography>
@@ -136,7 +143,7 @@ const Configuration = () => {
             </Section>
 
             {/* Additional settings */}
-            <Section style={{ marginTop: '1.5rem' }}>
+            <Section style={{ marginTop: '1rem' }}>
               <Typography variant="h6" fontSize={16} fontWeight={600} sx={{ color: "#35495c" }}>
                 Additional Settings
               </Typography>
@@ -177,7 +184,7 @@ const Configuration = () => {
               <CustomMuiColorInput format="hex" value={settings.fontColor} onChange={(newValue: string) => handleChange("fontColor", newValue)} />
             </Section>
 
-            <Section>
+            <Section style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: '0.5rem' }}>
               <FormControlLabel
                 control={
                   <Checkbox
@@ -194,11 +201,10 @@ const Configuration = () => {
                   },
                 }}
               />
-            </Section>
-
             <SaveButton color="var(--theme-color)" onClick={handleSave}>
               Save
             </SaveButton>
+            </Section>
           </motion.div>
           <ChatBot settings={settings} />
         </SettingsContainer>
@@ -231,6 +237,9 @@ const Configuration = () => {
             </Section>
           </motion.div>
         </SettingsContainer>
+      )}
+      {loading && (
+        <Loader />
       )}
     </ContentContainer>
   );
