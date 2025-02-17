@@ -76,7 +76,7 @@ function AppRoutes() {
                   <ContentArea>
                     <Routes>
                       <Route path="/" element={<Home />} />
-                      <Route path="/chats/:type?/:threadId?" element={<Chats />} />
+                      <Route path="/chats" element={<Chats />} />
                       <Route path="/organization" element={<Organization />} />
                       <Route path="/settings/configuration" element={<Configuration />} />
                       <Route path="/settings/agents" element={<Agents />} />

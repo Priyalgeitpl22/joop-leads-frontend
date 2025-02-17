@@ -3,7 +3,7 @@ import { IconButton, TableCell, TableContainer, TableHead } from "@mui/material"
 import { motion } from 'framer-motion';
 
 export const AgentsContainer = styled.div`
-  width: 100%;
+  width: fit-content;
   height: 98%;
   display: flex;
   border-radius: 8px;
@@ -12,10 +12,13 @@ export const AgentsContainer = styled.div`
   background: white;
   position: relative;
   flex-direction: column;
-  background: red;
+  background: var(--white-fade-gradient);
+  padding: 16px;
+  border-radius: 8px;
+}
 `;
 export const AgentHeader = styled.section`
-    width:100%;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -33,7 +36,7 @@ export const CreateAgent = styled(motion.button)`
     padding: 12px;
     border: none;
     border-radius: 8px;
-    background: linear-gradient(135deg, var(--theme-color), #4ca4a5);
+    background: linear-gradient(135deg, var(--theme-color), var(--theme-color));
     color: #ffffff;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
@@ -43,7 +46,7 @@ export const CreateAgent = styled(motion.button)`
     letter-spacing: 1px;
 
     &:hover {
-      background: linear-gradient(135deg, #4ca4a5, #378f8f);
+      background: linear-gradient(135deg, var(--theme-color), #378f8f);
       transform: scale(1.05);
       box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
     }
@@ -72,13 +75,13 @@ export const StyledTableContainer = styled(TableContainer)`
     }
   
     &::-webkit-scrollbar-thumb {
-      background: linear-gradient(135deg, var(--theme-color), #4ca4a5);
+      background: linear-gradient(135deg, var(--theme-color), var(--theme-color));
       opacity: 0.5;
       border-radius: 10px; 
     }
   
     &::-webkit-scrollbar-thumb:hover {
-      background: linear-gradient(135deg, #4ca4a5, #378f8f); 
+      background: linear-gradient(135deg, var(--theme-color), #378f8f); 
     }
   `;
 
@@ -111,7 +114,7 @@ export const StyledTableCell = styled(TableCell)`
 `;
 
 export const CustomEditIconButton = styled(IconButton)`
-  color: #4ca4a5;
+  color: var(--theme-color);
   margin-right: 8px;
   &:hover {
     color: #3e5164;

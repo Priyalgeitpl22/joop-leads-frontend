@@ -51,6 +51,6 @@ export const StyledButton = styled(Button)`
   width: 100%;
 
   &:hover {
-    background: #4ca4a5;
+    background: var(--theme-color);
   }
 `;

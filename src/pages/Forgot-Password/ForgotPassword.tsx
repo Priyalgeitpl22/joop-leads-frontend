@@ -76,7 +76,7 @@ const ForgotPassword = () => {
             Remember your password?{" "}
             <RouterLink
               to="/login"
-              style={{ textDecoration: "none", color: "#1976d2" }}
+              style={{ textDecoration: "none", color: "var(--theme-color-dark)" }}
             >
               Login
             </RouterLink>

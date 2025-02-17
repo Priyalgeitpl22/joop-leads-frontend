@@ -5,21 +5,18 @@ import { AppDispatch, RootState } from "../../redux/store/store";
 import ChatArea from "./ChatArea/ChatArea";
 import ChatList from "./ChatList/ChatList";
 import ChatSideBar from "./ChatSideBar/ChatSideBar";
-import { useParams, useNavigate } from "react-router-dom";
 import { useSocket } from "../../context/SocketContext";
 import Loader from "../../components/Loader";
 import { ChatContainer } from "./ChatSideBar/chatSidebar.styled";
+import { ThreadType } from "../../enums";
 
 export default function Chats() {
   const dispatch = useDispatch<AppDispatch>();
   const { threads = [] } = useSelector((state: RootState) => state.thread);
-  const { type, threadId } = useParams<{ type: string; threadId: string }>();
-  const navigate = useNavigate();
   const { socket } = useSocket();
 
-  const [selectedThreadId, setSelectedThreadId] = useState<string | null>(
-    threadId || null
-  );
+  const [selectedThreadId, setSelectedThreadId] = useState<string | null>(null);
+  const [selectedThreadType, setSelectedThreadType] = useState<string>(ThreadType.UNASSIGNED);
   const [messages, setMessages] = useState<any[]>([]);
   const [lastEvent, setLastEvent] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -33,11 +30,10 @@ export default function Chats() {
   }, [dispatch]);
 
   useEffect(() => {
-    if (threads.length > 0) {
-      const currentType = type || "unassigned";
-      navigate(`/chats/${currentType}`, { replace: true });
+    if (threads.length > 0 && !selectedThreadId) {
+      setSelectedThreadId(threads[0].id);
     }
-  }, [threads, type, threadId, navigate]);
+  }, [threads, selectedThreadId]);
 
   useEffect(() => {
     if (!socket) return;
@@ -63,15 +59,19 @@ export default function Chats() {
 
   return (
     <ChatContainer>
-      <ChatSideBar selectedType={type || "unassigned"} />
-      <ChatList
-        threads={threads.filter(
-          (thread) => thread.type === (type || "unassigned")
-        )}
-        onSelectThread={(newThreadId: string) => setSelectedThreadId(newThreadId)}
-        type={type || "unassigned"}
+      <ChatSideBar
+        selectedType={selectedThreadType}
+        onSelectType={setSelectedThreadType}
       />
-      <ChatArea selectedThreadId={selectedThreadId} />
+      <ChatList
+        threads={threads.filter((thread) => thread.type === selectedThreadType)}
+        onSelectThread={(newThreadId: string) => setSelectedThreadId(newThreadId)}
+        type={selectedThreadType} selectedThreadId={selectedThreadId}
+      />
+      <ChatArea
+        onSelectThread={(newThreadId: string) => setSelectedThreadId(newThreadId)}
+        selectedThreadId={selectedThreadId}
+      />
     </ChatContainer>
   );
 }

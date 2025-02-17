@@ -12,7 +12,7 @@ import { logoutUser } from "../../redux/slice/authSlice";
 import { AppDispatch, RootState } from "../../redux/store/store";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ProfileDetail from "./Profile-Details/ProfileDetail";
-import SettingsIcon from '@mui/icons-material/Settings';
+import SettingsIcon from "@mui/icons-material/Settings";
 export interface User {
   id: string;
   email: string;
@@ -55,39 +55,30 @@ const UserProfileMenu: React.FC = () => {
 
   return (
     <UserProfileContainer>
-      <Box display="flex" alignItems="center" gap={1}>
-        <ProfileIcon onClick={handleMenuOpen} style={{ cursor: "pointer" }}>
-          {user?.profilePicture ? (
-            <img
-              src={user.profilePicture}
-              alt="Profile"
-              style={{ width: "50px", height: "50px", borderRadius: "20%" }}
-            />
-          ) : (
-            <AccountCircleIcon style={{ width: "50px", height: "50px" }} />
-          )}
-        </ProfileIcon>
-        <ProfileNameContainer>
-          <Typography
-            sx={{ fontWeight: "500 !important", fontSize: 16 }}
-            variant="subtitle2"
-            alignSelf={"self-end"}
-          >
-            {user?.fullName}
-          </Typography>
-          <Typography
-            sx={{ fontWeight: "500", fontSize: 14 }}
-            variant="body2"
-            color="textSecondary"
-            alignSelf={"self-start"}
-          >
-            {user?.role}
-          </Typography>
-        </ProfileNameContainer>
-        <IconButton onClick={handleMenuOpen}>
-          <SettingsIcon />
-        </IconButton>
-      </Box>
+      <ProfileNameContainer>
+        <Typography variant="subtitle2" sx={{ fontWeight: 500, fontSize: 14 }}>
+          {user?.fullName || "Unknown User"}
+        </Typography>
+        <Typography
+          variant="body2"
+          sx={{ fontWeight: 500, fontSize: 12 }}
+          color="textSecondary"
+        >
+          {user?.role || "N/A"}
+        </Typography>
+      </ProfileNameContainer>
+
+      <ProfileIcon onClick={handleMenuOpen} style={{ cursor: "pointer" }}>
+        {user?.profilePicture ? (
+          <img
+            src={user.profilePicture}
+            alt="Profile"
+            style={{ width: "35px", height: "35px", borderRadius: "20%" }}
+          />
+        ) : (
+          <AccountCircleIcon style={{ width: "35px", height: "35px" }} />
+        )}
+      </ProfileIcon>
 
       <Menu
         anchorEl={anchorEl}

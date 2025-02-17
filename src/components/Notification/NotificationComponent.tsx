@@ -53,7 +53,6 @@ const NotificationComponent: React.FC = () => {
     <>
       <IconButton
         sx={{
-          // color: "#7ed8d6",
           padding: "5px",
           display: "flex",
           flexDirection: "column",
@@ -62,10 +61,10 @@ const NotificationComponent: React.FC = () => {
         }}
         onClick={handleClick}
       >
-        <Badge badgeContent={12} color="error">
-          <NotificationsIcon sx={{ fontSize: 36, color: 'black' }} />
+        <Badge badgeContent={notifications.length} color="error">
+          <NotificationsIcon sx={{ fontSize: 25, color: 'var(--theme-color-dark)' }} />
         </Badge>
-        <Typography variant="h6" sx={{ mt: 0.5, fontSize: "14px", color: 'black'}}>
+        <Typography variant="subtitle2" sx={{ fontSize: 10, color: '#696969' }}>
           Notifications
         </Typography>
       </IconButton>

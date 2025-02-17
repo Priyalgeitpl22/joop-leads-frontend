@@ -133,7 +133,7 @@ const Register = () => {
               <PreviewImage src={previewImage} alt="Profile preview" onClick={handleIconClick} style={{ cursor: 'pointer' }} />
             ) : (
               <AccountCircleIcon
-                style={{ fontSize: "50px", color: "#1976d2", marginBottom: "8px", cursor: 'pointer' }}
+                style={{ fontSize: "50px", color: "var(--theme-color-dark)", marginBottom: "8px", cursor: 'pointer' }}
                 onClick={handleIconClick}
               />
             )}
@@ -165,7 +165,7 @@ const Register = () => {
 
           <Typography variant="body2" color="black" align="center" sx={{ my: 1 }}>
             Already have an account?{" "}
-            <RouterLink to="/login" style={{ textDecoration: "none", color: "#1976d2" }}>
+            <RouterLink to="/login" style={{ textDecoration: "none", color: "var(--theme-color-dark)" }}>
               Login
             </RouterLink>
           </Typography>

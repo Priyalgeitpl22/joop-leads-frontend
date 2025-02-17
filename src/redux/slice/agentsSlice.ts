@@ -2,23 +2,29 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import api from "../../services/api";
 import { AxiosError } from "axios";
 import Cookies from "js-cookie";
+import dayjs from "dayjs";
 
-interface ScheduleSlot {
+export interface ScheduleSlot {
   day: string;
   hours: { startTime: string; endTime: string }[];
 }
+
 export interface Agent {
   id: string;
   fullName: string;
   email: string;
   role: string;
   orgId: string;
-  aiOrgId: string;
-  profilePicture: string | null;
+  profilePicture?: string | null;
   phone?: string;
-  schedule: {
-    timeZone: string;
-    schedule: ScheduleSlot[];
+  schedule?: {
+    timeZone?: string;
+    schedule?: {
+      day: string;
+      hours: { startTime: string; endTime: string }[];
+      startTime?: dayjs.Dayjs; // Optional for UI convenience
+      endTime?: dayjs.Dayjs;   // Optional for UI convenience
+    }[];
   };
 }
 interface AgentState {

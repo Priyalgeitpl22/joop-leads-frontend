@@ -90,7 +90,7 @@ const Agents: React.FC = () => {
         <CreateAgent onClick={handleOpenDialog}>Add User</CreateAgent>
       </AgentHeader>
       <AgentTable>
-        <Paper>
+        {/* <Paper> */}
           <StyledTableContainer>
             <Table>
               <StyledTableHead>
@@ -103,7 +103,7 @@ const Agents: React.FC = () => {
                   <StyledTableHeadCell>Actions</StyledTableHeadCell>
                 </TableRow>
               </StyledTableHead>
-              <TableBody>
+              <TableBody style={{ background: '#ffff'}}>
                 {agents.length > 0 ? (
                   agents.map((agent, index) => (
                     <TableRow key={agent.id}>
@@ -178,7 +178,7 @@ const Agents: React.FC = () => {
               </TableBody>
             </Table>
           </StyledTableContainer>
-        </Paper>
+        {/* </Paper> */}
       </AgentTable>
     </AgentsContainer>
   );

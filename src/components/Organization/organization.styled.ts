@@ -2,7 +2,8 @@ import styled from '@emotion/styled';
 import { Box, Typography, TextField, Button } from '@mui/material';
 
 export const FormContainer = styled(Box)(`
-  width: fit-content;
+  width: min-content;
+  min-width: 960px;
   height: 98%;
   padding: 20px;
   border-radius: 8px;
@@ -37,7 +38,7 @@ export const StyledButton = styled(Button)({
   width:'150px',
   borderRadius: '30px',
   padding: '12px 24px',
-  background: `linear-gradient(135deg, var(--theme-color), #4ca4a5)`,
+  background: `linear-gradient(135deg, var(--theme-color), var(--theme-color))`,
   color: '#ffffff',
   fontWeight: 700,
   textTransform: 'none',

@@ -108,7 +108,7 @@ export const ColorCheckBox = styled.input`
   border: none;
   border-radius: 6px;
   color: #fff;
-  background-color: var(--theme-color);
+  background-color: var(--button-theme-color);
   cursor: pointer;
   font-size: 16px;
 

@@ -47,7 +47,7 @@ export const PreviewImage = styled('img')`
   height: 50px;
   object-fit: cover;
   border-radius: 50%;
-  border: 2px solid #1976d2;
+  border: 2px solid var(--theme-color-dark);
   margin-bottom: 8px;
 `;
 

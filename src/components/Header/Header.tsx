@@ -4,7 +4,6 @@ import {
   AppSubtitle,
   AppTitle,
   LogoContainer,
-  ProfileNameContainer,
   SearchBar,
   TitleContainer,
 } from "../Header/header.styled";
@@ -20,7 +19,7 @@ import { getUserDetails } from "../../redux/slice/userSlice";
 import { useNavigate } from "react-router-dom";
 import NotificationComponent from "../Notification/NotificationComponent";
 import logo from "../../../public/logo3.png";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import { HeaderOptions } from "../../pages/Home/home.styled";
 
 const Header = () => {
   const { user } = useSelector((state: RootState) => state.user);
@@ -97,47 +96,49 @@ const Header = () => {
         <Search size={20} color="#64748b" />
         <input placeholder="Search conversations..." />
       </SearchBar>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          flexDirection: "column",
-          padding: "6px",
-        }}
-      >
-        <Switch
-          checked={isOnline}
-          onChange={handleStatusChange}
-          inputProps={{ "aria-label": "controlled" }}
-        />
+
+      <HeaderOptions>
         <div
           style={{
             display: "flex",
-            flexDirection: "row",
             alignItems: "center",
-            gap: "2px",
+            flexDirection: "column",
+            padding: '0px 8px'
           }}
         >
-          <Typography variant="h6" sx={{ mt: 0.5, fontSize: "14px" }}>
-            {isOnline ? "Online" : "Offline"}
-          </Typography>
-          <StatusIndicator online={isOnline} />
+          <Switch
+            size="small"
+            checked={isOnline}
+            onChange={handleStatusChange}
+            inputProps={{ "aria-label": "controlled" }}
+          />
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              gap: "2px",
+            }}
+          >
+            <Typography variant="subtitle2" sx={{ fontSize: 10, color: '#696969' }}>
+              {isOnline ? "Online" : "Offline"}
+            </Typography>
+            <StatusIndicator online={isOnline} />
+          </div>
         </div>
-      </div>
-      <NotificationComponent />
-      {user && (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <LogoContainer>
+        <NotificationComponent />
+        {user && (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
             <UserProfileMenu />
-          </LogoContainer>
-        </div>
-      )}
+          </div>
+        )}
+      </HeaderOptions>
     </HeaderContainer>
   );
 };

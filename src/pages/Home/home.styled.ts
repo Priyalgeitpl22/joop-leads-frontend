@@ -12,3 +12,11 @@ export const ContentContainer = styled(Box)`
   flex-direction: column;
   background: var(--white-fade-gradient);
 `;
+
+export const HeaderOptions = styled(Box)`
+  height: 40px;
+  display: flex;
+  background-color: #f1f5f9;
+  padding: 5px;
+  border-radius: 8px;
+`

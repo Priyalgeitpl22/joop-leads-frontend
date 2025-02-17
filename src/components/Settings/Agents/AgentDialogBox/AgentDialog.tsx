@@ -36,7 +36,6 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 interface ScheduleSlot {
   day: string;
-  // Internally, we store times as Dayjs objects for the TimePicker
   hours: { startTime: Dayjs; endTime: Dayjs }[];
 }
 
@@ -51,8 +50,8 @@ export interface Agent {
   schedule: {
     timeZone: string;
     schedule: (ScheduleSlot & {
-      starttime?: string; // flat keys from payload
-      endTime?: string;   // flat keys from payload
+      startTime?: string;
+      endTime?: string;
     })[];
   };
 }
@@ -63,11 +62,9 @@ interface AgentDialogProps {
   agent?: Agent | null;
 }
 
-// Default times for new agent: 9:00 AM and 5:00 PM
 const defaultStartTime: Dayjs = dayjs("09:00", "HH:mm");
 const defaultEndTime: Dayjs = dayjs("17:00", "HH:mm");
 
-// Default agent in internal format (with valid Dayjs objects)
 const defaultAgent: Agent = {
   fullName: "",
   email: "",
@@ -97,45 +94,32 @@ const AgentDialog: React.FC<AgentDialogProps> = ({ open, onClose, agent }) => {
   const { user } = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch<AppDispatch>();
 
-  // -------------------------------
-  // Effect: Convert schedule on open
-  // -------------------------------
   useEffect(() => {
-    // Only run conversion when the dialog opens
     if (!open) return;
 
     if (agent) {
-      // If editing, parse the agent’s schedule
       const timeZoneValue = agent.schedule.timeZone || defaultAgent.schedule.timeZone;
 
       const convertedSchedule = {
         timeZone: timeZoneValue,
         schedule: agent.schedule.schedule.map((slot) => {
-          // Attempt to extract start/end from either flat keys or nested hours
           let startVal: string | Dayjs | undefined;
           let endVal: string | Dayjs | undefined;
 
-          // If the API uses "starttime"/"endTime" fields:
-          if (slot.starttime) {
-            startVal = slot.starttime;
+          if (slot.startTime) {
+            startVal = slot.startTime;
             endVal = slot.endTime;
           }
-          // Otherwise, if we have an hours array:
           else if (slot.hours?.[0]) {
             startVal = slot.hours[0].startTime;
             endVal = slot.hours[0].endTime;
           }
 
-          // Convert or fallback to default
           let parsedStart = dayjs(startVal, ["h:mmA", "h:mm A", "HH:mm"], true);
 
-          console.log(parsedStart.isValid(),"parsedStart")
           if (!parsedStart.isValid() && dayjs.isDayjs(startVal)) {
-            // If it's already a Dayjs object, keep it
             parsedStart = startVal as Dayjs;
-            // console.log(parsedStart,"parsedStartDate")
           } else if (!parsedStart.isValid()) {
-            // fallback
             parsedStart = defaultStartTime;
             console.log(parsedStart,"parsedStartDate")
           }
@@ -166,16 +150,10 @@ const AgentDialog: React.FC<AgentDialogProps> = ({ open, onClose, agent }) => {
         schedule: convertedSchedule,
       });
     } else {
-      // If creating a new agent, use the default agent
       setFormData(defaultAgent);
     }
   }, [open, agent]);
 
-  console.log("formData",formData)
-
-  // ------------------------------------------------------
-  // Input handlers (personal details & schedule day/times)
-  // ------------------------------------------------------
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -260,15 +238,8 @@ const AgentDialog: React.FC<AgentDialogProps> = ({ open, onClose, agent }) => {
     });
   };
 
-  // ---------------------
-  // Navigation (Stepper)
-  // ---------------------
   const handleNext = () => setActiveStep((prev) => prev + 1);
   const handleBack = () => setActiveStep((prev) => prev - 1);
-
-  // ---------------------
-  // Save & Payload
-  // ---------------------
   const handleSave = () => {
     const payload = {
       email: formData.email,
@@ -282,7 +253,7 @@ const AgentDialog: React.FC<AgentDialogProps> = ({ open, onClose, agent }) => {
         timeZone: formData.schedule.timeZone,
         schedule: formData.schedule.schedule.map((slot) => ({
           day: slot.day,
-          starttime: slot.hours[0].startTime.format("h:mmA"),
+          startTime: slot.hours[0].startTime.format("h:mmA"),
           endTime: slot.hours[0].endTime.format("h:mmA"),
         })),
       },

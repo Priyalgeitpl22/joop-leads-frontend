@@ -15,7 +15,6 @@ export const ChatHeader = styled(Box)({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  backgroundColor: 'var(--theme-color)',
 });
 
 export const ChatMessages = styled(Box)({
@@ -48,7 +47,7 @@ export const ChatInputContainer = styled(Box)({
       borderColor: '#ccc',
     },
     '&.Mui-focused fieldset': {
-      borderColor: '#1976d2',
+      borderColor: 'var(--theme-color-dark)',
     },
   },
 });
@@ -79,8 +78,8 @@ export const BotMessage = styled(Box)({
 });
 
 export const BotMessageBubble = styled(Box)({
-  backgroundColor: '#7ed8d7',
-  color: '#ffffff',
+  backgroundColor: 'var(--theme-color)',
+  color: 'black',
   padding: '12px 16px',
   borderRadius: '12px',
   wordWrap: 'break-word',
@@ -89,17 +88,16 @@ export const BotMessageBubble = styled(Box)({
 
 export const UserMessage = styled(Box)({
   display: 'flex',
+  flexDirection: 'column',
   justifyContent: 'flex-start',
   alignItems: 'flex-start',
   gap: '8px',
-  marginBottom: '24px',
 });
 
-// User Message Bubble
 export const UserMessageBubble = styled(Box)({
   backgroundColor: '#e9ecef',
   color: '#000000',
-  padding: '12px 16px',
+  padding: '12px',
   borderRadius: '12px',
   maxWidth: '80%',
   wordWrap: 'break-word',

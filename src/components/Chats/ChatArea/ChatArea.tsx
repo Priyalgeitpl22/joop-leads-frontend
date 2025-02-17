@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   Avatar,
   Box,
@@ -24,7 +24,8 @@ import {
   UserMessage,
   UserMessageBubble,
 } from "./chatArea.styled";
-import { ChatListHeader } from "../ChatList/chatList.styled";
+import { ChatListHeader, TimeStamp } from "../ChatList/chatList.styled";
+import { formatTimestamp } from "../../../utils/utils";
 
 interface ChatData {
   id: string;
@@ -36,6 +37,7 @@ interface ChatData {
 
 interface ChatAreaProps {
   selectedThreadId: string | null;
+  onSelectThread: (type: string) => void;
 }
 
 const motionVariants = {
@@ -43,9 +45,7 @@ const motionVariants = {
   visible: { opacity: 1, y: 0 },
 };
 
-export default function ChatArea({
-  selectedThreadId,
-}: ChatAreaProps): JSX.Element {
+export default function ChatArea({ selectedThreadId }: ChatAreaProps) {
   const dispatch = useDispatch<AppDispatch>();
   const { socket } = useSocket();
   const { chats, loading } = useSelector((state: RootState) => state.chats);
@@ -55,14 +55,26 @@ export default function ChatArea({
     null
   );
   const [delayedLoading, setDelayedLoading] = useState(loading);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  useEffect(() => {
+    setTimeout(() => {
+      requestAnimationFrame(scrollToBottom);
+    }, 100);
+  }, [chats]);
 
   useEffect(() => {
     if (!loading) {
-      const timer = setTimeout(() => setDelayedLoading(false), 1000);
+      const timer = setTimeout(() => setDelayedLoading(false), 500);
       return () => clearTimeout(timer);
-    } else {
-      setDelayedLoading(true);
     }
+    setDelayedLoading(true);
   }, [loading]);
 
   useEffect(() => {
@@ -74,46 +86,40 @@ export default function ChatArea({
   useEffect(() => {
     if (!socket || !selectedThreadId) return;
 
-    socket.on("receiveMessage", (newMessage) => {
-      if (
-        newMessage.sender === "Bot" &&
-        newMessage.threadId === selectedThreadId
-      ) {
-        const messageData: ChatData = {
-          id: Date.now().toString(),
-          threadId: newMessage.threadId,
-          sender: "Bot",
-          content: newMessage.answer,
-          createdAt: new Date().toISOString(),
-        };
-        dispatch(addchat(messageData));
+    const handleReceiveMessage = (newMessage: ChatData) => {
+      if (newMessage.threadId === selectedThreadId) {
+        dispatch(addchat(newMessage));
       }
-    });
+    };
 
-    socket.on("updateDashboard", (data) => {
+    const handleUpdateDashboard = (data: ChatData) => {
       if (data.sender === "User" && data.threadId === selectedThreadId) {
         dispatch(addchat(data));
       }
-    });
+    };
 
-    socket.on("typing", ({ agentName }: { agentName: string }) => {
+    const handleTyping = ({ agentName }: { agentName: string }) => {
       setTypingAgent(agentName);
-    });
+    };
 
-    socket.on("stopTyping", () => {
+    const handleStopTyping = () => {
       setTypingAgent(null);
-    });
+    };
+
+    socket.on("receiveMessage", handleReceiveMessage);
+    socket.on("updateDashboard", handleUpdateDashboard);
+    socket.on("typing", handleTyping);
+    socket.on("stopTyping", handleStopTyping);
 
     return () => {
-      socket.off("receiveMessage");
-      socket.off("updateDashboard");
-      socket.off("typing");
-      socket.off("stopTyping");
+      socket.off("receiveMessage", handleReceiveMessage);
+      socket.off("updateDashboard", handleUpdateDashboard);
+      socket.off("typing", handleTyping);
+      socket.off("stopTyping", handleStopTyping);
     };
   }, [socket, selectedThreadId, dispatch]);
 
-  // Emit typing event when user types
-  const handleTyping = () => {
+  const handleTyping = useCallback(() => {
     if (!socket || !selectedThreadId) return;
 
     socket.emit("typing", { threadId: selectedThreadId, agentName: "Agent" });
@@ -125,19 +131,18 @@ export default function ChatArea({
         socket.emit("stopTyping", { threadId: selectedThreadId });
       }, 3000)
     );
-  };
+  }, [socket, selectedThreadId, typingTimeout]);
 
-  const sendMessage = () => {
+  const sendMessage = useCallback(() => {
     if (!socket || !selectedThreadId || !inputMessage.trim()) return;
 
-    // Emit stopTyping when sending message
     socket.emit("stopTyping", { threadId: selectedThreadId });
 
     const messageData: ChatData = {
       id: Date.now().toString(),
       threadId: selectedThreadId,
       sender: "Bot",
-      content: inputMessage,
+      content: inputMessage.trim(),
       createdAt: new Date().toISOString(),
     };
 
@@ -149,7 +154,7 @@ export default function ChatArea({
 
     dispatch(addchat(messageData));
     setInputMessage("");
-  };
+  }, [socket, selectedThreadId, inputMessage, dispatch]);
 
   return (
     <ChatContainer>
@@ -178,12 +183,13 @@ export default function ChatArea({
         <>
           <ChatHeader>
             <Box display="flex" alignItems="center" gap={2}>
-              <Avatar>U</Avatar>
+              <Avatar style={{ backgroundColor: "var(--theme-color)" }}>
+                U
+              </Avatar>
               <Typography variant="subtitle1">Unknown Visitor</Typography>
             </Box>
           </ChatHeader>
-
-          <ChatMessages>
+          <ChatMessages id="chatMessagesContainer">
             {delayedLoading ? (
               <Box
                 sx={{
@@ -196,63 +202,40 @@ export default function ChatArea({
                 <CircularProgress size={24} />
               </Box>
             ) : chats.length > 0 ? (
-              chats.map((chat) => {
-                const isBot = chat.sender === "Bot";
-                return isBot ? (
-                  <BotMessage key={chat.id}>
-                    <Box sx={{ display: "flex", gap: "8px" }}>
-                      <Typography
-                        variant="body2"
-                        color="textSecondary"
-                        gutterBottom
-                      >
-                        {chat.sender} •{" "}
-                        {new Date(chat.createdAt).toLocaleTimeString()}
-                      </Typography>
-                      <Avatar
-                        sx={{ bgcolor: "#7ed8d6", width: 32, height: 32 }}
-                      >
-                        {chat.sender.charAt(0).toUpperCase()}
-                      </Avatar>
-                    </Box>
+              <>
+                {chats.map((chat) => {
+                  const isBot = chat.sender === "Bot";
+                  return (
                     <motion.div
+                      key={chat.id}
                       initial="hidden"
                       animate="visible"
                       variants={motionVariants}
                     >
-                      <BotMessageBubble>{chat.content}</BotMessageBubble>
+                      {isBot ? (
+                        <BotMessage>
+                          <TimeStamp>
+                            {chat.sender} • {formatTimestamp(chat.createdAt)}
+                          </TimeStamp>
+                          <BotMessageBubble>{chat.content}</BotMessageBubble>
+                        </BotMessage>
+                      ) : (
+                        <UserMessage>
+                          <TimeStamp>
+                            {chat.sender} • {formatTimestamp(chat.createdAt)}
+                          </TimeStamp>
+                          <UserMessageBubble>{chat.content}</UserMessageBubble>
+                        </UserMessage>
+                      )}
                     </motion.div>
-                  </BotMessage>
-                ) : (
-                  <UserMessage key={chat.id}>
-                    <Avatar sx={{ bgcolor: "#bdbdbd", width: 32, height: 32 }}>
-                      {chat.sender.charAt(0).toUpperCase()}
-                    </Avatar>
-                    <Box>
-                      <Typography
-                        variant="body2"
-                        color="textSecondary"
-                        gutterBottom
-                      >
-                        {chat.sender} •{" "}
-                        {new Date(chat.createdAt).toLocaleTimeString()}
-                      </Typography>
-                      <motion.div
-                        initial="hidden"
-                        animate="visible"
-                        variants={motionVariants}
-                      >
-                        <UserMessageBubble>{chat.content}</UserMessageBubble>
-                      </motion.div>
-                    </Box>
-                  </UserMessage>
-                );
-              })
+                  );
+                })}
+                <div ref={messagesEndRef} /> {/* Add this at the bottom */}
+              </>
             ) : (
               <Typography>No messages yet.</Typography>
             )}
 
-            {/* Show Typing Indicator */}
             {typingAgent && (
               <Typography sx={{ fontStyle: "italic", color: "#888", mt: 1 }}>
                 {typingAgent} is typing...

@@ -71,7 +71,7 @@ export const StyledButton = styled(Button)`
   color: white;
 
   &:hover {
-    background: #4ca4a5;
+    background: var(--theme-color);
   }
 `;
 

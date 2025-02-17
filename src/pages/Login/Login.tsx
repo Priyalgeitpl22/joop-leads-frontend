@@ -97,7 +97,7 @@ function Login() {
           
           <RouterLink 
             to="/forgot-password" 
-            style={{ textDecoration: 'none', marginBottom:'10px', color: '#1976d2' }}
+            style={{ textDecoration: 'none', marginBottom:'10px', color: 'var(--theme-color-dark)' }}
           >
             <ForgotPasswordLink>Forgot Password?</ForgotPasswordLink>
           </RouterLink>
@@ -119,7 +119,7 @@ function Login() {
 
           <Typography variant="body2" color="black" align="center" sx={{ my: 2 }}>
             Don't have an account?{' '}
-            <RouterLink to="/register" style={{ textDecoration: 'none', color: '#1976d2' }}>
+            <RouterLink to="/register" style={{ textDecoration: 'none', color: 'var(--theme-color-dark)' }}>
               Register
             </RouterLink>
           </Typography>

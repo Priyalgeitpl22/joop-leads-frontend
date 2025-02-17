@@ -9,6 +9,8 @@ export const SidebarContainer = styled(motion.aside)`
   height: 100vh !important;
   background-color: #ffffff;
   border-right: 1px solid #e2e8f0;
+  margin-top: 6px;
+  border-radius: 10px;
 `;
 
 export const HeaderContainer = styled.header`
@@ -104,14 +106,14 @@ export const SubNavItem = styled(NavLink)`
 export const DashboardContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100vh; /* Take full viewport height */
+  height: 100vh;
   width: 100vw;
-  background: #ffffff; /* Change from red to a neutral background */
+  background: var(theme-color-light);
 `;
 
 export const MainContainer = styled.div`
   display: flex;
-  flex: 1; /* Take available space */
+  flex: 1;
   width: 100%;
   overflow: hidden;
 `;
@@ -126,5 +128,5 @@ export const ContentArea = styled.div`
   height: 100%;
   flex-grow: 1;
   padding: 5px 10px;
-  background-color: white;
+  background-color: var(--theme-color-light);
 `;

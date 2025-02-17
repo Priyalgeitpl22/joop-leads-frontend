@@ -32,7 +32,7 @@ import { ContentContainer } from "./configuration.styled";
 
 const Configuration = () => {
   const [settings, setSettings] = useState({
-    iconColor: "#7ed8d7",
+    iconColor: "var(--theme-color)",
     chatWindowColor: "#ffffff",
     fontColor: "#333333",
     position: "bottom-right",
@@ -42,7 +42,7 @@ const Configuration = () => {
   });
   const [activeTab, setActiveTab] = useState("configure");
   const [embedCode, setEmbedCode] = useState("");
-  const colors = ["#45607c", "#7ed8d7", "#b15194", "#f8b771", "#546db9"];
+  const colors = ["#45607c", "var(--theme-color)", "#b15194", "#f8b771", "#546db9"];
   const { user } = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch<AppDispatch>();
 
@@ -196,7 +196,7 @@ const Configuration = () => {
               />
             </Section>
 
-            <SaveButton color="#7ed8d7" onClick={handleSave}>
+            <SaveButton color="var(--theme-color)" onClick={handleSave}>
               Save
             </SaveButton>
           </motion.div>

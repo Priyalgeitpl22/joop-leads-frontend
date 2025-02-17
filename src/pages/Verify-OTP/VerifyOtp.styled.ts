@@ -31,7 +31,7 @@ export const EmailSection = styled(Box)`
   }
 
   .MuiIconButton-root {
-    color: #1976d2;
+    color: var(--theme-color-dark);
   }
 `;
 
@@ -71,7 +71,7 @@ export const StyledButton = styled(Button)`
   max-width: 300px;
 
   &:hover {
-    background: #4ca4a5;
+    background: var(--theme-color);
   }
 `;
 

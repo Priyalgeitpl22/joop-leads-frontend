@@ -28,9 +28,17 @@ export const UserProfileContainer = styled(Box)`
 `
 
 export const ProfileNameContainer = styled(Box)`
-  display: grid;
-  align-items: center;
+  flex-direction: column;
+  display: flex;
+  align-items: flex-end;  // Align text to the right
   justify-content: center;
-  text-align: left;
-  min-width: 100px;
-`
+  text-align: right;
+  white-space: nowrap; // Prevents text from breaking into two lines
+  overflow: hidden;
+  text-overflow: ellipsis; // Adds "..." if text overflows
+  margin-right: 10px;
+`;
+
+
+
+

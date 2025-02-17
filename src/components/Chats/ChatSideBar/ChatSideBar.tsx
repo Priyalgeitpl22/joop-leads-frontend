@@ -1,12 +1,11 @@
-import { List, ListItemText, ListItemIcon, Typography, Box, Divider } from "@mui/material";
+import { ListItemText, ListItemIcon, Typography, Box, Divider } from "@mui/material";
 import { MessageCircle, Users, Bot, UserCheck, MessageSquare } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import { SidebarContainer, SidebarItem, ActiveIndicator, Count } from "./chatSidebar.styled";
+import { SidebarContainer, Count, ChatList, SidebarItem } from "./chatSidebar.styled";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllThreads } from "../../../redux/slice/threadSlice";
 import { AppDispatch, RootState } from "../../../redux/store/store";
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
 interface MenuItem {
   text: string;
@@ -19,14 +18,13 @@ const MotionSidebarItem = motion.create(SidebarItem);
 
 interface ChatSideBarProps {
   selectedType: string;
+  onSelectType: (type: string) => void;
 }
 
-const ChatSideBar = ({ selectedType }: ChatSideBarProps) => {
+const ChatSideBar = ({ selectedType, onSelectType }: ChatSideBarProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const threads = useSelector((state: RootState) => state.thread);
   const [threadCounts, setThreadCounts] = useState<Record<string, number>>({});
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchThreads = async () => {
@@ -40,7 +38,6 @@ const ChatSideBar = ({ selectedType }: ChatSideBarProps) => {
           },
           {}
         );
-
         setThreadCounts(groupedCounts);
       }
     };
@@ -60,38 +57,29 @@ const ChatSideBar = ({ selectedType }: ChatSideBarProps) => {
     <>
       {(threads && threads.threads?.length > 0) ? (
         <SidebarContainer>
-          <Box sx={{ padding: "16px" }} display="flex" alignItems="center" flexDirection={"column"}>
+          <Box sx={{ padding: "10px" , borderRadius: '8px'}} display="flex" alignItems="center" flexDirection={"column"}>
             <Typography variant="h6" sx={{ fontFamily: "cursive", fontWeight: 600 }}>
               Inbox
             </Typography>
           </Box>
           <Divider />
-          <List>
+          <ChatList>
             {menuItems.map((item) => {
               const isActive = selectedType === item.threadType;
               return (
                 <MotionSidebarItem
                   key={item.text}
                   active={isActive}
-                  onClick={() => navigate(`/chats/${item.threadType}`)}
+                  onClick={() => onSelectType(item.threadType)}
                   whileTap={{ scale: 0.98 }}
                 >
-                  {isActive && (
-                    <ActiveIndicator
-                      layoutId="activeIndicator"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                    />
-                  )}
                   <ListItemIcon sx={{ minWidth: 40 }}>{item.icon}</ListItemIcon>
                   <ListItemText primary={item.text} />
                   {typeof item.count === "number" && <Count variant="body2">{item.count}</Count>}
                 </MotionSidebarItem>
               );
             })}
-          </List>
+          </ChatList>
         </SidebarContainer>
       ) : (
         <Box
