@@ -20,6 +20,7 @@ import { AppDispatch, RootState } from "../../../redux/store/store";
 import { Agent, fetchAgents } from "../../../redux/slice/agentsSlice";
 import Loader from "../../../components/Loader";
 import toast, {Toaster} from "react-hot-toast";
+import { Button } from "../../../styles/layout.styled";
 
 const Agents: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -97,7 +98,7 @@ const Agents: React.FC = () => {
           onSave={handleSaveAgent}
           agent={editingAgent}
         />
-        <CreateAgent onClick={handleOpenDialog}>Add User</CreateAgent>
+        <Button onClick={handleOpenDialog}>Add User</Button>
       </AgentHeader>
       <AgentTable>
         <StyledTableContainer>
