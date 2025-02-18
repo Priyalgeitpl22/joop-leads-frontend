@@ -12,6 +12,7 @@ import {
 } from "./activateAccount.styled";
 import { AppDispatch, RootState } from "../../redux/store/store";
 import { activateAccount } from "../../redux/slice/authSlice";
+// import { activateAccount } from "../../redux/slice/authSlice";
 
 const ActivateAccount = () => {
   const [password, setPassword] = useState("");
