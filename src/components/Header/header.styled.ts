@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 export const SearchBar = styled.div`
   display: flex;
-  height: 27px;
+  height: 16px;
   width: 100%;
   align-items: center;
   background-color: #f1f5f9;
@@ -91,6 +91,7 @@ export const AppSubtitle = styled.p`
   margin: 0 !important;
   font-size: 12px;
   align-self: start;
+  align-item: center;
 `
 
 export const TitleContainer = styled.div`

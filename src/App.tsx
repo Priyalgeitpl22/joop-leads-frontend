@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { getUserDetails } from "./redux/slice/userSlice";
 import { AppDispatch } from "./redux/store/store";
@@ -17,12 +17,15 @@ import PasswordResetConfirmation from "./pages/Forgot-Password/PasswordResetConf
 import ResetPassword from "./pages/Forgot-Password/ResetPassword";
 import Register from "./pages/Register/Register";
 import VerifyOtp from "./pages/Verify-OTP/VerifyOtp";
-import { DashboardContainer, MainContainer, ContentArea } from "./styles/layout.styled";
+import { DashboardContainer, ContentArea } from "./styles/layout.styled";
 import Login from "./pages/Login/Login";
 import Sidebar from "./components/SideBar";
 import Home from "./pages/Home/Home";
 import { SocketProvider } from "./context/SocketContext";
 import { Toaster } from "react-hot-toast";
+import EmailAccount from "./pages/Email-Account/EmailAccount";
+import Leads from "./pages/Leads/Leads";
+import EmailCampaign from "./pages/EmailCampaign/EmailCampaign";
 
 const AuthGuard = ({ children }: { children: JSX.Element }) => {
   const token = Cookies.get("access_token");
@@ -32,7 +35,8 @@ const AuthGuard = ({ children }: { children: JSX.Element }) => {
 function AppRoutes() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  
   useEffect(() => {
     const fetchUser = async () => {
       const token = Cookies.get("access_token");
@@ -54,7 +58,7 @@ function AppRoutes() {
 
   return (
     <SocketProvider>
-    <Toaster position="top-center" />
+      <Toaster position="top-center" />
       <Routes>
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
@@ -72,19 +76,29 @@ function AppRoutes() {
           element={
             <AuthGuard>
               <DashboardContainer>
-                <Header />
-                <MainContainer>
-                  <Sidebar />
-                  <ContentArea>
-                    <Routes>
-                      <Route path="/" element={<Home />} />
-                      <Route path="/chats" element={<Chats />} />
-                      <Route path="/organization" element={<Organization />} />
-                      <Route path="/settings/configuration" element={<Configuration />} />
-                      <Route path="/settings/agents" element={<Agents />} />
-                    </Routes>
-                  </ContentArea>
-                </MainContainer>
+                <Header
+                  toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+                />
+                <ContentArea>
+                  {isSidebarOpen ? <Sidebar /> : null}
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/email-campaign" element={<EmailCampaign />} />
+                    <Route path="/email-account" element={<EmailAccount />} />
+                    <Route path="/leads" element={<Leads />} />
+                    <Route path="/chats" element={<Chats />} />
+                    <Route path="/organization" element={<Organization />} />
+                    <Route
+                      path="/settings/configuration"
+                      element={<Configuration />}
+                    />
+                    <Route path="/settings/agents" element={<Agents />} />
+                    <Route
+                      path="/settings/configuration"
+                      element={<Configuration />}
+                    />
+                  </Routes>
+                </ContentArea>
               </DashboardContainer>
             </AuthGuard>
           }

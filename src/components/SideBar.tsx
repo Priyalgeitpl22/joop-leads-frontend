@@ -6,8 +6,6 @@ import {
   ChevronUp,
   Sliders,
   Users,
-  MessageSquare,
-  Building,
 } from "lucide-react";
 import {
   SidebarContainer,
@@ -17,7 +15,7 @@ import {
   SettingsWrapper,
 } from "../styles/layout.styled";
 import { useLocation } from "react-router-dom";
-
+import MailOutlineSharpIcon from "@mui/icons-material/MailOutlineSharp";
 const sidebarAnimation = {
   initial: { x: -260 },
   animate: { x: 0 },
@@ -39,29 +37,13 @@ const Sidebar = () => {
           <HomeIcon size={20} />
           Home
         </NavItem>
-        <NavItem
-          to="/chats"
-          className={location.pathname.startsWith("/chats") ? "active" : ""}
-        >
-          <MessageSquare size={20} />
-          Chats
+        <NavItem to="/email-campaign" className={location.pathname === "/email-campaign" ? "active" : ""}>
+          <HomeIcon size={20} />
+          Email Campaign
         </NavItem>
-
-        <NavItem
-          to="/organization"
-          className={location.pathname === "/organization" ? "active" : ""}
-        >
-          <Building/>
-          Organization
-        </NavItem>
-        <NavItem
-          to="/settings/configuration"
-          className={
-            location.pathname === "/settings/configuration" ? "active" : ""
-          }
-        >
-          <Sliders size={18} />
-          Configuration
+        <NavItem to="/">
+          <HomeIcon size={20} />
+          Master Inbox
         </NavItem>
         <NavItem
           to="/settings/agents"
@@ -69,6 +51,20 @@ const Sidebar = () => {
         >
           <Users size={18} />
           Agents
+        </NavItem>
+        <NavItem
+          to="/email-account"
+          className={location.pathname === "/email-account" ? "active" : ""}
+        >
+          <MailOutlineSharpIcon />
+          Email Account
+        </NavItem>
+        <NavItem
+          to="/leads"
+          className={location.pathname === "/leads" ? "active" : ""}
+        >
+          <HomeIcon size={20} />
+          All Leads
         </NavItem>
         <SettingsWrapper>
           <div onClick={() => setIsSettingsOpen(!isSettingsOpen)}>
