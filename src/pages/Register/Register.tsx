@@ -36,11 +36,11 @@ interface RegisterFormData {
 const formFields: { name: keyof Omit<RegisterFormData, "profilePicture">; label: string; type: string }[] = [
   { name: "fullName", label: "Full Name", type: "text" },
   { name: "email", label: "Email Address", type: "email" },
-  { name: "orgName", label: "Organization Name", type: "text" },
-  { name: "domain", label: "Domain", type: "text" },
-  { name: "country", label: "Country", type: "text" },
-  { name: "phone", label: "Phone Number", type: "tel" },
   { name: "password", label: "Password", type: "text" },
+  { name: "orgName", label: "Company Name", type: "text" },
+  { name: "domain", label: "Company Domain", type: "text" },
+  // { name: "country", label: "Country", type: "text" },
+  // { name: "phone", label: "Phone Number", type: "tel" },
 ];
 
 const Register = () => {

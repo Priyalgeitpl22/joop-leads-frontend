@@ -8,6 +8,7 @@ import {
   TitleContainer,
 } from "../Header/header.styled";
 import UserProfileMenu from "../User-Profile/UserProfile";
+import CampaignIcon from "@mui/icons-material/Campaign";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../redux/store/store";
 import { useState, useCallback, useEffect } from "react";
@@ -18,14 +19,18 @@ import Cookies from "js-cookie";
 import { getUserDetails } from "../../redux/slice/userSlice";
 import { useNavigate } from "react-router-dom";
 import NotificationComponent from "../Notification/NotificationComponent";
-import logo from "../../../public/logo3.png";
 import { HeaderOptions } from "../../pages/Home/home.styled";
+import { Menu } from "lucide-react";
+interface HeaderProps {
+  toggleSidebar: () => void;
+}
 
-const Header = () => {
+const Header = ({ toggleSidebar }: HeaderProps) => {
   const { user } = useSelector((state: RootState) => state.user);
   const { socket } = useSocket();
   const [isOnline, setIsOnline] = useState<boolean>(false);
   const [onlineUsers, setOnlineUsers] = useState<Record<string, boolean>>({});
+
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -81,14 +86,25 @@ const Header = () => {
     return () => {
       socket.off("agentStatusUpdate", handleAgentStatusUpdate);
     };
-  }, [socket, user?.id]);
+  }, [socket, user?.id, isOnline]);
 
   return (
     <HeaderContainer>
+      <button
+        onClick={toggleSidebar}
+        style={{ background: "transparent", border: "none" }}
+      >
+        <Menu size={24} />
+      </button>
       <LogoContainer>
-        <img src={logo} style={{ width: "75px", height: "75px" }}></img>
+        <CampaignIcon
+          style={{
+            width: "50px",
+            height: "50px",
+          }}
+        />
         <TitleContainer>
-          <AppTitle>Golden Bot</AppTitle>
+          <AppTitle>Joop Leads</AppTitle>
           <AppSubtitle>Automate, Assist, Accelerate</AppSubtitle>
         </TitleContainer>
       </LogoContainer>
@@ -103,7 +119,7 @@ const Header = () => {
             display: "flex",
             alignItems: "center",
             flexDirection: "column",
-            padding: '0px 8px'
+            padding: "0px 8px",
           }}
         >
           <Switch
@@ -120,7 +136,10 @@ const Header = () => {
               gap: "2px",
             }}
           >
-            <Typography variant="subtitle2" sx={{ fontSize: 10, color: '#696969' }}>
+            <Typography
+              variant="subtitle2"
+              sx={{ fontSize: 10, color: "#696969" }}
+            >
               {isOnline ? "Online" : "Offline"}
             </Typography>
             <StatusIndicator online={isOnline} />
