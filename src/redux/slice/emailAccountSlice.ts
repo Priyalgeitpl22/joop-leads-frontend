@@ -1,5 +1,5 @@
 import { createAsyncThunk} from "@reduxjs/toolkit";
-import {emailApi} from "../../services/api";
+import emailApi from "../../services/api";
 import { AxiosError } from "axios";
 
 export interface EmailAccount {
