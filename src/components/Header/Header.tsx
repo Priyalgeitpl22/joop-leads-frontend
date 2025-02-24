@@ -30,6 +30,7 @@ const Header = ({ toggleSidebar }: HeaderProps) => {
   const { socket } = useSocket();
   const [isOnline, setIsOnline] = useState<boolean>(false);
   const [onlineUsers, setOnlineUsers] = useState<Record<string, boolean>>({});
+
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -102,7 +103,6 @@ const Header = ({ toggleSidebar }: HeaderProps) => {
             height: "50px",
           }}
         />
-        {/* <img src={logo} alt="Logo" style={{ width: "75px", height: "75px" }} /> */}
         <TitleContainer>
           <AppTitle>Joop Leads</AppTitle>
           <AppSubtitle>Automate, Assist, Accelerate</AppSubtitle>

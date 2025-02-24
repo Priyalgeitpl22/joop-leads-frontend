@@ -9,6 +9,9 @@ import {
   IconButton,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { useDispatch} from "react-redux";
+import { AppDispatch } from "../../../redux/store/store";
+import { addOuthEmailAccount } from "../../../redux/slice/emailAccountSlice";
 
 interface EmailCampaignDialogProps {
   open: boolean;
@@ -19,6 +22,14 @@ const EmailCampaignDialog: React.FC<EmailCampaignDialogProps> = ({
   open,
   onClose,
 }) => {
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handleGoogleOuth = async () =>{
+    const response = await dispatch(addOuthEmailAccount()).unwrap();
+    if(response){
+    window.location.href=response}
+  }
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <IconButton
@@ -93,6 +104,7 @@ const EmailCampaignDialog: React.FC<EmailCampaignDialogProps> = ({
               padding: 2,
               textTransform: "none",
             }}
+            onClick={handleGoogleOuth}
           >
             <Box
               component="img"
@@ -184,7 +196,7 @@ const EmailCampaignDialog: React.FC<EmailCampaignDialogProps> = ({
         </Typography> */}
 
         {/* <Box display="flex" gap={2}> */}
-          {/* <Button
+        {/* <Button
             variant="contained"
             sx={{
               flex: 1,

@@ -25,7 +25,9 @@ import { SocketProvider } from "./context/SocketContext";
 import { Toaster } from "react-hot-toast";
 import EmailAccount from "./pages/Email-Account/EmailAccount";
 import Leads from "./pages/Leads/Leads";
-import EmailCampaign from "./pages/EmailCampaign/EmailCampaign";
+import EmailCampaign from "./pages/Email-Campaign/EmailCampaign";
+import EmailInboxs from "./pages/Email-Inbox/EmailInbox";
+import NewCampaign from "./pages/Email-Campaign/NewCampaign/NewCampaign";
 
 const AuthGuard = ({ children }: { children: JSX.Element }) => {
   const token = Cookies.get("access_token");
@@ -69,8 +71,8 @@ function AppRoutes() {
         <Route path="/confirmation" element={<PasswordResetConfirmation />} />
         <Route path="/change-password" element={<ChangePassword />} />
         <Route path="/activate-account" element={<ActivateAccount />} />
+        <Route path="/email-campaign/new-campaign" element={<NewCampaign />} />
 
-        {/* Protected Routes */}
         <Route
           path="/*"
           element={
@@ -85,6 +87,7 @@ function AppRoutes() {
                     <Route path="/" element={<Home />} />
                     <Route path="/email-campaign" element={<EmailCampaign />} />
                     <Route path="/email-account" element={<EmailAccount />} />
+                    <Route path="/email-inbox" element={<EmailInboxs />} />
                     <Route path="/leads" element={<Leads />} />
                     <Route path="/chats" element={<Chats />} />
                     <Route path="/organization" element={<Organization />} />

@@ -1,5 +1,19 @@
-import { Box, Checkbox, Menu, Table, TableBody, TableRow, Typography, Link, FormControl, InputLabel, Select, MenuItem, Button } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import {
+  Box,
+  Checkbox,
+  Menu,
+  Table,
+  TableBody,
+  TableRow,
+  Typography,
+  Link,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Button,
+} from "@mui/material";
 import {
   EmailAccountsContainer,
   EmailAccountHeader,
@@ -10,30 +24,53 @@ import {
   StyledTableCell,
   StyledTableHead,
   CustomEditIconButton,
-  CustomDangerIcon,
-  CustomForwardIcon,
   StyledWarmup,
   StyledReputation,
   StyledTableCheckbox,
   FilterIcon,
 } from "./EmailAccount.styled";
-
-import SendIcon from "@mui/icons-material/Send";
 import EmailAccountDialog from "./EmailAccountDialogBox/EmailAccountDialog";
 import AdvancedSettingDialog from "./AdvancedSettingDialogBox/AdvancedSettingDialog";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
-import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
-import WarningOutlinedIcon from "@mui/icons-material/WarningOutlined";
+import { useDispatch, useSelector } from "react-redux";
+import { EmailAccount, fetchEmailAccount } from "../../redux/slice/emailAccountSlice";
+import { AppDispatch, RootState } from "../../redux/store/store";
 import { SearchBar } from "../../components/Header/header.styled";
 import { Search } from "lucide-react";
 import { Button2 } from "../../styles/layout.styled";
+import toast from "react-hot-toast";
 
-const EmailAccount: React.FC = () => {
+const EmailAccounts: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [isSettingOpen, setIsSettingOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  
+  const [emailAccounts, setEmailAccounts] = useState<EmailAccount[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const { user } = useSelector((state: RootState) => state.user);
+  // const { data } = useSelector((state: RootState) => state.agents);
+
+
+  useEffect(() => {
+    setLoading(true);
+    if (user) {
+      dispatch(fetchEmailAccount())
+        .unwrap()
+        .then((data) => {
+          console.log("data0000000000", data)
+          setEmailAccounts(data);
+          setLoading(false);
+          toast.success("Email Accounts fetched successfully");
+        })
+        .catch((error) => {
+          console.error("Failed to fetch Account:", error);
+          toast.error("Failed to fetch Account");
+        });
+    }
+  }, [dispatch, user]);
+
+
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -51,6 +88,29 @@ const EmailAccount: React.FC = () => {
   };
 
   const isMenuOpen = Boolean(anchorEl);
+
+  const CustomIcon = () => (
+    <svg
+      fill="none"
+      viewBox="0 0 16 16"
+      height="16"
+      width="16"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M0 6.61829L16 3.08496L12.3964 13.5072L6.79537 9.88496L5.70399 14.085L4.75676 9.01829L0 6.61829Z"
+        fill="#5F63CB"
+      ></path>
+      <path
+        d="M5.84857 12.3289L6.30159 9.64006L14.559 3.95117L5.14844 8.64006L5.84857 12.3289Z"
+        fill="#9297EC"
+      ></path>
+      <path
+        d="M9.30771 11.5067L5.7041 14.0845L6.79548 9.8623L9.30771 11.5067Z"
+        fill="#6E58F1"
+      ></path>
+    </svg>
+  );
 
   return (
     <EmailAccountsContainer>
@@ -128,7 +188,7 @@ const EmailAccount: React.FC = () => {
 
         {["Warmup Status", "Tag Name", "Client Name"].map((label) => (
           <FormControl fullWidth sx={{ mt: 2 }}>
-            <InputLabel>{label}</InputLabel>
+            <InputLabel shrink={false}>{label}</InputLabel>
             {/* <InputLabel>Warmup Status</InputLabel> */}
             <Select>
               <MenuItem value="">Select {label}</MenuItem>
@@ -182,40 +242,34 @@ const EmailAccount: React.FC = () => {
               </TableRow>
             </StyledTableHead>
             <TableBody style={{ background: "#ffff" }}>
-              <TableRow>
-                <StyledTableCheckbox>
-                  <Checkbox {...label} />
-                </StyledTableCheckbox>
-                <StyledTableCell>
-                  Nidhi
-                  <CustomForwardIcon>
-                    <OpenInNewOutlinedIcon />
-                  </CustomForwardIcon>
-                  <CustomDangerIcon>
-                    <WarningOutlinedIcon />
-                  </CustomDangerIcon>
-                </StyledTableCell>
-                <StyledTableCell>
-                  <CustomEditIconButton>
-                    <SendIcon />
-                  </CustomEditIconButton>
-                  nidhi@mailinator.com
-                </StyledTableCell>
-                <StyledTableCell>0/100</StyledTableCell>
-                <StyledTableCell>
-                  <div>
-                    <StyledWarmup>yes</StyledWarmup>
-                  </div>
-                </StyledTableCell>
-                <StyledTableCell>
-                  <StyledReputation>100%</StyledReputation>
-                </StyledTableCell>
-                <StyledTableCell>
-                  <CustomEditIconButton>
-                    <SendIcon />
-                  </CustomEditIconButton>
-                </StyledTableCell>
-              </TableRow>
+              {emailAccounts.map((account) => (
+                <TableRow key={account.id}>
+                  <StyledTableCheckbox>
+                    <Checkbox {...label} />
+                  </StyledTableCheckbox>
+                  <StyledTableCell>{account.name}</StyledTableCell>
+                  <StyledTableCell>{account.email}</StyledTableCell>
+                  <StyledTableCell>0/100</StyledTableCell>
+                  <StyledTableCell>
+                    <div>
+                      <StyledWarmup>yes</StyledWarmup>
+                    </div>
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    <StyledReputation>100%</StyledReputation>
+                  </StyledTableCell>
+                  {/* <StyledTableCell>warmup</StyledTableCell> */}
+                  {/* <StyledTableCell>
+                    <StyledWarmup>{account.type}</StyledWarmup>
+                  </StyledTableCell> */}
+                  {/* <StyledTableCell></StyledTableCell> */}
+                  <StyledTableCell>
+                    <CustomEditIconButton>
+                      <CustomIcon />
+                    </CustomEditIconButton>
+                  </StyledTableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </StyledTableContainer>
@@ -224,4 +278,4 @@ const EmailAccount: React.FC = () => {
   );
 };
 
-export default EmailAccount;
+export default EmailAccounts;

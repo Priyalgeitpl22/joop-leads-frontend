@@ -1,21 +1,16 @@
 import { useState } from "react";
 import {
   HomeIcon,
-  Settings,
-  ChevronDown,
-  ChevronUp,
-  Sliders,
   Users,
 } from "lucide-react";
 import {
   SidebarContainer,
   NavItem,
-  SubNavItem,
-  SubmenuWrapper,
-  SettingsWrapper,
 } from "../styles/layout.styled";
 import { useLocation } from "react-router-dom";
 import MailOutlineSharpIcon from "@mui/icons-material/MailOutlineSharp";
+import CampaignOutlinedIcon from "@mui/icons-material/CampaignOutlined";
+import AllInboxOutlinedIcon from "@mui/icons-material/AllInboxOutlined";
 const sidebarAnimation = {
   initial: { x: -260 },
   animate: { x: 0 },
@@ -24,7 +19,6 @@ const sidebarAnimation = {
 
 const Sidebar = () => {
   const location = useLocation();
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   return (
     <SidebarContainer
@@ -37,12 +31,25 @@ const Sidebar = () => {
           <HomeIcon size={20} />
           Home
         </NavItem>
-        <NavItem to="/email-campaign" className={location.pathname === "/email-campaign" ? "active" : ""}>
+        <NavItem
+          to="/chats"
+          className={location.pathname === "/chats" ? "active" : ""}
+        >
           <HomeIcon size={20} />
+          Chats
+        </NavItem>
+        <NavItem
+          to="/email-campaign"
+          className={location.pathname === "/email-campaign" ? "active" : ""}
+        >
+          <CampaignOutlinedIcon />
           Email Campaign
         </NavItem>
-        <NavItem to="/">
-          <HomeIcon size={20} />
+        <NavItem
+          to="/email-inbox"
+          className={location.pathname === "/email-inbox" ? "active" : ""}
+        >
+          <AllInboxOutlinedIcon />
           Master Inbox
         </NavItem>
         <NavItem
@@ -66,7 +73,7 @@ const Sidebar = () => {
           <HomeIcon size={20} />
           All Leads
         </NavItem>
-        <SettingsWrapper>
+        {/* <SettingsWrapper>
           <div onClick={() => setIsSettingsOpen(!isSettingsOpen)}>
             <NavItem
               to="#"
@@ -108,7 +115,7 @@ const Sidebar = () => {
               </SubNavItem>
             </SubmenuWrapper>
           )}
-        </SettingsWrapper>
+        </SettingsWrapper> */}
       </nav>
     </SidebarContainer>
   );

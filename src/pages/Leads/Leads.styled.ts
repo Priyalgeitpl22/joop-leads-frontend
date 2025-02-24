@@ -7,7 +7,7 @@ import {
 } from "@mui/material";
 import { motion } from "framer-motion";
 
-export const EmailAccountsContainer = styled.div`
+export const LeadssContainer = styled.div`
   width: 98%;
   height: 98%;
   display: flex;
@@ -22,7 +22,7 @@ export const EmailAccountsContainer = styled.div`
   border-radius: 8px;
 }
 `;
-export const EmailAccountHeader = styled.section`
+export const LeadsHeader = styled.section`
   width: 100%;
   display: flex;
   align-items: center;
@@ -37,7 +37,13 @@ export const SectionTitle = styled.h2`
   display: flex;
 `;
 
-export const CreateEmailAccount = styled(motion.button)`
+// export const AccountButton = styled(motion.button)`
+//   background: #6e58f1;
+//   border-radius: 3px;
+//   color: white;
+// `;
+
+export const CreateLeads = styled(motion.button)`
   font-weight: bold;
   padding: 12px;
   border: none;
@@ -62,7 +68,7 @@ export const CreateEmailAccount = styled(motion.button)`
     box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
   }
 `;
-export const EmailAccountTable = styled.div`
+export const LeadsTable = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -70,6 +76,7 @@ export const EmailAccountTable = styled.div`
 `;
 
 export const StyledTableContainer = styled(TableContainer)`
+  max-height: 400px;
   overflow-y: auto;
   &::-webkit-scrollbar {
     width: 8px;
@@ -142,14 +149,12 @@ export const StyledReputation = styled(TableCell)`
 
 export const CustomEditIconButton = styled(IconButton)`
   color: var(--theme-color);
-  margin-right: 8px;
-  &:hover {
-    color: #3e5164;
-  }
+  color: black;
+  margin-right: 2px;
 `;
 
 export const CustomForwardIcon = styled(IconButton)`
-  padding: 0px
+  padding: 0px;
 `;
 
 export const FilterIcon = styled(IconButton)`

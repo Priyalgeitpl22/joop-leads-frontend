@@ -102,7 +102,7 @@ export const SubNavItem = styled(NavLink)`
 export const DashboardContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 96vh;
   width: 100%
   ;
   background: var(theme-color-light);
@@ -123,6 +123,7 @@ export const Sidebar = styled.div`
 `;
 
 export const ContentArea = styled.div`
+  height: 88%;
   flex-grow: 1;
   background-color: var(--theme-color-light);
   display: flex;

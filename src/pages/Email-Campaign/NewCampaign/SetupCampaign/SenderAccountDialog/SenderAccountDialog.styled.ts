@@ -1,68 +1,51 @@
 import styled from "@emotion/styled";
-import {
-  IconButton,
-  TableCell,
-  TableContainer,
-  TableHead,
-} from "@mui/material";
+import { IconButton, TableCell, TableContainer, TableHead } from "@mui/material";
 import { motion } from "framer-motion";
 
-export const EmailAccountsContainer = styled.div`
-  width: 98%;
-  height: 98%;
-  display: flex;
-  // border-radius: 8px;
-  overflow: auto;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  background: white;
-  position: relative;
-  flex-direction: column;
-  background: var(--white-fade-gradient);
-  padding: 16px;
-  border-radius: 8px;
-}
-`;
-export const EmailAccountHeader = styled.section`
+export const DialogContainer = styled.div`
+  min-height: 450px;
   width: 100%;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-radius: 8px;
+  flex-direction: column;
+  background: #f7f9fc;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 24px;
 `;
 
-export const SectionTitle = styled.h2`
-  font-size: 2rem;
-  font-weight: 600;
-  color: #35495c;
+export const TabPanel = styled(motion.div)`
+  padding: 24px;
+  background: #ffffff;
+  border-radius: 12px;
+`;
+
+export const FormGroup = styled.div`
   display: flex;
+  flex-direction: column;
+  gap: 10px;
 `;
 
-export const CreateEmailAccount = styled(motion.button)`
-  font-weight: bold;
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  background: linear-gradient(135deg, var(--theme-color), var(--theme-color));
-  color: #ffffff;
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  font-size: 16px;
-  outline: none;
-  letter-spacing: 1px;
+export const AvatarWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 10px;
+  justify-content: center;
+`;
 
-  &:hover {
-    background: linear-gradient(135deg, var(--theme-color), #378f8f);
-    transform: scale(1.05);
-    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
-  }
+export const AvailabilityContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 
-  &:active {
-    transform: scale(0.95);
-    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+  .availability-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
   }
 `;
-export const EmailAccountTable = styled.div`
+
+export const SenderAccountTable = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -70,6 +53,8 @@ export const EmailAccountTable = styled.div`
 `;
 
 export const StyledTableContainer = styled(TableContainer)`
+  // max-height: 400px;
+  max-width: 100% !important;
   overflow-y: auto;
   &::-webkit-scrollbar {
     width: 8px;
@@ -167,3 +152,4 @@ export const CustomDeleteIconButton = styled(IconButton)`
     color: #3e5164;
   }
 `;
+
