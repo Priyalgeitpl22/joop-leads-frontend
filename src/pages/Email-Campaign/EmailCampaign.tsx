@@ -12,6 +12,11 @@ import {
   Paper,
   Button,
   Link,
+  Menu,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Select,
 } from "@mui/material";
 import {
   Email,
@@ -32,6 +37,7 @@ import { useNavigate } from "react-router-dom";
 const EmailCampaign = () => {
   const [activeTab, setActiveTab] = useState("all_campaign");
   const [createFolder, setCreateFolder] = useState<boolean>(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const navigate = useNavigate();
   
 
@@ -47,6 +53,16 @@ const EmailCampaign = () => {
   const handleCreateFolder = () => {
     setCreateFolder(true);
   };
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const isMenuOpen = Boolean(anchorEl);
 
   const campaignData = [
     {
@@ -99,7 +115,7 @@ const EmailCampaign = () => {
               marginLeft: "auto",
             }}
           >
-            <FilterIcon>
+            <FilterIcon onClick={handleMenuOpen}>
               <FilterAltOutlinedIcon />
             </FilterIcon>
             <SearchBar>
@@ -140,6 +156,75 @@ const EmailCampaign = () => {
           </Box>
         )}
       </CustomTabs>
+      <Menu
+        anchorEl={anchorEl}
+        open={isMenuOpen}
+        onClose={handleMenuClose}
+        MenuListProps={{ "aria-labelledby": "profile-menu-button" }}
+        sx={{
+          "& .MuiMenu-paper": {
+            minWidth: "320px",
+            padding: "10px",
+            boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+            borderRadius: "8px",
+          },
+        }}
+      >
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          mb={1}
+        >
+          <Typography fontWeight="bold">Filter</Typography>
+          <Link
+            href="#"
+            underline="hover"
+            sx={{ color: "#6e58f1", fontSize: "14px" }}
+          >
+            Clear all
+          </Link>
+        </Box>
+
+        {["Campaign Status", "Tag Name", "Team Member", "Client Name"].map(
+          (label) => (
+            <FormControl fullWidth sx={{ mt: 2 }}>
+              <InputLabel shrink={false}>{label}</InputLabel>
+              <Select>
+                <MenuItem value="">Select {label}</MenuItem>
+              </Select>
+            </FormControl>
+          )
+        )}
+
+        <Box display="flex" justifyContent="space-between" mt={2}>
+          <Button
+            variant="outlined"
+            sx={{
+              color: "black",
+              borderColor: "#ccc",
+              textTransform: "none",
+              borderRadius: "8px",
+              width: "45%",
+            }}
+            onClick={handleMenuClose}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: "#6e58f1",
+              color: "white",
+              textTransform: "none",
+              borderRadius: "8px",
+              width: "45%",
+            }}
+          >
+            Apply
+          </Button>
+        </Box>
+      </Menu>
 
       {activeTab === "all_campaign" && (
         <TableContainer
@@ -340,7 +425,12 @@ const EmailCampaign = () => {
                 <Button2
                   background="#6e58f1"
                   color="white"
-                  style={{ width: "21%", height: "16%", marginTop: "10px", padding: "0px" }}
+                  style={{
+                    width: "21%",
+                    height: "16%",
+                    marginTop: "10px",
+                    padding: "0px",
+                  }}
                   onClick={handleCreateFolder}
                 >
                   Create Folder

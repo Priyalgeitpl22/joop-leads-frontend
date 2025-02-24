@@ -189,14 +189,12 @@ const EmailAccounts: React.FC = () => {
         {["Warmup Status", "Tag Name", "Client Name"].map((label) => (
           <FormControl fullWidth sx={{ mt: 2 }}>
             <InputLabel shrink={false}>{label}</InputLabel>
-            {/* <InputLabel>Warmup Status</InputLabel> */}
             <Select>
               <MenuItem value="">Select {label}</MenuItem>
             </Select>
           </FormControl>
         ))}
 
-        {/* Buttons */}
         <Box display="flex" justifyContent="space-between" mt={2}>
           <Button
             variant="outlined"
