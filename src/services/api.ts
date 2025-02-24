@@ -1,11 +1,17 @@
 import axios from "axios";
 
 export const baseURL = 'http://localhost:5003/api';
-const api = axios.create({
+export const api = axios.create({
   baseURL:  baseURL, 
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-export default api;
+export const emailBaseURL = "http://localhost:3000/api";
+export const emailApi = axios.create({
+  baseURL: emailBaseURL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});

@@ -2,13 +2,15 @@ import styled from "@emotion/styled";
 import { motion } from "framer-motion";
 import { Link, NavLink } from "react-router-dom";
 
+interface ButtonProps {
+  color: string
+  background: string
+}
+
 export const SidebarContainer = styled(motion.aside)`
-  padding: 20px;
   background-color: #ffffff;
   border-right: 1px solid #e2e8f0;
-  margin-top: 6px;
-  border-radius: 10px;
-  min-width: 200px;
+  min-width: 240px;
 `;
 
 export const HeaderContainer = styled.header`
@@ -17,7 +19,7 @@ export const HeaderContainer = styled.header`
   display: flex;
   align-items: center;
   padding: 10px;
-  background: var(--white-fade-gradient);
+  background: rgb(65 70 233);
 `;
 
 export const Logo = styled.div`
@@ -31,19 +33,16 @@ export const Logo = styled.div`
 `;
 
 export const NavItem = styled(Link)`
+  width: "20%";
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.75rem 1rem;
+  padding: 20px 12px;
   color: #64748b;
   text-decoration: none;
-  border-radius: 0.5rem;
   transition: all 0.2s;
   cursor: pointer;
-  margin-bottom: 0.5rem;
   background-color: transparent;
-  border: 1px solid #ddd;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 
   &:hover {
     background-color: var(--theme-color);
@@ -103,8 +102,9 @@ export const SubNavItem = styled(NavLink)`
 export const DashboardContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  width: 100vw;
+  height: 96vh;
+  width: 100%
+  ;
   background: var(theme-color-light);
 `;
 
@@ -123,9 +123,10 @@ export const Sidebar = styled.div`
 `;
 
 export const ContentArea = styled.div`
+  height: 88%;
   flex-grow: 1;
-  padding: 5px 10px;
   background-color: var(--theme-color-light);
+  display: flex;
 `;
 
 export const Button = styled.button`
@@ -145,3 +146,19 @@ font-weight: 600;
   opacity: 0.8;
 }
 `;
+
+export const Button2 = styled("button", {
+  shouldForwardProp: (prop) => prop !== "online",
+})<ButtonProps>(
+  ({ color, background }) => `
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+    padding: 12px;
+    color: ${color};
+    background-color: ${background};
+    border: none;
+    font-weight: 500;
+    font-size: 14px;
+`
+);

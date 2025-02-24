@@ -7,7 +7,6 @@ import {
   FormContainer,
   FormTitle,
   StyledTextField,
-  StyledButton
 } from './organization.styled';
 import { AppDispatch, RootState } from '../../redux/store/store';
 import industriesData from './Industry.json';
@@ -128,11 +127,9 @@ const OrganizationForm: React.FC = () => {
     }, 1000);
   };
 
- 
-
   return (
     <FormContainer>
-       {loading && <Loader />}
+      {loading && <Loader />}
       <Box
         sx={{
           display: 'flex',
