@@ -16,12 +16,17 @@ import CloseIcon from "@mui/icons-material/Close";
 interface PreviewEmailDialogProps {
   open: boolean;
   onClose: () => void;
+  emailContent: string;
 }
 
 const PreviewMailDialog: React.FC<PreviewEmailDialogProps> = ({
   open,
   onClose,
+  emailContent,
 }) => {
+  const stripTags = (html: string) => {
+    return html.replace(/<[^>]*>/g, "");
+  };
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <IconButton
@@ -30,14 +35,21 @@ const PreviewMailDialog: React.FC<PreviewEmailDialogProps> = ({
       >
         <CloseIcon />
       </IconButton>
-      <DialogTitle>
+      <DialogTitle
+        sx={{
+          fontWeight: "bold",
+          fontSize: 18,
+          background: "#f1f2fb",
+          padding: "12px 24px",
+        }}
+      >
         <Typography variant="h6" fontWeight="bold">
           Sequence Preview
         </Typography>
       </DialogTitle>
 
       <DialogContent>
-        <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+        <Typography variant="subtitle1" fontWeight="bold" mt={2}>
           Select a Lead
         </Typography>
         <FormControl fullWidth>
@@ -57,6 +69,9 @@ const PreviewMailDialog: React.FC<PreviewEmailDialogProps> = ({
         </Typography>
         <TextField
           fullWidth
+          value={stripTags(emailContent)}
+          multiline
+          // minRows={3}
           sx={{ backgroundColor: "#f5f5f5", marginTop: 1 }}
         />
 
@@ -78,8 +93,13 @@ const PreviewMailDialog: React.FC<PreviewEmailDialogProps> = ({
           <Button
             variant="contained"
             color="primary"
-            disabled
-            sx={{ marginTop: 2 }}
+            sx={{
+              backgroundColor: "#E4D9FF",
+              color: "white",
+              background: "#6e58f1",
+              marginTop: "40px",
+              marginBottom: "20px",
+            }}
           >
             Send Test Email
           </Button>

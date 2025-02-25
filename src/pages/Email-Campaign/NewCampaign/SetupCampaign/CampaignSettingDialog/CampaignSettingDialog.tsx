@@ -67,13 +67,13 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
           }}
         >
           <CustomTab label="General" value="general" />
-          <CustomTab label="Email Account" value="email_account" />
-          <CustomTab label="Webhooks" value="webhooks" />
+          {/* <CustomTab label="Email Account" value="email_account" />
+          <CustomTab label="Webhooks" value="webhooks" /> */}
         </CustomTabs>
         <ContentContainer>
           {activeTab === "general" && <GeneralCampaignSetting />}
-          {activeTab === "email_account" && <EmailCampaignSetting />}
-          {activeTab === "webhooks" && <WebhooksCampaignSetting />}
+          {/* {activeTab === "email_account" && <EmailCampaignSetting />}
+          {activeTab === "webhooks" && <WebhooksCampaignSetting />} */}
         </ContentContainer>
       </Dialog>
     </>

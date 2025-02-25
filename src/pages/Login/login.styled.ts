@@ -64,7 +64,7 @@ export const StyledButton = styled(Button)`
   text-transform: none;
   transition: all 0.3s ease-in-out;
   background:  var(--theme-color);
-  color: white;
+  color: black;
 
   &:hover {
     background:  var(--theme-color);
