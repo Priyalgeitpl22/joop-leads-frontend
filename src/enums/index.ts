@@ -4,5 +4,5 @@ export enum ThreadType {
     OPEN = "open",
     CHAT = "chat",
     BOTS = "bots",
-  }
+}
   

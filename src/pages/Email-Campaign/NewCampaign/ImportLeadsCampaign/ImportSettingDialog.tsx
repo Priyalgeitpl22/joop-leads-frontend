@@ -9,39 +9,39 @@ import {
   Switch,
   Typography,
   Tooltip,
+  FormControlLabel,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { csvSettingsType } from "../../Interfaces";
 
 interface ImportSettingDialogProps {
   open: boolean;
   onClose: () => void;
+  onSave: (settings: CsvSettings) => void;
 }
 
-type SettingKey =
-  | "blockList"
-  | "unsubscribeList"
-  | "bouncedLeads"
-  | "existingCampaign";
+type CsvSettings = csvSettingsType
 
 const ImportSettingDialog: React.FC<ImportSettingDialogProps> = ({
   open,
   onClose,
+  onSave,
 }) => {
-  const [settings, setSettings] = useState<{
-    blockList: boolean;
-    unsubscribeList: boolean;
-    bouncedLeads: boolean;
-    existingCampaign: boolean;
-  }>({
-    blockList: false,
-    unsubscribeList: false,
-    bouncedLeads: false,
-    existingCampaign: false,
+  const [settings, setSettings] = useState<CsvSettings>({
+    ignoreCommunityBounceList: false,
+    ignoreDuplicateLeadsInOtherCampaign: false,
+    ignoreGlobalBlockList: false,
+    ignoreUnsubscribeList: false,
   });
 
-  const handleToggle = (key: SettingKey) => {
+  const handleToggle = (key: keyof CsvSettings) => {
     setSettings((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const handleSave = () => {
+    onSave(settings);
+    onClose();
   };
 
   return (
@@ -66,30 +66,28 @@ const ImportSettingDialog: React.FC<ImportSettingDialogProps> = ({
 
       <DialogContent sx={{ padding: "20px 24px" }}>
         <Typography fontSize={14} fontWeight="600" mb={2} mt={2}>
-          General Preference
+          General Preferences
         </Typography>
 
-        {(
-          [
-            {
-              key: "blockList",
-              label: "Import Leads Even If They Are In The Global Block List",
-            },
-            {
-              key: "unsubscribeList",
-              label: "Import Leads Even If They Are In The Unsubscribe List",
-            },
-            {
-              key: "bouncedLeads",
-              label:
-                "Import Leads Even If They Bounced Across Our Entire Userbase",
-            },
-            {
-              key: "existingCampaign",
-              label: "Ignore The Leads That Exist In Another Campaign",
-            },
-          ] as { key: SettingKey; label: string }[]
-        ).map((item) => (
+        {[
+          {
+            key: "ignoreGlobalBlockList",
+            label: "Import Leads Even If They Are In The Global Block List",
+          },
+          {
+            key: "ignoreUnsubscribeList",
+            label: "Import Leads Even If They Are In The Unsubscribe List",
+          },
+          {
+            key: "ignoreCommunityBounceList",
+            label:
+              "Import Leads Even If They Bounced Across Our Entire Userbase",
+          },
+          {
+            key: "ignoreDuplicateLeadsInOtherCampaign",
+            label: "Ignore The Leads That Exist In Another Campaign",
+          },
+        ].map((item) => (
           <Box
             key={item.key}
             display="flex"
@@ -105,10 +103,15 @@ const ImportSettingDialog: React.FC<ImportSettingDialogProps> = ({
                 />
               </Tooltip>
             </Box>
-            <Switch
-              checked={settings[item.key]}
-              onChange={() => handleToggle(item.key)}
-              color="primary"
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={settings[item.key as keyof CsvSettings]}
+                  onChange={() => handleToggle(item.key as keyof CsvSettings)}
+                  color="primary"
+                />
+              }
+              label=""
             />
           </Box>
         ))}
@@ -124,7 +127,7 @@ const ImportSettingDialog: React.FC<ImportSettingDialogProps> = ({
               borderRadius: "6px",
               "&:hover": { backgroundColor: "#5a46d1" },
             }}
-            onClick={onClose}
+            onClick={handleSave}
           >
             Save
           </Button>
