@@ -11,6 +11,7 @@ import {
   StyledTableCheckbox,
   FilterIcon,
 } from "./SenderAccountDialog.styled";
+import Loader from "../../../../../components/Loader";
 import {
   Dialog,
   DialogTitle,
@@ -28,6 +29,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  DialogContent,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { EmailAccount, fetchEmailAccount } from "../../../../../redux/slice/emailAccountSlice";
@@ -72,7 +74,6 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
       dispatch(fetchEmailAccount())
         .unwrap()
         .then((data) => {
-          console.log("data0000000000", data)
           setEmailAccounts(data);
           setLoading(false);
         })
@@ -105,9 +106,13 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
     </svg>
   );
 
+  if (loading) {
+    return <Loader />;
+  }
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md">
-      <Box sx={{ minWidth: "100%", maxWidth: "fit-content !important" }}>
+      <Box sx={{ minWidth: "80%", maxWidth: "fit-content !important" }}>
         <IconButton
           onClick={onClose}
           sx={{ position: "absolute", right: 16, top: 10 }}
@@ -130,21 +135,23 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
             padding: "12px 15px",
             fontWeight: "bold",
             display: "flex",
-            gap: "55%",
+            gap: "54%",
           }}
         >
-          <Typography mt={1}>Email Account</Typography>
-          <Box sx={{display: "flex"}}>
+          <Typography mt={1} ml={1}>
+            Email Account
+          </Typography>
+          <Box sx={{ display: "flex" }}>
             <FilterIcon onClick={handleMenuOpen}>
               <FilterAltOutlinedIcon />
             </FilterIcon>
-            <SearchBar style={{ width: "80%" }} >
+            <SearchBar style={{ width: "80%" }}>
               <Search size={20} color="#64748b" />
               <input placeholder="Search input..." />
             </SearchBar>
           </Box>
         </Box>
-        <SenderAccountTable>
+        <SenderAccountTable style={{ width: "95%", marginLeft: "3%" }}>
           <StyledTableContainer>
             <Table>
               <StyledTableHead>
@@ -196,6 +203,7 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
             marginTop: "15px",
             marginBottom: "20px",
             float: "right",
+            marginRight: "2%",
           }}
         >
           Save Email Accounts
@@ -237,7 +245,9 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
           </MenuItem>
           <MenuItem disableRipple>
             <Checkbox size="small" />
-            <Typography variant="body2">Filter by Warmup Reputation</Typography>
+            <Typography variant="body2">
+              Filter by Warmup Reputation
+            </Typography>
           </MenuItem>
 
           {["Warmup Status", "Tag Name", "Client Name"].map((label) => (

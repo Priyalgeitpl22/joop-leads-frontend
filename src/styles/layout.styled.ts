@@ -19,7 +19,7 @@ export const HeaderContainer = styled.header`
   display: flex;
   align-items: center;
   padding: 10px;
-  background: rgb(65 70 233);
+  background: #6e58f1;
 `;
 
 export const Logo = styled.div`

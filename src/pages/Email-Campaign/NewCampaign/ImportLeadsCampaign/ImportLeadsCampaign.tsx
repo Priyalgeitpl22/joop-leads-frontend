@@ -35,14 +35,14 @@ const ImportLeadsCampaign = () => {
         alignItems: "center",
         flexDirection: "column",
         width: "100%",
-        padding: "60px 0",
+        padding: "2px 0",
       }}
     >
       {showDetail ? (
         <ImportLeadsDetail file={selectedFile} onFileChange={setSelectedFile}/>
       ) : (
         <>
-          <Typography variant="h6" fontWeight="600" textAlign="center">
+          <Typography variant="h6" fontWeight="600" textAlign="center" mt={6}>
             Easily add or update Leads /Contacts
           </Typography>
           <Typography variant="body2" textAlign="center" color="gray" mb={3}>

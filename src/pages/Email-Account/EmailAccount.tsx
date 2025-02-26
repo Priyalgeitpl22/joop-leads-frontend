@@ -31,6 +31,7 @@ import {
 } from "./EmailAccount.styled";
 import EmailAccountDialog from "./EmailAccountDialogBox/EmailAccountDialog";
 import AdvancedSettingDialog from "./AdvancedSettingDialogBox/AdvancedSettingDialog";
+import Loader from "../../components/Loader";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import { useDispatch, useSelector } from "react-redux";
 import { EmailAccount, fetchEmailAccount } from "../../redux/slice/emailAccountSlice";
@@ -58,7 +59,6 @@ const EmailAccounts: React.FC = () => {
       dispatch(fetchEmailAccount())
         .unwrap()
         .then((data) => {
-          console.log("data0000000000", data)
           setEmailAccounts(data);
           setLoading(false);
           toast.success("Email Accounts fetched successfully");
@@ -111,6 +111,10 @@ const EmailAccounts: React.FC = () => {
       ></path>
     </svg>
   );
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <EmailAccountsContainer>
@@ -189,14 +193,12 @@ const EmailAccounts: React.FC = () => {
         {["Warmup Status", "Tag Name", "Client Name"].map((label) => (
           <FormControl fullWidth sx={{ mt: 2 }}>
             <InputLabel shrink={false}>{label}</InputLabel>
-            {/* <InputLabel>Warmup Status</InputLabel> */}
             <Select>
               <MenuItem value="">Select {label}</MenuItem>
             </Select>
           </FormControl>
         ))}
 
-        {/* Buttons */}
         <Box display="flex" justifyContent="space-between" mt={2}>
           <Button
             variant="outlined"

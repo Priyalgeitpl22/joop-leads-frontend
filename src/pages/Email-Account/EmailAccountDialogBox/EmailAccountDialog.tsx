@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,6 +12,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useDispatch} from "react-redux";
 import { AppDispatch } from "../../../redux/store/store";
 import { addOuthEmailAccount } from "../../../redux/slice/emailAccountSlice";
+import EmailAccountSmtpDialog from "./EmailAccountSmtpDialog";
 
 interface EmailCampaignDialogProps {
   open: boolean;
@@ -23,11 +24,16 @@ const EmailCampaignDialog: React.FC<EmailCampaignDialogProps> = ({
   onClose,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
+  const [smtpDialogOpen, setSmtpDialogOpen] = useState<boolean>(false);
 
   const handleGoogleOuth = async () =>{
     const response = await dispatch(addOuthEmailAccount()).unwrap();
     if(response){
     window.location.href=response}
+  }
+
+  const handleSmtpDetail = async () =>{
+    setSmtpDialogOpen(true);
   }
 
   return (
@@ -140,7 +146,10 @@ const EmailCampaignDialog: React.FC<EmailCampaignDialogProps> = ({
               Outlook
             </Typography>
           </Button>
-
+          <EmailAccountSmtpDialog
+            open={smtpDialogOpen}
+            onClose={() => setSmtpDialogOpen(false)}
+          />
           <Button
             variant="contained"
             sx={{
@@ -153,6 +162,7 @@ const EmailCampaignDialog: React.FC<EmailCampaignDialogProps> = ({
               padding: 2,
               textTransform: "none",
             }}
+            onClick={handleSmtpDetail}
           >
             <Box
               component="img"

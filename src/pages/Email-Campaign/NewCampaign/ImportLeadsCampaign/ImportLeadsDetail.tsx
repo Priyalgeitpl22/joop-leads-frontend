@@ -38,9 +38,10 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
       sx={{
         maxWidth: "700px",
         margin: "auto",
-        height: "100%",
         padding: "20px",
         background: "#FAFBFF",
+        overflowY: "auto",
+        height: "462px",
       }}
     >
       <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 3 }}>
@@ -163,10 +164,39 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
                 minWidth: "60%",
                 background: "white",
                 borderRadius: "6px",
+                fontSize: "13px",
               }}
             >
-              <MenuItem value="">Select Column</MenuItem>
-              <MenuItem value="column2">Column 1</MenuItem>
+              <MenuItem value="first_name" sx={{ fontSize: "13px" }}>
+                First Name
+              </MenuItem>
+              <MenuItem value="last_name" sx={{ fontSize: "13px" }}>
+                Last Name
+              </MenuItem>
+              <MenuItem value="email" sx={{ fontSize: "13px" }}>
+                Email
+              </MenuItem>
+              <MenuItem value="phone_number" sx={{ fontSize: "13px" }}>
+                Phone Number
+              </MenuItem>
+              <MenuItem value="company_name" sx={{ fontSize: "13px" }}>
+                Company Name
+              </MenuItem>
+              <MenuItem value="website" sx={{ fontSize: "13px" }}>
+                Website
+              </MenuItem>
+              <MenuItem value="linkedin_profile" sx={{ fontSize: "13px" }}>
+                LinkedIn Profile
+              </MenuItem>
+              <MenuItem value="location" sx={{ fontSize: "13px" }}>
+                Location
+              </MenuItem>
+              <MenuItem value="custom_field" sx={{ fontSize: "13px" }}>
+                Custom Field
+              </MenuItem>
+              <MenuItem value="ignore_field" sx={{ fontSize: "13px" }}>
+                Ignore Field
+              </MenuItem>
             </Select>
           </Box>
         ))}
