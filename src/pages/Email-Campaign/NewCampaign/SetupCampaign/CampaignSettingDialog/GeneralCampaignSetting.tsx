@@ -6,18 +6,15 @@ import {
   RadioGroup,
   FormControlLabel,
   Checkbox,
-  Select,
-  MenuItem,
   Slider,
   Button,
-  TextField,
 } from "@mui/material";
+import { TextField } from "../../../../../styles/layout.styled";
 
 const GeneralCampaignSetting = () => {
   const [stopSending, setStopSending] = useState("replies");
   const [trackEmailOpens, setTrackEmailOpens] = useState(false);
   const [trackLinkClicks, setTrackLinkClicks] = useState(false);
-  const [smartServer, setSmartServer] = useState("");
   const [priority, setPriority] = useState(50);
 
   return (
@@ -80,7 +77,7 @@ const GeneralCampaignSetting = () => {
         label="DON'T track link clicks"
       />
 
-      <Typography fontWeight="600" mt={2}>
+      {/* <Typography fontWeight="600" mt={2}>
         Assign a SmartServer
       </Typography>
       <Typography>
@@ -98,7 +95,7 @@ const GeneralCampaignSetting = () => {
         <MenuItem value="1">
           No IP Address added yet. Please add IP Address.
         </MenuItem>
-      </Select>
+      </Select> */}
 
       <Typography fontWeight="600" mt={2}>
         Prioritise sending pattern
@@ -137,7 +134,7 @@ const GeneralCampaignSetting = () => {
         label="Auto-analyse leads mailbox email service providers."
       />
 
-      <Typography fontWeight="600" mt={2}>
+      {/* <Typography fontWeight="600" mt={2}>
         Isolated Lead Email Provider Sending
       </Typography>
       <Typography>
@@ -157,9 +154,9 @@ const GeneralCampaignSetting = () => {
           label="Outlooks"
         />
         <FormControlLabel value="others" control={<Radio />} label="Others" />
-      </RadioGroup>
+      </RadioGroup> */}
 
-      <Typography fontWeight="600" mt={2}>
+      {/* <Typography fontWeight="600" mt={2}>
         Intelligent AI Lead Categorisation (Max: 5)
       </Typography>
       <Typography>
@@ -181,7 +178,7 @@ const GeneralCampaignSetting = () => {
           control={<Radio />}
           label="Write your own prompt to categories lead through AI"
         />
-      </RadioGroup>
+      </RadioGroup> */}
 
       <Typography fontWeight="600" mt={2}>
         High Bounce Rate Auto-Protection

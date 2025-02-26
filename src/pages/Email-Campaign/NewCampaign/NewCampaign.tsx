@@ -14,11 +14,13 @@ import ImportLeadsCampaign from './ImportLeadsCampaign/ImportLeadsCampaign';
 import SetupCampaign from './SetupCampaign/SetupCampaign';
 import FinalReviewCampaign from './FinalReviewCampaign/FinalReviewCampaign';
 import { useNavigate } from 'react-router-dom';
+import ImportCsvFileDialog from './ImportLeadsCampaign/ImportCsvFileDialog';
 
 const steps = ['Import Leads', 'Sequences', 'Setup', 'Final Review'];
 
 const NewCampaign = () => {
   const [activeStep, setActiveStep] = React.useState(0);
+  const [uploadCsv, setUploadCsv] = React.useState<boolean>(false);
   const navigate = useNavigate();
 
   const handleNext = () => {
@@ -44,6 +46,10 @@ const NewCampaign = () => {
   const handleNavigate = () => {
     navigate('/email-campaign')
   }
+
+  const handleUploadCsv = () => {
+    setUploadCsv(true);
+  };
 
   return (
     <>
@@ -107,14 +113,31 @@ const NewCampaign = () => {
         >
           Back
         </Button>
-        <Button
-          variant="contained"
-          onClick={handleNext}
-          disabled={activeStep === steps.length - 1}
-          sx={{ background: "#6e58f1", color: "white" }}
-        >
-          Save and Next
-        </Button>
+        {activeStep === 0 ? (
+          <>
+            <ImportCsvFileDialog
+              open={uploadCsv}
+              onClose={() => setUploadCsv(false)}
+            />
+            <Button
+              variant="contained"
+              disabled={activeStep === steps.length - 1}
+              onClick={handleUploadCsv}
+              sx={{ background: "#6e58f1", color: "white" }}
+            >
+              Save
+            </Button>
+          </>
+        ) : (
+          <Button
+            variant="contained"
+            onClick={handleNext}
+            disabled={activeStep === steps.length - 1}
+            sx={{ background: "#6e58f1", color: "white" }}
+          >
+            Save and Next
+          </Button>
+        )}
       </Box>
     </>
   );
