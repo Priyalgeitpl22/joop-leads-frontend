@@ -1,6 +1,8 @@
 import styled from "@emotion/styled";
 import { motion } from "framer-motion";
 import { Link, NavLink } from "react-router-dom";
+import { TextField as MuiTextField } from "@mui/material";
+import { InputLabel as MuiInputLabel } from "@mui/material";
 
 interface ButtonProps {
   color: string
@@ -162,3 +164,21 @@ export const Button2 = styled("button", {
     font-size: 14px;
 `
 );
+
+export const TextField = styled(MuiTextField)`
+  border-radius: 5px;
+  box-shadow: 1px 1px 1px 1px #bebebe;
+
+  & .MuiInputBase-root {
+    max-height: 45px;
+  }
+
+  &:hover {
+    // border: none;
+    marginTop: 2px;
+  }
+`;
+
+export const InputLabel = styled(MuiInputLabel)`
+  color: black;
+`;

@@ -17,6 +17,7 @@ import { csvSettingsType } from '../Interfaces';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../../redux/store/store';
 import { addLeadsToCampaign } from '../../../redux/slice/emailCampaignSlice';
+import ImportCsvFileDialog from './ImportLeadsCampaign/ImportCsvFileDialog';
 
 const steps = ['Import Leads', 'Sequences', 'Setup', 'Final Review'];
 
@@ -33,6 +34,7 @@ export interface ImportedLeadsData {
 
 const NewCampaign = () => {
   const [activeStep, setActiveStep] = React.useState(0);
+  const [uploadCsv, setUploadCsv] = React.useState<boolean>(false);
   const navigate = useNavigate();
   const [emailFieldsToBeAdded, setEmailFieldsToBeAdded] = React.useState<ImportedLeadsData>();
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
@@ -71,6 +73,10 @@ const NewCampaign = () => {
 
   const handleNavigate = () => {
     navigate('/email-campaign')
+  };
+
+  const handleUploadCsv = () => {
+    setUploadCsv(true);
   };
 
   return (
@@ -125,14 +131,31 @@ const NewCampaign = () => {
         >
           Back
         </Button>
-        <Button
-          variant="contained"
-          onClick={handleNext}
-          disabled={activeStep === steps.length - 1}
-          sx={{ background: "#6e58f1", color: "white" }}
-        >
-          Save and Next
-        </Button>
+        {activeStep === 0 ? (
+          <>
+            <ImportCsvFileDialog
+              open={uploadCsv}
+              onClose={() => setUploadCsv(false)}
+            />
+            <Button
+              variant="contained"
+              disabled={activeStep === steps.length - 1}
+              onClick={handleUploadCsv}
+              sx={{ background: "#6e58f1", color: "white" }}
+            >
+              Save
+            </Button>
+          </>
+        ) : (
+          <Button
+            variant="contained"
+            onClick={handleNext}
+            disabled={activeStep === steps.length - 1}
+            sx={{ background: "#6e58f1", color: "white" }}
+          >
+            Save and Next
+          </Button>
+        )}
       </Box>
     </>
   );
