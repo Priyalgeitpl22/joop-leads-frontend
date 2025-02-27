@@ -9,7 +9,7 @@ body {
 }
 
 :root {
-  --white-fade-gradient: linear-gradient(320deg, var(--theme-color), #fbfdff);
+  --white-fade-gradient: linear-gradient(320deg, #eae9f8, #fbfdff);
   --button-theme-color: linear-gradient(90deg, var(--theme-color), #fbfdff);
   --theme-color: #c0dbf9;
   --theme-color-dark: #4782db;

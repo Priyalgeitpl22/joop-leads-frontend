@@ -30,6 +30,7 @@ export const  AbConfiguration = styled(Typography)({
   color: "#6e58f1",
   fontSize: "14px",
   fontWeight: "500",
+  cursor: "pointer",
   textDecorationLine: "underline"
 })
 

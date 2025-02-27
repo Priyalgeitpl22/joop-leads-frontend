@@ -15,10 +15,10 @@ import {
 interface EmailFollowUpStepProps {
   onAddStep: () => void;
   onDelete: () => void;
+  openAbConfigurationDialog: () => void;
 }
 
-
-const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({ onDelete }) => {
+const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({ onDelete, openAbConfigurationDialog }) => {
   const [subjects, setSubjects] = useState<string[]>(["Subject 1"]);
 
   const handleAddVariant = () => {
@@ -49,7 +49,9 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({ onDelete }) => {
             <Typography fontWeight="bold" sx={{ marginLeft: "8px" }}>
               Email follow up
             </Typography>
-            <AbConfiguration>A/B Configuration</AbConfiguration>
+            <AbConfiguration onClick={openAbConfigurationDialog}>
+              A/B Configuration
+            </AbConfiguration>
           </div>
 
           <EmailFollowUp>

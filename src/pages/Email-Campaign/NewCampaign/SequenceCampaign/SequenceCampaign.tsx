@@ -9,10 +9,14 @@ import AddIcon from "@mui/icons-material/Add";
 import EmailFollowUpStep from "./Sequences/EmailFollowUpStep";
 import { AddStepButton } from "./Sequences/sequences.styled";
 import ManualFollowUp from "./Sequences/ManualFollowUp";
+import ManualTemplate from "./EmailTemplate/ManualTemplate";
+import { TemplateHeader } from "./sequenceCampaign.styled";
+import AbConfigurationDialog from "./Sequences/AbConfigurationDialog";
 
 const SequenceCampaign = () => {
   const [steps, setSteps] = useState(["email"]);
   const [showStepOptions, setShowStepOptions] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleAddStep = () => {
     setShowStepOptions(!showStepOptions);
@@ -30,6 +34,14 @@ const SequenceCampaign = () => {
 
   const handleRemoveStep = (index: number) => {
     setSteps(steps.filter((_, i) => i !== index));
+  }
+
+  const openAbConfigurationDialog = () => {
+    setIsDialogOpen(true);
+  };
+  
+  const closeAbConfigurationDialog = () => {
+    setIsDialogOpen(false);
   };
 
   return (
@@ -46,6 +58,7 @@ const SequenceCampaign = () => {
         {steps.map((step, index) =>
           step === "email" ? (
             <EmailFollowUpStep
+              openAbConfigurationDialog={openAbConfigurationDialog}
               key={index}
               onAddStep={function (): void {
                 throw new Error("Function not implemented.");
@@ -83,10 +96,15 @@ const SequenceCampaign = () => {
         )}
       </SidebarContainer>
 
-      <Box flex={1} padding={3}>
-        <EmailTemplate />
+      <Box flex={1} padding='40px'> 
+        <TemplateHeader>
+      <Typography fontSize={18}>Stage 2: Manual Sequence</Typography>
+      <Typography fontSize={14}>Manual</Typography>
+      </TemplateHeader>
+        <ManualTemplate />
       </Box>
-    </Box>
+      {isDialogOpen && <AbConfigurationDialog open={isDialogOpen} onClose={closeAbConfigurationDialog} />}
+      </Box>
   );
 };
 
