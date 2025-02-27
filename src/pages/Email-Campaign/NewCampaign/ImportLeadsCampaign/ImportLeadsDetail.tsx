@@ -31,7 +31,7 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
       [field]: value,
     }));
 
-    const column = csv_columns.filter((o)=>o.label === value)[0].key as string
+    const column = csv_columns.filter((o)=>o.key === value)[0].key as string
 
     setEmailFieldAdded((prev) => ({
       ...prev,
@@ -93,7 +93,7 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
       <input type="file" ref={fileInputRef} onChange={handleFileChange} style={{ display: "none" }} />
       <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 4, mb: 2 }}>
         <Typography variant="h6" fontWeight="bold" sx={{ color: "#6e58f1" }}>
-          3
+          2
         </Typography>
         <Typography fontWeight="bold">Map Fields</Typography>
       </Box>
@@ -108,6 +108,7 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
             <Typography sx={{ flex: 1 }}>{field}</Typography>
             <Select
               displayEmpty
+              onChange={(event) => handleEmailFieldsChange(event, field)}
               sx={{
                 maxHeight: "40px",
                 minWidth: "60%",

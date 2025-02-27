@@ -5,11 +5,13 @@ import Grid2 from "@mui/material/Grid2";
 
 interface UploadCsvDialogProps {
   open: boolean;
+  uploadCount: number;
   onClose: () => void;
 }
 
 const UploadLeadsDialog: React.FC<UploadCsvDialogProps> = ({
   open,
+  uploadCount,
   onClose
 }) => {
   return (
@@ -50,7 +52,7 @@ const UploadLeadsDialog: React.FC<UploadCsvDialogProps> = ({
         >
           Uploaded Leads
           <Typography variant="h5" fontWeight="bold">
-            100
+            {uploadCount}
           </Typography>
         </Typography>
 

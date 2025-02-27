@@ -32,7 +32,7 @@ export const addLeadsToCampaign = createAsyncThunk(
       const response = await api.post(`${BASE_URL}/add-leads-to-campaign`, data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      return response;
+      return response.data; // Corrected this line
     } catch (error: unknown) {
       let errorMessage = "Network error";
       if (error instanceof AxiosError) {

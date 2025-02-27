@@ -18,6 +18,7 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../../redux/store/store';
 import { addLeadsToCampaign } from '../../../redux/slice/emailCampaignSlice';
 import ImportCsvFileDialog from './ImportLeadsCampaign/ImportCsvFileDialog';
+import UploadLeadsDialog from './ImportLeadsCampaign/UploadLeadsDialog';
 
 const steps = ['Import Leads', 'Sequences', 'Setup', 'Final Review'];
 
@@ -39,6 +40,9 @@ const NewCampaign = () => {
   const [emailFieldsToBeAdded, setEmailFieldsToBeAdded] = React.useState<ImportedLeadsData>();
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
   const [CSVsettings, setCSVsettings] = React.useState<csvSettingsType>();
+  const [uploadleads, setUploadLeads] = React.useState<boolean>(false);
+  const [uploadCount, setUploadCount] = React.useState<number>(0);
+
   const dispatch = useDispatch<AppDispatch>();
 
   const handleFileChange = (file: File) => {
@@ -54,14 +58,22 @@ const NewCampaign = () => {
   }
 
   const handleNext = async () => {
+    setUploadCsv(true);
     const payload = {
       CSVsettings,
       csvFile: selectedFile,
       emailFieldsToBeAdded
     }
     const response = await dispatch(addLeadsToCampaign(payload))
-    if (activeStep < steps.length - 1) {
-      setActiveStep((prev) => prev + 1);
+    if(response.payload.code === 200) {
+      console.log(response);
+      setUploadCount(response.payload.contactsInserted);
+      setUploadCsv(false);
+      setUploadLeads(true);
+  
+      if (activeStep < steps.length - 1) {
+        setActiveStep((prev) => prev + 1);
+      }
     }
   };
 
@@ -103,6 +115,11 @@ const NewCampaign = () => {
               </Step>
             ))}
           </Stepper>
+          <UploadLeadsDialog
+          open={uploadleads}
+          uploadCount={uploadCount}
+          onClose={() => setUploadLeads(false)}
+        />
         </Box>
       </HeaderContainer>
 
@@ -140,7 +157,7 @@ const NewCampaign = () => {
             <Button
               variant="contained"
               disabled={activeStep === steps.length - 1}
-              onClick={handleUploadCsv}
+              onClick={handleNext}
               sx={{ background: "#6e58f1", color: "white" }}
             >
               Save
