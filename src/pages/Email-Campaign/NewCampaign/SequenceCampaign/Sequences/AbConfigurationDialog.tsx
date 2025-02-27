@@ -63,13 +63,13 @@ const AbConfigurationDialog: React.FC<AbConfigurationDialogProps> = ({
 
       <DialogContent>
         <Content>
-          <Typography fontWeight={600} fontSize={14}>
+          <Typography fontWeight={600} fontSize={16}>
             Variant Percentage Distribution
           </Typography>
-          <Typography fontWeight={500} fontSize={12}>
+          <Typography fontWeight={500} fontSize={14} mt={1}>
             Select a different distribution % for each variant
           </Typography>
-          <RadioGroup row>
+          <RadioGroup row sx={{mt: "10px"}}>
             <FormControlLabel
               value="replies"
               control={<Radio />}
@@ -84,7 +84,7 @@ const AbConfigurationDialog: React.FC<AbConfigurationDialogProps> = ({
         </Content>
 
         <Content>
-          <Typography variant="h6" fontWeight={600} fontSize={16}>
+          <Typography variant="h6" fontWeight={600} fontSize={16} mt={2}>
             Allocate the Variant Percentage
           </Typography>
           <Box display="flex" alignItems="center">

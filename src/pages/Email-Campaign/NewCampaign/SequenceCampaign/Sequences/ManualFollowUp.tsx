@@ -12,6 +12,7 @@ interface ManualFollowUpProps {
 
 
 const ManualFollowUp: React.FC<ManualFollowUpProps> = ({onDelete}) => {
+  const [waitDays, setWaitDays] = useState(1);
 
   return (
     <>
@@ -21,7 +22,22 @@ const ManualFollowUp: React.FC<ManualFollowUpProps> = ({onDelete}) => {
           <LeftDashedBorderLine />
         </BorderConatiner>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <Typography>Wait for 1 day then</Typography>
+          <Typography>
+            Wait for{" "}
+            <input
+              type="number"
+              value={waitDays}
+              min={1}
+              onChange={(e) => setWaitDays(Number(e.target.value))}
+              style={{
+                width: "40px",
+                textAlign: "center",
+                border: "1px solid grey",
+                borderBottom: "1px solid black",
+              }}
+            />{" "}
+            day{waitDays > 1 ? "s" : ""} then
+          </Typography>
         </div>
       </EmailFollowUpContainer>
       <EmailFollowUpContainer>

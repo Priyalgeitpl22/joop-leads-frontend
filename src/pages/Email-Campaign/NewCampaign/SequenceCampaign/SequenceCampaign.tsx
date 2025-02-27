@@ -64,6 +64,7 @@ const SequenceCampaign = () => {
                 throw new Error("Function not implemented.");
               }}
               onDelete={() => handleRemoveStep(index)}
+              isFirstEmail={index === 0}
             />
           ) : (
             <ManualFollowUp
@@ -89,22 +90,27 @@ const SequenceCampaign = () => {
               </IconButton>
 
               <IconButton onClick={handleAddManualStep}>
-                <AssignmentIcon sx={{color: "#6e58f1"}} />
+                <AssignmentIcon sx={{ color: "#6e58f1" }} />
               </IconButton>
             </Box>
           </div>
         )}
       </SidebarContainer>
 
-      <Box flex={1} padding='40px'> 
+      <Box flex={1} padding="40px">
         <TemplateHeader>
-      <Typography fontSize={18}>Stage 2: Manual Sequence</Typography>
-      <Typography fontSize={14}>Manual</Typography>
-      </TemplateHeader>
+          <Typography fontSize={18}>Stage 2: Manual Sequence</Typography>
+          <Typography fontSize={14}>Manual</Typography>
+        </TemplateHeader>
         <ManualTemplate />
       </Box>
-      {isDialogOpen && <AbConfigurationDialog open={isDialogOpen} onClose={closeAbConfigurationDialog} />}
-      </Box>
+      {isDialogOpen && (
+        <AbConfigurationDialog
+          open={isDialogOpen}
+          onClose={closeAbConfigurationDialog}
+        />
+      )}
+    </Box>
   );
 };
 

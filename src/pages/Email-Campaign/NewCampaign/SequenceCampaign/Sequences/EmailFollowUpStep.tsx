@@ -3,6 +3,7 @@ import { Box, IconButton, Typography } from "@mui/material";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import HourglassBottomIcon from "@mui/icons-material/HourglassBottom";
 import {
   AbConfiguration,
   AddVarientButton,
@@ -10,16 +11,23 @@ import {
   EmailFollowUp,
   EmailFollowUpContainer,
   LeftDashedBorder,
+  LeftDashedBorderLine,
 } from "./sequences.styled";
 
 interface EmailFollowUpStepProps {
   onAddStep: () => void;
   onDelete: () => void;
   openAbConfigurationDialog: () => void;
+  isFirstEmail: boolean;
 }
 
-const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({ onDelete, openAbConfigurationDialog }) => {
+const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({
+  onDelete,
+  openAbConfigurationDialog,
+  isFirstEmail,
+}) => {
   const [subjects, setSubjects] = useState<string[]>(["Subject 1"]);
+  const [waitDays, setWaitDays] = useState(1);
 
   const handleAddVariant = () => {
     setSubjects([...subjects, `Subject ${subjects.length + 1}`]);
@@ -39,6 +47,32 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({ onDelete, openAbC
 
   return (
     <>
+      {!isFirstEmail && (
+        <EmailFollowUpContainer>
+          <BorderConatiner>
+            <HourglassBottomIcon sx={{ fontSize: 20, color: "#6e58f1" }} />
+            <LeftDashedBorderLine />
+          </BorderConatiner>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <Typography>
+              Wait for{" "}
+              <input
+                type="number"
+                value={waitDays}
+                min={1}
+                onChange={(e) => setWaitDays(Number(e.target.value))}
+                style={{
+                  width: "40px",
+                  textAlign: "center",
+                  border: "1px solid grey",
+                  borderBottom: "1px solid black",
+                }}
+              />{" "}
+              day{waitDays > 1 ? "s" : ""} then
+            </Typography>
+          </div>
+        </EmailFollowUpContainer>
+      )}
       <EmailFollowUpContainer>
         <BorderConatiner>
           <MailOutlineIcon sx={{ fontSize: 20, color: "#6e58f1" }} />
@@ -49,9 +83,10 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({ onDelete, openAbC
             <Typography fontWeight="bold" sx={{ marginLeft: "8px" }}>
               Email follow up
             </Typography>
+            {subjects.length > 1 &&
             <AbConfiguration onClick={openAbConfigurationDialog}>
               A/B Configuration
-            </AbConfiguration>
+            </AbConfiguration>}
           </div>
 
           <EmailFollowUp>
