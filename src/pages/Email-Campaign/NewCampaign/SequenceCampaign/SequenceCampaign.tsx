@@ -6,8 +6,9 @@ import AssignmentIcon from "@mui/icons-material/Assignment";
 import EmailTemplate from "./EmailTemplate/EmailTemplate";
 import { Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import EmailFollowUp from "./Sequences/EmailFollowUp";
+import EmailFollowUpStep from "./Sequences/EmailFollowUpStep";
 import { AddStepButton } from "./Sequences/sequences.styled";
+import ManualFollowUp from "./Sequences/ManualFollowUp";
 
 const SequenceCampaign = () => {
   const [steps, setSteps] = useState(["email"]);
@@ -27,6 +28,10 @@ const SequenceCampaign = () => {
     setShowStepOptions(false);
   };
 
+  const handleRemoveStep = (index: number) => {
+    setSteps(steps.filter((_, i) => i !== index));
+  };
+
   return (
     <Box display="flex" sx={{ height: "80%" }}>
       <SidebarContainer
@@ -40,13 +45,22 @@ const SequenceCampaign = () => {
       >
         {steps.map((step, index) =>
           step === "email" ? (
-            <EmailFollowUp
+            <EmailFollowUpStep
               key={index}
               onAddStep={function (): void {
                 throw new Error("Function not implemented.");
               }}
+              onDelete={() => handleRemoveStep(index)}
             />
-          ) : null
+          ) : (
+            <ManualFollowUp
+              key={index}
+              onAddStep={function (): void {
+                throw new Error("Function not implemented.");
+              }}
+              onDelete={() => handleRemoveStep(index)}
+            />
+          )
         )}
 
         <AddStepButton onClick={handleAddStep}>
@@ -55,15 +69,17 @@ const SequenceCampaign = () => {
         </AddStepButton>
 
         {showStepOptions && (
-          <Box display="flex" justifyContent="center" gap={2} mt={2}>
-            <IconButton onClick={handleAddEmailStep}>
-              <EmailIcon color="primary" />
-            </IconButton>
+          <div>
+            <Box display="flex" justifyContent="center" gap={16} pt={2}>
+              <IconButton onClick={handleAddEmailStep}>
+                <EmailIcon sx={{ color: "#6e58f1" }} />
+              </IconButton>
 
-            <IconButton onClick={handleAddManualStep}>
-              <AssignmentIcon color="primary" />
-            </IconButton>
-          </Box>
+              <IconButton onClick={handleAddManualStep}>
+                <AssignmentIcon sx={{color: "#6e58f1"}} />
+              </IconButton>
+            </Box>
+          </div>
         )}
       </SidebarContainer>
 

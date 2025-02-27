@@ -20,6 +20,12 @@ export const LeftDashedBorder = styled.div({
   backgroundColor: "#d3d3d3",
 });
 
+export const LeftDashedBorderLine = styled.div({
+  width: "2px",
+  height: "60px",
+  backgroundColor: "#d3d3d3",
+});
+
 export const  AbConfiguration = styled(Typography)({
   color: "#6e58f1",
   fontSize: "14px",
