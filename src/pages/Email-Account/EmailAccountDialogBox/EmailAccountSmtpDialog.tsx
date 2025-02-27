@@ -16,6 +16,8 @@ import Grid2 from "@mui/material/Grid2";
 import { Button2, TextField, InputLabel } from "../../../styles/layout.styled";
 import ReactQuill from "react-quill";
 import {
+  CreateEmailAccount,
+  CreateEmailAccountPayload,
   verifyEmailAccount,
   VerifyEmailAccountPayload,
 } from "../../../redux/slice/emailAccountSlice";
@@ -78,15 +80,20 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
     setFormData((prev) => ({
       ...prev,
       [name]:
-        type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
+        type === "checkbox"
+          ? (e.target as HTMLInputElement).checked
+          : name === "smtpPort" || name === "imapPort"
+          ? Number(value)
+          : value,
     }));
   };
 
   const handleSelectChange = (
-    e: React.ChangeEvent<{ value: unknown }>,
+    e: React.ChangeEvent<HTMLInputElement>,
     field: string
   ) => {
-    setFormData((prev) => ({ ...prev, [field]: e.target.value as string }));
+    const value = e.target.value === "ssl";
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleVerifyAccount = () => {
@@ -113,6 +120,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
       proxy: null,
       smtpEhloName: "localhost",
     };
+    console.log("payload",payload);
 
     dispatch(verifyEmailAccount(payload))
       .unwrap()
@@ -123,6 +131,44 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
       .catch((error: any) => {
         setIsVerified(false);
         setIsSaveDisabled(true);
+      });
+  };
+
+  const handleCreateAccount = () => {
+    const payload: CreateEmailAccountPayload = {
+      account: "smtp",
+      name: formData.fromName,
+      state: "init",
+      email: formData.fromEmail,
+      imap: {
+        host: formData.imapHost,
+        port: formData.imapPort,
+        secure: formData.imapSecurity,
+        auth: {
+          user: formData.imapUserName,
+          pass: formData.imapPassword,
+        },
+      },
+      smtp: {
+        host: formData.smtpHost,
+        port: formData.smtpPort,
+        secure: formData.security,
+        auth: {
+          user: formData.userName,
+          pass: formData.password,
+        },
+      },
+      proxy: null,
+      smtpEhloName: "localhost",
+    };
+
+    dispatch(CreateEmailAccount(payload))
+      .unwrap()
+      .then((url: any) => {
+        console.log("Account created successfully----->", payload, url);
+      })
+      .catch((error: any) => {
+        console.log("Failed to create account ======>>", error);
       });
   };
 
@@ -212,7 +258,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
           <Grid2 size={{ xs: 3, sm: 3 }}>
             <RadioGroup
               sx={{ display: "block", marginTop: "10%" }}
-              value={formData.security}
+              value={formData.security ? "ssl" : "tls"}
               onChange={(e) => handleSelectChange(e, "security")}
             >
               <FormControlLabel value="ssl" control={<Radio />} label="SSL" />
@@ -319,7 +365,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
           <Grid2 size={{ xs: 3, sm: 3 }}>
             <RadioGroup
               sx={{ display: "block", marginTop: "10%" }}
-              value={formData.imapSecurity}
+              value={formData.imapSecurity ? "ssl" : "tls"}
               onChange={(e) => handleSelectChange(e, "imapSecurity")}
             >
               <FormControlLabel value="ssl" control={<Radio />} label="SSL" />
@@ -364,7 +410,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
           </Grid2>
           <Button2
             disabled={isSaveDisabled}
-            onClick={() => console.log("Save clicked")}
+            onClick={handleCreateAccount}
             color={isSaveDisabled ? "black" : "white"}
             background={isSaveDisabled ? "#d3d3d3" : "#6e58f1"}
             style={{

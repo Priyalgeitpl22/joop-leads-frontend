@@ -33,6 +33,33 @@ export interface VerifyEmailAccountPayload {
   smtpEhloName: string;
 }
 
+export interface CreateEmailAccountPayload {
+  account: string;
+  name: string;
+  state: string;
+  email: string;
+  imap: {
+    auth: {
+      user: string;
+      pass: string;
+    };
+    host: string;
+    port: number;
+    secure: boolean;
+  };
+  smtp: {
+    auth: {
+      user: string;
+      pass: string;
+    };
+    host: string;
+    port: number;
+    secure: boolean;
+  };
+  proxy: null | string;
+  smtpEhloName: string;
+}
+
 export const fetchEmailAccount = createAsyncThunk(
   "accounts",
   async (_, { rejectWithValue }) => {
@@ -70,6 +97,22 @@ export const verifyEmailAccount = createAsyncThunk<
   async ( data: VerifyEmailAccountPayload, { rejectWithValue }) => {
     try {
       const response = await emailApi.post(`/accounts/verify`, data);
+      return response.data.url;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Network error");
+    }
+  }
+);
+
+export const CreateEmailAccount = createAsyncThunk<
+  string,
+  CreateEmailAccountPayload,
+  { rejectValue: string }
+>(
+  "accounts",
+  async (data: CreateEmailAccountPayload, { rejectWithValue }) => {
+    try {
+      const response = await emailApi.post(`/accounts`, data);
       return response.data.url;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || "Network error");
