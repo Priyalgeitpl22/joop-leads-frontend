@@ -30,16 +30,19 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
       ...prev,
       [field]: value,
     }));
-
-    const column = csv_columns.filter((o)=>o.key === value)[0].key as string
-
-    setEmailFieldAdded((prev) => ({
-      ...prev,
-      [field]: column
-    }))
-
-    onEmailFieldsChange(emailFieldsAdded);
-  };
+  
+    const column = csv_columns.find((o) => o.key === value)?.key as string;
+  
+    setEmailFieldAdded((prev) => {
+      const updatedFields = {
+        ...prev,
+        [field]: column,
+      };
+  
+      onEmailFieldsChange(updatedFields);
+      return updatedFields;
+    });
+  };  
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {

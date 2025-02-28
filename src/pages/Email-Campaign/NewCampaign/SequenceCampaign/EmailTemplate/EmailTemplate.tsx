@@ -1,7 +1,6 @@
-import { Box, TextField, Typography, styled } from "@mui/material";
 import "react-quill/dist/quill.snow.css";
 import { useEffect, useRef, useState } from "react";
-import { Sequence, SequenceVariant } from "../Sequences/interfaces";
+import { Sequence } from "../Sequences/interfaces";
 import {
   EmailTemplateFooter,
   EmailTemplateHeader,
@@ -13,15 +12,6 @@ import {
 } from "./emailTemplate.styled";
 import "./EmailEditor.css";
 import ReactQuill from "react-quill";
-
-const StyledTextField = styled(TextField)`
-  width: 100%;
-  background: #f8f9fc;
-
-  .MuiOutlinedInput-root {
-    height: 100%;
-  }
-`;
 
 const modules = {
   toolbar: [
@@ -39,77 +29,80 @@ const modules = {
 };
 
 interface EmailTemplateProps {
-  handleEmailTemplateData: (data: {
-    title: string;
-    description: string;
-  }) => void;
+  handleEmailTemplateData: (data: { subject: string; emailBody: string }) => void;
   updateSequenceData: (sequence: Sequence) => void;
   selectedSequence?: Sequence;
-  selectedVariant?: SequenceVariant;
 }
 
 const EmailTemplate: React.FC<EmailTemplateProps> = ({
   handleEmailTemplateData,
   selectedSequence,
-  selectedVariant,
   updateSequenceData,
 }) => {
-  const [emailBody, setEmailBody] = useState(selectedVariant?.emailBody || "");
-  const [subject, setSubject] = useState(selectedVariant?.subject || "");
-  const quillRef = useRef<typeof ReactQuill | null>(null) as React.MutableRefObject<typeof ReactQuill | null>;
+  const [emailBody, setEmailBody] = useState(selectedSequence?.seq_variants[0]?.emailBody || "");
+  const [subject, setSubject] = useState(selectedSequence?.seq_variants[0]?.subject || "");
+  
+  const quillRef = useRef<typeof ReactQuill | null>(null);
 
   useEffect(() => {
-    setEmailBody(selectedVariant?.emailBody || "");
-    setSubject(selectedVariant?.subject || "");
-  }, [selectedVariant]);
-
+    setEmailBody(selectedSequence?.seq_variants[0]?.emailBody || "");
+    setSubject(selectedSequence?.seq_variants[0]?.subject || "");
+  }, [selectedSequence]);
 
   const insertVariable = () => {
     if (quillRef.current) {
       const editor = quillRef.current.getEditor();
       const range = editor.getSelection();
-
       if (range) {
         editor.insertText(range.index, "{{Variable}}");
       }
     }
   };
 
-  useEffect(() => {
-    if (selectedSequence && selectedVariant) {
+  const handleDataChange = (newSubject: string, newEmailBody: string) => {
+    setSubject(newSubject);
+    setEmailBody(newEmailBody);
+
+    handleEmailTemplateData({ subject: newSubject, emailBody: newEmailBody });
+
+    if (selectedSequence) {
       const updatedVariants = selectedSequence.seq_variants.map((variant) =>
-        variant.variantLabel === selectedVariant.variantLabel
-          ? { ...variant, emailBody, subject }
+        variant.variantLabel === selectedSequence.seq_variants[0]?.variantLabel
+          ? { ...variant, subject: newSubject, emailBody: newEmailBody }
           : variant
       );
 
-      const updatedSequence = {
-        ...selectedSequence,
-        seq_variants: updatedVariants,
-      };
+      const updatedSequence: Sequence = { ...selectedSequence, seq_variants: updatedVariants };
 
-      handleEmailTemplateData({ title: subject, description: emailBody });
       updateSequenceData(updatedSequence);
     }
-  }, [subject, emailBody]);
+  };
 
   return (
     <EmailTemplateWrapper>
       <EmailTemplateHeader>
         <SubjectBox>Subject:</SubjectBox>
-        <SubjectText placeholder="Hi {{ first_name }}"></SubjectText>
-        <VariablesButton className="ql-insertVariables" onClick={() => insertVariable()}>{"{ } Variables"}</VariablesButton>
+        <SubjectText
+          placeholder="Hi {{ first_name }}"
+          value={subject}
+          onChange={(e) => handleDataChange(e.target.value, emailBody)}
+        />
+        <VariablesButton onClick={insertVariable}>{"{ } Variables"}</VariablesButton>
       </EmailTemplateHeader>
+
+      {/* ReactQuill Editor */}
       <ReactQuill
+        ref={quillRef}
         value={emailBody}
-        onChange={setEmailBody}
+        onChange={(newValue: string) => handleDataChange(subject, newValue)}
         modules={modules}
         className="custom-quill-email"
       />
+
       <EmailTemplateFooter>
         <FooterContent>
-        Type %signature% to insert your email account's signature where you want
-        it added or it will be added at the end of the email by default.
+          Type <strong>%signature%</strong> to insert your email account's signature where you
+          want it added or it will be added at the end of the email by default.
         </FooterContent>
       </EmailTemplateFooter>
     </EmailTemplateWrapper>

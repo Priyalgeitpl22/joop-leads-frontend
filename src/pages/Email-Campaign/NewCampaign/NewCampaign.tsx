@@ -6,22 +6,23 @@ import Button from "@mui/material/Button";
 import { HeaderContainer } from "./NewCampaign.styled";
 import { SearchBar } from "../../../components/Header/header.styled";
 import WestOutlinedIcon from "@mui/icons-material/WestOutlined";
+import { StepButton } from "@mui/material";
+import SequenceCampaign from "./SequenceCampaign/SequenceCampaign";
+import ImportLeadsCampaign from "./ImportLeadsCampaign/ImportLeadsCampaign";
+import SetupCampaign from "./SetupCampaign/SetupCampaign";
+import FinalReviewCampaign from "./FinalReviewCampaign/FinalReviewCampaign";
+import { useNavigate } from "react-router-dom";
+import { csvSettingsType } from "../Interfaces";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../redux/store/store";
 import {
-  Sequence,
-} from "./SequenceCampaign/Sequences/interfaces";
+  addLeadsToCampaign,
+  addSequencesToCampaign,
+} from "../../../redux/slice/emailCampaignSlice";
+import ImportCsvFileDialog from "./ImportLeadsCampaign/ImportCsvFileDialog";
+import UploadLeadsDialog from "./ImportLeadsCampaign/UploadLeadsDialog";
+import { Sequence } from "./SequenceCampaign/Sequences/interfaces";
 import Loader from "../../../components/Loader";
-import { StepButton } from '@mui/material';
-import SequenceCampaign from './SequenceCampaign/SequenceCampaign';
-import ImportLeadsCampaign from './ImportLeadsCampaign/ImportLeadsCampaign';
-import SetupCampaign from './SetupCampaign/SetupCampaign';
-import FinalReviewCampaign from './FinalReviewCampaign/FinalReviewCampaign';
-import { useNavigate } from 'react-router-dom';
-import { csvSettingsType } from '../Interfaces';
-import { useDispatch } from 'react-redux';
-import { AppDispatch } from '../../../redux/store/store';
-import { addLeadsToCampaign, addSequencesToCampaign } from '../../../redux/slice/emailCampaignSlice';
-import ImportCsvFileDialog from './ImportLeadsCampaign/ImportCsvFileDialog';
-import UploadLeadsDialog from './ImportLeadsCampaign/UploadLeadsDialog';
 import SendTestEmailDialog from './SendTestEmailDialog';
 
 const steps = ["Import Leads", "Sequences", "Setup", "Final Review"];
@@ -99,13 +100,13 @@ const NewCampaign = () => {
 
   const handleSequences = async () => {
     const payload = {
-      campaign_id: campaignId,
+      campaign_id: "0847453b-079e-408a-b4cd-abed26514e41",
       sequences,
     };
     const response = await dispatch(addSequencesToCampaign(payload));
     console.log(response);
   };
-  
+
   const handleSetup = () => {
     console.log("Handling setup step");
     goToNextStep();
@@ -166,18 +167,26 @@ const NewCampaign = () => {
 
   const updateSequenceData = (sequence: Sequence) => {
     console.log("Updated Sequence:", sequence);
-
-    setSelectedSequence((prevSequence) => ({
-      ...prevSequence,
-      ...sequence,
-    }));
-
+  
+    setSelectedSequence((prevSequence) => {
+      if (!prevSequence) return sequence;
+      return {
+        ...prevSequence,
+        ...sequence,
+        seq_variants: [...sequence.seq_variants],
+      };
+    });
+  
     setSequences((prevSequences) =>
       prevSequences.map((seq) =>
-        seq.seq_number === sequence.seq_number ? sequence : seq
+        seq.seq_number === sequence.seq_number
+          ? { ...seq, ...sequence, seq_variants: [...sequence.seq_variants] }
+          : seq
       )
     );
-  };
+
+    console.log(sequences)
+  };  
 
   const setVariants = (data: any) => {
     console.log(data);

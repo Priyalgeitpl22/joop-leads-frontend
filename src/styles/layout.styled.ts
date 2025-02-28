@@ -13,6 +13,16 @@ export const SidebarContainer = styled(motion.aside)`
   background-color: #ffffff;
   border-right: 1px solid #e2e8f0;
   min-width: 240px;
+  overflow-y: auto; /* Ensures content can still scroll */
+
+  /* Hide scrollbar for Chrome, Safari, and Edge */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for Firefox */
+  scrollbar-width: none;
+  -ms-overflow-style: none; /* Hide scrollbar in IE and Edge */
 `;
 
 export const HeaderContainer = styled.header`

@@ -6,10 +6,10 @@ import AssignmentIcon from "@mui/icons-material/Assignment";
 import EmailTemplate from "./EmailTemplate/EmailTemplate";
 import AddIcon from "@mui/icons-material/Add";
 import EmailFollowUpStep from "./Sequences/EmailFollowUpStep";
-import { AddStepButton } from "./Sequences/sequences.styled";
+import { AddStepButton, StyledAssignmentIcon, StyledEmailIcon } from "./Sequences/sequences.styled";
 import ManualFollowUp from "./Sequences/ManualFollowUp";
 import ManualTemplate from "./EmailTemplate/ManualTemplate";
-import { TemplateHeader } from "./sequenceCampaign.styled";
+import { AddStepContainer, StyledIconButton, TemplateHeader } from "./sequenceCampaign.styled";
 import AbConfigurationDialog from "./Sequences/AbConfigurationDialog";
 import {
   Sequence,
@@ -152,14 +152,14 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
         </AddStepButton>
 
         {showStepOptions && (
-          <Box display="flex" justifyContent="center" gap={2} pt={2}>
-            <IconButton onClick={handleAddEmailStep}>
-              <EmailIcon sx={{ color: "#6e58f1" }} />
-            </IconButton>
-            <IconButton onClick={handleAddManualStep}>
-              <AssignmentIcon sx={{ color: "#6e58f1" }} />
-            </IconButton>
-          </Box>
+          <AddStepContainer>
+            <StyledIconButton onClick={handleAddEmailStep}>
+              <StyledEmailIcon />
+            </StyledIconButton>
+            <StyledIconButton onClick={handleAddManualStep}>
+              <StyledAssignmentIcon />
+            </StyledIconButton>
+          </AddStepContainer>
         )}
       </SidebarContainer>
 
@@ -169,7 +169,7 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
             Stage {selectedSequence?.seq_number}:{" "}
             {selectedSequence?.seq_type === SequenceType.MANUAL
               ? "Manual Sequence"
-              : `Email : Variant ${selectedVariant?.variantLabel}`}
+              : "Email"}
           </Typography>
           <Typography fontSize={14}>Manual</Typography>
         </TemplateHeader>
@@ -178,14 +178,12 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
           (selectedSequence?.seq_type === SequenceType.MANUAL ? (
             <ManualTemplate
               selectedSequence={selectedSequence}
-              selectedVariant={selectedSequence.seq_variants[0]}
               updateSequenceData={updateSequenceData}
               handleEmailTemplateData={handleEmailTemplateData}
             />
           ) : (
             <EmailTemplate
               selectedSequence={selectedSequence}
-              selectedVariant={selectedVariant}
               updateSequenceData={updateSequenceData}
               handleEmailTemplateData={handleEmailTemplateData}
             />

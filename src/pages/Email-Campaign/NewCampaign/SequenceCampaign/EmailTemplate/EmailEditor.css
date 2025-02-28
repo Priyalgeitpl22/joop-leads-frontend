@@ -17,6 +17,13 @@
     border: 0 !important;
   }
   
+  .custom-quill-email .ql-editor {
+    white-space: normal !important; /* Allows natural wrapping */
+    overflow-wrap: break-word !important; /* Ensures long words break */
+    word-wrap: break-word !important; /* Alternative for compatibility */
+    line-height: 1.5; /* Improves text readability */
+  }  
+  
   .ql-toolbar .ql-stroke {
     stroke: #9d9ba7 !important;
   }
@@ -32,3 +39,15 @@
   .ql-toolbar .ql-picker-item {
     color: #9d9ba7 !important;
   }
+
+  .custom-insert-variable {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    margin-left: 8px;
+  }
+  
+  .custom-insert-variable:hover {
+    opacity: 0.8;
+  }
+  

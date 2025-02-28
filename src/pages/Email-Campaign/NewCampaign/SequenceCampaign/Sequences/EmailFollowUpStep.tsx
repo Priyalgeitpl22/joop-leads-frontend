@@ -12,6 +12,7 @@ import {
   EmailFollowUpContainer,
   LeftDashedBorder,
   LeftDashedBorderLine,
+  VariantWrapper,
 } from "./sequences.styled";
 import { Sequence, SequenceVariant } from "./interfaces";
 
@@ -42,10 +43,12 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({
 
   useEffect(() => {
     if (selectedSequence) {
-      setVariants(selectedSequence.seq_variants);
-      setWaitDays(selectedSequence.seq_delay_details?.delay_in_days || 1);
+      updateSequenceData({
+        ...selectedSequence,
+        seq_variants: variants,
+      });
     }
-  }, [selectedSequence]);
+  }, [variants]);
 
   const getNextVariantLabel = (variants: SequenceVariant[]) => {
     if (variants.length === 0) return "A";
@@ -74,15 +77,7 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({
   };
 
   const handleRemoveVariant = (index: number) => {
-    const updatedVariants = variants.filter((_, i) => i !== index);
-    setVariants(updatedVariants);
-
-    if (selectedSequence) {
-      updateSequenceData({
-        ...selectedSequence,
-        seq_variants: updatedVariants,
-      });
-    }
+    setVariants((prevVariants) => prevVariants.filter((_, i) => i !== index));
   };
 
   const handleWaitDaysChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -144,7 +139,7 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({
           <MailOutlineIcon sx={{ fontSize: 20, color: "#6e58f1" }} />
           <LeftDashedBorder />
         </BorderConatiner>
-        <div style={{ display: "flex", flexDirection: "column" , gap: '8px'}}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
           <div style={{ display: "flex", flexDirection: "row", gap: "58px" }}>
             <Typography fontWeight="bold" sx={{ marginLeft: "8px" }}>
               Email follow-up
@@ -157,7 +152,13 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({
           </div>
 
           <EmailFollowUp>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                padding: "4px",
+              }}
+            >
               <Typography fontSize={14}>Email</Typography>
               <DeleteOutlineIcon
                 onClick={() => onDelete(selectedSequence?.seq_number!)}
@@ -165,54 +166,50 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({
             </div>
             {variants.length > 0 ? (
               variants.map((variant, index) => (
-                <Box
+                <VariantWrapper
                   key={index}
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="space-between"
-                  gap={1}
-                  width="100%"
                   onClick={() => onSelectVariant(variant)}
                 >
-                  <Box display="flex" alignItems="center" gap={1}>
-                    <Box
+                  <Box display="flex" gap={1}>
+                    {/* <Box
                       sx={{
-                        width: 24,
-                        height: 24,
+                        width: 20,
+                        height: 20,
                         borderRadius: "50%",
                         backgroundColor: colors[index % colors.length],
                         color: "white",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        fontWeight: "bold",
+                        fontWeight: "500",
                         margin: "4px",
                         fontSize: 14,
                       }}
                     >
                       {String.fromCharCode(65 + index)}
-                    </Box>
-                    <Typography fontSize={14}>{variant.subject}</Typography>
+                    </Box> */}
+                    <Typography fontSize={14}>{'Subject: '}{selectedSequence?.seq_variants[0].subject}</Typography>
                   </Box>
-                  <IconButton
+
+                  {/* <IconButton
                     size="small"
                     onClick={() => handleRemoveVariant(index)}
                     sx={{ marginLeft: "auto" }}
                   >
                     <CloseIcon fontSize="small" sx={{ color: "black" }} />
-                  </IconButton>
-                </Box>
+                  </IconButton> */}
+                </VariantWrapper>
               ))
             ) : (
               <Typography fontSize={14}>No variants added</Typography>
             )}
           </EmailFollowUp>
 
-          <div>
+          {/* <div>
             <AddVarientButton onClick={handleAddVariant}>
               + Add Variant
             </AddVarientButton>
-          </div>
+          </div> */}
         </div>
       </EmailFollowUpContainer>
     </>

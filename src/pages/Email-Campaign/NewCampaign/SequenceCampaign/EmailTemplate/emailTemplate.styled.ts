@@ -1,3 +1,4 @@
+import { ImportContacts } from "@mui/icons-material";
 import { Box, Button, Card, CardContent, Input, styled, Typography } from "@mui/material";
 
 export const ManualTemplateContainer = styled(Box)(`
@@ -112,6 +113,12 @@ export const SubjectText = styled("input")`
 `;
 
 export const VariablesButton = styled(Button)`
+    width: max-content;
+    min-width: 130px;
+    color: #6e58f1 !important;
+`;
+
+export const VariablesIcon = styled(ImportContacts)`
     width: max-content;
     min-width: 130px;
     color: #6e58f1 !important;

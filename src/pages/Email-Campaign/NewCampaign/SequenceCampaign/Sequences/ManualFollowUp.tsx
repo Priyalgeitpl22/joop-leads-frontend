@@ -6,6 +6,7 @@ import {
   EmailFollowUpContainer,
   LeftDashedBorder,
   LeftDashedBorderLine,
+  ManualFollowUpContainer,
 } from "./sequences.styled";
 import HourglassBottomIcon from "@mui/icons-material/HourglassBottom";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
@@ -54,7 +55,7 @@ const ManualFollowUp: React.FC<ManualFollowUpProps> = ({
 
   return (
     <>
-      <EmailFollowUpContainer>
+      <ManualFollowUpContainer>
         <BorderConatiner>
           <HourglassBottomIcon sx={{ fontSize: 20, color: "#6e58f1" }} />
           <LeftDashedBorderLine />
@@ -76,9 +77,9 @@ const ManualFollowUp: React.FC<ManualFollowUpProps> = ({
             day{waitDays > 1 ? "s" : ""} then
           </Typography>
         </div>
-      </EmailFollowUpContainer>
+      </ManualFollowUpContainer>
 
-      <EmailFollowUpContainer
+      <ManualFollowUpContainer
         onClick={() => onClickEmailFollowUp(selectedSequence)}
       >
         <BorderConatiner>
@@ -101,7 +102,7 @@ const ManualFollowUp: React.FC<ManualFollowUpProps> = ({
             </Typography>
           </EmailFollowUp>
         </div>
-      </EmailFollowUpContainer>
+      </ManualFollowUpContainer>
     </>
   );
 };

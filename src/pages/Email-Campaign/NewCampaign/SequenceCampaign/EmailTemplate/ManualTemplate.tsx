@@ -8,7 +8,7 @@ import {
   TitleContainer,
 } from "./emailTemplate.styled";
 import ReactQuill from "react-quill";
-import { Sequence, SequenceVariant } from "../Sequences/interfaces";
+import { Sequence } from "../Sequences/interfaces";
 import "./ManualEditor.css";
 
 const modules = {
@@ -33,24 +33,20 @@ interface ManualTemplateProps {
   }) => void;
   updateSequenceData: (sequence: Sequence) => void;
   selectedSequence?: Sequence;
-  selectedVariant?: SequenceVariant;
 }
 
 const ManualTemplate: React.FC<ManualTemplateProps> = ({
   handleEmailTemplateData,
   updateSequenceData,
-  selectedVariant,
   selectedSequence,
 }) => {
-  const [subject, setSubject] = useState(selectedVariant?.subject || "");
-  const [emailBody, setEmailBody] = useState(selectedVariant?.emailBody || "");
+  const [emailBody, setEmailBody] = useState(selectedSequence?.seq_variants[0]?.emailBody || "");
+  const [subject, setSubject] = useState(selectedSequence?.seq_variants[0]?.subject || "");
 
   useEffect(() => {
-    if (selectedVariant) {
-      setSubject(selectedVariant.subject || "");
-      setEmailBody(selectedVariant.emailBody || "");
-    }
-  }, [selectedVariant]);
+    setEmailBody(selectedSequence?.seq_variants[0]?.emailBody || "");
+    setSubject(selectedSequence?.seq_variants[0]?.subject || "");
+  }, [selectedSequence]);
 
   const handleDataChange = (newSubject: string, newEmailBody: string) => {
     setSubject(newSubject);
@@ -58,7 +54,7 @@ const ManualTemplate: React.FC<ManualTemplateProps> = ({
 
     handleEmailTemplateData({ subject: newSubject, emailBody: newEmailBody });
 
-    if (selectedSequence && selectedVariant) {
+    if (selectedSequence) {
       const updatedVariants = selectedSequence.seq_variants.map((variant) => ({
         ...variant,
         subject: newSubject,
@@ -97,7 +93,7 @@ const ManualTemplate: React.FC<ManualTemplateProps> = ({
           <div style={{border: '1px solid #d5d5d5 !important'}}>
           <ReactQuill
             value={emailBody}
-            onChange={setEmailBody}
+            onChange={(newValue: string) => handleDataChange(subject, newValue)}
             modules={modules}
             className="custom-quill-manual"
           />
