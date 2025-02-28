@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { api, emailApi } from "../../services/api";
 import { AxiosError } from "axios";
+import { CampaignSettingsPayload } from "../../pages/Email-Campaign/NewCampaign/SetupCampaign/Interface";
 
 export interface EmailCampaign {
   id: string;
@@ -43,11 +44,18 @@ export const addLeadsToCampaign = createAsyncThunk(
   }
 );
 
-export const addSequencesToCampaign = createAsyncThunk(
-  "emailCampaign/addSequences",
-  async (data: any, { rejectWithValue }) => {
+export const addEmailCampaignSettings = createAsyncThunk<
+  string,
+  CampaignSettingsPayload,
+  { rejectValue: string }
+>(
+  "api/email-campaign/add-email-campaign-settings",
+  async (data: CampaignSettingsPayload, { rejectWithValue }) => {
     try {
-      const response = await api.post(`${BASE_URL}/add-sequence-to-campaign`, data);
+      const response = await api.post(
+        `${BASE_URL}/add-email-campaign-settings`,
+        data
+      );
       return response.data;
     } catch (error: unknown) {
       let errorMessage = "Network error";
@@ -59,3 +67,21 @@ export const addSequencesToCampaign = createAsyncThunk(
   }
 );
 
+export const addSequencesToCampaign = createAsyncThunk(
+  "emailCampaign/addSequences",
+  async (data: any, { rejectWithValue }) => {
+    try {
+      const response = await api.post(
+        `${BASE_URL}/add-sequence-to-campaign`,
+        data
+      );
+      return response.data;
+    } catch (error: unknown) {
+      let errorMessage = "Network error";
+      if (error instanceof AxiosError) {
+        errorMessage = error.response?.data?.message || errorMessage;
+      }
+      return rejectWithValue(errorMessage);
+    }
+  }
+);

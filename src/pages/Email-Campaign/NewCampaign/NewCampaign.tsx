@@ -6,25 +6,23 @@ import Button from "@mui/material/Button";
 import { HeaderContainer } from "./NewCampaign.styled";
 import { SearchBar } from "../../../components/Header/header.styled";
 import WestOutlinedIcon from "@mui/icons-material/WestOutlined";
-import { StepButton } from "@mui/material";
-import SequenceCampaign from "./SequenceCampaign/SequenceCampaign";
-import ImportLeadsCampaign from "./ImportLeadsCampaign/ImportLeadsCampaign";
-import SetupCampaign from "./SetupCampaign/SetupCampaign";
-import FinalReviewCampaign from "./FinalReviewCampaign/FinalReviewCampaign";
-import { useNavigate } from "react-router-dom";
-import { csvSettingsType } from "../Interfaces";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../redux/store/store";
-import {
-  addLeadsToCampaign,
-  addSequencesToCampaign,
-} from "../../../redux/slice/emailCampaignSlice";
-import ImportCsvFileDialog from "./ImportLeadsCampaign/ImportCsvFileDialog";
-import UploadLeadsDialog from "./ImportLeadsCampaign/UploadLeadsDialog";
 import {
   Sequence,
 } from "./SequenceCampaign/Sequences/interfaces";
 import Loader from "../../../components/Loader";
+import { StepButton } from '@mui/material';
+import SequenceCampaign from './SequenceCampaign/SequenceCampaign';
+import ImportLeadsCampaign from './ImportLeadsCampaign/ImportLeadsCampaign';
+import SetupCampaign from './SetupCampaign/SetupCampaign';
+import FinalReviewCampaign from './FinalReviewCampaign/FinalReviewCampaign';
+import { useNavigate } from 'react-router-dom';
+import { csvSettingsType } from '../Interfaces';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../../../redux/store/store';
+import { addLeadsToCampaign, addSequencesToCampaign } from '../../../redux/slice/emailCampaignSlice';
+import ImportCsvFileDialog from './ImportLeadsCampaign/ImportCsvFileDialog';
+import UploadLeadsDialog from './ImportLeadsCampaign/UploadLeadsDialog';
+import SendTestEmailDialog from './SendTestEmailDialog';
 
 const steps = ["Import Leads", "Sequences", "Setup", "Final Review"];
 
@@ -53,6 +51,7 @@ const NewCampaign = () => {
   const [selectedSequence, setSelectedSequence] = React.useState<Sequence>();
   const [campaignId, setCampaignId] = React.useState<Sequence>();
   const [isLoading, setIsLoading] = React.useState(false);
+  const [testEmailDialog, setTestEmailDialog] = React.useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -187,6 +186,10 @@ const NewCampaign = () => {
   if (isLoading) {
     return <Loader />;
   }
+  
+  const handleTestEmail = () => {
+    setTestEmailDialog(true);
+  }
 
   return (
     <>
@@ -280,6 +283,36 @@ const NewCampaign = () => {
             >
               Save
             </Button>
+          </>
+        ) : activeStep === 3 ? (
+          <>
+            <Box sx={{ display: "flex", gap: 3 }}>
+              <Button
+                variant="contained"
+                onClick={handleNext}
+                sx={{ background: "#ececee", color: "#6e58f1" }}
+              >
+                Run Spam Test
+              </Button>
+              <SendTestEmailDialog
+                open={testEmailDialog}
+                onClose={() => setTestEmailDialog(false)}
+                />
+              <Button
+                variant="contained"
+                onClick={handleTestEmail}
+                sx={{ background: "#ececee", color: "#6e58f1" }}
+              >
+                Send Test Email
+              </Button>
+              <Button
+                variant="contained"
+                onClick={handleNext}
+                sx={{ background: "#6e58f1", color: "white" }}
+              >
+                Schedule Campaign
+              </Button>
+            </Box>
           </>
         ) : (
           <Button

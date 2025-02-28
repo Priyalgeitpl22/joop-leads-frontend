@@ -7,8 +7,6 @@ import {
 import { ContentContainer, CustomTab, CustomTabs } from "../../../EmailCampaign.styled";
 import GeneralCampaignSetting from "./GeneralCampaignSetting";
 import CloseIcon from "@mui/icons-material/Close";
-import EmailCampaignSetting from "./EmailCampaignSetting";
-import WebhooksCampaignSetting from "./WebhooksCampaignSetting";
 
 
 interface SettingCampaignProps {
@@ -71,7 +69,9 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
           <CustomTab label="Webhooks" value="webhooks" /> */}
         </CustomTabs>
         <ContentContainer>
-          {activeTab === "general" && <GeneralCampaignSetting />}
+          {activeTab === "general" && (
+            <GeneralCampaignSetting onClose={onClose} />
+          )}
           {/* {activeTab === "email_account" && <EmailCampaignSetting />}
           {activeTab === "webhooks" && <WebhooksCampaignSetting />} */}
         </ContentContainer>

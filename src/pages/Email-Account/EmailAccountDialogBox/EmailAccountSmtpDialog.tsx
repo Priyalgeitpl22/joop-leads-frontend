@@ -120,7 +120,6 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
       proxy: null,
       smtpEhloName: "localhost",
     };
-    console.log("payload",payload);
 
     dispatch(verifyEmailAccount(payload))
       .unwrap()
@@ -165,10 +164,9 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
     dispatch(CreateEmailAccount(payload))
       .unwrap()
       .then((url: any) => {
-        console.log("Account created successfully----->", payload, url);
+        onClose();
       })
       .catch((error: any) => {
-        console.log("Failed to create account ======>>", error);
       });
   };
 

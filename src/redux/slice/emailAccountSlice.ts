@@ -3,7 +3,7 @@ import { emailApi } from "../../services/api";
 import { AxiosError } from "axios";
 
 export interface EmailAccount {
-  id: string;
+  _id: string;
   name: string;
   email: string;
   type: string;

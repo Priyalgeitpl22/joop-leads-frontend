@@ -93,8 +93,8 @@ const EmailAccounts: React.FC = () => {
     <svg
       fill="none"
       viewBox="0 0 16 16"
-      height="16"
-      width="16"
+      height="22"
+      width="22"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
@@ -245,7 +245,7 @@ const EmailAccounts: React.FC = () => {
             </StyledTableHead>
             <TableBody style={{ background: "#ffff" }}>
               {emailAccounts.map((account) => (
-                <TableRow key={account.id}>
+                <TableRow key={account._id}>
                   <StyledTableCheckbox>
                     <Checkbox {...label} />
                   </StyledTableCheckbox>

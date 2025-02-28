@@ -10,25 +10,102 @@ import {
   Button,
 } from "@mui/material";
 import { TextField } from "../../../../../styles/layout.styled";
+import { AppDispatch } from "../../../../../redux/store/store";
+import { useDispatch } from "react-redux";
+import { addEmailCampaignSettings } from "../../../../../redux/slice/emailCampaignSlice";
+import dayjs, { Dayjs } from "dayjs";
 
-const GeneralCampaignSetting = () => {
-  const [stopSending, setStopSending] = useState("replies");
-  const [trackEmailOpens, setTrackEmailOpens] = useState(false);
-  const [trackLinkClicks, setTrackLinkClicks] = useState(false);
-  const [priority, setPriority] = useState(50);
+interface GeneralCampaignSettingProps {
+  onClose: () => void;
+}
+
+const GeneralCampaignSetting: React.FC<GeneralCampaignSettingProps> = ({
+  onClose,
+}) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const [formData, setFormData] = useState({
+    campaignName: "",
+    timeZone: "",
+    selectedDays: [],
+    startTime: dayjs().hour(9).minute(0),
+    endTime: dayjs().hour(18).minute(0),
+    emailInterval: "",
+    startDate: null as Dayjs | null,
+    maxLeads: 100,
+    selectedEmailAccounts: [],
+    stopSending: "replies",
+    trackEmailOpens: false,
+    trackLinkClicks: false,
+    emailDeliveryOptimization: false,
+    priority: 50,
+    companyAutoPause: false,
+    EmailDelivery: false,
+    BounceRate: false,
+    Unsubscribe: false,
+  });
+
+  const handleChange = (field: keyof typeof formData, value: any) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSave = async () => {
+    try {
+      await dispatch(
+        addEmailCampaignSettings({
+          sender_accounts: formData.selectedEmailAccounts,
+          campaign_id: "250cac40-bbbf-4da2-96e7-67d8ad6094f4",
+          auto_warm_up: false,
+          schedule_settings: {
+            time_zone: formData.timeZone,
+            send_these_days: formData.selectedDays,
+            time_sequences: {
+              from: formData.startTime.format("HH:mm"),
+              to: formData.endTime.format("HH:mm"),
+              minutes: formData.emailInterval,
+            },
+            start_date: formData.startDate
+              ? formData.startDate.format("YYYY-MM-DD")
+              : "",
+            max_leads_per_day: formData.maxLeads,
+          },
+          campaign_settings: {
+            campaign_name: formData.campaignName,
+            stop_message_on_lead: formData.stopSending,
+            email_delivery_optimization: formData.emailDeliveryOptimization,
+            excluded_tracking: {
+              dont_track_open_emails: formData.trackEmailOpens,
+              dont_track_link_clicks: formData.trackLinkClicks,
+            },
+            priority_sending_pattern: formData.priority,
+            company_auto_pause: formData.companyAutoPause,
+            enhanced_email_delivery: formData.EmailDelivery,
+            bounce_rate: formData.BounceRate,
+            unsubscribe: formData.Unsubscribe,
+          },
+        })
+      ).unwrap();
+      onClose();
+    } catch (error) {
+      alert("Failed to save campaign settings.");
+    }
+  };
 
   return (
-    <Box sx={{ padding: 3,  margin: "auto" }}>
+    <Box sx={{ padding: 3, margin: "auto" }}>
       <Box>
         <Typography fontWeight="600">Campaign Name</Typography>
-        <TextField fullWidth />
+        <TextField
+          fullWidth
+          value={formData.campaignName}
+          onChange={(e) => handleChange("campaignName", e.target.value)}
+        />
       </Box>
       <Typography fontWeight="600" mt={2}>
         Stop sending messages when your lead
       </Typography>
       <RadioGroup
-        value={stopSending}
-        onChange={(e) => setStopSending(e.target.value)}
+        value={formData.stopSending}
+        onChange={(e) => handleChange("stopSending", e.target.value)}
       >
         <FormControlLabel
           value="replies"
@@ -52,6 +129,13 @@ const GeneralCampaignSetting = () => {
       </Typography>
       <FormControlLabel
         control={<Checkbox />}
+        checked={formData.emailDeliveryOptimization}
+        onChange={(e) =>
+          handleChange(
+            "emailDeliveryOptimization",
+            (e.target as HTMLInputElement).checked
+          )
+        }
         label="Boost your deliverability by sending emails in plain text, without HTML"
       />
 
@@ -61,8 +145,8 @@ const GeneralCampaignSetting = () => {
       <FormControlLabel
         control={
           <Checkbox
-            checked={trackEmailOpens}
-            onChange={(e) => setTrackEmailOpens(e.target.checked)}
+            checked={formData.trackEmailOpens}
+            onChange={(e) => handleChange("trackEmailOpens", e.target.checked)}
           />
         }
         label="DON'T track email opens"
@@ -70,8 +154,8 @@ const GeneralCampaignSetting = () => {
       <FormControlLabel
         control={
           <Checkbox
-            checked={trackLinkClicks}
-            onChange={(e) => setTrackLinkClicks(e.target.checked)}
+            checked={formData.trackLinkClicks}
+            onChange={(e) => handleChange("trackLinkClicks", e.target.checked)}
           />
         }
         label="DON'T track link clicks"
@@ -101,8 +185,8 @@ const GeneralCampaignSetting = () => {
         Prioritise sending pattern
       </Typography>
       <Slider
-        value={priority}
-        onChange={(e, newValue) => setPriority(newValue as number)}
+        value={formData.priority}
+        onChange={(e, newValue) => handleChange("priority", newValue)}
         step={10}
         marks
         min={0}
@@ -119,6 +203,8 @@ const GeneralCampaignSetting = () => {
       </Typography>
       <FormControlLabel
         control={<Checkbox />}
+        value={formData.companyAutoPause}
+        onChange={(e, newValue) => handleChange("companyAutoPause", newValue)}
         label="Auto-pause if one of the leads from the same domain replies."
       />
 
@@ -131,6 +217,10 @@ const GeneralCampaignSetting = () => {
       </Typography>
       <FormControlLabel
         control={<Checkbox />}
+        checked={formData.EmailDelivery}
+        onChange={(e) =>
+          handleChange("EmailDelivery", (e.target as HTMLInputElement).checked)
+        }
         label="Auto-analyse leads mailbox email service providers."
       />
 
@@ -188,6 +278,10 @@ const GeneralCampaignSetting = () => {
       </Typography>
       <FormControlLabel
         control={<Checkbox />}
+        checked={formData.BounceRate}
+        onChange={(e) =>
+          handleChange("BounceRate", (e.target as HTMLInputElement).checked)
+        }
         label="Activate auto-pause protection from bounces"
       />
 
@@ -196,12 +290,17 @@ const GeneralCampaignSetting = () => {
       </Typography>
       <FormControlLabel
         control={<Checkbox />}
+        checked={formData.Unsubscribe}
+        onChange={(e) =>
+          handleChange("Unsubscribe", (e.target as HTMLInputElement).checked)
+        }
         label="Add unsubscribe message in all emails"
       />
 
       <Button
         variant="contained"
         color="primary"
+        onClick={handleSave}
         sx={{
           backgroundColor: "#E4D9FF",
           color: "white",
