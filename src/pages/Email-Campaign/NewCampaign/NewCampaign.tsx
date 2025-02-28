@@ -6,24 +6,23 @@ import Button from "@mui/material/Button";
 import { HeaderContainer } from "./NewCampaign.styled";
 import { SearchBar } from "../../../components/Header/header.styled";
 import WestOutlinedIcon from "@mui/icons-material/WestOutlined";
-import { StepButton } from "@mui/material";
-import SequenceCampaign from "./SequenceCampaign/SequenceCampaign";
-import ImportLeadsCampaign from "./ImportLeadsCampaign/ImportLeadsCampaign";
-import SetupCampaign from "./SetupCampaign/SetupCampaign";
-import FinalReviewCampaign from "./FinalReviewCampaign/FinalReviewCampaign";
-import { useNavigate } from "react-router-dom";
-import { csvSettingsType } from "../Interfaces";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../redux/store/store";
 import {
-  addLeadsToCampaign,
-  addSequencesToCampaign,
-} from "../../../redux/slice/emailCampaignSlice";
-import ImportCsvFileDialog from "./ImportLeadsCampaign/ImportCsvFileDialog";
-import UploadLeadsDialog from "./ImportLeadsCampaign/UploadLeadsDialog";
-import { Sequence } from "./SequenceCampaign/Sequences/interfaces";
+  Sequence,
+} from "./SequenceCampaign/Sequences/interfaces";
 import Loader from "../../../components/Loader";
 import SendTestEmailDialog from './SendTestEmailDialog';
+import { StepButton } from '@mui/material';
+import SequenceCampaign from './SequenceCampaign/SequenceCampaign';
+import ImportLeadsCampaign from './ImportLeadsCampaign/ImportLeadsCampaign';
+import SetupCampaign from './SetupCampaign/SetupCampaign';
+import FinalReviewCampaign from './FinalReviewCampaign/FinalReviewCampaign';
+import { useNavigate } from 'react-router-dom';
+import { csvSettingsType } from '../Interfaces';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../../../redux/store/store';
+import { addLeadsToCampaign, addSequencesToCampaign } from '../../../redux/slice/emailCampaignSlice';
+import ImportCsvFileDialog from './ImportLeadsCampaign/ImportCsvFileDialog';
+import UploadLeadsDialog from './ImportLeadsCampaign/UploadLeadsDialog';
 
 const steps = ["Import Leads", "Sequences", "Setup", "Final Review"];
 
