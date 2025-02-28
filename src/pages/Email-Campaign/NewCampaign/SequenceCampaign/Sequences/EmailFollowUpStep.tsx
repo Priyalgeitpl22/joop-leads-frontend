@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, IconButton, Typography } from "@mui/material";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import CloseIcon from "@mui/icons-material/Close";
@@ -13,25 +13,92 @@ import {
   LeftDashedBorder,
   LeftDashedBorderLine,
 } from "./sequences.styled";
+import { Sequence, SequenceVariant } from "./interfaces";
 
 interface EmailFollowUpStepProps {
   onAddStep: () => void;
-  onDelete: () => void;
+  onDelete: (sequenceId: number) => void;
+  updateSequenceData: (sequence: Sequence) => void;
+  onSelectVariant: (variant: SequenceVariant) => void;
   openAbConfigurationDialog: () => void;
+  onClickEmailFollowUp: (sequence: Sequence) => void;
   isFirstEmail: boolean;
+  selectedSequence?: Sequence;
 }
 
 const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({
   onDelete,
   openAbConfigurationDialog,
+  onClickEmailFollowUp,
+  updateSequenceData,
+  onSelectVariant,
   isFirstEmail,
+  selectedSequence,
 }) => {
-  const [subjects, setSubjects] = useState<string[]>(["Subject 1"]);
+  const [variants, setVariants] = useState<SequenceVariant[]>(
+    selectedSequence?.seq_variants || []
+  );
   const [waitDays, setWaitDays] = useState(1);
 
-  const handleAddVariant = () => {
-    setSubjects([...subjects, `Subject ${subjects.length + 1}`]);
+  useEffect(() => {
+    if (selectedSequence) {
+      setVariants(selectedSequence.seq_variants);
+      setWaitDays(selectedSequence.seq_delay_details?.delay_in_days || 1);
+    }
+  }, [selectedSequence]);
+
+  const getNextVariantLabel = (variants: SequenceVariant[]) => {
+    if (variants.length === 0) return "A";
+
+    const lastLabel = variants[variants.length - 1].variantLabel ?? "A";
+    return String.fromCharCode(lastLabel.charCodeAt(0) + 1);
   };
+
+  const handleAddVariant = () => {
+    const newVariant: SequenceVariant = {
+      subject: `Subject ${variants.length + 1}`,
+      emailBody: "",
+      variantLabel: getNextVariantLabel(variants),
+    };
+
+    setVariants([...variants, newVariant]);
+
+    if (selectedSequence) {
+      const updatedSequence: Sequence = {
+        ...selectedSequence,
+        seq_variants: [...selectedSequence.seq_variants, newVariant],
+      };
+
+      updateSequenceData(updatedSequence);
+    }
+  };
+
+  const handleRemoveVariant = (index: number) => {
+    const updatedVariants = variants.filter((_, i) => i !== index);
+    setVariants(updatedVariants);
+
+    if (selectedSequence) {
+      updateSequenceData({
+        ...selectedSequence,
+        seq_variants: updatedVariants,
+      });
+    }
+  };
+
+  const handleWaitDaysChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newWaitDays = Number(e.target.value);
+    setWaitDays(newWaitDays);
+
+    if (selectedSequence) {
+      const updatedSequence: Sequence = {
+        ...selectedSequence,
+        seq_delay_details: { delay_in_days: newWaitDays },
+      };
+
+      updateSequenceData(updatedSequence);
+    }
+  };
+
   const colors = [
     "#6e58f1",
     "#ff6b6b",
@@ -41,14 +108,12 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({
     "#9c27b0",
   ];
 
-  const handleRemoveSubject = (index: number) => {
-    setSubjects(subjects.filter((_, i) => i !== index));
-  };
-
   return (
     <>
       {!isFirstEmail && (
-        <EmailFollowUpContainer>
+        <EmailFollowUpContainer
+          onClick={() => onClickEmailFollowUp(selectedSequence!)}
+        >
           <BorderConatiner>
             <HourglassBottomIcon sx={{ fontSize: 20, color: "#6e58f1" }} />
             <LeftDashedBorderLine />
@@ -57,10 +122,9 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({
             <Typography>
               Wait for{" "}
               <input
-                type="number"
-                value={waitDays}
-                min={1}
-                onChange={(e) => setWaitDays(Number(e.target.value))}
+                defaultValue={waitDays}
+                // value={waitDays}
+                onChange={handleWaitDaysChange}
                 style={{
                   width: "40px",
                   textAlign: "center",
@@ -73,29 +137,34 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({
           </div>
         </EmailFollowUpContainer>
       )}
-      <EmailFollowUpContainer>
+      <EmailFollowUpContainer
+        onClick={() => onClickEmailFollowUp(selectedSequence!)}
+      >
         <BorderConatiner>
           <MailOutlineIcon sx={{ fontSize: 20, color: "#6e58f1" }} />
           <LeftDashedBorder />
         </BorderConatiner>
-        <div style={{ display: "flex", flexDirection: "column" }}>
+        <div style={{ display: "flex", flexDirection: "column" , gap: '8px'}}>
           <div style={{ display: "flex", flexDirection: "row", gap: "58px" }}>
             <Typography fontWeight="bold" sx={{ marginLeft: "8px" }}>
-              Email follow up
+              Email follow-up
             </Typography>
-            {subjects.length > 1 &&
-            <AbConfiguration onClick={openAbConfigurationDialog}>
-              A/B Configuration
-            </AbConfiguration>}
+            {variants.length > 1 && (
+              <AbConfiguration onClick={openAbConfigurationDialog}>
+                A/B Configuration
+              </AbConfiguration>
+            )}
           </div>
 
           <EmailFollowUp>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <Typography fontSize={14}>Email</Typography>
-              <DeleteOutlineIcon onClick={onDelete} />
+              <DeleteOutlineIcon
+                onClick={() => onDelete(selectedSequence?.seq_number!)}
+              />
             </div>
-            {subjects.length > 1 ? (
-              subjects.map((subject, index) => (
+            {variants.length > 0 ? (
+              variants.map((variant, index) => (
                 <Box
                   key={index}
                   display="flex"
@@ -103,6 +172,7 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({
                   justifyContent="space-between"
                   gap={1}
                   width="100%"
+                  onClick={() => onSelectVariant(variant)}
                 >
                   <Box display="flex" alignItems="center" gap={1}>
                     <Box
@@ -122,13 +192,11 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({
                     >
                       {String.fromCharCode(65 + index)}
                     </Box>
-                    <Typography fontSize={14}>
-                      {subject.replace(/\d+/g, "").trim()}
-                    </Typography>
+                    <Typography fontSize={14}>{variant.subject}</Typography>
                   </Box>
                   <IconButton
                     size="small"
-                    onClick={() => handleRemoveSubject(index)}
+                    onClick={() => handleRemoveVariant(index)}
                     sx={{ marginLeft: "auto" }}
                   >
                     <CloseIcon fontSize="small" sx={{ color: "black" }} />
@@ -136,7 +204,7 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({
                 </Box>
               ))
             ) : (
-              <Typography fontSize={14}>Subject ---</Typography>
+              <Typography fontSize={14}>No variants added</Typography>
             )}
           </EmailFollowUp>
 

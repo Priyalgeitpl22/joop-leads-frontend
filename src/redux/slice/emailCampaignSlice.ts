@@ -42,3 +42,20 @@ export const addLeadsToCampaign = createAsyncThunk(
     }
   }
 );
+
+export const addSequencesToCampaign = createAsyncThunk(
+  "emailCampaign/addSequences",
+  async (data: any, { rejectWithValue }) => {
+    try {
+      const response = await api.post(`${BASE_URL}/add-sequence-to-campaign`, data);
+      return response.data;
+    } catch (error: unknown) {
+      let errorMessage = "Network error";
+      if (error instanceof AxiosError) {
+        errorMessage = error.response?.data?.message || errorMessage;
+      }
+      return rejectWithValue(errorMessage);
+    }
+  }
+);
+

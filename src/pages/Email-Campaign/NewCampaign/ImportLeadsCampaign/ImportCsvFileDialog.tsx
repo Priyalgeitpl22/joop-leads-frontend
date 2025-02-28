@@ -5,9 +5,7 @@ import {
   Typography,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { Button2 } from "../../../../styles/layout.styled";
 import React from "react";
-import UploadLeadsDialog from "./UploadLeadsDialog";
 
 interface ImportCsvFileDialogProps {
   open: boolean;
@@ -18,12 +16,6 @@ const ImportCsvFileDialog: React.FC<ImportCsvFileDialogProps> = ({
   open,
   onClose,
 }) => {
-
-  const [uploadleads, setUploadLeads] = React.useState<boolean>(false);
-
-  // const handleUploadLeads = () =>{
-  //   setUploadLeads(true);
-  // }
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm">
