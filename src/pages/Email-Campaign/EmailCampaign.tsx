@@ -1,4 +1,4 @@
-import { SetStateAction, useEffect, useState } from "react";
+import React, { SetStateAction, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Box,
@@ -10,7 +10,6 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Button,
   Link,
   Menu,
   MenuItem,
@@ -18,56 +17,61 @@ import {
   InputLabel,
   Select,
 } from "@mui/material";
+import { Email, Replay, ErrorOutline } from "@mui/icons-material";
 import {
-  Email,
-  Replay,
-  ErrorOutline,
-} from "@mui/icons-material";
-import { ContentContainer, CustomTab, CustomTabs, SectionTitle, EmailCampaignContainer } from "./EmailCampaign.styled";
+  ContentContainer,
+  CustomTab,
+  CustomTabs,
+  SectionTitle,
+  EmailCampaignContainer,
+} from "./EmailCampaign.styled";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import { SearchBar } from "../../components/Header/header.styled";
 import { FilterIcon } from "../Email-Account/EmailAccount.styled";
 import FolderOpenOutlinedIcon from "@mui/icons-material/FolderOpenOutlined";
 import EmailCampaignDialog from "./EmailCampaignDialog/AddEmailCampaignDialog";
 import { Search } from "lucide-react";
-import { Button2 } from "../../styles/layout.styled";
-import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { fetchEmailCampaigns } from "../../redux/slice/emailCampaignSlice";
 import { AppDispatch } from "../../redux/store/store";
 import { IEmailCampaign } from "./NewCampaign/interfaces";
 import { formatDate } from "../../utils/utils";
+import { Router } from "@toolpad/core/AppProvider";
+import { Button } from "../../styles/global.styled";
 
+interface EmailCampaignProps {
+  router: Router;
+}
 
-const EmailCampaign = () => {
+const EmailCampaign: React.FC<EmailCampaignProps> = ({ router }) => {
   const [activeTab, setActiveTab] = useState("all_campaign");
   const [createFolder, setCreateFolder] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const [campaigns, setCampaigns] = useState<IEmailCampaign[]>([]);
 
   useEffect(() => {
     const getEmailCampaigns = async () => {
-      await getAllEmailCampaigns(); 
+      await getAllEmailCampaigns();
     };
-  
+
     getEmailCampaigns();
   }, []);
-  
+
   const getAllEmailCampaigns = async () => {
     const response = await dispatch(fetchEmailCampaigns());
     setCampaigns(response.payload.data);
   };
-  
+
   const handleTabChange = (_: any, newValue: SetStateAction<string>) => {
     setActiveTab(newValue);
-    if (newValue === "folder"){}
+    if (newValue === "folder") {
+    }
   };
 
-  const handleCreateCampaign = () =>{
-    navigate('/email-campaign/new-campaign')
-  }
+  const handleCreateCampaign = () => {
+    router.navigate("/email-campaign/new-campaign");
+  };
 
   const handleCreateFolder = () => {
     setCreateFolder(true);
@@ -83,34 +87,6 @@ const EmailCampaign = () => {
 
   const isMenuOpen = Boolean(anchorEl);
 
-  const campaignData = [
-    {
-      progress: 31,
-      name: "Newly created - Siva",
-      createdAt: "22 Jan, 11:11 pm",
-      sequences: 4,
-      sent: 845,
-      opened: 200,
-      clicked: 0,
-      replied: 1,
-      positiveReply: true,
-      bounced: 53,
-    },
-    {
-      progress: 80,
-      name: "Dharmendra 500 Leads",
-      createdAt: "09 Jan, 11:40 pm",
-      sequences: 5,
-      sent: 666,
-      opened: "NA",
-      clicked: "NA",
-      replied: 7,
-      positiveReply: true,
-      bounced: 7,
-    },
-  ];
-
-
   return (
     <ContentContainer>
       <CustomTabs
@@ -123,7 +99,7 @@ const EmailCampaign = () => {
           borderColor: "divider",
         }}
       >
-        <CustomTab label="All Campaign" value="all_campaign" />
+        <CustomTab label={`All Campaigns (${campaigns.length})`} value="all_campaign" />
         <CustomTab label="Folders" value="folder" />
         {activeTab === "all_campaign" && (
           <Box
@@ -132,7 +108,7 @@ const EmailCampaign = () => {
               gap: "15px",
               alignItems: "center",
               marginLeft: "auto",
-              marginBottom: "10px"
+              marginBottom: "10px",
             }}
           >
             <FilterIcon onClick={handleMenuOpen}>
@@ -142,15 +118,15 @@ const EmailCampaign = () => {
               <Search size={20} />
               <input placeholder="Search input..." />
             </SearchBar>
-            <Button2
-              background="var(--theme-color)"
-              color="white"
+            <Button
+              // color="white"
               onClick={handleCreateCampaign}
             >
               Create Campaign
-            </Button2>
+            </Button>
           </Box>
         )}
+        
         {activeTab === "folder" && (
           <Box
             sx={{
@@ -164,16 +140,11 @@ const EmailCampaign = () => {
               open={createFolder}
               onClose={() => setCreateFolder(false)}
             />
-            <Button2
-              background="var(--theme-color)"
-              color="white"
-              onClick={handleCreateFolder}
-            >
-              Create Folder
-            </Button2>
+            <Button onClick={handleCreateFolder}>Create Folder</Button>
           </Box>
         )}
       </CustomTabs>
+
       <Menu
         anchorEl={anchorEl}
         open={isMenuOpen}
@@ -216,31 +187,8 @@ const EmailCampaign = () => {
         )}
 
         <Box display="flex" justifyContent="space-between" mt={2}>
-          <Button
-            variant="outlined"
-            sx={{
-              color: "black",
-              borderColor: "#ccc",
-              textTransform: "none",
-              borderRadius: "8px",
-              width: "45%",
-            }}
-            onClick={handleMenuClose}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: "var(--theme-color)",
-              color: "white",
-              textTransform: "none",
-              borderRadius: "8px",
-              width: "45%",
-            }}
-          >
-            Apply
-          </Button>
+          <Button onClick={handleMenuClose}>Cancel</Button>
+          <Button>Apply</Button>
         </Box>
       </Menu>
 
@@ -296,8 +244,8 @@ const EmailCampaign = () => {
                           {campaign.campaignName}
                         </Link>
                         <Typography variant="body2" sx={{ color: "#667085" }}>
-                          Paused | Created At: {formatDate(campaign.createdAt)} |{" "}
-                          {campaign.sequences.length} sequences
+                          Paused | Created At: {formatDate(campaign.createdAt)}{" "}
+                          | {campaign.sequences.length} sequences
                         </Typography>
                       </Box>
                     </Box>
@@ -362,20 +310,7 @@ const EmailCampaign = () => {
                         }}
                       />
 
-                      {7 && (
-                        <Button
-                          size="small"
-                          sx={{
-                            textTransform: "none",
-                            backgroundColor: "#edf8f6",
-                            color: "#2db5a7",
-                            fontSize: "12px",
-                            ml: 2,
-                          }}
-                        >
-                          Go To Master Inbox
-                        </Button>
-                      )}
+                      {7 && <Button>Go To Master Inbox</Button>}
 
                       <Typography
                         sx={{
@@ -399,6 +334,7 @@ const EmailCampaign = () => {
                 </TableRow>
               ))}
             </TableBody>
+            
           </Table>
         </TableContainer>
       )}
@@ -440,19 +376,7 @@ const EmailCampaign = () => {
                   open={createFolder}
                   onClose={() => setCreateFolder(false)}
                 />
-                <Button2
-                  background="var(--theme-color)"
-                  color="white"
-                  style={{
-                    width: "21%",
-                    height: "16%",
-                    marginTop: "10px",
-                    padding: "0px",
-                  }}
-                  onClick={handleCreateFolder}
-                >
-                  Create Folder
-                </Button2>
+                <Button style={{ marginBottom: "10px !important" }} onClick={handleCreateFolder}>Create Folder</Button>
               </Box>
             </Box>
           </motion.div>

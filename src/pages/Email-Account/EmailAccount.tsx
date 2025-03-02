@@ -75,14 +75,14 @@ const EmailAccounts: React.FC = () => {
   ];
 
   useEffect(() => {
-    setLoading(true);
+    // setLoading(true);
     if (user) {
       dispatch(fetchEmailAccount())
         .unwrap()
         .then((data) => {
           setEmailAccounts(data);
           setRows(data);
-          setLoading(false);
+          // setLoading(false);
           toast.success("Email Accounts fetched successfully");
         })
         .catch((error) => {
@@ -173,7 +173,7 @@ const EmailAccounts: React.FC = () => {
           </Button2>
         </Box>
       </EmailAccountHeader>
-      {loading && <ProgressBar />}
+      {/* {loading && <ProgressBar />} */}
       <Menu
         anchorEl={anchorEl}
         open={isMenuOpen}

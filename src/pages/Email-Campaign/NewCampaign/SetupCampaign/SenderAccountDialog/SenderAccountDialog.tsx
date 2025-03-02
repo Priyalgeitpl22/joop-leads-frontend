@@ -65,7 +65,7 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
   useEffect(() => {
     if (!user) return;
 
-    setLoading(true);
+    // setLoading(true);
 
     dispatch(fetchEmailAccount())
       .unwrap()
@@ -128,7 +128,7 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
     console.log("Selected Row:", selectedRow);
   };
 
-  if (loading) return <Loader />;
+  // if (loading) return <Loader />;
 
   return (
     <Dialog

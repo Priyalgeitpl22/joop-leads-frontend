@@ -3,13 +3,15 @@ import styled from '@emotion/styled';
 export const SearchBar = styled.div`
     display: flex;
     flex-direction: row;
-    padding: 16px;
-    border: 1px solid var(--background-light);
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    background-color: white;
     border-radius: 5px;
     flex-grow: 1;
     width: 100%;
     min-width: 350px;
     gap: 10px;
+    height: 42px;
 
   input {
     background: none;

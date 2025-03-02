@@ -22,7 +22,7 @@ import NotificationComponent from "../Notification/NotificationComponent";
 import { HeaderOptions } from "../../pages/Home/home.styled";
 import { Menu } from "lucide-react";
 interface HeaderProps {
-  toggleSidebar: () => void;
+  toggleSidebar?: () => void;
 }
 
 const Header = ({ toggleSidebar }: HeaderProps) => {
@@ -75,12 +75,6 @@ const Header = ({ toggleSidebar }: HeaderProps) => {
 
   return (
     <HeaderContainer>
-      {/* <button
-        onClick={toggleSidebar}
-        style={{ background: "transparent", border: "none" }}
-      >
-        <Menu size={24} />
-      </button> */}
       <LogoContainer>
         <CampaignIcon
           style={{
@@ -97,7 +91,12 @@ const Header = ({ toggleSidebar }: HeaderProps) => {
         <Search size={20} />
         <input placeholder="Search conversations..." />
       </SearchBar>
-
+      <button
+        onClick={toggleSidebar}
+        style={{ background: "transparent", border: "none" }}
+      >
+        <Menu size={24} />
+      </button>
       <HeaderOptions>
         {user && (
           <div

@@ -69,7 +69,7 @@ const Configuration = () => {
   };
   
   const handleSave = async () => {
-    setLoading(true);
+    // setLoading(true);
     try {
       await dispatch(
         saveConfigurations({ ...settings, orgId: user?.orgId, aiOrgId: user?.aiOrgId })
@@ -77,12 +77,12 @@ const Configuration = () => {
   
       await fetchScript();
       setTimeout(() => {
-        setLoading(false);
+        // setLoading(false);
         setActiveTab("tracking_code");
       }, 1000); 
     } catch (error) {
       console.error("Error saving settings:", error);
-      setLoading(false);
+      // setLoading(false);
     }
   };
 

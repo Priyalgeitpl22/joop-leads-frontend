@@ -1,6 +1,20 @@
 import { createTheme } from "@mui/material/styles";
+import { color } from "framer-motion";
 
 const theme = createTheme({
+  colorSchemes: {
+    light: true,
+    dark: true,
+  },
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 600,
+      lg: 1200,
+      xl: 1536,
+    },
+  },
   components: {
     MuiCheckbox: {
       styleOverrides: {
@@ -37,7 +51,7 @@ const theme = createTheme({
             backgroundColor: "white",
           },
           "&.Mui-focused": {
-            backgroundColor: "blue",
+            backgroundColor: "var(--theme-color-dark)",
             borderColor: "var(--theme-color-dark)",
           },
           "&.Mui-disabled": {
@@ -245,6 +259,106 @@ const theme = createTheme({
           },
           "&:focus": {
             borderColor: "var(--theme-color-dark) !important",
+          },
+        },
+      },
+    },
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "var(--theme-color)",
+          color: "#fff",
+          height: "80px",
+          boxShadow: "none",
+          borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+        },
+        colorPrimary: {
+          backgroundColor: "#1E88E5",
+        },
+        colorSecondary: {
+          backgroundColor: "#D32F2F",
+        },
+        positionFixed: {
+          top: 0,
+          left: 0,
+          width: "100%",
+          zIndex: 1200,
+        },
+      },
+    },
+    MuiSvgIcon: {
+      styleOverrides: {
+        root: {
+          fontSize: "30px",
+          color: "var(--icon-primary)",
+          transition: "0.3s ease-in-out",
+
+          "&:hover": {
+            color: "var(--icon-hover)",
+          },
+          "&:active": {
+            color: "var(--icon-active)",
+          },
+          "&.Mui-selected": {
+            color: "var(--icon-selected) !important",
+          },
+          "&:focus": {
+            color: "var(--icon-focus)",
+            outline: "2px solid var(--icon-focus-outline)",
+          },
+        },
+      },
+    },
+    MuiDrawer: {
+      styleOverrides: {
+        paper: {
+          width: "240px",
+          backgroundColor: "#fff",
+          color: "#FFFFFF",
+          padding: "10px",
+        },
+      },
+    },
+    MuiListItem: {
+      styleOverrides: {
+        root: {
+          borderRadius: "8px",
+          marginBottom: "8px",
+          padding: "10px !important", // Hover effect,
+
+          "&:hover": {
+            backgroundColor: "var(--background-secondary)",
+            padding: "10px !important" // Hover effect
+          },
+          "&:active": {
+            backgroundColor: "var(--background-secondary)",
+            padding: "10px !important" // Hover effect
+          },
+          "&.Mui-selected": {
+            backgroundColor: "var(--selected) !important",
+            color: "white",
+            padding: "10px !important" // Hover effect
+          },
+          "& a": {
+            textDecoration: "none !important",
+            color: "inherit !important",
+            backgroundColor: "transparent !important",
+          },
+          "& a:hover, & a:focus, & a:active, & a.Mui-focusVisible": {
+            backgroundColor: "transparent !important",
+            textDecoration: "none !important",
+            color: "inherit !important",
+            outline: "none !important",
+          },
+        },
+      },
+    },
+    MuiListItemIcon: {
+      styleOverrides: {
+        root: {
+          color: "#FFFFFF !important",
+          "&:active": {
+            color: "var(--background-secondary)",
           },
         },
       },

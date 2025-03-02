@@ -45,7 +45,7 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
   };
 
   useEffect(() => {
-    setLoading(true);
+    // setLoading(true);
     const campaignId = "14eb8d0d-b902-40c3-b8b4-78abde6545c5";
 
     if (campaignId) {
@@ -67,7 +67,7 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
 
           setSelectedContact(contactsData.data[0]);
 
-          setLoading(false);
+          // setLoading(false);
           toast.success("Data fetched successfully");
         })
         .catch((error) => {

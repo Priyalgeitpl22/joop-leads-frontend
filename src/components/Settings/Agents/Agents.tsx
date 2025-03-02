@@ -37,12 +37,12 @@ const Agents: React.FC = () => {
     }
   }, [data]);
   useEffect(() => {
-    setLoading(true);
+    // setLoading(true);
     if (user) {
       dispatch(fetchAgents(user.orgId))
         .unwrap()
         .then(() => {
-          setLoading(false);
+          // setLoading(false);
           toast.success("Agents fetched successfully");
         })
         .catch((error) => {

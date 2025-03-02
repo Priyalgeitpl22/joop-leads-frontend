@@ -152,7 +152,7 @@ export const Button2 = styled("button", {
     background-color: ${background};
     border: none;
     font-weight: 500;
-    font-size: 14px;
+    font-size: 16px;
 `
 );
 

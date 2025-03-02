@@ -59,7 +59,7 @@ const ProfileDetail: React.FC<ProfileDetailProps> = ({ open, onClose }) => {
   };
 
   const handleSave = async () => {
-    setLoading(true);
+    // setLoading(true);
     const formDataToSend = new FormData();
     formDataToSend.append("id", userData?.id || "");
     formDataToSend.append("name", formData.name);
@@ -75,7 +75,7 @@ const ProfileDetail: React.FC<ProfileDetailProps> = ({ open, onClose }) => {
       toast.success("User details updated successfully!");
       onClose(); 
       window.location.reload();
-      setLoading(false);
+      // setLoading(false);
     } catch (error) {
       toast.error("Failed to update user details!");
     }

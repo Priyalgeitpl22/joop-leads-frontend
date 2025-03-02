@@ -23,7 +23,7 @@ export default function Chats() {
   );
   const [messages, setMessages] = useState<any[]>([]);
   const [lastEvent, setLastEvent] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {

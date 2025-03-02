@@ -101,7 +101,7 @@ const SetupCampaign: React.FC<SetupCampaignProps> = ({ campaignId }) => {
             label={
               <Box>
                 <Typography fontWeight="600">Schedule Campaign</Typography>
-                <Typography variant="body2">
+                <Typography variant="body2" >
                   Email will be triggered based on time chosen here
                 </Typography>
               </Box>
@@ -137,7 +137,7 @@ const SetupCampaign: React.FC<SetupCampaignProps> = ({ campaignId }) => {
             label={
               <Box>
                 <Typography variant="h5">Campaign Settings</Typography>
-                <Typography variant="body2">
+                <Typography variant="body2" color="gray">
                   Configure the settings for this campaign
                 </Typography>
               </Box>

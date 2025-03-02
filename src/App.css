@@ -14,7 +14,7 @@ body {
 
 :root {
   /* 🌟 Primary Theme Colors */
-  --theme-color: #130830; /* Base Primary */
+  --theme-color: #26155b; /* Base Primary */
   --theme-color-light: #eff0ff; /* Light Variant */
   --theme-color-dark: #291D48; /* Darker Primary Variant */
 
@@ -58,6 +58,12 @@ body {
   --shadow-dark: rgba(19, 8, 48, 0.3); /* Darker Shadow */
   
   --icon-color: #9c82df;
+  --icon-primary: #2E2445;
+  --icon-hover: #46386A;
+  --icon-selected: rgb(255, 0, 238);
+  --icon-focused: yellow;
+  --icon-light: #fff;
+  
   --disable-color: #6e6e6e;
 
   /* Input */
@@ -100,6 +106,7 @@ body {
     border-radius: 10px;
   }
 }
+
 /* 🌙 Dark Mode */
 .dark-mode {
   background: var(--background-dark);
