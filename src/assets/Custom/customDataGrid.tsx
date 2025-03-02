@@ -30,14 +30,15 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
         onPaginationModelChange={setPaginationModel}
         checkboxSelection
         getRowId={(row) => row._id}
-        // sx={{
-        //   "& .MuiCheckbox-root": {
-        //     color: "var(--primary-color)",
-        //   },
-        //   "& .Mui-checked": {
-        //     color: "var(--border-color) !important",
-        //   },
-        // }}
+        slots={{
+          noRowsOverlay: () => (
+            <div
+              style={{ padding: "20px", textAlign: "center", color: "#888" }}
+            >
+              No email accounts found
+            </div>
+          ),
+        }}
       />
     </Paper>
   );

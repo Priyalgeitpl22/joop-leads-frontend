@@ -39,9 +39,9 @@ const ColorlibStepIconRoot = styled("div")<{
   backgroundColor:
     ownerState.completed || ownerState.active ? "transparent" : "#ccc",
   zIndex: 1,
-  padding: "16px",
+  padding: "5px",
   color: "var(--background-light)",
-  width: 20,
+  width: 20 !,
   height: 20,
   marginBottom: "-8px",
   display: "flex",

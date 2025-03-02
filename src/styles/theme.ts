@@ -1,12 +1,7 @@
 import { createTheme } from "@mui/material/styles";
-import { color } from "framer-motion";
 
 const theme = createTheme({
-  colorSchemes: {
-    light: true,
-    dark: true,
-  },
-  breakpoints: {
+    breakpoints: {
     values: {
       xs: 0,
       sm: 600,
@@ -138,6 +133,7 @@ const theme = createTheme({
           style: {
             fontSize: "1.75rem",
             fontWeight: 600,
+            color: "var(--text-white)",
           },
         },
         {
@@ -271,6 +267,11 @@ const theme = createTheme({
           height: "80px",
           boxShadow: "none",
           borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+          justifyContent: "center",
+          "& .MuiSvgIcon-root": {  // ✅ This correctly targets MUI icons inside buttons
+            color: "white !important",
+            fontSize: "40px !important"
+          },
         },
         colorPrimary: {
           backgroundColor: "#1E88E5",
@@ -289,7 +290,7 @@ const theme = createTheme({
     MuiSvgIcon: {
       styleOverrides: {
         root: {
-          fontSize: "30px",
+          fontSize: "24px",
           color: "var(--icon-primary)",
           transition: "0.3s ease-in-out",
 
@@ -316,6 +317,7 @@ const theme = createTheme({
           backgroundColor: "#fff",
           color: "#FFFFFF",
           padding: "10px",
+          justifyContent: "center",
         },
       },
     },
@@ -325,7 +327,10 @@ const theme = createTheme({
           borderRadius: "8px",
           marginBottom: "8px",
           padding: "10px !important", // Hover effect,
-
+          "& .MuiSvgIcon-root": {  // ✅ This correctly targets MUI icons inside buttons
+            color: "var(--theme-color) !important",
+            fontSize: "30px !important"
+          },
           "&:hover": {
             backgroundColor: "var(--background-secondary)",
             padding: "10px !important" // Hover effect

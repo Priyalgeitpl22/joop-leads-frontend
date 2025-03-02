@@ -1,37 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Box,
   Checkbox,
   Menu,
-  Table,
-  TableBody,
-  TableRow,
   Typography,
   Link,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
-  Button,
 } from "@mui/material";
 import {
   EmailAccountsContainer,
   EmailAccountHeader,
-  SectionTitle,
-  StyledTableContainer,
-  StyledTableHeadCell,
   EmailAccountTable,
-  StyledTableCell,
-  StyledTableHead,
-  CustomEditIconButton,
-  StyledWarmup,
-  StyledReputation,
-  StyledTableCheckbox,
   FilterIcon,
+  StyledWarmup,
 } from "./EmailAccount.styled";
 import EmailAccountDialog from "./EmailAccountDialogBox/EmailAccountDialog";
 import AdvancedSettingDialog from "./AdvancedSettingDialogBox/AdvancedSettingDialog";
-import Loader from "../../components/Loader";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -41,12 +28,11 @@ import {
 import { AppDispatch, RootState } from "../../redux/store/store";
 import { SearchBar } from "../../components/Header/header.styled";
 import { Search } from "lucide-react";
-import { Button2 } from "../../styles/layout.styled";
 import toast from "react-hot-toast";
-import ProgressBar from "../../assets/Custom/linearProgress";
 import { CustomDataTable } from "../../assets/Custom/customDataGrid";
 import { GridColDef } from "@mui/x-data-grid";
 import { formatDate } from "../../utils/utils";
+import { Button, SecondaryButton } from "../../styles/global.styled";
 
 const EmailAccounts: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -60,37 +46,90 @@ const EmailAccounts: React.FC = () => {
 
   const [rows, setRows] = useState<any[]>([]);
 
-  const columns: GridColDef[] = [
-    { field: "_id", headerName: "ID", width: 250 },
-    { field: "name", headerName: "Name", width: 150 },
-    { field: "email", headerName: "Email", width: 250 },
-    { field: "account", headerName: "Account", width: 120 },
-    { field: "state", headerName: "State", width: 100 },
-    {
-      field: "createdAt",
-      headerName: "Created At",
-      width: 180,
-      valueGetter: (params: any) => (params ? formatDate(params) : null),
-    },
-  ];
+  const columns: GridColDef[] = useMemo(
+    () => [
+      { field: "name", headerName: "Name", width: 150 },
+      { field: "email", headerName: "Email", width: 250 },
+      {
+        field: "type",
+        headerName: "Type",
+        width: 120,
+        renderCell: (params: any) => {
+          if (params.value === "gmail") {
+            return (
+              <img
+                src="https://img.icons8.com/color/48/000000/gmail-new.png"
+                alt="Gmail Icon"
+                width="24"
+                height="24"
+              />
+            );
+          } else if (params.value === "outlook") {
+            return (
+              <img
+                src="https://img.icons8.com/color/48/000000/microsoft-outlook-2019.png"
+                alt="Outlook Icon"
+                width="24"
+                height="24"
+              />
+            );
+          } else if (params.value === "imap") {
+            return <CustomIcon />;
+          } else {
+            return null;
+          }
+        },
+      },
+      {
+        field: "warm_up",
+        headerName: "Warmup Enabled",
+        width: 120,
+        renderCell: (params: any) => <StyledWarmup>Yes</StyledWarmup>,
+      },
+      {
+        field: "daily_limit",
+        headerName: "Daily Limit",
+        width: 120,
+        valueGetter: () => "0 / 100",
+      },
+      {
+        field: "reputation",
+        headerName: "Reputation",
+        width: 120,
+        renderCell: () => <StyledWarmup>100%</StyledWarmup>,
+      },
+      {
+        field: "createdAt",
+        headerName: "Created At",
+        width: 180,
+        valueGetter: (params: any) => (params ? formatDate(params) : null),
+      },
+    ],
+    []
+  );
 
   useEffect(() => {
-    // setLoading(true);
-    if (user) {
-      dispatch(fetchEmailAccount())
-        .unwrap()
-        .then((data) => {
-          setEmailAccounts(data);
-          setRows(data);
-          // setLoading(false);
-          toast.success("Email Accounts fetched successfully");
-        })
-        .catch((error) => {
-          console.error("Failed to fetch Account:", error);
-          toast.error("Failed to fetch Account");
-        });
-    }
-  }, [dispatch, user]);
+    const getEmailAccounts = async () => {
+      await getAllEmailAccounts();
+    };
+
+    getEmailAccounts();
+  }, []);
+
+  const getAllEmailAccounts = async () => {
+    dispatch(fetchEmailAccount())
+      .unwrap()
+      .then((data) => {
+        setEmailAccounts(data);
+        setRows(data);
+        // setLoading(false);
+        toast.success("Email Accounts fetched successfully");
+      })
+      .catch((error) => {
+        console.error("Failed to fetch Account:", error);
+        toast.error("Failed to fetch Account");
+      });
+  };
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -133,15 +172,11 @@ const EmailAccounts: React.FC = () => {
     </svg>
   );
 
-  // if (loading) {
-  //   return <Loader />;
-  // }
-
   return (
     <EmailAccountsContainer>
       <EmailAccountHeader>
-        <SectionTitle>Email Account</SectionTitle>
-        <Box sx={{ display: "flex", gap: "20px" }}>
+        {/* <SectionTitle>Email Account</SectionTitle> */}
+        <Box sx={{ display: "flex", gap: "20px", width: "100%" }}>
           <FilterIcon onClick={handleMenuOpen}>
             <FilterAltOutlinedIcon />
           </FilterIcon>
@@ -157,20 +192,10 @@ const EmailAccounts: React.FC = () => {
             open={isSettingOpen}
             onClose={() => setIsSettingOpen(false)}
           />
-          <Button2
-            onClick={handleSettingDialog}
-            background="#f1f2fb"
-            color="var(--theme-color)"
-          >
+          <SecondaryButton onClick={handleSettingDialog}>
             Advanced Settings
-          </Button2>
-          <Button2
-            onClick={handleOpenDialog}
-            background="var(--theme-color)"
-            color="white"
-          >
-            Add Account
-          </Button2>
+          </SecondaryButton>
+          <Button onClick={handleOpenDialog}>Add Account</Button>
         </Box>
       </EmailAccountHeader>
       {/* {loading && <ProgressBar />} */}
@@ -222,31 +247,8 @@ const EmailAccounts: React.FC = () => {
         ))}
 
         <Box display="flex" justifyContent="space-between" mt={2}>
-          <Button
-            variant="outlined"
-            sx={{
-              color: "black",
-              borderColor: "#ccc",
-              textTransform: "none",
-              borderRadius: "8px",
-              width: "45%",
-            }}
-            onClick={handleMenuClose}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: "var(--theme-color)",
-              color: "white",
-              textTransform: "none",
-              borderRadius: "8px",
-              width: "45%",
-            }}
-          >
-            Apply
-          </Button>
+          <Button onClick={handleMenuClose}>Cancel</Button>
+          <Button>Apply</Button>
         </Box>
       </Menu>
       <EmailAccountTable>
@@ -255,53 +257,6 @@ const EmailAccounts: React.FC = () => {
           rows={rows}
           pageSizeOptions={[10, 10]}
         />
-        {/* <StyledTableContainer>
-          <Table>
-            <StyledTableHead>
-              <TableRow>
-                <StyledTableCheckbox>
-                  <Checkbox {...label} />
-                </StyledTableCheckbox>
-                <StyledTableHeadCell>Name</StyledTableHeadCell>
-                <StyledTableHeadCell>Email</StyledTableHeadCell>
-                <StyledTableHeadCell>Daily Limit</StyledTableHeadCell>
-                <StyledTableHeadCell>Warmup Enabled</StyledTableHeadCell>
-                <StyledTableHeadCell>Reputation</StyledTableHeadCell>
-                <StyledTableHeadCell>Type</StyledTableHeadCell>
-              </TableRow>
-            </StyledTableHead>
-            <TableBody style={{ background: "var(--background-light)f" }}>
-              {emailAccounts.map((account) => (
-                <TableRow key={account._id}>
-                  <StyledTableCheckbox>
-                    <Checkbox {...label} />
-                  </StyledTableCheckbox>
-                  <StyledTableCell>{account.name}</StyledTableCell>
-                  <StyledTableCell>{account.email}</StyledTableCell>
-                  <StyledTableCell>0/100</StyledTableCell>
-                  <StyledTableCell>
-                    <div>
-                      <StyledWarmup>yes</StyledWarmup>
-                    </div>
-                  </StyledTableCell>
-                  <StyledTableCell>
-                    <StyledReputation>100%</StyledReputation>
-                  </StyledTableCell>
-                  {/* <StyledTableCell>warmup</StyledTableCell> */}
-        {/* <StyledTableCell>
-                    <StyledWarmup>{account.type}</StyledWarmup>
-                  </StyledTableCell> */}
-        {/* <StyledTableCell></StyledTableCell> */}
-        {/* <StyledTableCell>
-                    <CustomEditIconButton>
-                      <CustomIcon />
-                    </CustomEditIconButton>
-                  </StyledTableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </StyledTableContainer> */}
       </EmailAccountTable>
     </EmailAccountsContainer>
   );

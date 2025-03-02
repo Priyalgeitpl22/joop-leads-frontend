@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { motion } from "framer-motion";
 import { Link, NavLink } from "react-router-dom";
-import { TextField as MuiTextField } from "@mui/material";
+import { Box, TextField as MuiTextField } from "@mui/material";
 import { InputLabel as MuiInputLabel } from "@mui/material";
 
 interface ButtonProps {
@@ -172,3 +172,17 @@ export const TextField = styled(MuiTextField)`
 export const InputLabel = styled(MuiInputLabel)`
   color: black;
 `;
+
+export const TableItem = styled(Box)(`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+`)
+
+export const TableIcons = styled(Box)(`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 5px;
+`)

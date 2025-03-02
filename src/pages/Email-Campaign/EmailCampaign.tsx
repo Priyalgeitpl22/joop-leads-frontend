@@ -24,6 +24,9 @@ import {
   CustomTabs,
   SectionTitle,
   EmailCampaignContainer,
+  CustomTableRow,
+  CustomTableCell,
+  CustomTableBody,
 } from "./EmailCampaign.styled";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import { SearchBar } from "../../components/Header/header.styled";
@@ -36,11 +39,18 @@ import { fetchEmailCampaigns } from "../../redux/slice/emailCampaignSlice";
 import { AppDispatch } from "../../redux/store/store";
 import { IEmailCampaign } from "./NewCampaign/interfaces";
 import { formatDate } from "../../utils/utils";
-import { Router } from "@toolpad/core/AppProvider";
 import { Button } from "../../styles/global.styled";
+import ForwardToInboxOutlinedIcon from "@mui/icons-material/ForwardToInboxOutlined";
+import MarkEmailReadOutlinedIcon from "@mui/icons-material/MarkEmailReadOutlined";
+import DraftsOutlinedIcon from "@mui/icons-material/DraftsOutlined";
+import AdsClickOutlinedIcon from "@mui/icons-material/AdsClickOutlined";
+import ErrorOutlinedIcon from "@mui/icons-material/ErrorOutlined";
+import AttachMoneyOutlinedIcon from "@mui/icons-material/AttachMoneyOutlined";
+import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
+import { TableIcons, TableItem } from "../../styles/layout.styled";
 
 interface EmailCampaignProps {
-  router: Router;
+  router?: any;
 }
 
 const EmailCampaign: React.FC<EmailCampaignProps> = ({ router }) => {
@@ -85,6 +95,35 @@ const EmailCampaign: React.FC<EmailCampaignProps> = ({ router }) => {
     setAnchorEl(null);
   };
 
+  const tableData = [
+    {
+      count: 0,
+      icon: ForwardToInboxOutlinedIcon,
+      label: "Sent",
+      color: "#6e58f1",
+    },
+    { count: 2, icon: DraftsOutlinedIcon, label: "Opened", color: "#bf51c1" },
+    {
+      count: 4,
+      icon: AdsClickOutlinedIcon,
+      label: "Clicked",
+      color: "#efba2f",
+    },
+    {
+      count: 7,
+      icon: MarkEmailReadOutlinedIcon,
+      label: "Replied",
+      color: "#51c1c1",
+    },
+    {
+      count: 10,
+      icon: AttachMoneyOutlinedIcon,
+      label: "Positive Reply",
+      color: "#23b820",
+    },
+    { count: 1, icon: ErrorOutlinedIcon, label: "Bounced", color: "#e01010" },
+  ];
+
   const isMenuOpen = Boolean(anchorEl);
 
   return (
@@ -99,7 +138,10 @@ const EmailCampaign: React.FC<EmailCampaignProps> = ({ router }) => {
           borderColor: "divider",
         }}
       >
-        <CustomTab label={`All Campaigns (${campaigns.length})`} value="all_campaign" />
+        <CustomTab
+          label={`All Campaigns (${campaigns.length})`}
+          value="all_campaign"
+        />
         <CustomTab label="Folders" value="folder" />
         {activeTab === "all_campaign" && (
           <Box
@@ -112,7 +154,7 @@ const EmailCampaign: React.FC<EmailCampaignProps> = ({ router }) => {
             }}
           >
             <FilterIcon onClick={handleMenuOpen}>
-              <FilterAltOutlinedIcon />
+              <FilterAltOutlinedIcon sx={{ color: "var(--icon-color)" }} />
             </FilterIcon>
             <SearchBar>
               <Search size={20} />
@@ -126,7 +168,7 @@ const EmailCampaign: React.FC<EmailCampaignProps> = ({ router }) => {
             </Button>
           </Box>
         )}
-        
+
         {activeTab === "folder" && (
           <Box
             sx={{
@@ -209,132 +251,67 @@ const EmailCampaign: React.FC<EmailCampaignProps> = ({ router }) => {
               </TableRow>
             </TableHead>
 
-            <TableBody>
-              {campaigns.map((campaign, index) => (
-                <TableRow key={index} sx={{ borderBottom: "1px solid #ddd" }}>
-                  <TableCell>
-                    <Box display="flex" alignItems="center">
-                      <Box
-                        sx={{
-                          width: "40px",
-                          height: "40px",
-                          borderRadius: "50%",
-                          background: `conic-gradient(var(--theme-color) ${20}%, #ddd ${40}%)`,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          color: "#35495c",
-                          fontSize: "14px",
-                          fontWeight: "bold",
-                          mr: 1.5,
-                        }}
-                      >
-                        {35}%
-                      </Box>
-
-                      <Box>
-                        <Link
-                          href="#"
-                          sx={{
-                            fontWeight: "bold",
-                            color: "var(--theme-color)",
-                            textDecoration: "none",
+            {campaigns.length > 0 &&
+              campaigns.map((campaign) => (
+                <CustomTableBody>
+                  <CustomTableRow>
+                    <CustomTableCell>
+                      <div>
+                        <h3
+                          style={{
+                            marginBottom: "8px",
+                            color: "var(--title-color)",
                           }}
                         >
                           {campaign.campaignName}
-                        </Link>
-                        <Typography variant="body2" sx={{ color: "#667085" }}>
-                          Paused | Created At: {formatDate(campaign.createdAt)}{" "}
-                          | {campaign.sequences.length} sequences
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </TableCell>
+                        </h3>
+                        <p
+                          style={{
+                            fontWeight: "400",
+                            color: "var(--text-light)",
+                          }}
+                        >
+                          {`Drafted | ${formatDate(campaign.createdAt)} | ${campaign.sequences.length} Sequences`}
+                        </p>
+                      </div>
+                    </CustomTableCell>
 
-                  <TableCell>
-                    <Box display="flex" alignItems="center">
-                      <Typography
-                        sx={{
-                          color: "var(--theme-color)",
-                          fontWeight: "bold",
-                          width: "50px",
-                        }}
-                      >
-                        {2}
-                      </Typography>
-                      <Email
-                        sx={{
-                          fontSize: "18px",
-                          color: "#667085",
-                          marginLeft: "4px",
-                        }}
-                      />
-
-                      <Typography
-                        sx={{
-                          color: "#9b51e0",
-                          fontWeight: "bold",
-                          width: "50px",
-                          marginLeft: "16px",
-                        }}
-                      >
-                        {4}
-                      </Typography>
-
-                      <Typography
-                        sx={{
-                          color: "#667085",
-                          fontWeight: "bold",
-                          width: "50px",
-                          marginLeft: "16px",
-                        }}
-                      >
-                        {7}
-                      </Typography>
-
-                      <Typography
-                        sx={{
-                          color: "#2db5a7",
-                          fontWeight: "bold",
-                          width: "50px",
-                          marginLeft: "16px",
-                        }}
-                      >
-                        {1}
-                      </Typography>
-                      <Replay
-                        sx={{
-                          fontSize: "18px",
-                          color: "#2db5a7",
-                          marginLeft: "4px",
-                        }}
-                      />
-
-                      {7 && <Button>Go To Master Inbox</Button>}
-
-                      <Typography
-                        sx={{
-                          color: "#e74c3c",
-                          fontWeight: "bold",
-                          width: "50px",
-                          marginLeft: "16px",
-                        }}
-                      >
-                        {10}
-                      </Typography>
-                      <ErrorOutline
-                        sx={{
-                          fontSize: "18px",
-                          color: "#e74c3c",
-                          marginLeft: "4px",
-                        }}
-                      />
-                    </Box>
-                  </TableCell>
-                </TableRow>
+                    {tableData.map((item, index) => (
+                      <CustomTableCell key={index}>
+                        <TableItem>
+                          <p
+                            style={{
+                              fontWeight: "500",
+                              color: "var(--text-light)",
+                              fontSize: "24px",
+                            }}
+                          >
+                            {item.count}
+                          </p>
+                          <TableIcons>
+                            <item.icon
+                              sx={{ fontSize: "20px", color: item.color }}
+                            />
+                            <p
+                              style={{
+                                fontWeight: "400",
+                                color: "var(--text-light)",
+                                fontSize: "12px",
+                                whiteSpace: "nowrap",
+                              }}
+                            >
+                              {item.label}
+                            </p>
+                          </TableIcons>
+                        </TableItem>
+                      </CustomTableCell>
+                    ))}
+                    <CustomTableCell>
+                      <ModeEditOutlineOutlinedIcon />
+                    </CustomTableCell>
+                  </CustomTableRow>
+                </CustomTableBody>
               ))}
-            </TableBody>
-            
           </Table>
         </TableContainer>
       )}
@@ -376,7 +353,12 @@ const EmailCampaign: React.FC<EmailCampaignProps> = ({ router }) => {
                   open={createFolder}
                   onClose={() => setCreateFolder(false)}
                 />
-                <Button style={{ marginBottom: "10px !important" }} onClick={handleCreateFolder}>Create Folder</Button>
+                <Button
+                  style={{ marginBottom: "10px !important" }}
+                  onClick={handleCreateFolder}
+                >
+                  Create Folder
+                </Button>
               </Box>
             </Box>
           </motion.div>

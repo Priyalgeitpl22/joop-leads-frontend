@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Box, Tab, Tabs } from "@mui/material";
+import { Box, Tab, TableBody, TableCell, TableRow, Tabs } from "@mui/material";
 import { MuiColorInput } from "mui-color-input";
 
 export const EmailCampaignContainer = styled.div`
@@ -183,3 +183,62 @@ export const ContentContainer = styled(Box)`
   flex-direction: column;
   // background: var(--white-fade-gradient);
 `;
+
+export const CustomTableBody = styled(TableBody)(({ }) => ({
+  backgroundColor: "var(--background-primary)",
+  // "& .MuiTableRow-root": {
+  //   "&:nth-of-type(even)": {
+  //     backgroundColor: "var(--background-secondary)",
+  //   },
+  //   "&:hover": {
+  //     backgroundColor: "var(--hover-color)", 
+  //   },
+  // },
+  "& .MuiTableCell-root": {
+    padding: "12px",
+    borderBottom: "1px solid var(--border-color)",
+    color: "var(--text-primary)",
+  },
+}));
+
+export const CustomTableRow = styled(TableRow)(({ }) => ({
+  height: "80px",
+  borderRadius: 0,
+  overflowX: "auto",
+  
+  "&:nth-of-type(even)": {
+    backgroundColor: "var(--background-secondary)", // Alternate row color
+  },
+
+  "&:hover": {
+    // backgroundColor: "var(--hover-color)", // Hover effect
+    cursor: "pointer",
+  },
+
+  // "&.Mui-selected, &.Mui-selected:hover": {
+  //   backgroundColor: "var(--selected-color) !important",
+  //   color: "white",
+  // },
+}));
+
+export const CustomTableCell = styled(TableCell)(({ }) => ({
+  fontSize: "14px",
+  fontWeight: "500",
+  color: "red",
+  padding: "12px 16px",
+  height: "80px",
+  alignItems: "center",
+  justifyContent: "center",
+  
+  "&:first-of-type": {
+    fontWeight: "bold",
+  },
+
+  "&:last-of-type": {
+    textAlign: "right",
+  },
+
+  "&.MuiTableCell-root": {
+    borderBottom: "1px solid var(--border-color)",
+  },
+}));

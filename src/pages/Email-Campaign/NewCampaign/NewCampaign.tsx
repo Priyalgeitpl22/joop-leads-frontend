@@ -26,7 +26,7 @@ import SendTestEmailDialog from "./SendTestEmailDialog";
 import { ILeadsCounts } from "./interfaces";
 import { CustomizedStepper } from "./stepper";
 import { Button, SecondaryButton } from "../../../styles/global.styled";
-import { Router } from "@toolpad/core/AppProvider";
+import ProgressBar from "../../../assets/Custom/linearProgress";
 export interface ImportedLeadsData {
   campaignName?: string;
   clientId?: string;
@@ -39,7 +39,7 @@ export interface ImportedLeadsData {
 }
 
 interface NewCampaignProps {
-  router: Router;
+  router?: any;
 }
 
 const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
@@ -58,6 +58,7 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
   const [testEmailDialog, setTestEmailDialog] = React.useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
 
   const handleFileChange = (file: File) => {
     setSelectedFile(file);
@@ -98,20 +99,20 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
   };
 
   const handleSequences = async () => {
+    setIsLoading(true);
     const payload = {
       campaign_id: campaignId,
       sequences,
     };
     const response = await dispatch(addSequencesToCampaign(payload));
+    if (response.payload.code) {
+      setIsLoading(false);
+      if(response.payload.code==200){
+        setCampaignId(response.payload.data.campaign_id)
+        goToNextStep();
+      }
+    }
   };
-
-  // const handleSetup = () => {
-  //   goToNextStep();
-  // };
-
-  // const handleFinalReview = () => {
-  //   goToNextStep();
-  // };
 
   const goToNextStep = () => {
     if (activeStep < 3) {
@@ -122,11 +123,11 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
   const handleNext = async () => {
     switch (activeStep) {
       case 0:
-        goToNextStep();
+        // goToNextStep();
         await handleImportLeads();
         break;
       case 1:
-        goToNextStep();
+        // goToNextStep();
         handleSequences();
         break;
       case 2:
@@ -134,7 +135,7 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
         // handleSetup();
         break;
       case 3:
-        goToNextStep();
+        // goToNextStep();
         // handleFinalReview();
         break;
       default:
@@ -149,7 +150,7 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
   };
 
   const GoBack = () => {
-    router.navigate("/email-campaign");
+    navigate("/email-campaign");
   };
 
   const onClickEmailFollowUp = (sequence: Sequence) => {
@@ -191,7 +192,7 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
   return (
     <Container>
       <HeaderContainer>
-        <Box sx={{ width: "100%", display: "flex" }}>
+        <Box sx={{ width: "100%", display: "flex", alignItems: "center" }}>
           <WestOutlinedIcon
             onClick={GoBack}
             sx={{
@@ -216,8 +217,9 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
           />
         </Box>
       </HeaderContainer>
+      {isLoading && <ProgressBar />}
       <MainContainer>
-        {activeStep === 0 && (
+        {activeStep === 1 && (
           <ImportLeadsCampaign
             handleLeadsData={handleLeadsData}
             handleCSVUpload={handleFileChange}
@@ -236,7 +238,7 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
           />
         )}
         {activeStep === 2 && <SetupCampaign campaignId={campaignId} />}
-        {activeStep === 3 && <FinalReviewCampaign campaignId={campaignId} />}
+        {activeStep === 0 && <FinalReviewCampaign campaignId={campaignId} />}
       </MainContainer>
       <FooterContainer>
         {activeStep !== 0 && (
@@ -244,7 +246,7 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
             Back
           </SecondaryButton>
         )}
-        {activeStep === 2 ? (
+        {activeStep === 3 ? (
           <>
             <SendTestEmailDialog
               open={testEmailDialog}

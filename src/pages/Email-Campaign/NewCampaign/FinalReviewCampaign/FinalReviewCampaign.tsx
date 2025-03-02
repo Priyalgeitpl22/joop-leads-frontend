@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Box, Tab, Tabs, Typography } from "@mui/material";
 import { SidebarContainer } from "../../../../styles/layout.styled";
 import { Search } from "lucide-react";
@@ -20,6 +20,8 @@ import {
   FinalReviewContainer,
   TabsHeader,
 } from "./finalReview.styled";
+import ReactQuill from "react-quill";
+import { modules } from "../SequenceCampaign/EmailTemplate/EmailTemplate";
 interface FinalReviewCampaignProps {
   campaignId?: string;
 }
@@ -35,6 +37,7 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
   const [sequences, setSequences] = React.useState<Sequence[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const dispatch = useDispatch<AppDispatch>();
+  const quillRef = useRef<typeof ReactQuill | null>(null);
 
   const handleChange = (event: any, newValue: number) => {
     setSelectedVariant(newValue);
@@ -45,8 +48,7 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
   };
 
   useEffect(() => {
-    // setLoading(true);
-    const campaignId = "14eb8d0d-b902-40c3-b8b4-78abde6545c5";
+    const campaignId = "2cad1944-2856-4a54-b1b0-a7c37e1ba99b";
 
     if (campaignId) {
       Promise.all([
@@ -60,10 +62,7 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
           setContacts(contactsData.data);
           setSequences(sequencesData.data);
           setSelectedVariant(sequencesData.data[0].seq_number);
-          setSelectedTemplate(
-            sequences.find((seq) => seq.seq_number === Number(sequencesData.data[0].seq_variants[0]))
-              ?.seq_variants[0] || null
-          );
+          setSelectedTemplate(sequencesData.data[0].seq_variants[0]);
 
           setSelectedContact(contactsData.data[0]);
 
@@ -210,9 +209,15 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
                 <Typography fontSize={14}>
                   Hi {selectedContact?.first_name} {selectedContact?.last_name},
                 </Typography>
-                <Typography fontSize={14} mt={2}>
+                {/* <Typography fontSize={14} mt={2}>
                   {selectedTemplate?.emailBody}
-                </Typography>
+                </Typography> */}
+                <ReactQuill
+                  ref={quillRef}
+                  value={selectedTemplate?.emailBody}
+                  modules={modules}
+                  className="custom-quill-email"
+                />
               </Box>
             </Box>
           )}

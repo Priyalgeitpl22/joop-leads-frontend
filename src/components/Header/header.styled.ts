@@ -9,6 +9,7 @@ export const SearchBar = styled.div`
     border-radius: 5px;
     flex-grow: 1;
     width: 100%;
+    max-width: 350px;
     min-width: 350px;
     gap: 10px;
     height: 42px;

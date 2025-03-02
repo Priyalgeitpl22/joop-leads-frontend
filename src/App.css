@@ -48,7 +48,7 @@ body {
   --success-color: #4CAF50;
   --info-color: #6e6e6e;
   --text-disabled: #adb5bd;
-
+  --title-color: #7057c1;
   /* 🖍️ Borders & Shadows */
   --border-color: #4D3687; /* Border Default */
   --border-dark: #291D48; /* Darker Border */
@@ -162,4 +162,8 @@ a:hover {
   border: 1px solid var(--border-dark);
   padding: 20px;
   border-radius: 10px;
+}
+
+svg.MuiSvgIcon-root.MuiSvgIcon-fontSizeMedium.css-1k5as7m-MuiSvgIcon-root {
+  color: white;
 }
