@@ -19,7 +19,7 @@ export const EmailInboxListContainer = styled(Box)({
 export const EmailInboxListHeader = styled(Box)({
   padding: "10px",
   borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
-  backgroundColor: "#fff",
+  backgroundColor: "var(--background-light)",
   display: "flex",
   flexDirection: "column",
   justifyContent: "center",

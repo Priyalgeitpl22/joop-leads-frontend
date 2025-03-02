@@ -67,7 +67,6 @@ export default function EmailInboxArea() {
       <EmailInboxMessages
         style={{
           overflowY: "auto",
-          maxHeight: "calc(100vh - 150px)",
           padding: "10px",
         }}
       >

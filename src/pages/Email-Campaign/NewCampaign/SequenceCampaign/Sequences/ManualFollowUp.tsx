@@ -57,7 +57,9 @@ const ManualFollowUp: React.FC<ManualFollowUpProps> = ({
     <>
       <ManualFollowUpContainer>
         <BorderConatiner>
-          <HourglassBottomIcon sx={{ fontSize: 20, color: "#6e58f1" }} />
+          <HourglassBottomIcon
+            sx={{ fontSize: 20, color: "var(--theme-color)" }}
+          />
           <LeftDashedBorderLine />
         </BorderConatiner>
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -70,7 +72,7 @@ const ManualFollowUp: React.FC<ManualFollowUpProps> = ({
               style={{
                 width: "40px",
                 textAlign: "center",
-                border: "1px solid grey",
+                border: "1px solid var(--border-dark)",
                 borderBottom: "1px solid black",
               }}
             />{" "}
@@ -83,19 +85,25 @@ const ManualFollowUp: React.FC<ManualFollowUpProps> = ({
         onClick={() => onClickEmailFollowUp(selectedSequence)}
       >
         <BorderConatiner>
-          <ContentCopyIcon sx={{ fontSize: 20, color: "#6e58f1" }} />
+          <ContentCopyIcon sx={{ fontSize: 20, color: "var(--theme-color)" }} />
           <LeftDashedBorder />
         </BorderConatiner>
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div style={{ display: "flex", flexDirection: "row", gap: "58px" }}>
-            <Typography fontWeight="bold" sx={{ marginLeft: "8px", marginBottom: "8px" }}>
+            <Typography
+              fontWeight="bold"
+              sx={{ marginLeft: "8px", marginBottom: "8px" }}
+            >
               Manual follow-up
             </Typography>
           </div>
           <EmailFollowUp>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <Typography fontSize={14}>Manual</Typography>
-              <DeleteOutlineIcon onClick={() => onDelete(selectedSequence)} />
+              <DeleteOutlineIcon
+                sx={{ color: "var(--icon-color)", cursor: "pointer" }}
+                onClick={() => onDelete(selectedSequence)}
+              />
             </div>
             <Typography fontSize={14}>
               Title : {selectedSequence?.seq_variants[0].subject}

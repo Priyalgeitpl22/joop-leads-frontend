@@ -100,7 +100,7 @@ const AbConfigurationDialog: React.FC<AbConfigurationDialogProps> = ({
         <Button
           variant="contained"
           sx={{
-            backgroundColor: "#6e58f1",
+            backgroundColor: "var(--theme-color)",
             color: "white",
             textTransform: "none",
             padding: "8px 24px",

@@ -374,7 +374,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
           <Button2
             onClick={handleVerifyAccount}
             color={"white"}
-            background={"#6e58f1"}
+            background={"var(--theme-color)"}
             style={{ cursor: "pointer" }}
           >
             Verify Email Account
@@ -410,7 +410,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
             disabled={isSaveDisabled}
             onClick={handleCreateAccount}
             color={isSaveDisabled ? "black" : "white"}
-            background={isSaveDisabled ? "#d3d3d3" : "#6e58f1"}
+            background={isSaveDisabled ? "#d3d3d3" : "var(--theme-color)"}
             style={{
               width: "10%",
               cursor: isSaveDisabled ? "not-allowed" : "pointer",

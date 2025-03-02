@@ -1,12 +1,13 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import Stepper from "@mui/material/Stepper";
-import Step from "@mui/material/Step";
-import Button from "@mui/material/Button";
-import { HeaderContainer } from "./NewCampaign.styled";
+import {
+  Container,
+  FooterContainer,
+  HeaderContainer,
+  MainContainer,
+} from "./NewCampaign.styled";
 import { SearchBar } from "../../../components/Header/header.styled";
 import WestOutlinedIcon from "@mui/icons-material/WestOutlined";
-import { StepButton } from "@mui/material";
 import SequenceCampaign from "./SequenceCampaign/SequenceCampaign";
 import ImportLeadsCampaign from "./ImportLeadsCampaign/ImportLeadsCampaign";
 import SetupCampaign from "./SetupCampaign/SetupCampaign";
@@ -19,14 +20,12 @@ import {
   addLeadsToCampaign,
   addSequencesToCampaign,
 } from "../../../redux/slice/emailCampaignSlice";
-import ImportCsvFileDialog from "./ImportLeadsCampaign/ImportCsvFileDialog";
 import UploadLeadsDialog from "./ImportLeadsCampaign/UploadLeadsDialog";
 import { Sequence } from "./SequenceCampaign/Sequences/interfaces";
-import Loader from "../../../components/Loader";
-import SendTestEmailDialog from './SendTestEmailDialog';
-
-const steps = ["Import Leads", "Sequences", "Setup", "Final Review"];
-
+import SendTestEmailDialog from "./SendTestEmailDialog";
+import { ILeadsCounts } from "./interfaces";
+import { CustomizedStepper } from "./stepper";
+import { Button, SecondaryButton } from "../../../styles/global.styled";
 export interface ImportedLeadsData {
   campaignName?: string;
   clientId?: string;
@@ -47,10 +46,10 @@ const NewCampaign = () => {
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
   const [CSVsettings, setCSVsettings] = React.useState<csvSettingsType>();
   const [uploadleads, setUploadLeads] = React.useState<boolean>(false);
-  const [uploadCount, setUploadCount] = React.useState<number>(0);
+  const [uploadCounts, setUploadCounts] = React.useState<ILeadsCounts>();
   const [sequences, setSequences] = React.useState<Sequence[]>([]);
   const [selectedSequence, setSelectedSequence] = React.useState<Sequence>();
-  const [campaignId, setCampaignId] = React.useState<Sequence>();
+  const [campaignId, setCampaignId] = React.useState<string>();
   const [isLoading, setIsLoading] = React.useState(false);
   const [testEmailDialog, setTestEmailDialog] = React.useState(false);
 
@@ -65,10 +64,6 @@ const NewCampaign = () => {
   };
 
   const handleEmailTemplateData = (data: any) => {
-    console.log(data);
-  };
-
-  const handleSequencesData = (data: any) => {
     console.log(data);
   };
 
@@ -90,7 +85,7 @@ const NewCampaign = () => {
     if (response.payload.code === 200) {
       setIsLoading(false);
       console.log(response);
-      setUploadCount(response.payload.contactsInserted);
+      setUploadCounts(response.payload.counts);
       setCampaignId(response.payload.campaignId);
       setUploadCsv(false);
       setUploadLeads(true);
@@ -100,25 +95,22 @@ const NewCampaign = () => {
 
   const handleSequences = async () => {
     const payload = {
-      campaign_id: "0847453b-079e-408a-b4cd-abed26514e41",
+      campaign_id: campaignId,
       sequences,
     };
     const response = await dispatch(addSequencesToCampaign(payload));
-    console.log(response);
   };
 
   const handleSetup = () => {
-    console.log("Handling setup step");
     goToNextStep();
   };
 
   const handleFinalReview = () => {
-    console.log("Handling final review step");
     goToNextStep();
   };
 
   const goToNextStep = () => {
-    if (activeStep < steps.length - 1) {
+    if (activeStep < 3) {
       setActiveStep((prev) => prev + 1);
     }
   };
@@ -126,15 +118,19 @@ const NewCampaign = () => {
   const handleNext = async () => {
     switch (activeStep) {
       case 0:
+        goToNextStep();
         await handleImportLeads();
         break;
       case 1:
+        goToNextStep();
         handleSequences();
         break;
       case 2:
+        goToNextStep();
         handleSetup();
         break;
       case 3:
+        goToNextStep();
         handleFinalReview();
         break;
       default:
@@ -166,8 +162,7 @@ const NewCampaign = () => {
   };
 
   const updateSequenceData = (sequence: Sequence) => {
-    console.log("Updated Sequence:", sequence);
-  
+
     setSelectedSequence((prevSequence) => {
       if (!prevSequence) return sequence;
       return {
@@ -176,7 +171,7 @@ const NewCampaign = () => {
         seq_variants: [...sequence.seq_variants],
       };
     });
-  
+
     setSequences((prevSequences) =>
       prevSequences.map((seq) =>
         seq.seq_number === sequence.seq_number
@@ -184,157 +179,87 @@ const NewCampaign = () => {
           : seq
       )
     );
-
-    console.log(sequences)
-  };  
-
-  const setVariants = (data: any) => {
-    console.log(data);
   };
 
-  if (isLoading) {
-    return <Loader />;
-  }
-  
   const handleTestEmail = () => {
     setTestEmailDialog(true);
-  }
+  };
 
   return (
-    <>
-      <HeaderContainer style={{ boxShadow: "0 0 4px rgba(0, 0, 0, 0.2)" }}>
+    <Container>
+      <HeaderContainer >
         <Box sx={{ width: "100%", display: "flex" }}>
           <WestOutlinedIcon
             onClick={handleNavigate}
-            sx={{ cursor: "pointer", margin: "10px" }}
+            sx={{ color: "var(--theme-color-light)", cursor: "pointer", margin: "14px", width: '35px', height: '35px' }}
           />
-          <SearchBar style={{ width: "10%" }}>
+          <SearchBar>
             <input placeholder="Untitled Campaign" />
           </SearchBar>
-          <Stepper
-            nonLinear
-            activeStep={activeStep}
-            style={{ width: "40%", marginLeft: "22%" }}
-          >
-            {steps.map((label, index) => (
-              <Step key={label}>
-                <StepButton
-                  color="inherit"
-                  onClick={() => setActiveStep(index)}
-                >
-                  {label}
-                </StepButton>
-              </Step>
-            ))}
-          </Stepper>
+          <CustomizedStepper activeStep={activeStep} setActiveStep={setActiveStep} />
           <UploadLeadsDialog
             open={uploadleads}
-            uploadCount={uploadCount}
+            uploadCounts={uploadCounts}
             onClose={() => setUploadLeads(false)}
           />
         </Box>
       </HeaderContainer>
-
-      {activeStep === 0 && (
-        <ImportLeadsCampaign
-          handleLeadsData={handleLeadsData}
-          handleCSVUpload={handleFileChange}
-          saveCSVSetting={saveCSVSetting}
-        />
-      )}
-      {activeStep === 1 && (
-        <SequenceCampaign
-          onClickEmailFollowUp={onClickEmailFollowUp}
-          handleSequencesData={handleSequencesData}
-          handleEmailTemplateData={handleEmailTemplateData}
-          addSequence={addSequence}
-          updateSequences={updateSequences}
-          updateSequenceData={updateSequenceData}
-          setVariants={setVariants}
-          sequences={sequences}
-          selectedSequence={selectedSequence}
-        />
-      )}
-      {activeStep === 2 && <SetupCampaign />}
-      {activeStep === 3 && <FinalReviewCampaign />}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          padding: "16px 32px",
-          backgroundColor: "#f8f9fc",
-          position: "fixed",
-          bottom: 0,
-          left: 0,
-          width: "96%",
-          boxShadow: "0 -2px 4px rgba(0,0,0,0.1)",
-        }}
-      >
-        <Button
-          variant="contained"
+      <MainContainer>
+        {activeStep === 6 && (
+          <ImportLeadsCampaign
+            handleLeadsData={handleLeadsData}
+            handleCSVUpload={handleFileChange}
+            saveCSVSetting={saveCSVSetting}
+          />
+        )}
+        {activeStep ===  1 && (
+          <SequenceCampaign
+            onClickEmailFollowUp={onClickEmailFollowUp}
+            handleEmailTemplateData={handleEmailTemplateData}
+            addSequence={addSequence}
+            updateSequences={updateSequences}
+            updateSequenceData={updateSequenceData}
+            sequences={sequences}
+            selectedSequence={selectedSequence}
+          />
+        )}
+        {activeStep === 0 && <SetupCampaign campaignId={campaignId} />}
+        {activeStep === 2 && <FinalReviewCampaign campaignId={campaignId} />}
+      </MainContainer>
+      <FooterContainer>
+       {activeStep !== 0 && <SecondaryButton
           onClick={handleBack}
           disabled={activeStep === 0}
-          sx={{ background: "#6e58f1", color: "white" }}
         >
           Back
-        </Button>
-        {activeStep === 0 ? (
+        </SecondaryButton>}
+        {activeStep === 3 ? (
           <>
-            <ImportCsvFileDialog
-              open={uploadCsv}
-              onClose={() => setUploadCsv(false)}
-            />
-            <Button
-              variant="contained"
-              disabled={activeStep === steps.length - 1}
-              onClick={handleNext}
-              sx={{ background: "#6e58f1", color: "white" }}
-            >
-              Save
-            </Button>
-          </>
-        ) : activeStep === 3 ? (
-          <>
-            <Box sx={{ display: "flex", gap: 3 }}>
-              <Button
-                variant="contained"
-                onClick={handleNext}
-                sx={{ background: "#ececee", color: "#6e58f1" }}
-              >
-                Run Spam Test
-              </Button>
               <SendTestEmailDialog
                 open={testEmailDialog}
                 onClose={() => setTestEmailDialog(false)}
-                />
-              <Button
-                variant="contained"
+              />
+              <SecondaryButton
                 onClick={handleTestEmail}
-                sx={{ background: "#ececee", color: "#6e58f1" }}
               >
                 Send Test Email
-              </Button>
+              </SecondaryButton>
               <Button
-                variant="contained"
                 onClick={handleNext}
-                sx={{ background: "#6e58f1", color: "white" }}
               >
                 Schedule Campaign
               </Button>
-            </Box>
           </>
         ) : (
           <Button
-            variant="contained"
             onClick={handleNext}
-            disabled={activeStep === steps.length - 1}
-            sx={{ background: "#6e58f1", color: "white" }}
+            // disabled={activeStep === steps.length - 1}
           >
             Save and Next
           </Button>
         )}
-      </Box>
-    </>
+      </FooterContainer>
+    </Container>
   );
 };
 

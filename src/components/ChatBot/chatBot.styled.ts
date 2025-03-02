@@ -3,7 +3,6 @@ import { Box, TextField, IconButton } from "@mui/material";
 
 export const ChatContainer = styled(Box)`
   width: 350px;
-  height: 98%;
   border-radius: 8px;
   overflow: auto;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -13,7 +12,7 @@ export const ChatContainer = styled(Box)`
 `;
 
 export const Header = styled(Box)<{ bgcolor: string }>`
-  background-color: ${({ bgcolor }) => bgcolor || "#343a40"};
+  background-color: var(--background-color);
   color: white;
   padding: 12px;
   display: flex;
@@ -38,7 +37,7 @@ export const ChatBody = styled(Box)`
 `;
 
 export const Message = styled(Box)`
-  background-color: #f1f1f1;
+  background-color: var(--background-color)
   padding: 8px;
   border-radius: 8px;
   max-width: 70%;
@@ -57,10 +56,10 @@ export const StyledTextField = styled(TextField)`
   }
 
   .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
-    border: 1px solid #ddd;
+  border: 1px solid var(--border-dark);
   }
   &:hover .MuiOutlinedInput-notchedOutline {
-    border: 1px solid #ddd;  // Remove border color on hover
+  border: 1px solid var(--border-dark);
   }
 
 
@@ -70,7 +69,7 @@ export const OpenButton = styled(IconButton)<{ bgcolor: string }>`
   position: fixed;
   bottom: 20px;
   right: 20px;
-  background-color: ${({ bgcolor }) => bgcolor || "#343a40"};
+  background-color: var(--background-color)
   color: white;
   z-index: 10;
   &:hover {
@@ -90,6 +89,6 @@ export const DropdownIconButton = styled(IconButton)`
   align-self: flex-end;
   color: white;
   &:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+  background-color: var(--background-color)
   }
 `;

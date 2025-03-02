@@ -8,14 +8,151 @@ body {
   margin: 0 !important;
 }
 
-:root {
-  --white-fade-gradient: linear-gradient(320deg, #eae9f8, #fbfdff);
-  --button-theme-color: linear-gradient(90deg, var(--theme-color), #fbfdff);
-  --theme-color: #c0dbf9;
-  --theme-color-dark: #4782db;
-  --theme-color-light: #edf6ff;
+::-webkit-scrollbar {
+  display: none;
 }
 
+:root {
+  /* 🌟 Primary Theme Colors */
+  --theme-color: #130830; /* Base Primary */
+  --theme-color-light: #eff0ff; /* Light Variant */
+  --theme-color-dark: #291D48; /* Darker Primary Variant */
+
+  /* 🎨 Background & Grayscale */
+  --background-color: #eff0ff; /* Light Mode Background */
+  --background-light: #f1f3fd; /* Light Mode Background */
+  --background-dark: #130830; /* Dark Mode Background */
+  --background-darker: #030426; /* Even Darker Background */
+  --background-secondary: #d2d4f3;
+
+  /* 🌈 Accent & Highlights */
+  --accent-color: #9E8BD0; /* Accent Color */
+  --accent-light: #ECEDFE; /* Light Accent */
+  --hover-color: #4D3687; /* Hover Effect */
+  --active-color: #291D48; /* Active State */
+  --selected-color: #130830; /* Selected State */
+  --selected: #795dc0; /* Hover Effect */
+
+  /* 🔤 Text Colors */
+  --text-color: #212121de;
+  --text-primary: #341093; /* Primary Text */
+  --text-secondary: #291D48; /* Secondary Text */
+  --text-light: #747474; /* Lightest Text */
+  --text-white: #ffffff; /* Lightest Text */
+  --text-black: #000;
+  --text-muted: #9E8BD0; /* Muted Text */
+  --primary-color: #341093;
+  --secondary-color: #6c757d;
+  --error-color: #dc3545;
+  --warning-color: #ffc107;
+  --success-color: #4CAF50;
+  --info-color: #6e6e6e;
+  --text-disabled: #adb5bd;
+
+  /* 🖍️ Borders & Shadows */
+  --border-color: #4D3687; /* Border Default */
+  --border-dark: #291D48; /* Darker Border */
+  --border-light: "1px solid #6e58f1";
+  
+  --shadow-color: rgba(64, 45, 112, 0.2); /* Default Shadow */
+  --shadow-dark: rgba(19, 8, 48, 0.3); /* Darker Shadow */
+  
+  --icon-color: #9c82df;
+  --disable-color: #6e6e6e;
+
+  /* Input */
+  --input-bg: #ffffff;
+  --input-border: #ccc;
+  --input-border-hover: #666;
+  --input-border-focus: #28a745;
+  --input-text: #333;
+  --input-placeholder: #aaa;
+  --input-disabled-bg: #f5f5f5;
+  --input-disabled-text: #bbb;
+
+  /* 🖋️ Global Font */
+  --font-family: 'Inter', sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 🌐 Global Styles */
+body {
+  background-color: var(--background-color);
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  line-height: 1.6;
+  transition: all 0.3s ease-in-out;
+  
+  /* Prevent horizontal overflow */
+  overflow-x: hidden;
+
+  /* Custom scrollbar styling (Optional) */
+  &::-webkit-scrollbar {
+    width: 6px; /* Make it thin instead of hiding */
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2); /* Light scrollbar */
+    border-radius: 10px;
+  }
+}
+/* 🌙 Dark Mode */
+.dark-mode {
+  background: var(--background-dark);
+  color: var(--text-secondary);
+}
+
+/* 🎨 Headings */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--theme-color);
+  font-weight: bold;
+}
+
+/* ✏️ Paragraphs & Text */
+span, div, a, textarea {
+  color: var(--background-darker);
+  font-family: inherit;
+}
+
+.input {
+  color: var(--background-darker);
+}
+
+p {
+  color: var(--selected-color);
+  font-family: inherit;
+}
+
+/* 🔗 Links */
+a {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--hover-color);
+}
+
+/* 🟦 Buttons */
 .button {
-  background-color: var(--button-theme-color);
+  background: var(--theme-color);
+  color: white;
+  padding: 10px 30px;
+  border: none;
+  border-radius: 8px;
+  font-family: var(--font-family);
+  transition: background 0.3s;
+}
+
+/* 🏞️ Cards */
+.card {
+  background: var(--background-color);
+  box-shadow: 0px 4px 10px var(--shadow-color);
+  border: 1px solid var(--border-dark);
+  padding: 20px;
+  border-radius: 10px;
 }

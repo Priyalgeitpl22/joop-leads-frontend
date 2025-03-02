@@ -40,7 +40,7 @@ const AdvancedSettingDialog: React.FC<AdvancedSettingDialogProps> = ({
         Advanced Settings
       </DialogTitle>
 
-      <DialogContent sx={{ padding: "16px 24px" }}>
+      <DialogContent >
         <Box
           display="flex"
           justifyContent="space-between"
@@ -54,7 +54,7 @@ const AdvancedSettingDialog: React.FC<AdvancedSettingDialogProps> = ({
           <Button
             variant="contained"
             sx={{
-              background: "#6e58f1",
+              background: "var(--theme-color)",
               color: "white",
               textTransform: "none",
               borderRadius: "8px",
@@ -80,7 +80,7 @@ const AdvancedSettingDialog: React.FC<AdvancedSettingDialogProps> = ({
           <Button
             variant="contained"
             sx={{
-              background: "#6e58f1",
+              background: "var(--theme-color)",
               color: "white",
               textTransform: "none",
               borderRadius: "8px",

@@ -12,7 +12,7 @@ import { AppDispatch, RootState } from '../../redux/store/store';
 import industriesData from './Industry.json';
 import { SelectChangeEvent } from '@mui/material/Select';
 import Loader from '../Loader';
-import { Button } from '../../styles/layout.styled';
+import { Button } from '../../styles/global.styled';
 
 interface Field {
   label: string;

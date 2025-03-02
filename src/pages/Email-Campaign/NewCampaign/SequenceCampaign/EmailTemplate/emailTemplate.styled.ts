@@ -2,16 +2,18 @@ import { ImportContacts } from "@mui/icons-material";
 import { Box, Button, Card, CardContent, Input, styled, Typography } from "@mui/material";
 
 export const ManualTemplateContainer = styled(Box)(`
-    background: #fff;
-    border: 1px solid #e1e2ef;
+    background: white;
     border-radius: 4px;
-    box-shadow: 0 2px 10px #1414140d;
     padding: 20px;
+    border: 1px solid #e1e2ef;
+    box-shadow: 0 2px 10px #1414140d;
+    width: 100%;
 `);
 
 export const DescriptionContainer = styled(Box)(`
     margin-bottom: 20px;
     width: 100%;
+    border-radius: 5px;
 `);
 
 export const TitleContainer = styled(Box)(`
@@ -19,32 +21,8 @@ export const TitleContainer = styled(Box)(`
     width: 100%;
 `);
 
-export const TitleBody = styled(Input)`
-    border: 1px solid #c6c7db !important;
-    border-radius: 3px;
-    min-height: 50px;
-    width: 100%;
-    border-bottom: 0 !important;
-
-    &:hover {
-        border: 1px solid #c6c7db !important;
-        background-color: inherit !important;
-    }
-
-    &.Mui-focused {
-        border: 1px solid #c6c7db !important;
-        box-shadow: none !important;
-        outline: none !important;
-        background-color: inherit !important;
-    }
-
-    .MuiOutlinedInput-notchedOutline {
-        border: none !important;
-    }
-`;
-
 export const EmailTemplateWrapper = styled(Card)(`
-    background: #fff;
+    background: var(--background-light);
     border: 1px solid #e1e2ef;
     border-radius: 4px;
     box-shadow: 0 2px 10px #1414140d;
@@ -56,7 +34,7 @@ export const EmailTemplateFooter = styled(Card)(`
     padding: 12px 20px;
     width: 97%;
     box-shadow: none !important;
-    background: #fff;
+    background: var(--background-light);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -102,7 +80,7 @@ export const SubjectBox = styled(CardContent)`
 
 export const SubjectText = styled("input")`
     cursor: pointer;
-    height: 58px;
+    height: 68px;
     outline: none;
     overflow-y: hidden;
     width: 100%;
@@ -110,17 +88,18 @@ export const SubjectText = styled("input")`
     border: none;
     padding: 10px 24px;
     background: transparent;
+    font-size: 16px;
 `;
 
 export const VariablesButton = styled(Button)`
     width: max-content;
     min-width: 130px;
-    color: #6e58f1 !important;
+    color: var(--hover-color) !important;
 `;
 
 export const VariablesIcon = styled(ImportContacts)`
     width: max-content;
     min-width: 130px;
-    color: #6e58f1 !important;
+    color: var(--theme-color) !important;
 `;
 

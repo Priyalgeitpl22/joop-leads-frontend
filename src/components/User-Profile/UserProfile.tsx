@@ -56,16 +56,8 @@ const UserProfileMenu: React.FC = () => {
   return (
     <UserProfileContainer>
       <ProfileNameContainer>
-        <Typography variant="subtitle2" sx={{ fontWeight: 500, fontSize: 14 }}>
-          {user?.fullName || "Unknown User"}
-        </Typography>
-        <Typography
-          variant="body2"
-          sx={{ fontWeight: 500, fontSize: 12 }}
-          color="textSecondary"
-        >
-          {user?.role || "N/A"}
-        </Typography>
+        <p>{user?.fullName || "Unknown User"}</p>
+        <p>{user?.role || "N/A"}</p>
       </ProfileNameContainer>
 
       <ProfileIcon onClick={handleMenuOpen} style={{ cursor: "pointer" }}>

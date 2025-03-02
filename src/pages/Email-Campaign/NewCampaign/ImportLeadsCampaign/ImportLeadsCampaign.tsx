@@ -6,6 +6,9 @@ import ImportSettingsDialog from "./ImportSettingDialog";
 import Papa from "papaparse";
 import { ImportedLeadsData } from "../NewCampaign";
 import { csvSettingsType } from "../../Interfaces";
+import { DialogFooter } from "../SequenceCampaign/sequenceCampaign.styled";
+import { CustomDialogFooter } from "../../../../styles/global.styled";
+import { FileUploadContainer } from "./importLeads.styled";
 
 interface ImportLeadsCampaignProps {
   handleLeadsData: (data: ImportedLeadsData) => void;
@@ -13,7 +16,11 @@ interface ImportLeadsCampaignProps {
   saveCSVSetting: (data: any) => void;
 }
 
-const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({ handleLeadsData, handleCSVUpload, saveCSVSetting }) => {
+const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
+  handleLeadsData,
+  handleCSVUpload,
+  saveCSVSetting,
+}) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [error, setError] = useState("");
   const [showDetail, setShowDetail] = useState(false);
@@ -33,7 +40,7 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({ handleLeadsDa
         setSelectedFile(file);
         setError("");
         handleCSVUpload(file);
-  
+
         Papa.parse(file, {
           complete: (result) => {
             const firstRow = result.data[0] as string[];
@@ -43,7 +50,7 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({ handleLeadsDa
           },
           skipEmptyLines: true,
         });
-  
+
         setShowDetail(true);
         setOpenDialog(true);
       } else {
@@ -52,7 +59,6 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({ handleLeadsDa
       }
     }
   };
-  
 
   return (
     <Box
@@ -63,6 +69,7 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({ handleLeadsDa
         flexDirection: "column",
         width: "100%",
         padding: "2px 0",
+        paddingTop: "50px"
       }}
     >
       {showDetail ? (
@@ -81,26 +88,22 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({ handleLeadsDa
             How would you like to get contacts into your list?
           </Typography>
 
-          <Box
-            sx={{
-              width: "80%",
-              maxWidth: "300px",
-              textAlign: "center",
-              padding: "40px",
-              borderRadius: "10px",
-              backgroundColor: "#F8F9FC",
-              boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-              cursor: "pointer",
-            }}
-            onClick={() => fileInputRef.current?.click()}
-          >
-            <UploadFileOutlinedIcon
-              sx={{ fontSize: 50, color: "#6e58f1", marginBottom: "10px" }}
-            />
+          <FileUploadContainer onClick={() => fileInputRef.current?.click()}>
             <Typography variant="h6" fontWeight="600" mt={2}>
               Upload CSV File
             </Typography>
-            <Typography variant="body2" color="gray">
+            <UploadFileOutlinedIcon
+              sx={{
+                fontSize: 80,
+                color: "var(--icon-color)",
+                marginBottom: "10px",
+              }}
+            />
+            <Typography
+              variant="body2"
+              color="gray"
+              sx={{ textAlign: "center" }}
+            >
               Select a CSV file to import <br /> or <br /> Drag & Drop CSV file
               here
             </Typography>
@@ -118,11 +121,14 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({ handleLeadsDa
               </Typography>
             )}
             {error && (
-              <Typography variant="body2" color="red" mt={1}>
+              <Typography variant="body2" color="var(--background-light)" mt={1}>
                 {error}
               </Typography>
             )}
-          </Box>
+            <CustomDialogFooter>
+              Upload your CSV files to import leads.
+            </CustomDialogFooter>
+          </FileUploadContainer>
         </>
       )}
 
@@ -131,7 +137,11 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({ handleLeadsDa
         onClose={() => setOpenDialog(false)}
         fullWidth
         maxWidth="sm"
-        ><ImportSettingsDialog open={openDialog} onClose={() => setOpenDialog(false)} onSave={saveCSVSetting} 
+      >
+        <ImportSettingsDialog
+          open={openDialog}
+          onClose={() => setOpenDialog(false)}
+          onSave={saveCSVSetting}
         />
       </Dialog>
     </Box>

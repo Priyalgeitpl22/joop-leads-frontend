@@ -39,7 +39,7 @@ const EmailCampaignDialog: React.FC<EmailCampaignDialogProps> = ({
         Create New Folder
       </DialogTitle>
 
-      <DialogContent sx={{ padding: "16px 24px", marginTop: "10px" }}>
+      <DialogContent >
         <TextField
           fullWidth
           placeholder="Type here..."
@@ -54,10 +54,9 @@ const EmailCampaignDialog: React.FC<EmailCampaignDialogProps> = ({
           <Button
             variant="contained"
             sx={{
-              backgroundColor: "#6e58f1",
+              backgroundColor: "var(--theme-color)",
               color: "white",
               textTransform: "none",
-              padding: "6px 16px",
               borderRadius: "6px",
               "&:hover": { backgroundColor: "#5a46d1" },
             }}

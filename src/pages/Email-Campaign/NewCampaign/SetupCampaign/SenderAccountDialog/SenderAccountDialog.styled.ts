@@ -15,7 +15,7 @@ export const DialogContainer = styled.div`
 
 export const TabPanel = styled(motion.div)`
   padding: 24px;
-  background: #ffffff;
+  background: var(--background-light);
   border-radius: 12px;
 `;
 
@@ -49,34 +49,26 @@ export const SenderAccountTable = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
+  background: white;
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.4);
 `;
 
 export const StyledTableContainer = styled(TableContainer)`
-  // max-height: 400px;
   max-width: 100% !important;
   overflow-y: auto;
+  background-color: white;
+ 
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+
   &::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: #f1f1f1;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, var(--theme-color), var(--theme-color));
-    opacity: 0.5;
-    border-radius: 10px;
-  }
-
-  &::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, var(--theme-color), #378f8f);
+    display: none; /* Chrome, Safari */
   }
 `;
 
 export const StyledTableHead = styled(TableHead)`
-  background-color: transparent;
+  background-color: white;
   position: sticky;
   top: 0;
   z-index: 1;
@@ -86,8 +78,9 @@ export const StyledTableHeadCell = styled(TableCell)`
   color: #282828;
   font-weight: 600;
   font-size: 16px;
-  background-color: #fafafa;
+  background-color: var(--background-color)
 `;
+
 export const StyledTableCell = styled(TableCell)`
   color: #222222;
   font-weight: 500;

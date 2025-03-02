@@ -1,22 +1,28 @@
 import { SetStateAction, useState } from "react";
+import { Dialog, DialogTitle, IconButton, Typography } from "@mui/material";
 import {
-  Dialog,
-  DialogTitle,
-  IconButton
-} from "@mui/material";
-import { ContentContainer, CustomTab, CustomTabs } from "../../../EmailCampaign.styled";
+  ContentContainer,
+  CustomTab,
+  CustomTabs,
+} from "../../../EmailCampaign.styled";
 import GeneralCampaignSetting from "./GeneralCampaignSetting";
 import CloseIcon from "@mui/icons-material/Close";
-
+import {
+  Button,
+  CustomDialogFooter,
+  CustomDialogHeader,
+} from "../../../../../styles/global.styled";
 
 interface SettingCampaignProps {
   open: boolean;
   onClose: () => void;
+  campaignId?: string;
 }
 
 const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
   open,
   onClose,
+  campaignId,
 }) => {
   const [activeTab, setActiveTab] = useState("general");
 
@@ -33,48 +39,25 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
         maxWidth="md"
         sx={{ "& .MuiDialog-paper": { height: "620px" } }}
       >
-        <IconButton
-          onClick={onClose}
-          sx={{ position: "absolute", right: 16, top: 10 }}
-        >
-          <CloseIcon />
-        </IconButton>
-        <DialogTitle
-          sx={{
-            fontWeight: "bold",
-            fontSize: 18,
-            background: "#f1f2fb",
-            padding: "12px 24px",
-          }}
-        >
-          Campaign Settings
-        </DialogTitle>
+        <CustomDialogHeader>
+          <IconButton
+            onClick={onClose}
+            sx={{ position: "absolute", right: 16, top: 10 }}
+          >
+            <CloseIcon />
+          </IconButton>
+          <Typography variant="h5">General Campaign Settings</Typography>
+        </CustomDialogHeader>
 
-        <CustomTabs
-          value={activeTab}
-          onChange={handleTabChange}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            borderBottom: 1,
-            borderColor: "divider",
-            fontWeight: "bold",
-            fontSize: 18,
-            background: "#f1f2fb",
-            padding: "12px 24px",
-          }}
-        >
-          <CustomTab label="General" value="general" />
-          {/* <CustomTab label="Email Account" value="email_account" />
-          <CustomTab label="Webhooks" value="webhooks" /> */}
-        </CustomTabs>
         <ContentContainer>
           {activeTab === "general" && (
-            <GeneralCampaignSetting onClose={onClose} />
+            <GeneralCampaignSetting campaignId={campaignId} onClose={onClose} />
           )}
-          {/* {activeTab === "email_account" && <EmailCampaignSetting />}
-          {activeTab === "webhooks" && <WebhooksCampaignSetting />} */}
         </ContentContainer>
+        <CustomDialogFooter>
+          {" "}
+          <Button>Save General Settings</Button>
+        </CustomDialogFooter>
       </Dialog>
     </>
   );

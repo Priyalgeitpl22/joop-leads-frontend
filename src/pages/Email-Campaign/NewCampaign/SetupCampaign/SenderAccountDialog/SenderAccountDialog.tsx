@@ -1,33 +1,11 @@
-import React, { useEffect, useState, useCallback } from "react";
-import {
-  StyledTableContainer,
-  StyledTableHeadCell,
-  SenderAccountTable,
-  StyledTableCell,
-  StyledTableHead,
-  StyledTableCheckbox,
-  StyledWarmup,
-  StyledReputation,
-  CustomEditIconButton,
-} from "./SenderAccountDialog.styled";
+import React, { useEffect, useState } from "react";
 import Loader from "../../../../../components/Loader";
 import {
   Dialog,
-  DialogTitle,
   Typography,
   Box,
   IconButton,
-  Button,
-  Checkbox,
-  Menu,
-  Table,
-  TableBody,
-  TableRow,
-  Link,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
+  DialogTitle,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useDispatch, useSelector } from "react-redux";
@@ -40,57 +18,69 @@ import {
 } from "../../../../../redux/slice/emailAccountSlice";
 import { addEmailCampaignSettings } from "../../../../../redux/slice/emailCampaignSlice";
 import { EmailAccounts } from "../Interface";
-
-const tableColumns = [
-  "Name",
-  "Email",
-  "Daily Limit",
-  "Warmup Enabled",
-  "Reputation",
-  "Type",
-];
-const filterOptions = ["Disconnected Accounts", "Warmup Reputation"];
-const selectFilters = ["Warmup Status", "Tag Name", "Client Name"];
+import {
+  Button,
+  CustomDialogContainer,
+  CustomDialogFooter,
+  CustomDialogHeader,
+} from "../../../../../styles/global.styled";
+import { CustomDataTable } from "../../../../../assets/Custom/customDataGrid";
+import { GridColDef } from "@mui/x-data-grid";
+import { formatDate } from "../../../../../utils/utils";
 
 interface SenderAccountDialogProps {
   open: boolean;
   onClose: () => void;
+  campaignId?: string;
 }
 
 const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
   open,
   onClose,
+  campaignId,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const [emailAccounts, setEmailAccounts] = useState<EmailAccount[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useSelector((state: RootState) => state.user);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedEmailAccounts, setSelectedEmailAccounts] = useState<
     EmailAccounts[]
   >([]);
 
+  const [rows, setRows] = useState<any[]>([]);
+
+  const columns: GridColDef[] = [
+    { field: "_id", headerName: "ID", width: 250 },
+    { field: "name", headerName: "Name", width: 150 },
+    { field: "email", headerName: "Email", width: 250 },
+    { field: "account", headerName: "Account", width: 120 },
+    { field: "state", headerName: "State", width: 100 },
+    {
+      field: "createdAt",
+      headerName: "Created At",
+      width: 180,
+      valueGetter: (params: any) => (params ? formatDate(params) : null),
+    },
+  ];
+
   useEffect(() => {
     if (!user) return;
+
     setLoading(true);
+
     dispatch(fetchEmailAccount())
       .unwrap()
-      .then(setEmailAccounts)
+      .then((data) => {
+        setRows(data);
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [dispatch, user]);
 
-  const handleCheckboxChange = (_id: string) => {
-    setSelectedEmailAccounts((prevAccounts) => {
-      if (prevAccounts.some((account) => account.account_id === _id)) {
-        return prevAccounts.filter((account) => account.account_id !== _id);
-      } else {
-        return [...prevAccounts, { account_id: _id }];
-      }
-    });
-  };
-
   const handleSave = () => {
+    if (!campaignId) {
+      return;
+    }
+
     if (selectedEmailAccounts.length === 0) {
       alert("Please select at least one email account.");
       return;
@@ -98,7 +88,7 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
     dispatch(
       addEmailCampaignSettings({
         sender_accounts: selectedEmailAccounts,
-        campaign_id: "250cac40-bbbf-4da2-96e7-67d8ad6094f4",
+        campaign_id: campaignId,
         auto_warm_up: false,
         schedule_settings: {
           time_zone: "",
@@ -129,115 +119,68 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
     )
       .unwrap()
       .then(() => {
-        // alert("Campaign settings saved successfully!");
         onClose();
       })
       .catch(() => alert("Failed to save campaign settings."));
   };
 
-  const handleMenuOpen = useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) =>
-      setAnchorEl(event.currentTarget),
-    []
-  );
-  const handleMenuClose = useCallback(() => setAnchorEl(null), []);
+  const handleRowSelect = (selectedRow: any) => {
+    console.log("Selected Row:", selectedRow);
+  };
 
   if (loading) return <Loader />;
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md">
-      <Box sx={{ minWidth: "80%" }}>
-        <IconButton
-          onClick={onClose}
-          sx={{ position: "absolute", right: 16, top: 10 }}
-        >
-          <CloseIcon />
-        </IconButton>
-        <DialogTitle
-          sx={{
-            fontWeight: "bold",
-            fontSize: 18,
-            background: "#f1f2fb",
-            padding: "12px 24px",
-          }}
-        >
-          Campaign Settings
-        </DialogTitle>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="md"
+      fullWidth
+      sx={{ overflowX: "hidden" }}
+    >
+      <CustomDialogHeader>
+        <Typography variant="h5">Campaign Settings</Typography>
+        {
+          <IconButton>
+            <CloseIcon onClick={onClose} />
+          </IconButton>
+        }
+      </CustomDialogHeader>
+
+      <CustomDialogContainer>
         <Box
           sx={{
+            background: "white",
             padding: "12px 15px",
             display: "flex",
             justifyContent: "space-between",
           }}
         >
-          <Typography mt={1} ml={1}>
-            Email Account
+          <Typography
+            variant="h6"
+            sx={{ fontWeight: 600, fontSize: "18px" }}
+            mt={1}
+            ml={1}
+          >
+            Email Accounts
           </Typography>
           <Box sx={{ display: "flex" }}>
             <SearchBar>
-              <Search size={20} color="#64748b" />
+              <Search size={20} />
               <input placeholder="Search input..." />
             </SearchBar>
           </Box>
         </Box>
-        <SenderAccountTable>
-          <StyledTableContainer>
-            <Table>
-              <StyledTableHead>
-                <TableRow>
-                  <StyledTableCheckbox>
-                    <Checkbox />
-                  </StyledTableCheckbox>
-                  {tableColumns.map((col) => (
-                    <StyledTableHeadCell key={col}>{col}</StyledTableHeadCell>
-                  ))}
-                </TableRow>
-              </StyledTableHead>
-              <TableBody>
-                {emailAccounts.map(({ _id, name, email }) => (
-                  <TableRow key={_id}>
-                    <StyledTableCheckbox>
-                      <Checkbox
-                        checked={selectedEmailAccounts
-                          .map((id) => id.account_id)
-                          .includes(_id)}
-                        onChange={() => handleCheckboxChange(_id)}
-                      />
-                    </StyledTableCheckbox>
-                    <StyledTableCell>{name}</StyledTableCell>
-                    <StyledTableCell>{email}</StyledTableCell>
-                    <StyledTableCell>0/100</StyledTableCell>
-                    <StyledTableCell>
-                      <StyledWarmup>Yes</StyledWarmup>
-                    </StyledTableCell>
-                    <StyledTableCell>
-                      <StyledReputation>100%</StyledReputation>
-                    </StyledTableCell>
-                    <StyledTableCell>
-                      <CustomEditIconButton>
-                        <CustomIcon />
-                      </CustomEditIconButton>
-                    </StyledTableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </StyledTableContainer>
-        </SenderAccountTable>
-        <Button
-          variant="contained"
-          onClick={handleSave}
-          sx={{
-            background: "#6e58f1",
-            color: "white",
-            mt: 2,
-            mb: 3,
-            float: "right",
-          }}
-        >
-          Save Email Accounts
-        </Button>
-      </Box>
+        <CustomDataTable
+          columns={columns}
+          rows={rows}
+          pageSizeOptions={[5, 10]}
+        />
+      </CustomDialogContainer>
+
+      <CustomDialogFooter justifyContent={"flex-end"}>
+        <Button onClick={handleSave}>Save Email Accounts</Button>
+      </CustomDialogFooter>
     </Dialog>
   );
 };
@@ -260,7 +203,7 @@ const CustomIcon = () => (
     ></path>
     <path
       d="M9.30771 11.5067L5.7041 14.0845L6.79548 9.8623L9.30771 11.5067Z"
-      fill="#6E58F1"
+      fill="var(--theme-color)"
     ></path>
   </svg>
 );

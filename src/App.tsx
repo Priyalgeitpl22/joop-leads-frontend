@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -21,13 +21,15 @@ import { DashboardContainer, ContentArea } from "./styles/layout.styled";
 import Login from "./pages/Login/Login";
 import Sidebar from "./components/SideBar";
 import Home from "./pages/Home/Home";
-import { SocketProvider } from "./context/SocketContext";
 import { Toaster } from "react-hot-toast";
 import EmailAccount from "./pages/Email-Account/EmailAccount";
 import Leads from "./pages/Leads/Leads";
 import EmailCampaign from "./pages/Email-Campaign/EmailCampaign";
 import EmailInboxs from "./pages/Email-Inbox/EmailInbox";
 import NewCampaign from "./pages/Email-Campaign/NewCampaign/NewCampaign";
+import theme from "./styles/theme";
+import { ThemeProvider } from "@mui/material/styles";
+import { CssBaseline } from "@mui/material";
 
 const AuthGuard = ({ children }: { children: JSX.Element }) => {
   const token = Cookies.get("access_token");
@@ -48,8 +50,9 @@ const publicRoutes = [
 function AppRoutes() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const location = useLocation(); // Get current route
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  
+
   useEffect(() => {
     const token = Cookies.get("access_token");
     if (!publicRoutes.includes(location.pathname)) {
@@ -64,10 +67,13 @@ function AppRoutes() {
           });
       }
     }
-  }, [dispatch]);
+  }, [dispatch, location.pathname]);
+
+  const isNewCampaignPage = location.pathname === "/email-campaign/new-campaign";
 
   return (
-    <SocketProvider>
+    <ThemeProvider theme={theme}>
+      {/* <CssBaseline />  */}
       <Toaster position="top-center" />
       <Routes>
         {/* Public Routes */}
@@ -79,18 +85,17 @@ function AppRoutes() {
         <Route path="/confirmation" element={<PasswordResetConfirmation />} />
         <Route path="/change-password" element={<ChangePassword />} />
         <Route path="/activate-account" element={<ActivateAccount />} />
-        <Route path="/email-campaign/new-campaign" element={<NewCampaign />} />
 
         <Route
           path="/*"
           element={
             <AuthGuard>
               <DashboardContainer>
-                <Header
-                  toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
-                />
+                {!isNewCampaignPage && (
+                  <Header toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
+                )}
                 <ContentArea>
-                  {isSidebarOpen ? <Sidebar /> : null}
+                  {!isNewCampaignPage && isSidebarOpen ? <Sidebar /> : null}
                   <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/email-campaign" element={<EmailCampaign />} />
@@ -99,15 +104,9 @@ function AppRoutes() {
                     <Route path="/leads" element={<Leads />} />
                     <Route path="/chats" element={<Chats />} />
                     <Route path="/organization" element={<Organization />} />
-                    <Route
-                      path="/settings/configuration"
-                      element={<Configuration />}
-                    />
+                    <Route path="/settings/configuration" element={<Configuration />} />
                     <Route path="/settings/agents" element={<Agents />} />
-                    <Route
-                      path="/settings/configuration"
-                      element={<Configuration />}
-                    />
+                    <Route path="/email-campaign/new-campaign" element={<NewCampaign />} />
                   </Routes>
                 </ContentArea>
               </DashboardContainer>
@@ -115,7 +114,7 @@ function AppRoutes() {
           }
         />
       </Routes>
-    </SocketProvider>
+    </ThemeProvider>
   );
 }
 

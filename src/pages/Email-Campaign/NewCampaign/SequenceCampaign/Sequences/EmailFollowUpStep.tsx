@@ -12,6 +12,8 @@ import {
   EmailFollowUpContainer,
   LeftDashedBorder,
   LeftDashedBorderLine,
+  StyledMailIcon,
+  StyledWaitIcon,
   VariantWrapper,
 } from "./sequences.styled";
 import { Sequence, SequenceVariant } from "./interfaces";
@@ -95,7 +97,7 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({
   };
 
   const colors = [
-    "#6e58f1",
+    "var(--theme-color)",
     "#ff6b6b",
     "#ffb400",
     "#4caf50",
@@ -110,7 +112,9 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({
           onClick={() => onClickEmailFollowUp(selectedSequence!)}
         >
           <BorderConatiner>
-            <HourglassBottomIcon sx={{ fontSize: 20, color: "#6e58f1" }} />
+            <StyledWaitIcon
+              sx={{ fontSize: 20, color: "var(--theme-color)" }}
+            />
             <LeftDashedBorderLine />
           </BorderConatiner>
           <div style={{ display: "flex", flexDirection: "column" }}>
@@ -121,10 +125,12 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({
                 // value={waitDays}
                 onChange={handleWaitDaysChange}
                 style={{
-                  width: "40px",
                   textAlign: "center",
-                  border: "1px solid grey",
-                  borderBottom: "1px solid black",
+                  border: "1px solid var(--icon-color)",
+                  borderRadius: '4px',
+                  padding: '0 12px',
+                  height: '24px',
+                  width: '47px',
                 }}
               />{" "}
               day{waitDays > 1 ? "s" : ""} then
@@ -136,12 +142,12 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({
         onClick={() => onClickEmailFollowUp(selectedSequence!)}
       >
         <BorderConatiner>
-          <MailOutlineIcon sx={{ fontSize: 20, color: "#6e58f1" }} />
+          <StyledMailIcon />
           <LeftDashedBorder />
         </BorderConatiner>
         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
           <div style={{ display: "flex", flexDirection: "row", gap: "58px" }}>
-            <Typography fontWeight="bold" sx={{ marginLeft: "8px" }}>
+            <Typography fontWeight="bold">
               Email follow-up
             </Typography>
             {variants.length > 1 && (
@@ -161,6 +167,7 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({
             >
               <Typography fontSize={14}>Email</Typography>
               <DeleteOutlineIcon
+                sx={{ color: "var(--icon-color)", cursor: "pointer" }}
                 onClick={() => onDelete(selectedSequence?.seq_number!)}
               />
             </div>
@@ -188,7 +195,10 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({
                     >
                       {String.fromCharCode(65 + index)}
                     </Box> */}
-                    <Typography fontSize={14}>{'Subject: '}{selectedSequence?.seq_variants[0].subject}</Typography>
+                    <Typography fontSize={14}>
+                      {"Subject: "}
+                      {selectedSequence?.seq_variants[0].subject}
+                    </Typography>
                   </Box>
 
                   {/* <IconButton

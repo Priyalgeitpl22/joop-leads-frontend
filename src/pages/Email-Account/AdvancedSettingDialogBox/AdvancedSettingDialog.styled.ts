@@ -13,7 +13,7 @@ export const DialogContainer = styled.div`
 
 export const TabPanel = styled(motion.div)`
   padding: 24px;
-  background: #ffffff;
+  background: var(--background-light);
   border-radius: 12px;
 `;
 

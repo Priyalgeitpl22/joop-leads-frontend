@@ -34,12 +34,19 @@ import AdvancedSettingDialog from "./AdvancedSettingDialogBox/AdvancedSettingDia
 import Loader from "../../components/Loader";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import { useDispatch, useSelector } from "react-redux";
-import { EmailAccount, fetchEmailAccount } from "../../redux/slice/emailAccountSlice";
+import {
+  EmailAccount,
+  fetchEmailAccount,
+} from "../../redux/slice/emailAccountSlice";
 import { AppDispatch, RootState } from "../../redux/store/store";
 import { SearchBar } from "../../components/Header/header.styled";
 import { Search } from "lucide-react";
 import { Button2 } from "../../styles/layout.styled";
 import toast from "react-hot-toast";
+import ProgressBar from "../../assets/Custom/linearProgress";
+import { CustomDataTable } from "../../assets/Custom/customDataGrid";
+import { GridColDef } from "@mui/x-data-grid";
+import { formatDate } from "../../utils/utils";
 
 const EmailAccounts: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -50,8 +57,22 @@ const EmailAccounts: React.FC = () => {
   const [emailAccounts, setEmailAccounts] = useState<EmailAccount[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const { user } = useSelector((state: RootState) => state.user);
-  // const { data } = useSelector((state: RootState) => state.agents);
 
+  const [rows, setRows] = useState<any[]>([]);
+
+  const columns: GridColDef[] = [
+    { field: "_id", headerName: "ID", width: 250 },
+    { field: "name", headerName: "Name", width: 150 },
+    { field: "email", headerName: "Email", width: 250 },
+    { field: "account", headerName: "Account", width: 120 },
+    { field: "state", headerName: "State", width: 100 },
+    {
+      field: "createdAt",
+      headerName: "Created At",
+      width: 180,
+      valueGetter: (params: any) => (params ? formatDate(params) : null),
+    },
+  ];
 
   useEffect(() => {
     setLoading(true);
@@ -60,6 +81,7 @@ const EmailAccounts: React.FC = () => {
         .unwrap()
         .then((data) => {
           setEmailAccounts(data);
+          setRows(data);
           setLoading(false);
           toast.success("Email Accounts fetched successfully");
         })
@@ -69,7 +91,6 @@ const EmailAccounts: React.FC = () => {
         });
     }
   }, [dispatch, user]);
-
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -107,14 +128,14 @@ const EmailAccounts: React.FC = () => {
       ></path>
       <path
         d="M9.30771 11.5067L5.7041 14.0845L6.79548 9.8623L9.30771 11.5067Z"
-        fill="#6E58F1"
+        fill="var(--theme-color)"
       ></path>
     </svg>
   );
 
-  if (loading) {
-    return <Loader />;
-  }
+  // if (loading) {
+  //   return <Loader />;
+  // }
 
   return (
     <EmailAccountsContainer>
@@ -125,7 +146,7 @@ const EmailAccounts: React.FC = () => {
             <FilterAltOutlinedIcon />
           </FilterIcon>
           <SearchBar>
-            <Search size={20} color="#64748b" />
+            <Search size={20} />
             <input placeholder="Search input..." />
           </SearchBar>
           <EmailAccountDialog
@@ -139,19 +160,20 @@ const EmailAccounts: React.FC = () => {
           <Button2
             onClick={handleSettingDialog}
             background="#f1f2fb"
-            color="#6e58f1"
+            color="var(--theme-color)"
           >
             Advanced Settings
           </Button2>
           <Button2
             onClick={handleOpenDialog}
-            background="#6e58f1"
+            background="var(--theme-color)"
             color="white"
           >
             Add Account
           </Button2>
         </Box>
       </EmailAccountHeader>
+      {loading && <ProgressBar />}
       <Menu
         anchorEl={anchorEl}
         open={isMenuOpen}
@@ -176,7 +198,7 @@ const EmailAccounts: React.FC = () => {
           <Link
             href="#"
             underline="hover"
-            sx={{ color: "#6e58f1", fontSize: "14px" }}
+            sx={{ color: "var(--theme-color)", fontSize: "14px" }}
           >
             Clear all
           </Link>
@@ -216,7 +238,7 @@ const EmailAccounts: React.FC = () => {
           <Button
             variant="contained"
             sx={{
-              backgroundColor: "#6e58f1",
+              backgroundColor: "var(--theme-color)",
               color: "white",
               textTransform: "none",
               borderRadius: "8px",
@@ -228,7 +250,12 @@ const EmailAccounts: React.FC = () => {
         </Box>
       </Menu>
       <EmailAccountTable>
-        <StyledTableContainer>
+        <CustomDataTable
+          columns={columns}
+          rows={rows}
+          pageSizeOptions={[10, 10]}
+        />
+        {/* <StyledTableContainer>
           <Table>
             <StyledTableHead>
               <TableRow>
@@ -243,7 +270,7 @@ const EmailAccounts: React.FC = () => {
                 <StyledTableHeadCell>Type</StyledTableHeadCell>
               </TableRow>
             </StyledTableHead>
-            <TableBody style={{ background: "#ffff" }}>
+            <TableBody style={{ background: "var(--background-light)f" }}>
               {emailAccounts.map((account) => (
                 <TableRow key={account._id}>
                   <StyledTableCheckbox>
@@ -261,11 +288,11 @@ const EmailAccounts: React.FC = () => {
                     <StyledReputation>100%</StyledReputation>
                   </StyledTableCell>
                   {/* <StyledTableCell>warmup</StyledTableCell> */}
-                  {/* <StyledTableCell>
+        {/* <StyledTableCell>
                     <StyledWarmup>{account.type}</StyledWarmup>
                   </StyledTableCell> */}
-                  {/* <StyledTableCell></StyledTableCell> */}
-                  <StyledTableCell>
+        {/* <StyledTableCell></StyledTableCell> */}
+        {/* <StyledTableCell>
                     <CustomEditIconButton>
                       <CustomIcon />
                     </CustomEditIconButton>
@@ -274,7 +301,7 @@ const EmailAccounts: React.FC = () => {
               ))}
             </TableBody>
           </Table>
-        </StyledTableContainer>
+        </StyledTableContainer> */}
       </EmailAccountTable>
     </EmailAccountsContainer>
   );

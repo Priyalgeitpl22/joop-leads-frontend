@@ -17,10 +17,12 @@ import dayjs, { Dayjs } from "dayjs";
 
 interface GeneralCampaignSettingProps {
   onClose: () => void;
+  campaignId?: string;
 }
 
 const GeneralCampaignSetting: React.FC<GeneralCampaignSettingProps> = ({
   onClose,
+  campaignId
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [formData, setFormData] = useState({
@@ -50,10 +52,14 @@ const GeneralCampaignSetting: React.FC<GeneralCampaignSettingProps> = ({
 
   const handleSave = async () => {
     try {
+      if(!campaignId) {
+        return;
+      }
+
       await dispatch(
         addEmailCampaignSettings({
           sender_accounts: formData.selectedEmailAccounts,
-          campaign_id: "250cac40-bbbf-4da2-96e7-67d8ad6094f4",
+          campaign_id: campaignId,
           auto_warm_up: false,
           schedule_settings: {
             time_zone: formData.timeZone,
@@ -93,14 +99,14 @@ const GeneralCampaignSetting: React.FC<GeneralCampaignSettingProps> = ({
   return (
     <Box sx={{ padding: 3, margin: "auto" }}>
       <Box>
-        <Typography fontWeight="600">Campaign Name</Typography>
+        <Typography variant="h6">Campaign Name</Typography>
         <TextField
           fullWidth
           value={formData.campaignName}
           onChange={(e) => handleChange("campaignName", e.target.value)}
         />
       </Box>
-      <Typography fontWeight="600" mt={2}>
+      <Typography variant="h6" mt={2}>
         Stop sending messages when your lead
       </Typography>
       <RadioGroup
@@ -124,7 +130,7 @@ const GeneralCampaignSetting: React.FC<GeneralCampaignSettingProps> = ({
         />
       </RadioGroup>
 
-      <Typography fontWeight="600" mt={2}>
+      <Typography variant="h6" mt={2}>
         Optimise Email Delivery
       </Typography>
       <FormControlLabel
@@ -139,7 +145,7 @@ const GeneralCampaignSetting: React.FC<GeneralCampaignSettingProps> = ({
         label="Boost your deliverability by sending emails in plain text, without HTML"
       />
 
-      <Typography fontWeight="600" mt={2}>
+      <Typography variant="h6" mt={2}>
         What shouldn't we track
       </Typography>
       <FormControlLabel
@@ -161,7 +167,7 @@ const GeneralCampaignSetting: React.FC<GeneralCampaignSettingProps> = ({
         label="DON'T track link clicks"
       />
 
-      {/* <Typography fontWeight="600" mt={2}>
+      {/* <Typography variant="h6" mt={2}>
         Assign a SmartServer
       </Typography>
       <Typography>
@@ -181,7 +187,7 @@ const GeneralCampaignSetting: React.FC<GeneralCampaignSettingProps> = ({
         </MenuItem>
       </Select> */}
 
-      <Typography fontWeight="600" mt={2}>
+      <Typography variant="h6" mt={2}>
         Prioritise sending pattern
       </Typography>
       <Slider
@@ -194,7 +200,7 @@ const GeneralCampaignSetting: React.FC<GeneralCampaignSettingProps> = ({
         valueLabelDisplay="auto"
       />
 
-      <Typography fontWeight="600" mt={2}>
+      <Typography variant="h6" mt={2}>
         Company Level Auto-Pause
       </Typography>
       <Typography>
@@ -208,10 +214,10 @@ const GeneralCampaignSetting: React.FC<GeneralCampaignSettingProps> = ({
         label="Auto-pause if one of the leads from the same domain replies."
       />
 
-      <Typography fontWeight="600" mt={2}>
+      <Typography variant="h6" mt={2}>
         Enhanced Email Sending & Delivery
       </Typography>
-      <Typography>
+      <Typography variant="body1">
         AI Auto-matches your leads email providers + Your mailbox providers for
         boosted deliver (e.g Gmail to Gmail, Outlook to Outlook)
       </Typography>
@@ -224,7 +230,7 @@ const GeneralCampaignSetting: React.FC<GeneralCampaignSettingProps> = ({
         label="Auto-analyse leads mailbox email service providers."
       />
 
-      {/* <Typography fontWeight="600" mt={2}>
+      {/* <Typography variant="h6" mt={2}>
         Isolated Lead Email Provider Sending
       </Typography>
       <Typography>
@@ -246,7 +252,7 @@ const GeneralCampaignSetting: React.FC<GeneralCampaignSettingProps> = ({
         <FormControlLabel value="others" control={<Radio />} label="Others" />
       </RadioGroup> */}
 
-      {/* <Typography fontWeight="600" mt={2}>
+      {/* <Typography variant="h6" mt={2}>
         Intelligent AI Lead Categorisation (Max: 5)
       </Typography>
       <Typography>
@@ -270,7 +276,7 @@ const GeneralCampaignSetting: React.FC<GeneralCampaignSettingProps> = ({
         />
       </RadioGroup> */}
 
-      <Typography fontWeight="600" mt={2}>
+      <Typography variant="h6" mt={2}>
         High Bounce Rate Auto-Protection
       </Typography>
       <Typography>
@@ -285,7 +291,7 @@ const GeneralCampaignSetting: React.FC<GeneralCampaignSettingProps> = ({
         label="Activate auto-pause protection from bounces"
       />
 
-      <Typography fontWeight="600" mt={2}>
+      <Typography variant="h6" mt={2}>
         Unsubscribe
       </Typography>
       <FormControlLabel
@@ -296,22 +302,6 @@ const GeneralCampaignSetting: React.FC<GeneralCampaignSettingProps> = ({
         }
         label="Add unsubscribe message in all emails"
       />
-
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleSave}
-        sx={{
-          backgroundColor: "#E4D9FF",
-          color: "white",
-          background: "#6e58f1",
-          marginTop: "40px",
-          marginBottom: "20px",
-          float: "right",
-        }}
-      >
-        Save General Settings
-      </Button>
     </Box>
   );
 };

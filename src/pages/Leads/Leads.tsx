@@ -55,7 +55,7 @@ const Leads: React.FC = () => {
         <SectionTitle>All Leads</SectionTitle>
         <Box sx={{ display: "flex", gap: "20px" }}>
           <SearchBar>
-            <Search size={20} color="#64748b" />
+            <Search size={20} />
             <input placeholder="Search input..." />
           </SearchBar>
           <FilterIcon>
@@ -107,7 +107,7 @@ const Leads: React.FC = () => {
                 <StyledTableHeadCell>Type</StyledTableHeadCell>
               </TableRow>
             </StyledTableHead>
-            <TableBody style={{ background: "#ffff" }}>
+            <TableBody style={{ background: "var(--background-light)f" }}>
               <TableRow>
                 <StyledTableCheckbox>
                   <Checkbox {...label} />

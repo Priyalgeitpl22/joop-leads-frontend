@@ -31,12 +31,12 @@ import { getScript, saveConfigurations } from "../../../redux/slice/chatSlice";
 import { ContentContainer } from "./configuration.styled";
 import Loader from "../../Loader";
 import toast, {Toaster} from "react-hot-toast";
-import { Button } from "../../../styles/layout.styled";
+import { Button } from "../../../styles/global.styled";
 
 const Configuration = () => {
   const [settings, setSettings] = useState({
     iconColor: "var(--theme-color)",
-    chatWindowColor: "#ffffff",
+    chatWindowColor: "var(--background-light)",
     fontColor: "#333333",
     position: "bottom-right",
     allowEmojis: false,

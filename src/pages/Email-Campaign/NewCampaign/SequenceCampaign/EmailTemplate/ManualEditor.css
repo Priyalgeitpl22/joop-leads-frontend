@@ -1,11 +1,11 @@
 .custom-quill-manual {
-    background-color: #fff;
+    background-color: white;
     font-size: 16px;
     border: 1px solid #cccccc !important;
   }
   
   .custom-quill-manual .ql-toolbar {
-    background-color: #fff;
+    background-color: white;
     border-bottom: 1px solid #ebebeb !important;
     border: 0;
     height: 40px;
@@ -15,6 +15,7 @@
     min-height: 190px;
     font-size: 16px;
     border: 0 !important;
+    word-break: break-word;
   }
   
   .ql-toolbar .ql-stroke {

@@ -1,15 +1,24 @@
 import { useEffect, useState } from "react";
-import { Box, IconButton, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { SidebarContainer } from "../../../../styles/layout.styled";
-import EmailIcon from "@mui/icons-material/Email";
-import AssignmentIcon from "@mui/icons-material/Assignment";
 import EmailTemplate from "./EmailTemplate/EmailTemplate";
 import AddIcon from "@mui/icons-material/Add";
 import EmailFollowUpStep from "./Sequences/EmailFollowUpStep";
-import { AddStepButton, StyledAssignmentIcon, StyledEmailIcon } from "./Sequences/sequences.styled";
+import {
+  AddStepButton,
+  AddStepButtonWrapper,
+  StyledAddIcon,
+  StyledAssignmentIcon,
+  StyledEmailIcon,
+} from "./Sequences/sequences.styled";
 import ManualFollowUp from "./Sequences/ManualFollowUp";
 import ManualTemplate from "./EmailTemplate/ManualTemplate";
-import { AddStepContainer, StyledIconButton, TemplateHeader } from "./sequenceCampaign.styled";
+import {
+  AddStepContainer,
+  SequenceSidebarContainer,
+  StyledIconButton,
+  TemplateHeader,
+} from "./sequenceCampaign.styled";
 import AbConfigurationDialog from "./Sequences/AbConfigurationDialog";
 import {
   Sequence,
@@ -17,21 +26,19 @@ import {
   SequenceVariant,
 } from "./Sequences/interfaces";
 import { SequenceType, variantDistributionType } from "./Sequences/enums";
+import { Button } from "../../../../styles/global.styled";
 
 interface ImportLeadsCampaignProps {
-  handleSequencesData: (data: any) => void;
   handleEmailTemplateData: (data: any) => void;
   onClickEmailFollowUp: (data: any) => void;
   addSequence: (data: any) => void;
   updateSequences: (data: any) => void;
   updateSequenceData: (data: any) => void;
-  setVariants: (data: any) => void;
   sequences: Sequence[];
   selectedSequence?: Sequence;
 }
 
 const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
-  handleSequencesData,
   handleEmailTemplateData,
   onClickEmailFollowUp,
   addSequence,
@@ -111,16 +118,8 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
   const closeAbConfigurationDialog = () => setIsDialogOpen(false);
 
   return (
-    <Box display="flex" sx={{ height: "80%" }}>
-      <SidebarContainer
-        style={{
-          borderRight: "1px solid #ddd",
-          paddingLeft: "2%",
-          overflow: "scroll",
-          width: "fit-content",
-          padding: "18px",
-        }}
-      >
+    <Box sx={{ height: "100%" }} display={"flex"}>
+      <SequenceSidebarContainer>
         {sequences.map((sequence, index) =>
           sequence.seq_type === SequenceType.EMAIL ? (
             <EmailFollowUpStep
@@ -146,10 +145,10 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
           )
         )}
 
-        <AddStepButton onClick={handleAddStep}>
-          <AddIcon sx={{ fontSize: 20, color: "#6e58f1" }} />
-          <Typography fontSize={14}>Add step</Typography>
-        </AddStepButton>
+        <AddStepButtonWrapper>
+          <StyledAddIcon />
+          <AddStepButton onClick={handleAddStep}>Add step</AddStepButton>
+        </AddStepButtonWrapper>
 
         {showStepOptions && (
           <AddStepContainer>
@@ -161,7 +160,7 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
             </StyledIconButton>
           </AddStepContainer>
         )}
-      </SidebarContainer>
+      </SequenceSidebarContainer>
 
       <Box flex={1} padding="40px">
         <TemplateHeader>

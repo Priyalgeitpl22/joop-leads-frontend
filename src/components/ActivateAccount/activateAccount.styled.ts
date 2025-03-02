@@ -5,7 +5,7 @@ export const PageContainer = styled(Box)`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  height: 100%;
 `;
 
 export const AuthCard = styled(Box)`
@@ -53,7 +53,7 @@ export const StyledTextField = styled(TextField)`
   }
 
   .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
-    border: 1px solid #ddd;
+  border: 1px solid var(--border-dark);
   }
 
   .MuiOutlinedInput-input {

@@ -5,7 +5,6 @@ import { motion } from 'framer-motion';
 export const ChatListContainer = styled(Box)({
   width: 300,
   borderRight: '1px solid rgba(0, 0, 0, 0.12)',
-  height: '95%',
   display: 'flex',
   flexDirection: 'column',
   padding: '10px'
@@ -14,7 +13,7 @@ export const ChatListContainer = styled(Box)({
 export const ChatListHeader = styled(Box)({
   padding: '10px', 
   borderBottom: '1px solid rgba(0, 0, 0, 0.12)', 
-  backgroundColor: '#fff', 
+  backgroundColor: 'var(--background-light)', 
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',

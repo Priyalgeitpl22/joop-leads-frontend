@@ -10,7 +10,7 @@ interface SidebarItemProps {
 export const SidebarContainer = styled(Box)({
   width: 240,
   height: '95%',
-  backgroundColor: '#ffffff',
+  backgroundColor: 'var(--background-light)',
   borderRight: '1px solid #e0e0e0', 
   overflowY: 'auto',
   padding: '10px',
@@ -23,7 +23,7 @@ export const StatusIndicator = styled("div", {
   width: 8,
   height: 8,
   borderRadius: "50%",
-  backgroundColor: online ? "#4caf50" : "red",
+  backgroundColor: online ? "#4caf50" : "var(--background-light)",
 }));
 
 export const SidebarItem = styled(ListItem, {

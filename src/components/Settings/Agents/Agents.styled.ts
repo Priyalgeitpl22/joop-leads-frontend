@@ -37,7 +37,7 @@ export const CreateAgent = styled(motion.button)`
     border: none;
     border-radius: 8px;
     background: linear-gradient(135deg, var(--theme-color), var(--theme-color));
-    color: #ffffff;
+    color: var(--background-light);
     cursor: pointer;
     transition: all 0.3s ease-in-out;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
@@ -86,7 +86,7 @@ export const StyledTableContainer = styled(TableContainer)`
   `;
 
 export const StyledTableHead = styled(TableHead)`
-    background-color: transparent;
+    background-color: var(--background-color)
     position: sticky;
     top: 0;
     z-index: 1;
@@ -96,7 +96,7 @@ export const StyledTableHeadCell = styled(TableCell)`
     color: #282828;
     font-weight: 600;
     font-size: 16px;
-    background-color: #fafafa;
+    background-color: var(--background-color)
   `;
 export const StyledTableCell = styled(TableCell)`
   color: #222222;

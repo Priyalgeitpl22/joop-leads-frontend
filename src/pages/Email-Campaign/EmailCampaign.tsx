@@ -1,4 +1,4 @@
-import { SetStateAction, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Box,
@@ -32,6 +32,11 @@ import EmailCampaignDialog from "./EmailCampaignDialog/AddEmailCampaignDialog";
 import { Search } from "lucide-react";
 import { Button2 } from "../../styles/layout.styled";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { fetchEmailCampaigns } from "../../redux/slice/emailCampaignSlice";
+import { AppDispatch } from "../../redux/store/store";
+import { IEmailCampaign } from "./NewCampaign/interfaces";
+import { formatDate } from "../../utils/utils";
 
 
 const EmailCampaign = () => {
@@ -39,8 +44,22 @@ const EmailCampaign = () => {
   const [createFolder, setCreateFolder] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const navigate = useNavigate();
-  
+  const dispatch = useDispatch<AppDispatch>();
+  const [campaigns, setCampaigns] = useState<IEmailCampaign[]>([]);
 
+  useEffect(() => {
+    const getEmailCampaigns = async () => {
+      await getAllEmailCampaigns(); 
+    };
+  
+    getEmailCampaigns();
+  }, []);
+  
+  const getAllEmailCampaigns = async () => {
+    const response = await dispatch(fetchEmailCampaigns());
+    setCampaigns(response.payload.data);
+  };
+  
   const handleTabChange = (_: any, newValue: SetStateAction<string>) => {
     setActiveTab(newValue);
     if (newValue === "folder"){}
@@ -113,19 +132,19 @@ const EmailCampaign = () => {
               gap: "15px",
               alignItems: "center",
               marginLeft: "auto",
+              marginBottom: "10px"
             }}
           >
             <FilterIcon onClick={handleMenuOpen}>
               <FilterAltOutlinedIcon />
             </FilterIcon>
             <SearchBar>
-              <Search size={20} color="#64748b" />
+              <Search size={20} />
               <input placeholder="Search input..." />
             </SearchBar>
             <Button2
-              background="#6e58f1"
+              background="var(--theme-color)"
               color="white"
-              style={{ height: "80%" }}
               onClick={handleCreateCampaign}
             >
               Create Campaign
@@ -146,9 +165,8 @@ const EmailCampaign = () => {
               onClose={() => setCreateFolder(false)}
             />
             <Button2
-              background="#6e58f1"
+              background="var(--theme-color)"
               color="white"
-              style={{ height: "90%" }}
               onClick={handleCreateFolder}
             >
               Create Folder
@@ -180,7 +198,7 @@ const EmailCampaign = () => {
           <Link
             href="#"
             underline="hover"
-            sx={{ color: "#6e58f1", fontSize: "14px" }}
+            sx={{ color: "var(--theme-color)", fontSize: "14px" }}
           >
             Clear all
           </Link>
@@ -214,7 +232,7 @@ const EmailCampaign = () => {
           <Button
             variant="contained"
             sx={{
-              backgroundColor: "#6e58f1",
+              backgroundColor: "var(--theme-color)",
               color: "white",
               textTransform: "none",
               borderRadius: "8px",
@@ -244,7 +262,7 @@ const EmailCampaign = () => {
             </TableHead>
 
             <TableBody>
-              {campaignData.map((campaign, index) => (
+              {campaigns.map((campaign, index) => (
                 <TableRow key={index} sx={{ borderBottom: "1px solid #ddd" }}>
                   <TableCell>
                     <Box display="flex" alignItems="center">
@@ -253,7 +271,7 @@ const EmailCampaign = () => {
                           width: "40px",
                           height: "40px",
                           borderRadius: "50%",
-                          background: `conic-gradient(#6e58f1 ${campaign.progress}%, #ddd ${campaign.progress}%)`,
+                          background: `conic-gradient(var(--theme-color) ${20}%, #ddd ${40}%)`,
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
@@ -263,7 +281,7 @@ const EmailCampaign = () => {
                           mr: 1.5,
                         }}
                       >
-                        {campaign.progress}%
+                        {35}%
                       </Box>
 
                       <Box>
@@ -271,15 +289,15 @@ const EmailCampaign = () => {
                           href="#"
                           sx={{
                             fontWeight: "bold",
-                            color: "#6e58f1",
+                            color: "var(--theme-color)",
                             textDecoration: "none",
                           }}
                         >
-                          {campaign.name}
+                          {campaign.campaignName}
                         </Link>
                         <Typography variant="body2" sx={{ color: "#667085" }}>
-                          Paused | Created At: {campaign.createdAt} |{" "}
-                          {campaign.sequences} sequences
+                          Paused | Created At: {formatDate(campaign.createdAt)} |{" "}
+                          {campaign.sequences.length} sequences
                         </Typography>
                       </Box>
                     </Box>
@@ -289,12 +307,12 @@ const EmailCampaign = () => {
                     <Box display="flex" alignItems="center">
                       <Typography
                         sx={{
-                          color: "#6e58f1",
+                          color: "var(--theme-color)",
                           fontWeight: "bold",
                           width: "50px",
                         }}
                       >
-                        {campaign.sent}
+                        {2}
                       </Typography>
                       <Email
                         sx={{
@@ -312,7 +330,7 @@ const EmailCampaign = () => {
                           marginLeft: "16px",
                         }}
                       >
-                        {campaign.opened}
+                        {4}
                       </Typography>
 
                       <Typography
@@ -323,7 +341,7 @@ const EmailCampaign = () => {
                           marginLeft: "16px",
                         }}
                       >
-                        {campaign.clicked}
+                        {7}
                       </Typography>
 
                       <Typography
@@ -334,7 +352,7 @@ const EmailCampaign = () => {
                           marginLeft: "16px",
                         }}
                       >
-                        {campaign.replied}
+                        {1}
                       </Typography>
                       <Replay
                         sx={{
@@ -344,7 +362,7 @@ const EmailCampaign = () => {
                         }}
                       />
 
-                      {campaign.positiveReply && (
+                      {7 && (
                         <Button
                           size="small"
                           sx={{
@@ -367,7 +385,7 @@ const EmailCampaign = () => {
                           marginLeft: "16px",
                         }}
                       >
-                        {campaign.bounced}
+                        {10}
                       </Typography>
                       <ErrorOutline
                         sx={{
@@ -423,7 +441,7 @@ const EmailCampaign = () => {
                   onClose={() => setCreateFolder(false)}
                 />
                 <Button2
-                  background="#6e58f1"
+                  background="var(--theme-color)"
                   color="white"
                   style={{
                     width: "21%",

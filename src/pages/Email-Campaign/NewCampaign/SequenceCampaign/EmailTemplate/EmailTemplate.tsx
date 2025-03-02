@@ -90,7 +90,6 @@ const EmailTemplate: React.FC<EmailTemplateProps> = ({
         <VariablesButton onClick={insertVariable}>{"{ } Variables"}</VariablesButton>
       </EmailTemplateHeader>
 
-      {/* ReactQuill Editor */}
       <ReactQuill
         ref={quillRef}
         value={emailBody}

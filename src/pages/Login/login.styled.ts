@@ -5,7 +5,7 @@ export const PageContainer = styled(Box)`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  height: 100%;
 `;
 
 export const LoginCard = styled(Box)`
@@ -50,7 +50,7 @@ export const StyledTextField = styled(TextField)`
 
 
   .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
-    border: 1px solid #ddd;
+  border: 1px solid var(--border-dark);
   }
   .MuiOutlinedInput-input {
     padding: 12px 10px !important; 
@@ -82,12 +82,12 @@ export const SocialButtonsContainer = styled(Box)`
 `;
 
 export const SocialButton = styled(IconButton)`
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border-dark);
   padding: 12px;
   transition: all 0.3s ease-in-out;
   
   &:hover {
-    background-color: #ffffff;
+    background-color: var(--background-light);
     transform: scale(1.1);
   }
 `;

@@ -47,7 +47,7 @@ export const PreviewImage = styled('img')`
   height: 50px;
   object-fit: cover;
   border-radius: 50%;
-  border: 2px solid var(--theme-color-dark);
+  border: 1px solid var(--border-dark);
   margin-bottom: 8px;
 `;
 
@@ -61,7 +61,7 @@ export const StyledTextField = styled(TextField)`
 
 
   .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
-    border: 1px solid #ddd;
+  border: 1px solid var(--border-dark);
   }
   .MuiOutlinedInput-input {
     padding: 12px 10px !important; 
@@ -93,12 +93,12 @@ export const SocialButtonsContainer = styled(Box)`
 `;
 
 export const SocialButton = styled(IconButton)`
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border-dark);
   padding: 12px;
   transition: all 0.3s ease-in-out;
   
   &:hover {
-    background-color: #ffffff;
+    background-color: var(--background-light);
     transform: scale(1.1);
   }
 `;

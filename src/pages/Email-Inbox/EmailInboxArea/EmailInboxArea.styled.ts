@@ -6,7 +6,7 @@ export const EmailInboxContainer = styled(Box)({
   display: "flex",
   flexDirection: "column",
   height: "100%",
-  backgroundColor: "#fff",
+  backgroundColor: "var(--background-light)",
 });
 
 export const EmailInboxHeader = styled(Box)({
@@ -35,7 +35,7 @@ export const ReassignmentNote = styled(Typography)({
 
 export const EmailInboxInputContainer = styled(Box)({
   padding: "16px",
-  backgroundColor: "#fff",
+  backgroundColor: "var(--background-light)",
   "& .MuiOutlinedInput-root": {
     borderRadius: "10px",
     padding: "10px",
@@ -66,7 +66,7 @@ export const PlaceholderContainer = styled(Box)({
   justifyContent: "center",
   height: "-webkit-fill-available",
   textAlign: "center",
-  background: "#ffff",
+  background: "var(--background-light)f",
 });
 
 export const BotMessage = styled(Box)({

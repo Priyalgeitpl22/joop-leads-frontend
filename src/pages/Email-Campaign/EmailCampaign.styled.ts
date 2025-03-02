@@ -35,7 +35,7 @@ export const ColorOption = styled.button<{
   height: 30px;
   border-radius: 50%;
   background-color: ${(props) => props.color};
-  border: 2px solid ${(props) => (props.isSelected ? "#ffffff" : "transparent")};
+  border: 2px solid ${(props) => (props.isSelected ? "var(--background-light)" : "transparent")};
   outline: 3px solid
     ${(props) => (props.isSelected ? props.color : "transparent")};
   cursor: pointer;
@@ -82,7 +82,7 @@ export const TrackingCode = styled.button`
 
 export const CodeInput = styled.textarea`
   padding: 8px 12px;
-  border: 1px solid #cfd9e5;
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   background: var(--surface);
   color: var(--text);
@@ -97,12 +97,12 @@ export const CodeInput = styled.textarea`
 export const ColorCheckBox = styled.input`
   width: 24px;
   height: 24px;
-  border: 2px solid #3e5164;
+  border: 1px solid var(--border-dark);
   cursor: pointer;
   background: blue;
 
   &:checked {
-    background-color: red;
+    background-color: var(--background-light);
   }
 `;
 
@@ -112,7 +112,7 @@ export const SaveButton = styled.button`
   padding: 8px 12px;
   border: none;
   border-radius: 6px;
-  color: #1e293b;
+  color: var(--background-light);
   background-color: var(--theme-color);
   cursor: pointer;
   font-size: 16px;
@@ -127,7 +127,7 @@ export const CopyButton = styled.button`
   font-weight: bold;
   border: none;
   border-radius: 6px;
-  color: #fff;
+  color: var(--background-light);
   background-color: var(--theme-color);
   cursor: pointer;
   font-size: 16px;

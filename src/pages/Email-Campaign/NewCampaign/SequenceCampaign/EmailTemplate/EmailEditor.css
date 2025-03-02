@@ -1,20 +1,21 @@
   .custom-quill-email {
-    background-color: #fff;
+    background-color: white;
     border-radius: 8px;
     font-size: 16px;
   }
   
   .custom-quill-email .ql-toolbar {
-    background-color: #fff;
+    background-color: white;
     border-bottom: 1px solid #ebebeb !important;
     border: 0;
   }
   
   .custom-quill-email .ql-container {
-    min-height: 200px;
+    min-height: 270px;
     font-size: 16px;
     border-radius: 0px !important;
     border: 0 !important;
+    word-break: break-word;
   }
   
   .custom-quill-email .ql-editor {

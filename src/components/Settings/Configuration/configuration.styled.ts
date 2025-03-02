@@ -12,7 +12,7 @@ export const Section = styled.section`
   background: var(--surface);
   border-radius: 8px;
   padding: 0px 10px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-dark);
 `;
 
 export const SectionTitle = styled.h2`
@@ -32,7 +32,7 @@ export const ColorOption = styled.button<{ color: string; isSelected: boolean }>
   height: 30px;
   border-radius: 50%;
   background-color: ${(props) => props.color};
-  border: 2px solid ${(props) => (props.isSelected ? "#ffffff" : "transparent")};
+  border: 2px solid ${(props) => (props.isSelected ? "var(--background-light)" : "transparent")};
   outline: 3px solid ${(props) => (props.isSelected ? props.color : "transparent")};
   cursor: pointer;
   transition: all 0.3s ease-in-out; /* Smooth transition */
@@ -77,7 +77,7 @@ export const TrackingCode = styled.button`
 
 export const CodeInput = styled.textarea`
   padding: 8px 12px;
-  border: 1px solid #cfd9e5;
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   background: var(--surface);
   color: var(--text);
@@ -92,12 +92,12 @@ export const CodeInput = styled.textarea`
 export const ColorCheckBox = styled.input`
   width: 24px;
   height: 24px;;
-  border: 2px solid #3e5164;
+  border: 1px solid var(--border-dark);
   cursor: pointer;
   background: blue;
 
   &:checked {
-    background-color: red;
+    background-color: var(--background-color)
   }
   `;
 
@@ -107,13 +107,13 @@ export const ColorCheckBox = styled.input`
   padding: 8px 12px;
   border: none;
   border-radius: 6px;
-  color: #1e293b;
-  background-color:var(--theme-color);
+  color: var(--background-light);
+  background-color: var(--background-color)
   cursor: pointer;
   font-size: 16px;  
 
   :hover {
-    background-color: var(--theme-color);
+  background-color: var(--background-color)
     opacity: 0.8;
   }
 `;
@@ -122,8 +122,8 @@ export const CopyButton = styled.button`
 font-weight: bold;
 border: none;
 border-radius: 6px;
-color: #fff;
-background-color: var(--theme-color);
+color: var(--background-light);
+  background-color: var(--background-color)
 cursor: pointer;
 font-size: 16px;
 margin: 8px 6px;
@@ -138,7 +138,7 @@ export const CustomTabs = styled(Tabs)`
   min-height: 40px;
   padding: 12px 12px 0px 12px;
   .MuiTabs-indicator {
-    background-color: #33475b; 
+  background-color: var(--background-color)
     height: 4px;
     border-radius: 4px;
   }

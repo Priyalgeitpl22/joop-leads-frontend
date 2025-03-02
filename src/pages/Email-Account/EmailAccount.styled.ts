@@ -23,11 +23,12 @@ export const EmailAccountsContainer = styled.div`
 }
 `;
 export const EmailAccountHeader = styled.section`
-  width: 100%;
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  border-radius: 8px;
+  padding: 12px;
+  background: var(--accent-color);
 `;
 
 export const SectionTitle = styled.h2`
@@ -43,7 +44,7 @@ export const CreateEmailAccount = styled(motion.button)`
   border: none;
   border-radius: 8px;
   background: linear-gradient(135deg, var(--theme-color), var(--theme-color));
-  color: #ffffff;
+  color: var(--background-light);
   cursor: pointer;
   transition: all 0.3s ease-in-out;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
@@ -91,7 +92,7 @@ export const StyledTableContainer = styled(TableContainer)`
 `;
 
 export const StyledTableHead = styled(TableHead)`
-  background-color: transparent;
+  background-color: var(--background-color)
   position: sticky;
   top: 0;
   z-index: 1;

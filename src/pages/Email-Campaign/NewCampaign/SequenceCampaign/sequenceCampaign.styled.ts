@@ -1,4 +1,5 @@
 import { Box, Dialog, IconButton, styled } from "@mui/material";
+import { motion } from "framer-motion";
 
 export const DialogBox = styled(Dialog)(`
     border-radius: 12px;
@@ -78,7 +79,7 @@ export const StyledIconButton = styled(IconButton)(`
     }
 
     .MuiSvgIcon-root {
-      color: #6e58f1;
+      color: var(--theme-color);
       transition: color 0.3s ease;
     }
 
@@ -87,5 +88,23 @@ export const StyledIconButton = styled(IconButton)(`
     }
 `);
 
+export const SequenceSidebarContainer = styled(motion.aside)`
+  background-color: var(--background-light);
+  border-right: 1px solid #e2e8f0;
+  overflow-y: auto;
+  height: 100%;
+  gap: 10px;
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: 20px;
 
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+`;
   

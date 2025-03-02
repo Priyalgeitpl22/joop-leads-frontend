@@ -69,7 +69,7 @@ const EmailInboxList: React.FC<EmailInboxListProps> = ({
       <EmailInboxListHeader>
         <Box sx={{display: "flex"}}>
           <SearchBar style={{ width: "100%", marginRight: "10%"}}>
-            <Search size={20} color="#64748b" />
+            <Search size={20} />
             <input placeholder="Search leads..." />
           </SearchBar>
           <SortOutlinedIcon />

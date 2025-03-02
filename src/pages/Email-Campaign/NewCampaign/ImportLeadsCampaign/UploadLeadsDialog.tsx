@@ -1,18 +1,26 @@
-import { Button, Dialog, DialogContent, DialogTitle, IconButton, Typography, Box } from "@mui/material";
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Typography,
+  Box,
+} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import Grid2 from "@mui/material/Grid2";
-
+import { ILeadsCounts } from "../interfaces";
 
 interface UploadCsvDialogProps {
   open: boolean;
-  uploadCount: number;
+  uploadCounts?: ILeadsCounts;
   onClose: () => void;
 }
 
 const UploadLeadsDialog: React.FC<UploadCsvDialogProps> = ({
   open,
-  uploadCount,
-  onClose
+  uploadCounts,
+  onClose,
 }) => {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -34,7 +42,7 @@ const UploadLeadsDialog: React.FC<UploadCsvDialogProps> = ({
             alignItems: "center",
           }}
         >
-          No Leads Imported
+          {uploadCounts?.uploadedCount === 0 ? 'No Leads Imported' : 'Leads Imported'}
         </DialogTitle>
       </Box>
 
@@ -52,19 +60,19 @@ const UploadLeadsDialog: React.FC<UploadCsvDialogProps> = ({
         >
           Uploaded Leads
           <Typography variant="h5" fontWeight="bold">
-            {uploadCount}
+            {uploadCounts?.uploadedCount}
           </Typography>
         </Typography>
 
         {[
-          { label: "Duplicate Leads", count: 0 },
-          { label: "Existing Count", count: 100 },
-          { label: "Blocked Email Count", count: 0 },
-          { label: "Community Bounce Blocked Count", count: 0 },
-          { label: "Empty Email Count", count: 0 },
-          { label: "Invalid Email Count", count: 0 },
-          { label: "Unsubscribed Leads", count: 0 },
-          { label: "Duplicate Leads in Multiple Campaigns", count: 0 },
+          { label: "Duplicate Leads", count: uploadCounts?.duplicateCount },
+          { label: "Blocked Email Count", count: uploadCounts?.blockedCount },
+          { label: "Empty Email Count", count: uploadCounts?.emptyCount },
+          { label: "Invalid Email Count", count: uploadCounts?.invalidCount },
+          {
+            label: "Unsubscribed Leads",
+            count: uploadCounts?.unsubscribedCount,
+          },
         ].map((item, index) => (
           <Grid2 container key={index} spacing={2} sx={{ marginBottom: 1 }}>
             <Grid2 size={{ xs: 9 }}>
@@ -85,7 +93,11 @@ const UploadLeadsDialog: React.FC<UploadCsvDialogProps> = ({
         >
           <Button
             variant="contained"
-            sx={{ backgroundColor: "#6e58f1", color: "white", marginTop: "20px" }}
+            sx={{
+              backgroundColor: "var(--theme-color)",
+              color: "white",
+              marginTop: "20px",
+            }}
             onClick={onClose}
           >
             Okay
@@ -94,6 +106,6 @@ const UploadLeadsDialog: React.FC<UploadCsvDialogProps> = ({
       </DialogContent>
     </Dialog>
   );
-}
+};
 
 export default UploadLeadsDialog;

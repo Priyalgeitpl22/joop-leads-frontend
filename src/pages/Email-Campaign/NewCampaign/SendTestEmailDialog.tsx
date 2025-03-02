@@ -56,7 +56,7 @@ return (
         variant="contained"
         fullWidth
         sx={{
-          backgroundColor: "#6e58f1",
+          backgroundColor: "var(--theme-color)",
           color: "white",
           textTransform: "none",
           padding: "8px 24px",
@@ -65,7 +65,7 @@ return (
         }}
         onClick={onClose}
       >
-        Save Manul Distribution
+        Sent Test Email
       </Button>
     </DialogFooter>
   </DialogBox>

@@ -20,7 +20,7 @@ import { AppDispatch, RootState } from "../../../redux/store/store";
 import { Agent, fetchAgents } from "../../../redux/slice/agentsSlice";
 import Loader from "../../../components/Loader";
 import toast, {Toaster} from "react-hot-toast";
-import { Button } from "../../../styles/layout.styled";
+import { Button } from "../../../styles/global.styled";
 
 const Agents: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -113,7 +113,7 @@ const Agents: React.FC = () => {
                 <StyledTableHeadCell>Actions</StyledTableHeadCell>
               </TableRow>
             </StyledTableHead>
-            <TableBody style={{ background: '#ffff'}}>
+            <TableBody style={{ background: 'var(--background-light)f'}}>
               {agents.length > 0 ? (
                 agents.map((agent, index) => (
                   <TableRow key={agent.id}>

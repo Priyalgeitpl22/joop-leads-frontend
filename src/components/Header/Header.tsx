@@ -34,21 +34,6 @@ const Header = ({ toggleSidebar }: HeaderProps) => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
-  const handleStatusChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const online = event.target.checked;
-      setIsOnline(online);
-      if (socket && user?.id) {
-        socket.emit("agentOnline", {
-          id: user.id,
-          online: online,
-          name: user.fullName,
-        });
-      }
-    },
-    [socket, user?.id, isOnline]
-  );
-
   useEffect(() => {
     const token = Cookies.get("access_token");
     if (!user && token) {
@@ -90,62 +75,30 @@ const Header = ({ toggleSidebar }: HeaderProps) => {
 
   return (
     <HeaderContainer>
-      <button
+      {/* <button
         onClick={toggleSidebar}
         style={{ background: "transparent", border: "none" }}
       >
         <Menu size={24} />
-      </button>
+      </button> */}
       <LogoContainer>
         <CampaignIcon
           style={{
             width: "50px",
             height: "50px",
+            color: "var(--theme-color-light)"
           }}
         />
         <TitleContainer>
-          <AppTitle>Joop Leads</AppTitle>
-          <AppSubtitle>Automate, Assist, Accelerate</AppSubtitle>
+          <AppTitle>Jooper.ai</AppTitle>
         </TitleContainer>
       </LogoContainer>
       <SearchBar>
-        <Search size={20} color="#64748b" />
+        <Search size={20} />
         <input placeholder="Search conversations..." />
       </SearchBar>
 
       <HeaderOptions>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            flexDirection: "column",
-            padding: "0px 8px",
-          }}
-        >
-          <Switch
-            size="small"
-            checked={isOnline}
-            onChange={handleStatusChange}
-            inputProps={{ "aria-label": "controlled" }}
-          />
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              gap: "2px",
-            }}
-          >
-            <Typography
-              variant="subtitle2"
-              sx={{ fontSize: 10, color: "#696969" }}
-            >
-              {isOnline ? "Online" : "Offline"}
-            </Typography>
-            <StatusIndicator online={isOnline} />
-          </div>
-        </div>
-        <NotificationComponent />
         {user && (
           <div
             style={{

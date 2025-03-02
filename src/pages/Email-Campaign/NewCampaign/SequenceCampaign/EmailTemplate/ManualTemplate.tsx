@@ -4,12 +4,12 @@ import { useEffect, useState } from "react";
 import {
   DescriptionContainer,
   ManualTemplateContainer,
-  TitleBody,
   TitleContainer,
 } from "./emailTemplate.styled";
 import ReactQuill from "react-quill";
 import { Sequence } from "../Sequences/interfaces";
 import "./ManualEditor.css";
+import { TitleBody } from "../../../../../styles/global.styled";
 
 const modules = {
   toolbar: [

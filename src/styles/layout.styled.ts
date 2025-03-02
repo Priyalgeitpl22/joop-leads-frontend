@@ -10,34 +10,36 @@ interface ButtonProps {
 }
 
 export const SidebarContainer = styled(motion.aside)`
-  background-color: #ffffff;
+  background-color: var(--background-color);
   border-right: 1px solid #e2e8f0;
-  min-width: 240px;
-  overflow-y: auto; /* Ensures content can still scroll */
+  overflow-y: auto;
+  height: 100%;
+  gap: 10px;
+  width: 350px;
+  padding: 16px 0px;
+  display: flex;
+  flex-direction: column;
 
-  /* Hide scrollbar for Chrome, Safari, and Edge */
   &::-webkit-scrollbar {
     display: none;
   }
 
-  /* Hide scrollbar for Firefox */
   scrollbar-width: none;
-  -ms-overflow-style: none; /* Hide scrollbar in IE and Edge */
+  -ms-overflow-style: none;
 `;
 
 export const HeaderContainer = styled.header`
-  height: 64px;
-  gap: 8px;
+  height: 100px;
+  gap: 20px;
   display: flex;
   align-items: center;
-  padding: 10px;
-  background: #6e58f1;
+  background: var(--theme-color);
 `;
 
 export const Logo = styled.div`
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--background-light);
   margin-bottom: 2rem;
   display: flex;
   align-items: center;
@@ -45,26 +47,23 @@ export const Logo = styled.div`
 `;
 
 export const NavItem = styled(Link)`
-  width: "20%";
   display: flex;
   align-items: center;
   gap: 0.75rem;
   padding: 20px 12px;
-  color: #64748b;
+  color: var(--theme-color);
   text-decoration: none;
-  transition: all 0.2s;
   cursor: pointer;
-  background-color: transparent;
 
   &:hover {
     background-color: var(--theme-color);
-    color: #1e293b;
+    color: var(--background-light);
     border:none;
   }
 
   &.active {
     background-color: var(--theme-color) ;
-    color: #1e293b;
+    color: var(--background-light);
   }
 `;
 
@@ -73,6 +72,7 @@ export const SettingsWrapper = styled.div`
   bottom: 20px;
   width: auto;  
 `;
+
 export const SubmenuWrapper = styled(motion.div)`
   position: absolute;
   bottom: 75px; 
@@ -82,8 +82,7 @@ export const SubmenuWrapper = styled(motion.div)`
   border-radius: 0.5rem;
   padding: 0.5rem;
   z-index: 10;
-  background-color: transparent;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-dark);
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 `;
 
@@ -91,7 +90,7 @@ export const SubNavItem = styled(NavLink)`
   display: flex;
   align-items: center;
   padding: 10px 16px;
-  color: #1e293b;
+  color: var(--background-light);
   text-decoration: none;
   font-size: 14px;
   border-radius: 5px;
@@ -107,16 +106,15 @@ export const SubNavItem = styled(NavLink)`
 
   &.active {
     background: var(--theme-color);
-    color: #1e293b;
+    color: var(--background-light);
   }
 `;
 
 export const DashboardContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: 96vh;
-  width: 100%
-  ;
+  height: 100%;
+  width: 100%;
   background: var(theme-color-light);
 `;
 
@@ -130,33 +128,16 @@ export const MainContainer = styled.div`
 export const Sidebar = styled.div`
   width: 250px;
   height: 100%;
-  background-color: #fff;
+  background-color: var(--background-light);
   border-right: 1px solid #ddd;
 `;
 
 export const ContentArea = styled.div`
-  height: 88%;
-  flex-grow: 1;
   background-color: var(--theme-color-light);
   display: flex;
-`;
-
-export const Button = styled.button`
-font-weight: semibold;
-width:100px;
-padding: 8px 12px;
-border: none;
-border-radius: 6px;
-color: #1e293b;
-background-color:var(--theme-color);
-cursor: pointer;
-font-size: 16px;  
-font-weight: 600;
-
-:hover {
-  background-color: var(--theme-color);
-  opacity: 0.8;
-}
+  flex-direction: row;
+  height: 100vh;
+  overflow: hidden;
 `;
 
 export const Button2 = styled("button", {
@@ -184,7 +165,6 @@ export const TextField = styled(MuiTextField)`
   }
 
   &:hover {
-    // border: none;
     marginTop: 2px;
   }
 `;

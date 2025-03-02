@@ -16,7 +16,7 @@ export const ContentContainer = styled(Box)`
 export const HeaderOptions = styled(Box)`
   height: 40px;
   display: flex;
-  background-color: #f1f5f9;
+  background-color: var(--background-color)
   padding: 5px;
   border-radius: 8px;
 `
