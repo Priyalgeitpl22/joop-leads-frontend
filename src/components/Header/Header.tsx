@@ -1,7 +1,6 @@
 import { Search } from "lucide-react";
 import { HeaderContainer } from "../../styles/layout.styled";
 import {
-  AppSubtitle,
   AppTitle,
   LogoContainer,
   SearchBar,
@@ -11,14 +10,11 @@ import UserProfileMenu from "../User-Profile/UserProfile";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../redux/store/store";
-import { useState, useCallback, useEffect } from "react";
-import { StatusIndicator } from "../Chats/ChatSideBar/chatSidebar.styled";
-import { Switch, Typography } from "@mui/material";
+import { useState, useEffect } from "react";
 import { useSocket } from "../../context/SocketContext";
 import Cookies from "js-cookie";
 import { getUserDetails } from "../../redux/slice/userSlice";
 import { useNavigate } from "react-router-dom";
-import NotificationComponent from "../Notification/NotificationComponent";
 import { HeaderOptions } from "../../pages/Home/home.styled";
 import { Menu } from "lucide-react";
 interface HeaderProps {

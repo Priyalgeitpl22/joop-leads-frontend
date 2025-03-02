@@ -15,39 +15,72 @@ import theme from "./styles/theme";
 import { CustomAppTitle } from "./assets/Custom/customAppTitle";
 import { CustomSearchBar } from "./assets/Custom/customSearchBar";
 import { SidebarFooter } from "./assets/Custom/customSidebarFooter";
-import { ThemeProvider } from "@emotion/react";
+import Cookies from "js-cookie";
+import { useDispatch, useSelector } from "react-redux";
+import { getUserDetails } from "./redux/slice/userSlice";
+import { AppDispatch, RootState } from "./redux/store/store";
+import { useNavigate } from "react-router-dom";
+import Login from "./pages/Login/Login";
+import Register from "./pages/Register/Register";
+import ForgotPassword from "./pages/Forgot-Password/ForgotPassword";
+import ActivateAccount from "./components/ActivateAccount/ActivateAccount";
+import ChangePassword from "./components/Change-Password/ChangePassword";
+import PasswordResetConfirmation from "./pages/Forgot-Password/PasswordResetConfirmation";
+import ResetPassword from "./pages/Forgot-Password/ResetPassword";
+import VerifyOtp from "./pages/Verify-OTP/VerifyOtp";
+
+const UNPROTECTED_ROUTES = [
+  "/login",
+  "/signup",
+  "/forgot-password",
+  "/reset-password",
+  "/verify-otp",
+  "/confirmation",
+  "/change-password",
+  "/activate-account",
+];
 
 function useDemoRouter(initialPath: string): Router {
   const [pathname, setPathname] = React.useState(
     window.location.pathname || initialPath
   );
+  const navigate = useNavigate();
 
   const router = React.useMemo(() => {
     return {
       pathname,
       searchParams: new URLSearchParams(window.location.search),
       navigate: (path: any) => {
-        window.history.pushState({}, "", path);
-        setPathname(path);
+        navigate(path); // Correctly navigate using React Router
+        setPathname(path); // Update state
       },
     };
-  }, [pathname]);
+  }, [navigate]);
 
-  React.useEffect(() => {
-    const handlePopState = () => {
-      setPathname(window.location.pathname);
-    };
-    window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
-  }, []);
-
-  return router as Router;
+  return router;
 }
 
 export default function DashboardLayoutBasic() {
   const router = useDemoRouter("/");
-  const isNewCampaignPage =
-    location.pathname === "/email-campaign/new-campaign";
+  const isNewCampaignPage = router.pathname === "/email-campaign/new-campaign";
+
+  // Handle unprotected routes separately
+  if (UNPROTECTED_ROUTES.includes(router.pathname)) {
+    return (
+      <AppProvider router={router} theme={theme}>
+        <PageContainer>
+          {router.pathname === "/login" && <Login />}
+          {router.pathname === "/signup" && <Register />}
+          {router.pathname === "/forgot-password" && <ForgotPassword />}
+          {router.pathname === "/reset-password" && <ResetPassword />}
+          {router.pathname === "/verify-otp" && <VerifyOtp />}
+          {router.pathname === "/confirmation" && <PasswordResetConfirmation />}
+          {router.pathname === "/change-password" && <ChangePassword />}
+          {router.pathname === "/activate-account" && <ActivateAccount />}
+        </PageContainer>
+      </AppProvider>
+    );
+  }
 
   return (
     <AppProvider navigation={NAVIGATION} router={router} theme={theme}>

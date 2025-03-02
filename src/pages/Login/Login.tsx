@@ -47,7 +47,8 @@ function Login() {
           }
 
           toast.success("Logged in successfully!");
-          navigate('/');
+          window.location.href = '/email-campaign';
+          navigate('/email-campaign');
         } catch (err) {
           console.error('Login failed:', err);
           toast.error("Login failed. Please try again.");
@@ -115,7 +116,7 @@ function Login() {
           </StyledButton>
           <Typography variant="body2" color="black" align="center" sx={{ my: 2 }}>
             Don't have an account?{' '}
-            <RouterLink to="/register" style={{ textDecoration: 'none', color: 'var(--theme-color-dark)' }}>
+            <RouterLink to="/signup" style={{ textDecoration: 'none', color: 'var(--theme-color-dark)' }}>
               Register
             </RouterLink>
           </Typography>
