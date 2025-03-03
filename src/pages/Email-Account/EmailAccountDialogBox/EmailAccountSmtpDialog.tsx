@@ -171,7 +171,11 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="md"
+    >
       <IconButton
         onClick={onClose}
         sx={{ position: "absolute", right: 16, top: 12 }}
@@ -198,7 +202,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
         <Typography fontWeight="bold" mt={2} mb={2}>
           SMTP Settings (sending emails)
         </Typography>
-        <Grid2 container spacing={2}>
+        <Grid2 container spacing={2} sx={{justifyContent: "flex-end"}}>
           <Grid2 size={{ xs: 6, sm: 6 }}>
             <InputLabel>From Name</InputLabel>
             <TextField
@@ -390,8 +394,8 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
               </Typography>
             </Grid2>
           )}
-          <Typography fontWeight="bold">Signature</Typography>
           <Grid2 size={{ xs: 12, sm: 12 }}>
+            <Typography fontWeight="bold">Signature</Typography>
             <Typography>
               Enter your email signature below (manually or by copy-pasting it
               from your email client).

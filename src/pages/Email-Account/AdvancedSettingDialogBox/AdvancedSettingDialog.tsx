@@ -24,7 +24,7 @@ const AdvancedSettingDialog: React.FC<AdvancedSettingDialogProps> = ({
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <IconButton
         onClick={onClose}
-        sx={{ position: "absolute", right: 16, top: 10 }}
+        sx={{ position: "absolute", right: 8, top: 2 }}
       >
         <CloseIcon />
       </IconButton>

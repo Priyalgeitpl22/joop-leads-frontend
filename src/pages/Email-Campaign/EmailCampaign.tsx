@@ -221,7 +221,7 @@ const EmailCampaign: React.FC<EmailCampaignProps> = ({ router }) => {
           (label) => (
             <FormControl fullWidth sx={{ mt: 2 }}>
               <InputLabel shrink={false}>{label}</InputLabel>
-              <Select>
+              <Select sx={{background: "white!important"}}>
                 <MenuItem value="">Select {label}</MenuItem>
               </Select>
             </FormControl>

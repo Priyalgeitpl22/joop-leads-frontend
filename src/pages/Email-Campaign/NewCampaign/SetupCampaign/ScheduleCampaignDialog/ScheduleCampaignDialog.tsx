@@ -135,14 +135,14 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
     <Dialog
       open={open}
       onClose={onClose}
-      maxWidth="lg"
+      maxWidth="md"
       sx={{ overflowX: "hidden" }}
     >
       <CustomDialogHeader>
         <Typography variant="h5">Schedule Settings</Typography>
         <IconButton
           onClick={onClose}
-          sx={{ position: "absolute", right: 16, top: 10 }}
+          sx={{ position: "absolute", right: 8, top: 2 }}
         >
           <CloseIcon />
         </IconButton>
@@ -157,7 +157,7 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
         >
           <FormControl fullWidth>
             <MultiSelectDropdown
-              width="710px"
+              width="100%"
               label="Select Time Zone"
               options={timeZones}
               selectedValues={selectedTimeZones}
@@ -211,22 +211,32 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
               </Grid>
             </Grid>
           </LocalizationProvider>
-
-          <Typography>Set Campaign Start Date</Typography>
-
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <Grid container spacing={2}>
-              <Grid size="grow">
+            <Grid container sx={{ width: "100%" }} spacing={2}>
+              <Grid
+                sx={{
+                  width: "48%",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                }}
+              >
+                <Typography>Set Campaign Start Date</Typography>
                 <DesktopDatePicker
-                  label="Start Date"
                   value={formData.startDate}
                   onChange={(value) => handleChange("startDate", value)}
                 />
               </Grid>
-
-              <Grid size="grow">
+              <Grid
+                sx={{
+                  width: "49%",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                }}
+              >
+                <Typography>Max Number Of New Leads Per Day</Typography>
                 <TextField
-                  label="Max Leads Per Day"
                   type="number"
                   value={formData.maxLeads}
                   onChange={(e) =>

@@ -156,7 +156,7 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
             variant="h6"
             sx={{ fontWeight: 600, fontSize: "18px" }}
             mt={1}
-            ml={1}
+            // ml={1}
           >
             Email Accounts
           </Typography>

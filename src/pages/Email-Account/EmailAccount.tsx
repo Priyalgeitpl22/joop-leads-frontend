@@ -16,6 +16,7 @@ import {
   EmailAccountTable,
   FilterIcon,
   StyledWarmup,
+  SectionTitle,
 } from "./EmailAccount.styled";
 import EmailAccountDialog from "./EmailAccountDialogBox/EmailAccountDialog";
 import AdvancedSettingDialog from "./AdvancedSettingDialogBox/AdvancedSettingDialog";
@@ -175,8 +176,16 @@ const EmailAccounts: React.FC = () => {
   return (
     <EmailAccountsContainer>
       <EmailAccountHeader>
-        {/* <SectionTitle>Email Account</SectionTitle> */}
-        <Box sx={{ display: "flex", gap: "20px", width: "100%" }}>
+        <SectionTitle>Email Account</SectionTitle>
+        <Box
+          sx={{
+            display: "flex",
+            gap: "15px",
+            alignItems: "center",
+            marginLeft: "auto",
+            marginBottom: "10px",
+          }}
+        >
           <FilterIcon onClick={handleMenuOpen}>
             <FilterAltOutlinedIcon />
           </FilterIcon>
@@ -240,7 +249,7 @@ const EmailAccounts: React.FC = () => {
         {["Warmup Status", "Tag Name", "Client Name"].map((label) => (
           <FormControl fullWidth sx={{ mt: 2 }}>
             <InputLabel shrink={false}>{label}</InputLabel>
-            <Select>
+            <Select sx={{ background: "white!important" }}>
               <MenuItem value="">Select {label}</MenuItem>
             </Select>
           </FormControl>

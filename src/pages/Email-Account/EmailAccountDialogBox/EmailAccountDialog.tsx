@@ -40,7 +40,7 @@ const EmailCampaignDialog: React.FC<EmailCampaignDialogProps> = ({
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <IconButton
         onClick={onClose}
-        sx={{ position: "absolute", right: 16, top: 10 }}
+        sx={{ position: "absolute", right: 8, top: 2 }}
       >
         <CloseIcon />
       </IconButton>

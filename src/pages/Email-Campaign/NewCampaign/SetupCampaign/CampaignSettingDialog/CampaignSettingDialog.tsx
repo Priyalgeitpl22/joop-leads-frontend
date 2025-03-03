@@ -42,7 +42,7 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
         <CustomDialogHeader>
           <IconButton
             onClick={onClose}
-            sx={{ position: "absolute", right: 16, top: 10 }}
+            sx={{ position: "absolute", right: 8, top: 2 }}
           >
             <CloseIcon />
           </IconButton>
@@ -54,8 +54,7 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
             <GeneralCampaignSetting campaignId={campaignId} onClose={onClose} />
           )}
         </ContentContainer>
-        <CustomDialogFooter>
-          {" "}
+        <CustomDialogFooter justifyContent="flex-end">
           <Button>Save General Settings</Button>
         </CustomDialogFooter>
       </Dialog>

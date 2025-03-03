@@ -170,7 +170,7 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
               sx={{
                 maxHeight: "40px",
                 minWidth: "60%",
-                background: "white",
+                background: "white!important",
                 borderRadius: "6px",
                 fontSize: "13px",
               }}
