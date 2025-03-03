@@ -63,10 +63,6 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
   ];
 
   useEffect(() => {
-    if (!user) return;
-
-    // setLoading(true);
-
     dispatch(fetchEmailAccount())
       .unwrap()
       .then((data) => {

@@ -56,8 +56,8 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
         MenuProps={{
           PaperProps: {
             style: {
-              maxHeight: 300,
-              width: 640,
+              maxHeight: 530,
+              width: 400,
             },
           },
         }}

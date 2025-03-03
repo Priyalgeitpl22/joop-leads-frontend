@@ -77,7 +77,11 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
       }}
     >
       <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 3 }}>
-        <Typography variant="h6" fontWeight="bold" sx={{ color: "var(--theme-color)" }}>
+        <Typography
+          variant="h6"
+          fontWeight="bold"
+          sx={{ color: "var(--theme-color)" }}
+        >
           1
         </Typography>
         <Typography fontWeight="bold">CSV File</Typography>
@@ -108,7 +112,7 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
             <RefreshIcon sx={{ color: "var(--theme-color)" }} />
           </IconButton>
           <IconButton onClick={handleDeleteFile}>
-            <DeleteIcon sx={{ color: "var(--background-light)" }} />
+            <DeleteIcon sx={{ color: "var(--theme-color)" }} />
           </IconButton>
         </Box>
       </Box>
@@ -119,7 +123,11 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
         style={{ display: "none" }}
       />
       <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 4, mb: 2 }}>
-        <Typography variant="h6" fontWeight="bold" sx={{ color: "var(--theme-color)" }}>
+        <Typography
+          variant="h6"
+          fontWeight="bold"
+          sx={{ color: "var(--theme-color)" }}
+        >
           2
         </Typography>
         <Typography fontWeight="bold">Map Fields</Typography>
@@ -127,12 +135,28 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
       <Typography fontSize={14} color="gray" mb={2}>
         Map CSV columns to the variables you want to add to the campaign.
       </Typography>
-      <Box sx={{ background: "var(--background-light)", padding: "16px", borderRadius: "8px" }}>
+      <Box
+        sx={{
+          background: "var(--background-light)",
+          padding: "16px",
+          borderRadius: "8px",
+        }}
+      >
         <InsertDriveFileIcon
-          sx={{ fontSize: 30, color: "var(--theme-color)", marginLeft: "5%", mb: 3 }}
+          sx={{
+            fontSize: 30,
+            color: "var(--theme-color)",
+            marginLeft: "5%",
+            mb: 3,
+          }}
         />
         <CampaignIcon
-          sx={{ marginLeft: "50%", fontSize: 33, color: "var(--theme-color)", mb: 3 }}
+          sx={{
+            marginLeft: "50%",
+            fontSize: 33,
+            color: "var(--theme-color)",
+            mb: 3,
+          }}
         />
         {columns.map((field, index) => (
           <Box
