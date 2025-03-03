@@ -6,7 +6,6 @@ import ScheduleCampaignDialog from "./ScheduleCampaignDialog/ScheduleCampaignDia
 import CampaignSettingDialog from "./CampaignSettingDialog/CampaignSettingDialog";
 import { SetupButton } from "../NewCampaign.styled";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
-import { CustomDialog } from "../../../../assets/Custom/customDialog";
 
 interface SetupCampaignProps {
   campaignId?: string;

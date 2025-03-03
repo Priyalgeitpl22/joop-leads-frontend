@@ -46,13 +46,14 @@ body {
   --error-color: #dc3545;
   --warning-color: #ffc107;
   --success-color: #4CAF50;
-  --info-color: #6e6e6e;
+  --info-color: #a1a1a1;
   --text-disabled: #adb5bd;
   --title-color: #7057c1;
   /* 🖍️ Borders & Shadows */
   --border-color: #4D3687; /* Border Default */
   --border-dark: #291D48; /* Darker Border */
   --border-light: "1px solid #6e58f1";
+  --border-grey: #e8e8e8;
   
   --shadow-color: rgba(64, 45, 112, 0.2); /* Default Shadow */
   --shadow-dark: rgba(19, 8, 48, 0.3); /* Darker Shadow */

@@ -77,10 +77,8 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
   };
 
   const handleImportLeads = async () => {
-    goToNextStep();
-
+    setIsLoading(true);
     setUploadCsv(true);
-    // setIsLoading(true);
     const payload = {
       CSVsettings,
       csvFile: selectedFile,
@@ -111,7 +109,6 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
       setIsLoading(false);
       if(response.payload.code==200){
         setCampaignId(response.payload.data.campaign_id)
-        goToNextStep();
       }
     }
   };
@@ -125,19 +122,19 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
   const handleNext = async () => {
     switch (activeStep) {
       case 0:
-        // goToNextStep();
         await handleImportLeads();
+        goToNextStep();
         break;
       case 1:
-        // goToNextStep();
-        handleSequences();
+        goToNextStep();
+        // handleSequences();
         break;
       case 2:
         goToNextStep();
         // handleSetup();
         break;
       case 3:
-        // goToNextStep();
+        goToNextStep();
         // handleFinalReview();
         break;
       default:
@@ -219,7 +216,7 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
           />
         </Box>
       </HeaderContainer>
-      {isLoading && <ProgressBar />}
+      {/* {isLoading && <ProgressBar />} */}
       <MainContainer>
         {activeStep === 0 && (
           <ImportLeadsCampaign

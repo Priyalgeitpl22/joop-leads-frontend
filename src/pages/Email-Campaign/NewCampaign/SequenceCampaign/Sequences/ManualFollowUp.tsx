@@ -70,10 +70,12 @@ const ManualFollowUp: React.FC<ManualFollowUpProps> = ({
               // value={waitDays}
               onChange={handleWaitDaysChange}
               style={{
-                width: "40px",
                 textAlign: "center",
-                border: "1px solid var(--border-dark)",
-                borderBottom: "1px solid black",
+                border: "1px solid var(--icon-color)",
+                borderRadius: '4px',
+                padding: '0 12px',
+                height: '24px',
+                width: '47px',
               }}
             />{" "}
             day{waitDays > 1 ? "s" : ""} then

@@ -162,15 +162,15 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
         )}
       </SequenceSidebarContainer>
 
-      <Box flex={1} padding="40px">
+      <Box flex={1} padding="12px 16px">
         <TemplateHeader>
-          <Typography fontSize={18}>
+          <Typography fontSize={18} fontWeight={500}>
             Stage {selectedSequence?.seq_number}:{" "}
             {selectedSequence?.seq_type === SequenceType.MANUAL
               ? "Manual Sequence"
               : "Email"}
           </Typography>
-          <Typography fontSize={14}>Manual</Typography>
+          {/* <Typography fontSize={14}>Manual</Typography> */}
         </TemplateHeader>
 
         {sequences.length > 0 &&

@@ -23,6 +23,7 @@ export const BorderConatiner = styled(Box)({
   flexDirection: "column",
   alignItems: "center",
   gap: 5,
+  width: "30px"
 });
 
 export const LeftDashedBorder = styled.div({
