@@ -8,6 +8,7 @@ export const ManualTemplateContainer = styled(Box)(`
     border: 1px solid #e1e2ef;
     box-shadow: 0 2px 10px #1414140d;
     width: 100%;
+    max-height: 420px;
 `);
 
 export const DescriptionContainer = styled(Box)(`
@@ -17,7 +18,7 @@ export const DescriptionContainer = styled(Box)(`
 `);
 
 export const TitleContainer = styled(Box)(`
-    margin-bottom: 40px;
+    margin-bottom: 16px;
     width: 100%;
 `);
 

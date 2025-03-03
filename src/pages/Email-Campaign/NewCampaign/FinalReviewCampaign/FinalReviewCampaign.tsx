@@ -48,7 +48,7 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
   };
 
   useEffect(() => {
-    const campaignId = "2cad1944-2856-4a54-b1b0-a7c37e1ba99b";
+    const campaignId = "46ba5a17-bacf-4805-9ef2-83ce325d844f";
 
     if (campaignId) {
       Promise.all([
@@ -81,12 +81,10 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
       <SidebarContainer
         style={{
           padding: "16px",
-          borderRight: "1px solid #ddd",
-          paddingLeft: "2%",
-          paddingTop: "2%",
+          border: "1px solid var(--border-grey)",
           overflowY: "auto",
           height: "100%",
-          backgroundColor: "#f8f9fc",
+          backgroundColor: "white",
         }}
       >
         <Typography variant="h5" mb={2}>
@@ -96,12 +94,11 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
           display="flex"
           alignItems="center"
           sx={{
-            backgroundColor: "var(--background-light)",
+            backgroundColor: "white",
             borderRadius: "8px",
             padding: "8px",
-            border: "border: 1px solid var(--border-dark)",
+            border: "1px solid var(--border-grey)",
             boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
-            width: "85%",
           }}
         >
           <Search size={20} />
@@ -128,14 +125,14 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
                 cursor: "pointer",
                 position: "relative",
                 borderRadius: "5px",
-                "&:hover": { backgroundColor: "#f3f3f3" },
+                "&:hover": { backgroundColor: "var(--background-light)" },
                 backgroundColor:
                   selectedContact?.email === contact.email
-                    ? "#e8e4fc"
-                    : "transparent",
+                    ? "var(--background-light)"
+                    : "white",
                 border:
                   selectedContact?.email == contact.email
-                    ? "1px solid grey"
+                    ? "var(--background-light)"
                     : "",
               }}
               onClick={() => setSelectedContact(contact)}
@@ -180,7 +177,7 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
             </Tabs>
           </TabsHeader>
 
-          <Typography
+          {/* <Typography
             sx={{
               fontWeight: "bold",
               fontSize: 14,
@@ -193,22 +190,19 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
           >
             This sequence has been sent. Select "scheduled" leads to see any
             copy changes.
-          </Typography>
+          </Typography> */}
 
           {selectedVariant && (
-            <Box sx={{ paddingLeft: "8px" }}>
-              <Typography mt={2} fontSize={14} color="gray">
+            <Box sx={{ padding: "8px", width: "100%", height: "92%", border: "1px solid var(--border-grey)" }}>
+              <Typography sx={{ margin: "12px 5px 0px 16px"}} fontSize={14} color="gray">
                 <strong>Email: </strong> {selectedContact?.email}
               </Typography>
-              <Typography variant="body2" fontSize={14} color="gray" mt={1}>
+              <Typography sx={{ margin: "12px 5px 0px 16px"}} variant="body2" fontSize={14} color="gray">
                 <strong>Subject: </strong>
                 {selectedTemplate?.subject}
               </Typography>
 
-              <Box mt={2} padding={2}>
-                <Typography fontSize={14}>
-                  Hi {selectedContact?.first_name} {selectedContact?.last_name},
-                </Typography>
+              <Box mt={2}>
                 {/* <Typography fontSize={14} mt={2}>
                   {selectedTemplate?.emailBody}
                 </Typography> */}

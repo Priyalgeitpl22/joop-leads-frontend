@@ -1,7 +1,7 @@
 export interface CampaignSettingsPayload {
   campaign_id: string;
   auto_warm_up: boolean;
-  sender_accounts: EmailAccounts[];
+  sender_accounts: EmailAccounts;
   schedule_settings: {
     time_zone: string;
     send_these_days: number[];
@@ -59,6 +59,8 @@ export interface CampaignSettings {
   };
 }
 
-export interface EmailAccounts {
-  account_id: string
+export interface EmailAccount {
+  account_id: string;
 }
+
+export type EmailAccounts = EmailAccount[];

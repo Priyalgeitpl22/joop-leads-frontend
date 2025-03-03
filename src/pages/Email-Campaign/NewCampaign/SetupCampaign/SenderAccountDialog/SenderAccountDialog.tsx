@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from "react";
-import Loader from "../../../../../components/Loader";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Dialog,
   Typography,
   Box,
   IconButton,
-  DialogTitle,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,7 +15,6 @@ import {
   fetchEmailAccount,
 } from "../../../../../redux/slice/emailAccountSlice";
 import { addEmailCampaignSettings } from "../../../../../redux/slice/emailCampaignSlice";
-import { EmailAccounts } from "../Interface";
 import {
   Button,
   CustomDialogContainer,
@@ -27,6 +24,8 @@ import {
 import { CustomDataTable } from "../../../../../assets/Custom/customDataGrid";
 import { GridColDef } from "@mui/x-data-grid";
 import { formatDate } from "../../../../../utils/utils";
+import { StyledWarmup } from "./SenderAccountDialog.styled";
+import { EmailAccounts } from "../Interface";
 
 interface SenderAccountDialogProps {
   open: boolean;
@@ -43,24 +42,73 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
   const [loading, setLoading] = useState(true);
   const { user } = useSelector((state: RootState) => state.user);
   const [selectedEmailAccounts, setSelectedEmailAccounts] = useState<
-    EmailAccounts[]
+    EmailAccount[]
   >([]);
 
   const [rows, setRows] = useState<any[]>([]);
+  const [selectedAccounts, setSelectedAccounts] = React.useState<EmailAccounts>([]);
 
-  const columns: GridColDef[] = [
-    { field: "_id", headerName: "ID", width: 250 },
-    { field: "name", headerName: "Name", width: 150 },
-    { field: "email", headerName: "Email", width: 250 },
-    { field: "account", headerName: "Account", width: 120 },
-    { field: "state", headerName: "State", width: 100 },
-    {
-      field: "createdAt",
-      headerName: "Created At",
-      width: 180,
-      valueGetter: (params: any) => (params ? formatDate(params) : null),
-    },
-  ];
+  const columns: GridColDef[] = useMemo(
+    () => [
+      { field: "name", headerName: "Name", width: 150 },
+      { field: "email", headerName: "Email", width: 250 },
+      {
+        field: "type",
+        headerName: "Type",
+        width: 120,
+        renderCell: (params: any) => {
+          if (params.value === "gmail") {
+            return (
+              <img
+                src="https://img.icons8.com/color/48/000000/gmail-new.png"
+                alt="Gmail Icon"
+                width="24"
+                height="24"
+              />
+            );
+          } else if (params.value === "outlook") {
+            return (
+              <img
+                src="https://img.icons8.com/color/48/000000/microsoft-outlook-2019.png"
+                alt="Outlook Icon"
+                width="24"
+                height="24"
+              />
+            );
+          } else if (params.value === "imap") {
+            return <CustomIcon />;
+          } else {
+            return null;
+          }
+        },
+      },
+      {
+        field: "warm_up",
+        headerName: "Warmup Enabled",
+        width: 120,
+        renderCell: (params: any) => <StyledWarmup>Yes</StyledWarmup>,
+      },
+      {
+        field: "daily_limit",
+        headerName: "Daily Limit",
+        width: 120,
+        valueGetter: () => "0 / 100",
+      },
+      {
+        field: "reputation",
+        headerName: "Reputation",
+        width: 120,
+        renderCell: () => <StyledWarmup>100%</StyledWarmup>,
+      },
+      {
+        field: "createdAt",
+        headerName: "Created At",
+        width: 180,
+        valueGetter: (params: any) => (params ? formatDate(params) : null),
+      },
+    ],
+    []
+  );
 
   useEffect(() => {
     dispatch(fetchEmailAccount())
@@ -72,6 +120,16 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
       .finally(() => setLoading(false));
   }, [dispatch, user]);
 
+  const handleSelectedAccounts = (newSelection: any[]) => {
+    setSelectedEmailAccounts(newSelection);
+  
+    const formattedSelection: EmailAccounts = newSelection.map((id) => ({
+      account_id: id,
+    }));
+  
+    setSelectedAccounts(formattedSelection);
+  };
+  
   const handleSave = () => {
     if (!campaignId) {
       return;
@@ -83,7 +141,7 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
     }
     dispatch(
       addEmailCampaignSettings({
-        sender_accounts: selectedEmailAccounts,
+        sender_accounts: selectedAccounts,
         campaign_id: campaignId,
         auto_warm_up: false,
         schedule_settings: {
@@ -118,10 +176,6 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
         onClose();
       })
       .catch(() => alert("Failed to save campaign settings."));
-  };
-
-  const handleRowSelect = (selectedRow: any) => {
-    console.log("Selected Row:", selectedRow);
   };
 
   // if (loading) return <Loader />;
@@ -171,6 +225,7 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
           columns={columns}
           rows={rows}
           pageSizeOptions={[5, 10]}
+          handleRowSelection={handleSelectedAccounts}
         />
       </CustomDialogContainer>
 

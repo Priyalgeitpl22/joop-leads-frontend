@@ -8,7 +8,7 @@ export const DialogBox = styled(Dialog)(`
 export const TemplateHeader = styled(Box)(`
     align-items: center;
     display: flex;
-    margin-bottom: 20px;
+    margin: 12px 0px;
     width: 100%;
     justify-content: space-between;
 `);

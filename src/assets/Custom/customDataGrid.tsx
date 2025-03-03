@@ -7,12 +7,14 @@ interface CustomDataTableProps {
   columns: GridColDef[];
   rows: any[];
   pageSizeOptions?: number[];
+  handleRowSelection?: (selection: any) => void;
 }
 
 export const CustomDataTable: React.FC<CustomDataTableProps> = ({
   columns,
   rows,
   pageSizeOptions = [5, 10],
+  handleRowSelection
 }) => {
   const [paginationModel, setPaginationModel] =
     React.useState<GridPaginationModel>({
@@ -29,6 +31,7 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
         paginationModel={paginationModel}
         onPaginationModelChange={setPaginationModel}
         checkboxSelection
+        onRowSelectionModelChange={handleRowSelection}
         getRowId={(row) => row._id}
         slots={{
           noRowsOverlay: () => (

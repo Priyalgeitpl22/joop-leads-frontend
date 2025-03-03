@@ -6,14 +6,14 @@ export const EmailPreviewContainer = styled(Box)(`
     align-items: center;
     width: 100%;
     height: 100%;
-    max-width: 750px;
+    max-width: 950px;
     background: white;
     border: 1px solid red;
     border: 1px solid #e1e2ef;
     border-radius: 4px;
     box-shadow: 0 2px 10px #1414140d;
     width: 100%;
-    margin: 24px;
+    padding: 24px;
 `);
 
 export const FinalReviewContainer = styled(Box)(`
@@ -22,6 +22,7 @@ export const FinalReviewContainer = styled(Box)(`
     align-items: center;
     width: 100%;
     height: 100%;
+    padding: 16px;
 `);
 
 export const TabsHeader = styled(Box)(`
