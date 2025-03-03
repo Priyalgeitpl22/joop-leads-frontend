@@ -32,13 +32,13 @@ const ResetPassword = () => {
       setToken(searchToken);
       setEmail(searchEmail);
     } else {
-      navigate("/login");
+      window.location.assign("/login");
     }
   }, [searchParams, navigate]);
 
   useEffect(() => {
     if (success) {
-      navigate("/login");
+      window.location.assign("/login");
     }
   }, [success, navigate]);
 
@@ -50,7 +50,7 @@ const ResetPassword = () => {
     try {
       await dispatch(resetPassword({ token, password, email })).unwrap();
       toast.success("Password reset successful!");
-      navigate("/login");
+      window.location.assign("/login");
     } catch (err) {
       console.error("Error resetting password:", err);
       toast.error("Error resetting password. Please try again.");

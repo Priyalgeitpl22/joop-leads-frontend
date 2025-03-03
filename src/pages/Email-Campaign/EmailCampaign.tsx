@@ -80,7 +80,7 @@ const EmailCampaign: React.FC<EmailCampaignProps> = ({ router }) => {
   };
 
   const handleCreateCampaign = () => {
-    router.navigate("/email-campaign/new-campaign");
+    window.location.assign("/email-campaign/new-campaign");
   };
 
   const handleCreateFolder = () => {

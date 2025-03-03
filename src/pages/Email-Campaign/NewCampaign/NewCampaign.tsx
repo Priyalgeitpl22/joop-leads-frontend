@@ -77,8 +77,10 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
   };
 
   const handleImportLeads = async () => {
+    goToNextStep();
+
     setUploadCsv(true);
-    setIsLoading(true);
+    // setIsLoading(true);
     const payload = {
       CSVsettings,
       csvFile: selectedFile,
@@ -150,7 +152,7 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
   };
 
   const GoBack = () => {
-    navigate("/email-campaign");
+    window.location.assign("/email-campaign");
   };
 
   const onClickEmailFollowUp = (sequence: Sequence) => {
@@ -219,7 +221,7 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
       </HeaderContainer>
       {isLoading && <ProgressBar />}
       <MainContainer>
-        {activeStep === 1 && (
+        {activeStep === 0 && (
           <ImportLeadsCampaign
             handleLeadsData={handleLeadsData}
             handleCSVUpload={handleFileChange}
@@ -238,7 +240,7 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
           />
         )}
         {activeStep === 2 && <SetupCampaign campaignId={campaignId} />}
-        {activeStep === 0 && <FinalReviewCampaign campaignId={campaignId} />}
+        {activeStep === 3 && <FinalReviewCampaign campaignId={campaignId} />}
       </MainContainer>
       <FooterContainer>
         {activeStep !== 0 && (

@@ -24,7 +24,7 @@ const PasswordResetConfirmation = () => {
             We've sent you a password reset link. Please check your inbox (or spam folder).
           </Typography>
 
-          <StyledButton variant="contained" onClick={() => navigate("/login")}>
+          <StyledButton variant="contained" onClick={() => window.location.assign("/login")}>
             Return to Login
           </StyledButton>
         </FormSection>

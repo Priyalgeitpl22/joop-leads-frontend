@@ -47,8 +47,7 @@ function Login() {
           }
 
           toast.success("Logged in successfully!");
-          window.location.href = '/email-campaign';
-          navigate('/email-campaign');
+          window.location.assign('/')
         } catch (err) {
           console.error('Login failed:', err);
           toast.error("Login failed. Please try again.");

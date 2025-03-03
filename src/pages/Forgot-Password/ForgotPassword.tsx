@@ -33,7 +33,7 @@ const ForgotPassword = () => {
       const response = await dispatch(forgetPassword({ email })).unwrap();
       if (response.code === 200) {
         toast.success("Reset link sent successfully!");
-        navigate('/confirmation');
+        window.location.assign('/confirmation');
       }
     } catch (err) {
       console.error("Error sending reset link:", err);

@@ -53,7 +53,8 @@ const ChangePassword: React.FC = () => {
     try {
       if (passwordChangeSuccess) {
         toast.success("Password changed successfully!");
-        navigate("/");
+        window.location.assign("/");
+        
       }
     } catch (error) {
       toast.error("Error changing password. Please try again.");

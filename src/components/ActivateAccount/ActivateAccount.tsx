@@ -32,13 +32,13 @@ const ActivateAccount = () => {
       setToken(token);
       setEmail(email);
     } else {
-      navigate("/login");
+      window.location.assign("/login")
     }
   }, [searchParams, navigate]);
 
   useEffect(() => {
     if (success) {
-      navigate("/login");
+      window.location.assign("/login")
     }
   }, [success, navigate]);
 

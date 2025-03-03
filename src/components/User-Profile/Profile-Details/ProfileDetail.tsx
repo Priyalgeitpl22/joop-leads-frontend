@@ -16,10 +16,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../redux/store/store";
 import toast, {Toaster} from 'react-hot-toast';
 import Loader from "../../Loader";
+import { User } from "../UserProfile";
 
 interface ProfileDetailProps {
   open: boolean;
   onClose: () => void;
+  userData?: any
 }
 
 const ProfileDetail: React.FC<ProfileDetailProps> = ({ open, onClose }) => {

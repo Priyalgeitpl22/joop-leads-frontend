@@ -97,7 +97,7 @@ const Register = () => {
       const result = await dispatch(registerUser(payload)).unwrap();
       console.log("Registration successful:", result);
       toast.success("Registration successful!");
-      navigate("/verify-otp", { state: { email: formData.email } });
+      window.location.assign("/verify-otp");
     } catch (err) {
       console.error("Registration failed:", err);
       toast.error("Registration failed. Please try again.");

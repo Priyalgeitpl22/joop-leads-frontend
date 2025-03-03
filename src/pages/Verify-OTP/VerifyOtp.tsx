@@ -89,7 +89,7 @@ const VerifyOtp = () => {
         .then(result => {
           console.log("OTP verified successfully:", result);
           toast.success("OTP verified successfully!");
-          navigate("/login");
+          window.location.assign("/login");
         })
         .catch(err => {
           console.error("OTP verification failed:", err);

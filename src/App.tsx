@@ -28,6 +28,7 @@ import ChangePassword from "./components/Change-Password/ChangePassword";
 import PasswordResetConfirmation from "./pages/Forgot-Password/PasswordResetConfirmation";
 import ResetPassword from "./pages/Forgot-Password/ResetPassword";
 import VerifyOtp from "./pages/Verify-OTP/VerifyOtp";
+import UserProfileMenu from "./assets/Custom/customUserProfile";
 
 const UNPROTECTED_ROUTES = [
   "/login",
@@ -93,7 +94,13 @@ export default function DashboardLayoutBasic() {
           }}
           slots={{
             appTitle: CustomAppTitle,
-            toolbarActions: CustomSearchBar,
+            toolbarActions: () => (
+              <>
+                <CustomSearchBar />
+                <UserProfileMenu />{" "}
+                {/* Added UserProfileMenu inside toolbarActions */}
+              </>
+            ),
             sidebarFooter: SidebarFooter,
           }}
         >

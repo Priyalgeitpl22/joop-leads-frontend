@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Menu, Typography, Box, IconButton } from "@mui/material";
+import { Menu, Typography } from "@mui/material";
 import {
   ProfileIcon,
   ProfileNameContainer,
@@ -12,7 +12,6 @@ import { logoutUser } from "../../redux/slice/authSlice";
 import { AppDispatch, RootState } from "../../redux/store/store";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ProfileDetail from "./Profile-Details/ProfileDetail";
-import SettingsIcon from "@mui/icons-material/Settings";
 export interface User {
   id: string;
   email: string;
@@ -48,7 +47,7 @@ const UserProfileMenu: React.FC = () => {
     await dispatch(logoutUser());
     localStorage.setItem("logout", Date.now().toString());
     handleMenuClose();
-    navigate("/login");
+    window.location.assign("/login");
   };
 
   const isMenuOpen = Boolean(anchorEl);
@@ -113,7 +112,7 @@ const UserProfileMenu: React.FC = () => {
       <ProfileDetail
         open={isProfileOpen}
         onClose={() => setIsProfileOpen(false)}
-        userData={user as User | null}
+        userData={user}
       />
     </UserProfileContainer>
   );
