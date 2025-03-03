@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { Typography } from "@mui/material";
 import { motion } from "framer-motion";
 
 export const DialogContainer = styled.div`
@@ -42,3 +43,16 @@ export const AvailabilityContainer = styled.div`
     gap: 16px;
   }
 `;
+
+export const StepText = styled(Typography)`
+  fontSize: "14px",
+  fontWeight: 400,
+  marginBottom: "8px",
+  `
+
+export const LinkText = styled("a")`
+  color: "#5F63CB",
+  fontWeight: 600,
+  textDecoration: "none",
+  cursor: "pointer",
+  `
