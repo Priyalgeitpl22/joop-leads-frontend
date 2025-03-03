@@ -88,6 +88,18 @@ export const addOuthEmailAccount = createAsyncThunk(
   }
 );
 
+export const addOutlookEmailAccount = createAsyncThunk(
+  "outlook/auth-url",
+async (__dirname, {rejectWithValue}) => {
+  try {
+    const origin = encodeURIComponent(window.location.href);
+    const response = await emailApi.get(`/outlook/auth-url?origin=${origin}`);
+    return response.data.url;
+  }catch (error: any){
+    return rejectWithValue(error.response?.data?.message || "Network error");
+  }
+});
+
 export const verifyEmailAccount = createAsyncThunk<
     string,
     VerifyEmailAccountPayload,
