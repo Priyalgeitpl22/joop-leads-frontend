@@ -5,4 +5,11 @@ export enum ThreadType {
     CHAT = "chat",
     BOTS = "bots",
 }
-  
+
+export enum CampaignStatus {
+    DRAFT = "draft",
+    PASSED = "passed",
+    RUNNING = "running",
+    SCHEDULED = "scheduled",
+    COMPLETED = "completed"
+}

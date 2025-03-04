@@ -12,11 +12,11 @@ import SequenceCampaign from "./SequenceCampaign/SequenceCampaign";
 import ImportLeadsCampaign from "./ImportLeadsCampaign/ImportLeadsCampaign";
 import SetupCampaign from "./SetupCampaign/SetupCampaign";
 import FinalReviewCampaign from "./FinalReviewCampaign/FinalReviewCampaign";
-import { useNavigate } from "react-router-dom";
 import { csvSettingsType } from "../Interfaces";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../redux/store/store";
 import {
+  addEmailCampaignSettings,
   addLeadsToCampaign,
   addSequencesToCampaign,
 } from "../../../redux/slice/emailCampaignSlice";
@@ -26,7 +26,7 @@ import SendTestEmailDialog from "./SendTestEmailDialog";
 import { ILeadsCounts } from "./interfaces";
 import { CustomizedStepper } from "./stepper";
 import { Button, SecondaryButton } from "../../../styles/global.styled";
-import ProgressBar from "../../../assets/Custom/linearProgress";
+import { EmailAccounts } from "./SetupCampaign/Interface";
 export interface ImportedLeadsData {
   campaignName?: string;
   clientId?: string;
@@ -53,12 +53,16 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
   const [uploadCounts, setUploadCounts] = React.useState<ILeadsCounts>();
   const [sequences, setSequences] = React.useState<Sequence[]>([]);
   const [selectedSequence, setSelectedSequence] = React.useState<Sequence>();
-  const [campaignId, setCampaignId] = React.useState<string>();
+  const [campaignId, setCampaignId] = React.useState<string>("");
   const [isLoading, setIsLoading] = React.useState(false);
   const [testEmailDialog, setTestEmailDialog] = React.useState(false);
+  const [dialogData, setDialogData] = React.useState({
+    senderAccount: {},
+    scheduleCampaign: {},
+    campaignSettings: {},
+  });
 
   const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
 
   const handleFileChange = (file: File) => {
     setSelectedFile(file);
@@ -113,6 +117,24 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
     }
   };
 
+const handleSetup = async () => {
+  setIsLoading(true);
+  try {
+    dispatch(
+      addEmailCampaignSettings({
+        ...dialogData?.senderAccount,
+        ...dialogData?.scheduleCampaign,
+        ...dialogData?.campaignSettings,
+        campaign_id: campaignId,
+      })
+    );
+  } catch (error) {
+    console.error("Error setting up campaign:",error);
+  } finally {
+    setIsLoading(false);
+  }
+};
+
   const goToNextStep = () => {
     if (activeStep < 3) {
       setActiveStep((prev) => prev + 1);
@@ -126,12 +148,12 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
         goToNextStep();
         break;
       case 1:
-        handleSequences();
+        await handleSequences();
         goToNextStep();
         break;
       case 2:
+        await handleSetup();
         goToNextStep();
-        // handleSetup();
         break;
       case 3:
         goToNextStep();
@@ -176,7 +198,7 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
     });
 
     setSequences((prevSequences) =>
-      prevSequences.map((seq) =>
+      prevSequences?.map((seq) =>
         seq.seq_number === sequence.seq_number
           ? { ...seq, ...sequence, seq_variants: [...sequence.seq_variants] }
           : seq
@@ -189,8 +211,17 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
   };
 
   const handleSenderAccountsUpdate = (data: any) => {
-    console.log(data)
-  }
+    setDialogData((prev) => ({ ...prev, senderAccount: data }));
+  };
+
+  const handleScheduleCampaignUpdate = (data: any) => {
+    setDialogData((prev) => ({ ...prev, scheduleCampaign: data }));
+  };
+
+  const handleCampaignSettingsUpdate = (data: any) => {
+    setDialogData((prev) => ({ ...prev, campaignSettings: data }));
+  };
+
   return (
     <Container>
       <HeaderContainer>
@@ -239,7 +270,14 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
             selectedSequence={selectedSequence}
           />
         )}
-        {activeStep === 2 && <SetupCampaign campaignId={campaignId} handleSenderAccountsUpdate={handleSenderAccountsUpdate}/>}
+        {activeStep === 2 && (
+          <SetupCampaign
+            campaignId={campaignId}
+            handleSenderAccountsUpdate={handleSenderAccountsUpdate}
+            handleScheduleCampaignUpdate={handleScheduleCampaignUpdate}
+            handleCampaignSettingsUpdate={handleCampaignSettingsUpdate}
+          />
+        )}
         {activeStep === 3 && <FinalReviewCampaign campaignId={campaignId} />}
       </MainContainer>
       <FooterContainer>
@@ -262,7 +300,6 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
         ) : (
           <Button
             onClick={handleNext}
-            // disabled={activeStep === steps.length - 1}
           >
             Save and Next
           </Button>

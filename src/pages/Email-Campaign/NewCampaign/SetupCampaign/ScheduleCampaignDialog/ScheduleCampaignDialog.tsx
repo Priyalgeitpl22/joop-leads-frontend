@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   Dialog,
-  DialogTitle,
   FormControl,
   FormGroup,
   FormControlLabel,
@@ -19,9 +18,6 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../../../redux/store/store";
-import { addEmailCampaignSettings } from "../../../../../redux/slice/emailCampaignSlice";
 import { EmailAccounts } from "../Interface";
 import { DaysOfWeek } from "../enums";
 import {
@@ -38,14 +34,15 @@ interface ScheduleCampaignProps {
   open: boolean;
   onClose: () => void;
   campaignId?: string;
+  handleSave: (data: any) => void;
 }
 
 const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
   open,
   onClose,
   campaignId,
+  handleSave,
 }) => {
-  const dispatch = useDispatch<AppDispatch>();
   const [selectedTimeZones, setSelectedTimeZones] = useState<string | string[]>(
     ""
   );
@@ -77,50 +74,6 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
   const daysOfWeek = Object.values(DaysOfWeek).filter(
     (value) => typeof value === "number"
   ) as number[];
-
-  const handleSave = async () => {
-    try {
-      if (campaignId) {
-        await dispatch(
-          addEmailCampaignSettings({
-            // sender_accounts: formData.selectedEmailAccounts,
-            campaign_id: campaignId,
-            auto_warm_up: false,
-            schedule_settings: {
-              time_zone: selectedTimeZones as string,
-              send_these_days: formData.selectedDays,
-              time_sequences: {
-                from: formData.startTime.format("HH:mm"),
-                to: formData.endTime.format("HH:mm"),
-                minutes: formData.emailInterval,
-              },
-              start_date: formData.startDate
-                ? formData.startDate.format("YYYY-MM-DD")
-                : "",
-              max_leads_per_day: formData.maxLeads,
-            },
-            // campaign_settings: {
-            //   campaign_name: "",
-            //   stop_message_on_lead: "",
-            //   email_delivery_optimization: false,
-            //   excluded_tracking: {
-            //     dont_track_open_emails: false,
-            //     dont_track_link_clicks: false,
-            //   },
-            //   priority_sending_pattern: 0,
-            //   company_auto_pause: false,
-            //   enhanced_email_delivery: false,
-            //   bounce_rate: false,
-            //   unsubscribe: false,
-            // },
-          })
-        ).unwrap();
-        onClose();
-      }
-    } catch (error) {
-      alert("Failed to save campaign settings.");
-    }
-  };
 
   const handleDayChange = (day: number) => {
     setFormData((prev) => ({
@@ -168,7 +121,7 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
 
           <Typography>Send these days</Typography>
           <FormGroup row>
-            {daysOfWeek.map((day) => (
+            {daysOfWeek?.map((day) => (
               <FormControlLabel
                 key={day}
                 control={
@@ -183,14 +136,14 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
           </FormGroup>
 
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <Grid sx={{ minWidth: "710px"}} container spacing={2}>
+            <Grid sx={{ minWidth: "710px" }} container spacing={2}>
               <Grid size={4}>
                 <MobileTimePicker
                   label="From"
                   value={formData.startTime}
                   onChange={(value) => handleChange("startTime", value)}
                 />
-              </Grid >
+              </Grid>
               <Grid size={4}>
                 <MobileTimePicker
                   label="To"
@@ -250,7 +203,10 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
       </CustomDialogContainer>
 
       <CustomDialogFooter justifyContent="flex-end">
-        <Button onClick={handleSave}>Save</Button>
+        <Button onClick={() => {handleSave({ schedule_settings: formData });
+          onClose();}}>
+          Save
+        </Button>
       </CustomDialogFooter>
     </Dialog>
   );

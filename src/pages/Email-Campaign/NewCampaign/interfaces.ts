@@ -1,3 +1,4 @@
+import { CampaignStatus } from "../../../enums";
 import { Sequence } from "./SequenceCampaign/Sequences/interfaces";
 
 export interface ILeadsCounts {
@@ -14,6 +15,7 @@ export interface IEmailCampaign {
   campaignName: string;
   sequences: Sequence[];
   createdAt: string;
+  status: CampaignStatus;
 }
 
 export interface IContacts {

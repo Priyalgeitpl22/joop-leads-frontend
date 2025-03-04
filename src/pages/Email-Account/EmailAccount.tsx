@@ -176,7 +176,7 @@ const EmailAccounts: React.FC = () => {
   return (
     <EmailAccountsContainer>
       <EmailAccountHeader>
-        <SectionTitle>Email Account</SectionTitle>
+        <SectionTitle style={{fontSize: "22px"}}>Email Account</SectionTitle>
         <Box
           sx={{
             display: "flex",

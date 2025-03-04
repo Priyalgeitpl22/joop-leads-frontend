@@ -33,7 +33,8 @@ const EmailAccountOutlookDialog: React.FC<{
           display: "flex",
           alignItems: "center",
           marginTop: "10px",
-          gap: "20%",
+          gap: "4%",
+          justifyContent: "center",
           position: "relative",
         }}
       >
@@ -107,7 +108,7 @@ const EmailAccountOutlookDialog: React.FC<{
         </StepText>
       </DialogContent>
 
-      <Box sx={{ display: "flex", justifyContent: "center", p: 3 }}>
+      <Box sx={{ display: "flex", justifyContent: "flex-end", p: 3 }}>
         <Button2
           color={"white"}
           background={"#6F4EF2"}
