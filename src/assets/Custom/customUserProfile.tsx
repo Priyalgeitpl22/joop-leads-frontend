@@ -6,6 +6,7 @@ import { logoutUser } from "../../redux/slice/authSlice";
 import { AppDispatch, RootState } from "../../redux/store/store";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ProfileDetail from "../../components/User-Profile/Profile-Details/ProfileDetail";
+import { ProfileNameContainer, StyledMenuItem, UserName, UserProfileContainer, UserRole } from "./styled";
 
 const UserProfileMenu: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -32,7 +33,15 @@ const UserProfileMenu: React.FC = () => {
 
   return (
     <>
-      {/* Profile Button */}
+      <UserProfileContainer>
+      <ProfileNameContainer>
+        <UserName>
+          {user?.fullName || "Unknown User"}
+        </UserName>
+        <UserRole>
+          {user?.role || "N/A"}
+        </UserRole>
+      </ProfileNameContainer>
       <IconButton onClick={handleMenuOpen} sx={{ cursor: "pointer" }}>
         {user?.profilePicture ? (
           <Avatar
@@ -45,7 +54,6 @@ const UserProfileMenu: React.FC = () => {
         )}
       </IconButton>
 
-      {/* Profile Menu */}
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
@@ -60,41 +68,35 @@ const UserProfileMenu: React.FC = () => {
       >
         {/* Profile */}
 
-        <Typography
+        <StyledMenuItem
           onClick={() => {
             handleMenuClose();
             setIsProfileOpen(true);
           }}
-          variant="body2"
-          sx={{ p: 2 }}
         >
           Profile
-        </Typography>
+        </StyledMenuItem>
 
-        <Typography
+        <StyledMenuItem
           onClick={() => window.location.assign("/change-password")}
-          variant="body2"
-          sx={{ p: 2 }}
         >
           Change Password
-        </Typography>
+        </StyledMenuItem>
 
         {/* Logout */}
-        <Typography
-          variant="body2"
-          sx={{ p: 2, cursor: "pointer" }}
+        <StyledMenuItem
           onClick={handleLogout}
         >
           Logout
-        </Typography>
+        </StyledMenuItem>
       </Menu>
 
-      {/* Profile Detail Modal */}
       <ProfileDetail
         open={isProfileOpen}
         onClose={() => setIsProfileOpen(false)}
         userData={user}
       />
+      </UserProfileContainer>
     </>
   );
 };
