@@ -16,6 +16,7 @@ import MultiSelectDropdown from "../../../assets/Custom/cutomSelectOption";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../redux/store/store";
 import { fetchEmailAccount } from "../../../redux/slice/emailAccountSlice";
+import { Account } from "./SetupCampaign/Interface";
 
 interface SendTestEmailDialogProps {
   open: boolean;
@@ -31,12 +32,14 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
   const [selectedEmailAccount, setSelectedEmailAccount] = useState<
     string | string[]
   >("");
+  const [emailAccounts, setEmailAccounts] = useState<Account[]>([]);
 
   useEffect(() => {
     const getEmailAccounts = async () => {
       try {
         const data = await dispatch(fetchEmailAccount()).unwrap();
         setRows(data);
+        setEmailAccounts(data);
         if (data.length > 0) {
           setSelectedEmailAccount(data[0].id);
         }
@@ -47,6 +50,12 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
 
     getEmailAccounts();
   }, [dispatch]);
+
+  const sendTestEmail = () => {
+    const senderAccount = emailAccounts.filter((account) => {
+      return account.email === selectedEmailAccount;
+     })[0];  
+  }
 
   return (
     <DialogBox open={open} onClose={onClose} fullWidth maxWidth="sm">
@@ -107,7 +116,7 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
             borderRadius: "6px",
             "&:hover": { backgroundColor: "#5a46d1" },
           }}
-          onClick={onClose}
+          onClick={sendTestEmail}
         >
           Send Test Email
         </Button>

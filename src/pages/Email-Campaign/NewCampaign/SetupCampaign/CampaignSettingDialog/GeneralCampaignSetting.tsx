@@ -20,11 +20,7 @@ interface GeneralCampaignSettingProps {
   campaignId?: string;
 }
 
-const GeneralCampaignSetting: React.FC<GeneralCampaignSettingProps> = ({
-  onClose,
-  campaignId
-}) => {
-  const dispatch = useDispatch<AppDispatch>();
+const GeneralCampaignSetting: React.FC<GeneralCampaignSettingProps> = ({}) => {
   const [formData, setFormData] = useState({
     campaignName: "",
     timeZone: "",
@@ -48,52 +44,6 @@ const GeneralCampaignSetting: React.FC<GeneralCampaignSettingProps> = ({
 
   const handleChange = (field: keyof typeof formData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleSave = async () => {
-    try {
-      if(!campaignId) {
-        return;
-      }
-
-      await dispatch(
-        addEmailCampaignSettings({
-          sender_accounts: formData.selectedEmailAccounts,
-          campaign_id: campaignId,
-          auto_warm_up: false,
-          schedule_settings: {
-            time_zone: formData.timeZone,
-            send_these_days: formData.selectedDays,
-            time_sequences: {
-              from: formData.startTime.format("HH:mm"),
-              to: formData.endTime.format("HH:mm"),
-              minutes: formData.emailInterval,
-            },
-            start_date: formData.startDate
-              ? formData.startDate.format("YYYY-MM-DD")
-              : "",
-            max_leads_per_day: formData.maxLeads,
-          },
-          campaign_settings: {
-            campaign_name: formData.campaignName,
-            stop_message_on_lead: formData.stopSending,
-            email_delivery_optimization: formData.emailDeliveryOptimization,
-            excluded_tracking: {
-              dont_track_open_emails: formData.trackEmailOpens,
-              dont_track_link_clicks: formData.trackLinkClicks,
-            },
-            priority_sending_pattern: formData.priority,
-            company_auto_pause: formData.companyAutoPause,
-            enhanced_email_delivery: formData.EmailDelivery,
-            bounce_rate: formData.BounceRate,
-            unsubscribe: formData.Unsubscribe,
-          },
-        })
-      ).unwrap();
-      onClose();
-    } catch (error) {
-      alert("Failed to save campaign settings.");
-    }
   };
 
   return (

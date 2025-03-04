@@ -94,7 +94,7 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
       setCampaignId(response.payload.campaignId);
       setUploadCsv(false);
       setUploadLeads(true);
-      goToNextStep();
+      // goToNextStep();
     }
   };
 
@@ -126,8 +126,8 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
         goToNextStep();
         break;
       case 1:
+        handleSequences();
         goToNextStep();
-        // handleSequences();
         break;
       case 2:
         goToNextStep();
@@ -188,6 +188,9 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
     setTestEmailDialog(true);
   };
 
+  const handleSenderAccountsUpdate = (data: any) => {
+    console.log(data)
+  }
   return (
     <Container>
       <HeaderContainer>
@@ -236,7 +239,7 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
             selectedSequence={selectedSequence}
           />
         )}
-        {activeStep === 2 && <SetupCampaign campaignId={campaignId} />}
+        {activeStep === 2 && <SetupCampaign campaignId={campaignId} handleSenderAccountsUpdate={handleSenderAccountsUpdate}/>}
         {activeStep === 3 && <FinalReviewCampaign campaignId={campaignId} />}
       </MainContainer>
       <FooterContainer>

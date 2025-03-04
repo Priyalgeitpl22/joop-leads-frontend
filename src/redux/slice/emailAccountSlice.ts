@@ -11,6 +11,7 @@ export interface EmailAccount {
 
 export interface VerifyEmailAccountPayload {
   type: string;
+  email?: string;
   imap: {
     host: string;
     port: number;
