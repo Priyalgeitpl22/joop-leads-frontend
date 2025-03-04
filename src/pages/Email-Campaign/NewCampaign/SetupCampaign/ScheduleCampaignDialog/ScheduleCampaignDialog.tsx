@@ -58,7 +58,7 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
     emailInterval: string;
     startDate: Dayjs | null;
     maxLeads: number;
-    selectedEmailAccounts: EmailAccounts[];
+    selectedEmailAccounts: EmailAccounts;
   }>({
     timeZone: "",
     selectedDays: [],
@@ -83,11 +83,11 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
       if (campaignId) {
         await dispatch(
           addEmailCampaignSettings({
-            sender_accounts: formData.selectedEmailAccounts,
+            // sender_accounts: formData.selectedEmailAccounts,
             campaign_id: campaignId,
             auto_warm_up: false,
             schedule_settings: {
-              time_zone: formData.timeZone,
+              time_zone: selectedTimeZones as string,
               send_these_days: formData.selectedDays,
               time_sequences: {
                 from: formData.startTime.format("HH:mm"),
@@ -99,20 +99,20 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
                 : "",
               max_leads_per_day: formData.maxLeads,
             },
-            campaign_settings: {
-              campaign_name: "",
-              stop_message_on_lead: "",
-              email_delivery_optimization: false,
-              excluded_tracking: {
-                dont_track_open_emails: false,
-                dont_track_link_clicks: false,
-              },
-              priority_sending_pattern: 0,
-              company_auto_pause: false,
-              enhanced_email_delivery: false,
-              bounce_rate: false,
-              unsubscribe: false,
-            },
+            // campaign_settings: {
+            //   campaign_name: "",
+            //   stop_message_on_lead: "",
+            //   email_delivery_optimization: false,
+            //   excluded_tracking: {
+            //     dont_track_open_emails: false,
+            //     dont_track_link_clicks: false,
+            //   },
+            //   priority_sending_pattern: 0,
+            //   company_auto_pause: false,
+            //   enhanced_email_delivery: false,
+            //   bounce_rate: false,
+            //   unsubscribe: false,
+            // },
           })
         ).unwrap();
         onClose();
@@ -183,22 +183,22 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
           </FormGroup>
 
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <Grid container spacing={2}>
-              <Grid>
+            <Grid sx={{ minWidth: "710px"}} container spacing={2}>
+              <Grid size={4}>
                 <MobileTimePicker
                   label="From"
                   value={formData.startTime}
                   onChange={(value) => handleChange("startTime", value)}
                 />
-              </Grid>
-              <Grid>
+              </Grid >
+              <Grid size={4}>
                 <MobileTimePicker
                   label="To"
                   value={formData.endTime}
                   onChange={(value) => handleChange("endTime", value)}
                 />
               </Grid>
-              <Grid>
+              <Grid size="grow">
                 <TextField
                   label="Minutes"
                   type="number"

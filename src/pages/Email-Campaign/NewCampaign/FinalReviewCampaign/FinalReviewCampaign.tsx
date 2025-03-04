@@ -48,8 +48,6 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
   };
 
   useEffect(() => {
-    const campaignId = "46ba5a17-bacf-4805-9ef2-83ce325d844f";
-
     if (campaignId) {
       Promise.all([
         dispatch(fetchCampaignContacts(campaignId)).unwrap(),

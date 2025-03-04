@@ -31,12 +31,14 @@ interface SenderAccountDialogProps {
   open: boolean;
   onClose: () => void;
   campaignId?: string;
+  handleSave: (data: any) => void;
 }
 
 const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
   open,
   onClose,
   campaignId,
+  handleSave
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [loading, setLoading] = useState(true);
@@ -130,53 +132,53 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
     setSelectedAccounts(formattedSelection);
   };
   
-  const handleSave = () => {
-    if (!campaignId) {
-      return;
-    }
+  // const handleSave = () => {
+  //   if (!campaignId) {
+  //     return;
+  //   }
 
-    if (selectedEmailAccounts.length === 0) {
-      alert("Please select at least one email account.");
-      return;
-    }
-    dispatch(
-      addEmailCampaignSettings({
-        sender_accounts: selectedAccounts,
-        campaign_id: campaignId,
-        auto_warm_up: false,
-        schedule_settings: {
-          time_zone: "",
-          send_these_days: [],
-          time_sequences: {
-            from: "",
-            to: "",
-            minutes: "",
-          },
-          start_date: "",
-          max_leads_per_day: 0,
-        },
-        campaign_settings: {
-          campaign_name: "",
-          stop_message_on_lead: "",
-          email_delivery_optimization: false,
-          excluded_tracking: {
-            dont_track_open_emails: false,
-            dont_track_link_clicks: false,
-          },
-          priority_sending_pattern: 0,
-          company_auto_pause: false,
-          enhanced_email_delivery: false,
-          bounce_rate: false,
-          unsubscribe: false,
-        },
-      })
-    )
-      .unwrap()
-      .then(() => {
-        onClose();
-      })
-      .catch(() => alert("Failed to save campaign settings."));
-  };
+  //   if (selectedEmailAccounts.length === 0) {
+  //     alert("Please select at least one email account.");
+  //     return;
+  //   }
+  //   dispatch(
+  //     addEmailCampaignSettings({
+  //       sender_accounts: selectedAccounts,
+  //       campaign_id: campaignId,
+  //       // auto_warm_up: false,
+  //       // schedule_settings: {
+  //       //   time_zone: "",
+  //       //   send_these_days: [],
+  //       //   time_sequences: {
+  //       //     from: "",
+  //       //     to: "",
+  //       //     minutes: "",
+  //       //   },
+  //       //   start_date: "",
+  //       //   max_leads_per_day: 0,
+  //       // },
+  //       // campaign_settings: {
+  //       //   campaign_name: "",
+  //       //   stop_message_on_lead: "",
+  //       //   email_delivery_optimization: false,
+  //       //   excluded_tracking: {
+  //       //     dont_track_open_emails: false,
+  //       //     dont_track_link_clicks: false,
+  //       //   },
+  //       //   priority_sending_pattern: 0,
+  //       //   company_auto_pause: false,
+  //       //   enhanced_email_delivery: false,
+  //       //   bounce_rate: false,
+  //       //   unsubscribe: false,
+  //       // },
+  //     })
+  //   )
+  //     .unwrap()
+  //     .then(() => {
+  //       onClose();
+  //     })
+  //     .catch(() => alert("Failed to save campaign settings."));
+  // };
 
   // if (loading) return <Loader />;
 
@@ -230,7 +232,7 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
       </CustomDialogContainer>
 
       <CustomDialogFooter justifyContent={"flex-end"}>
-        <Button onClick={handleSave}>Save Email Accounts</Button>
+        <Button onClick={() => handleSave({selectedAccounts, campaignId})}>Save Email Accounts</Button>
       </CustomDialogFooter>
     </Dialog>
   );
