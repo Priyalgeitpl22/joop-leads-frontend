@@ -16,9 +16,9 @@ import { CustomAppTitle } from "./assets/Custom/customAppTitle";
 import { CustomSearchBar } from "./assets/Custom/customSearchBar";
 import { SidebarFooter } from "./assets/Custom/customSidebarFooter";
 import Cookies from "js-cookie";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { getUserDetails } from "./redux/slice/userSlice";
-import { AppDispatch, RootState } from "./redux/store/store";
+import { AppDispatch } from "./redux/store/store";
 import { useNavigate } from "react-router-dom";
 import Login from "./pages/Login/Login";
 import Register from "./pages/Register/Register";
@@ -63,6 +63,8 @@ function useDemoRouter(initialPath: string): Router {
 
 export default function DashboardLayoutBasic() {
   const router = useDemoRouter("/");
+  const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
   const isNewCampaignPage = router.pathname === "/email-campaign/new-campaign";
 
   // Handle unprotected routes separately
@@ -82,6 +84,21 @@ export default function DashboardLayoutBasic() {
       </AppProvider>
     );
   }
+  React.useEffect(() => {
+    const token = Cookies.get("access_token");
+    if (!UNPROTECTED_ROUTES.includes(location.pathname)) {
+      if (!token) {
+        navigate("/login");
+      } else {
+        dispatch(getUserDetails(token))
+          .unwrap()
+          .catch((error) => {
+            console.error("Failed to fetch user details:", error);
+            navigate("/login");
+          });
+      }
+    }
+  }, [dispatch]);
 
   return (
     <AppProvider navigation={NAVIGATION} router={router} theme={theme}>

@@ -69,6 +69,7 @@ export const LeadsTable = styled.div`
   display: flex;
   flex-direction: column;
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.4);
+  margin-top: 16px;
 `;
 
 export const StyledTableContainer = styled(TableContainer)`

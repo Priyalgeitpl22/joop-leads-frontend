@@ -1,5 +1,42 @@
-import { styled, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Box, MenuItem, styled, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 
+export const UserProfileContainer = styled(Box)`
+  display: flex;
+  align-items: center;
+`
+
+export const ProfileNameContainer = styled(Box)`
+  flex-direction: column;
+  display: flex;
+  align-items: flex-end;  // Align text to the right
+  justify-content: center;
+  text-align: right;
+  white-space: nowrap; // Prevents text from breaking into two lines
+  overflow: hidden;
+  text-overflow: ellipsis; // Adds "..." if text overflows
+  margin-right: 10px;
+`;
+
+export const UserName = styled(Typography)`
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--theme-color-light);
+  text-align: right;
+`
+export const UserRole = styled(Typography)`
+  font-weight: 400;
+  font-size: 12px;
+  color: var(--theme-color-light);
+  text-align: right;
+`
+export const StyledMenuItem = styled(MenuItem)`
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  &:hover {
+    background-color: #f1f1f1;
+  }
+`;
 export const StyledTableContainer = styled(TableContainer)`
   max-width: 100%;
   overflow-y: auto;

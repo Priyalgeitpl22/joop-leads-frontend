@@ -115,7 +115,7 @@ function Login() {
           </StyledButton>
           <Typography variant="body2" color="black" align="center" sx={{ my: 2 }}>
             Don't have an account?{' '}
-            <RouterLink to="/signup" style={{ textDecoration: 'none', color: 'var(--theme-color-dark)' }}>
+            <RouterLink to="/signup" style={{ textDecoration: 'none', color: 'var(--theme-color-dark)', fontWeight: 'bold' }}>
               Register
             </RouterLink>
           </Typography>
