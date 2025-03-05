@@ -34,7 +34,6 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
     string | string[]
   >("");
   const [emailAccounts, setEmailAccounts] = useState<Account[]>([]);
-  const [emailAccounts, setEmailAccounts] = useState<Account[]>([]);
 
   useEffect(() => {
     const getEmailAccounts = async () => {
@@ -133,7 +132,6 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
             borderRadius: "6px",
             "&:hover": { backgroundColor: "#5a46d1" },
           }}
-          onClick={sendTestEmail}
           onClick={sendTestEmail}
         >
           Send Test Email

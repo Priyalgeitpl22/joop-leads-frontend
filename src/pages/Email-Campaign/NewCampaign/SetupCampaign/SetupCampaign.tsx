@@ -85,7 +85,6 @@ const SetupCampaign: React.FC<SetupCampaignProps> = ({
             open={senderAccount}
             onClose={() => setSenderAccount(false)}
             handleSave={handleSenderAccountsUpdate}
-            handleSave={handleSenderAccountsUpdate}
           />
         </Box>
 

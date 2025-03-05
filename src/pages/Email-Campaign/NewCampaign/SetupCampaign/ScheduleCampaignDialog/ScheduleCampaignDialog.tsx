@@ -9,6 +9,7 @@ import {
   Typography,
   Box,
   IconButton,
+  Grid,
 } from "@mui/material";
 import {
   LocalizationProvider,
@@ -28,7 +29,6 @@ import {
 } from "../../../../../styles/global.styled";
 import MultiSelectDropdown from "../../../../../assets/Custom/cutomSelectOption";
 import timeZones from "../../../../../constants";
-import Grid from "@mui/material/Grid2";
 
 interface ScheduleCampaignProps {
   open: boolean;
@@ -52,17 +52,16 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
     selectedDays: number[];
     startTime: Dayjs;
     endTime: Dayjs;
-    emailInterval: string;
+    emailInterval: number;
     startDate: Dayjs | null;
     maxLeads: number;
-    selectedEmailAccounts: EmailAccounts;
-    selectedEmailAccounts: EmailAccounts;
+    selectedEmailAccounts: EmailAccounts[];
   }>({
     timeZone: "",
     selectedDays: [],
     startTime: dayjs().hour(9).minute(0),
     endTime: dayjs().hour(18).minute(0),
-    emailInterval: "",
+    emailInterval: 0,
     startDate: null,
     maxLeads: 100,
     selectedEmailAccounts: [],
@@ -137,66 +136,53 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
           </FormGroup>
 
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <Grid sx={{ minWidth: "710px" }} container spacing={2}>
-              <Grid size={4}>
+            <Grid container spacing={2} sx={{ minWidth: "710px" }}>
+              <Grid item xs={4}>
                 <MobileTimePicker
                   label="From"
                   value={formData.startTime}
                   onChange={(value) => handleChange("startTime", value)}
                 />
               </Grid>
-              <Grid size={4}>
+              <Grid item xs={4}>
                 <MobileTimePicker
                   label="To"
                   value={formData.endTime}
                   onChange={(value) => handleChange("endTime", value)}
                 />
               </Grid>
-              <Grid size="grow">
-              <Grid size="grow">
+              <Grid item xs={4}>
                 <TextField
                   label="Minutes"
                   type="number"
                   value={formData.emailInterval}
                   onChange={(e) =>
-                    handleChange("emailInterval", Number(e.target.value))
+                    handleChange("emailInterval", Number(e.target.value) || 0)
                   }
                   fullWidth
                 />
               </Grid>
             </Grid>
           </LocalizationProvider>
+
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <Grid container sx={{ width: "100%" }} spacing={2}>
-              <Grid
-                sx={{
-                  width: "48%",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "flex-start",
-                }}
-              >
+            <Grid container spacing={2} sx={{ width: "100%" }}>
+              <Grid item xs={6}>
                 <Typography>Set Campaign Start Date</Typography>
                 <DesktopDatePicker
                   value={formData.startDate}
                   onChange={(value) => handleChange("startDate", value)}
                 />
               </Grid>
-              <Grid
-                sx={{
-                  width: "49%",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "flex-start",
-                }}
-              >
+              <Grid item xs={6}>
                 <Typography>Max Number Of New Leads Per Day</Typography>
                 <TextField
                   type="number"
                   value={formData.maxLeads}
                   onChange={(e) =>
-                    handleChange("maxLeads", Number(e.target.value))
+                    handleChange("maxLeads", Number(e.target.value) || 0)
                   }
+                  fullWidth
                 />
               </Grid>
             </Grid>
@@ -205,8 +191,12 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
       </CustomDialogContainer>
 
       <CustomDialogFooter justifyContent="flex-end">
-        <Button onClick={() => {handleSave({ schedule_settings: formData });
-          onClose();}}>
+        <Button
+          onClick={() => {
+            handleSave({ schedule_settings: formData });
+            onClose();
+          }}
+        >
           Save
         </Button>
       </CustomDialogFooter>

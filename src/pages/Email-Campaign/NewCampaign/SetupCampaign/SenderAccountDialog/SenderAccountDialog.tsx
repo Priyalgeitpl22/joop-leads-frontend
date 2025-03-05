@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from "react";
-import React, { useEffect, useMemo, useState } from "react";
 import {
   Dialog,
   Typography,
@@ -27,14 +26,11 @@ import { GridColDef } from "@mui/x-data-grid";
 import { formatDate } from "../../../../../utils/utils";
 import { StyledWarmup } from "./SenderAccountDialog.styled";
 import { EmailAccounts } from "../Interface";
-import { StyledWarmup } from "./SenderAccountDialog.styled";
-import { EmailAccounts } from "../Interface";
 
 interface SenderAccountDialogProps {
   open: boolean;
   onClose: () => void;
   campaignId?: string;
-  handleSave: (data: any) => void;
   handleSave: (data: any) => void;
 }
 
@@ -43,81 +39,16 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
   onClose,
   campaignId,
   handleSave
-  handleSave
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [loading, setLoading] = useState(true);
   const { user } = useSelector((state: RootState) => state.user);
   const [selectedEmailAccounts, setSelectedEmailAccounts] = useState<
     EmailAccount[]
-    EmailAccount[]
   >([]);
 
   const [rows, setRows] = useState<any[]>([]);
   const [selectedAccounts, setSelectedAccounts] = React.useState<EmailAccounts>([]);
-  const [selectedAccounts, setSelectedAccounts] = React.useState<EmailAccounts>([]);
-
-  const columns: GridColDef[] = useMemo(
-    () => [
-      { field: "name", headerName: "Name", width: 150 },
-      { field: "email", headerName: "Email", width: 250 },
-      {
-        field: "type",
-        headerName: "Type",
-        width: 120,
-        renderCell: (params: any) => {
-          if (params.value === "gmail") {
-            return (
-              <img
-                src="https://img.icons8.com/color/48/000000/gmail-new.png"
-                alt="Gmail Icon"
-                width="24"
-                height="24"
-              />
-            );
-          } else if (params.value === "outlook") {
-            return (
-              <img
-                src="https://img.icons8.com/color/48/000000/microsoft-outlook-2019.png"
-                alt="Outlook Icon"
-                width="24"
-                height="24"
-              />
-            );
-          } else if (params.value === "imap") {
-            return <CustomIcon />;
-          } else {
-            return null;
-          }
-        },
-      },
-      {
-        field: "warm_up",
-        headerName: "Warmup Enabled",
-        width: 120,
-        renderCell: (params: any) => <StyledWarmup>Yes</StyledWarmup>,
-      },
-      {
-        field: "daily_limit",
-        headerName: "Daily Limit",
-        width: 120,
-        valueGetter: () => "0 / 100",
-      },
-      {
-        field: "reputation",
-        headerName: "Reputation",
-        width: 120,
-        renderCell: () => <StyledWarmup>100%</StyledWarmup>,
-      },
-      {
-        field: "createdAt",
-        headerName: "Created At",
-        width: 180,
-        valueGetter: (params: any) => (params ? formatDate(params) : null),
-      },
-    ],
-    []
-  );
   const columns: GridColDef[] = useMemo(
     () => [
       { field: "name", headerName: "Name", width: 150 },
@@ -244,7 +175,6 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
           columns={columns}
           rows={rows}
           pageSizeOptions={[5, 10]}
-          handleRowSelection={handleSelectedAccounts}
           handleRowSelection={handleSelectedAccounts}
         />
       </CustomDialogContainer>
