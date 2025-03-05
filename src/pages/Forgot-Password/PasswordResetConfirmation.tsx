@@ -1,10 +1,8 @@
 import { Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import { PageContainer, VerifyCard, IllustrationSection, StyledButton } from "../Verify-OTP/VerifyOtp.styled";
 import { FormSection } from "./forgot_password.styled";
 
 const PasswordResetConfirmation = () => {
-  const navigate = useNavigate();
 
   return (
     <PageContainer>

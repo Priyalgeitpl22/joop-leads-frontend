@@ -10,9 +10,9 @@ import {
   StyledButton, 
   SocialButtonsContainer, 
   SocialButton, 
-  ForgotPasswordLink 
+  NavigateLink
 } from './login.styled';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import {  useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from '../../redux/slice/authSlice';
 import { AppDispatch, RootState } from '../../redux/store/store';
@@ -20,6 +20,7 @@ import Loader from '../../components/Loader';
 import Cookies from "js-cookie";
 import { getUserDetails } from '../../redux/slice/userSlice';
 import toast, { Toaster } from "react-hot-toast";
+import PasswordInput from '../../utils/PasswordInput';
 
 function Login() {
   // Local state for controlled inputs.
@@ -61,6 +62,9 @@ function Login() {
   const handleSignIn = () => {
     setLoginSubmitted(true);
   };
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>)=>{
+    setPassword(e.target.value);
+  }
 
   return (
     <PageContainer>
@@ -89,22 +93,13 @@ function Login() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-          <StyledTextField 
-            fullWidth 
-            label="Password" 
-            variant="outlined" 
-            type="password" 
+          <PasswordInput 
+            label="Password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={handlePasswordChange}
+            autoComplete='new-password'
           />
-          
-          <RouterLink 
-            to="/forgot-password" 
-            style={{ textDecoration: 'none', marginBottom:'10px', color: 'var(--theme-color-dark)' }}
-          >
-            <ForgotPasswordLink>Forgot Password?</ForgotPasswordLink>
-          </RouterLink>
-          
+          <NavigateLink style={{alignSelf: 'flex-end', marginBlock: 2 }} onClick={() => window.location.assign('/forgot-password')}>Forgot Password?</NavigateLink>          
           <StyledButton 
             variant="contained" 
             fullWidth 
@@ -115,9 +110,7 @@ function Login() {
           </StyledButton>
           <Typography variant="body2" color="black" align="center" sx={{ my: 2 }}>
             Don't have an account?{' '}
-            <RouterLink to="/signup" style={{ textDecoration: 'none', color: 'var(--theme-color-dark)', fontWeight: 'bold' }}>
-              Register
-            </RouterLink>
+            <NavigateLink onClick={() => window.location.assign('/signup')}>Register</NavigateLink>
           </Typography>
 
           <Typography variant="body2" color="black" align="center" sx={{ my: 1 }}>
