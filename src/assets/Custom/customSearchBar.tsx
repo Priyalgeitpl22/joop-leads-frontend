@@ -32,7 +32,7 @@ export function CustomSearchBar() {
               sx: { pr: 0.5 },
             },
           }}
-          sx={{ display: { xs: 'none', md: 'inline-block' }, mr: 1 }}
+          sx={{ display: { xs: 'none', md: 'inline-block' }, mr: 1, borderRadius: "5px" }}
         />
         <ThemeSwitcher />
       </Stack>

@@ -19,6 +19,7 @@ import {
   addLeadsToCampaign,
   addSequencesToCampaign,
   addEmailCampaignSettings,
+  scheduleCampaign,
 } from "../../../redux/slice/emailCampaignSlice";
 import UploadLeadsDialog from "./ImportLeadsCampaign/UploadLeadsDialog";
 import { Sequence } from "./SequenceCampaign/Sequences/interfaces";
@@ -99,8 +100,6 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
       setCampaignId(response.payload.campaignId);
       setUploadCsv(false);
       setUploadLeads(true);
-      // goToNextStep();
-      // goToNextStep();
     }
   };
 
@@ -143,14 +142,31 @@ const handleSetup = async () => {
     }
   };
 
-  const handleFinalReview = () => {};
+  const handleFinalReview = async () => {
+    setIsLoading(true);
+
+    try {
+      const response = await dispatch(
+        scheduleCampaign({
+          campaignId: campaignId,
+          status: "SCHEDULED",
+        })
+      );
+      if (response.payload.code === 200){
+        GoBack();
+      }
+    } catch (error) {
+      console.error("Error scheduling campaign:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
 
   const handleNext = async () => {
     switch (activeStep) {
       case 0:
         await handleImportLeads();
-        goToNextStep();
-        goToNextStep();
         break;
       case 1:
         await handleSequences();
@@ -163,8 +179,6 @@ const handleSetup = async () => {
       case 3:
         await handleFinalReview();
         goToNextStep();
-        goToNextStep();
-        // handleFinalReview();
         break;
       default:
         console.warn("Unknown step:", activeStep);
@@ -241,6 +255,7 @@ const handleSetup = async () => {
               margin: "14px",
               width: "35px",
               height: "35px",
+              "&:hover": { color: "var(--theme-color-light)" },
             }}
           />
           <SearchBar>
@@ -309,11 +324,7 @@ const handleSetup = async () => {
             <Button onClick={handleNext}>Schedule Campaign</Button>
           </>
         ) : (
-          <Button
-            onClick={handleNext}
-          >
-            Save and Next
-          </Button>
+          <Button onClick={handleNext}>Save and Next</Button>
         )}
       </FooterContainer>
     </Container>
