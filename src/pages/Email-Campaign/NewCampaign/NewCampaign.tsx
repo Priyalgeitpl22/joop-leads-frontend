@@ -19,6 +19,7 @@ import { AppDispatch } from "../../../redux/store/store";
 import {
   addLeadsToCampaign,
   addSequencesToCampaign,
+  addEmailCampaignSettings,
 } from "../../../redux/slice/emailCampaignSlice";
 import UploadLeadsDialog from "./ImportLeadsCampaign/UploadLeadsDialog";
 import { Sequence } from "./SequenceCampaign/Sequences/interfaces";
@@ -26,6 +27,7 @@ import SendTestEmailDialog from "./SendTestEmailDialog";
 import { ILeadsCounts } from "./interfaces";
 import { CustomizedStepper } from "./stepper";
 import { Button, SecondaryButton } from "../../../styles/global.styled";
+import { EmailAccounts } from "./SetupCampaign/Interface";
 import ProgressBar from "../../../assets/Custom/linearProgress";
 export interface ImportedLeadsData {
   campaignName?: string;
@@ -53,9 +55,14 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
   const [uploadCounts, setUploadCounts] = React.useState<ILeadsCounts>();
   const [sequences, setSequences] = React.useState<Sequence[]>([]);
   const [selectedSequence, setSelectedSequence] = React.useState<Sequence>();
-  const [campaignId, setCampaignId] = React.useState<string>();
+  const [campaignId, setCampaignId] = React.useState<string>("");
   const [isLoading, setIsLoading] = React.useState(false);
   const [testEmailDialog, setTestEmailDialog] = React.useState(false);
+  const [dialogData, setDialogData] = React.useState({
+    senderAccount: {},
+    scheduleCampaign: {},
+    campaignSettings: {},
+  });
 
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
@@ -107,9 +114,31 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
     const response = await dispatch(addSequencesToCampaign(payload));
     if (response.payload.code) {
       setIsLoading(false);
-      if(response.payload.code==200){
-        setCampaignId(response.payload.data.campaign_id)
+      if (response.payload.code == 200) {
+        setCampaignId(response.payload.data.campaign_id);
       }
+    }
+  };
+
+  const handleSetup = async () => {
+    setIsLoading(true);
+    try {
+      const response = await dispatch(
+        addEmailCampaignSettings({
+          ...dialogData?.senderAccount,
+          ...dialogData?.scheduleCampaign,
+          ...dialogData?.campaignSettings,
+          campaign_id: campaignId,
+        })
+      );
+      if (response) {
+        setIsLoading(false);
+      }
+    } catch (error) {
+      setIsLoading(false);
+      console.error("Error setting up campaign:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -119,6 +148,8 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
     }
   };
 
+  const handleFinalReview = () => {};
+
   const handleNext = async () => {
     switch (activeStep) {
       case 0:
@@ -126,16 +157,16 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
         goToNextStep();
         break;
       case 1:
-        handleSequences();
+        await handleSequences();
         goToNextStep();
         break;
       case 2:
+        await handleSetup();
         goToNextStep();
-        // handleSetup();
         break;
       case 3:
+        await handleFinalReview();
         goToNextStep();
-        // handleFinalReview();
         break;
       default:
         console.warn("Unknown step:", activeStep);
@@ -189,8 +220,8 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
   };
 
   const handleSenderAccountsUpdate = (data: any) => {
-    console.log(data)
-  }
+    console.log(data);
+  };
   return (
     <Container>
       <HeaderContainer>
@@ -215,11 +246,14 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
           <UploadLeadsDialog
             open={uploadleads}
             uploadCounts={uploadCounts}
-            onClose={() => setUploadLeads(false)}
+            onClose={() => {
+              setUploadLeads(false);
+              goToNextStep();
+            }}
           />
         </Box>
       </HeaderContainer>
-      {/* {isLoading && <ProgressBar />} */}
+      {isLoading && <ProgressBar />}
       <MainContainer>
         {activeStep === 0 && (
           <ImportLeadsCampaign
@@ -239,7 +273,12 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
             selectedSequence={selectedSequence}
           />
         )}
-        {activeStep === 2 && <SetupCampaign campaignId={campaignId} handleSenderAccountsUpdate={handleSenderAccountsUpdate}/>}
+        {activeStep === 2 && (
+          <SetupCampaign
+            campaignId={campaignId}
+            handleSenderAccountsUpdate={handleSenderAccountsUpdate}
+          />
+        )}
         {activeStep === 3 && <FinalReviewCampaign campaignId={campaignId} />}
       </MainContainer>
       <FooterContainer>
@@ -260,12 +299,7 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
             <Button onClick={handleNext}>Schedule Campaign</Button>
           </>
         ) : (
-          <Button
-            onClick={handleNext}
-            // disabled={activeStep === steps.length - 1}
-          >
-            Save and Next
-          </Button>
+          <Button onClick={handleNext}>Save and Next</Button>
         )}
       </FooterContainer>
     </Container>
