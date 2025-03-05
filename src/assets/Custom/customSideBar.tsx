@@ -13,6 +13,9 @@ export const NAVIGATION: Navigation = [
     icon: <DashboardIcon style={{ color: "var(--icon-hover)" }} />,
   },
   {
+    kind: "divider",
+  },
+  {
     segment: "email-campaign",
     title: "Email Campaigns",
     icon: <CampaignIcon style={{ color: "var(--icon-hover)" }}/>,

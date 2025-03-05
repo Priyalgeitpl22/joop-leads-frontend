@@ -19,6 +19,7 @@ import {
   addEmailCampaignSettings,
   addLeadsToCampaign,
   addSequencesToCampaign,
+  addEmailCampaignSettings,
 } from "../../../redux/slice/emailCampaignSlice";
 import UploadLeadsDialog from "./ImportLeadsCampaign/UploadLeadsDialog";
 import { Sequence } from "./SequenceCampaign/Sequences/interfaces";
@@ -113,8 +114,8 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
     const response = await dispatch(addSequencesToCampaign(payload));
     if (response.payload.code) {
       setIsLoading(false);
-      if(response.payload.code==200){
-        setCampaignId(response.payload.data.campaign_id)
+      if (response.payload.code == 200) {
+        setCampaignId(response.payload.data.campaign_id);
       }
     }
   };
@@ -143,6 +144,8 @@ const handleSetup = async () => {
     }
   };
 
+  const handleFinalReview = () => {};
+
   const handleNext = async () => {
     switch (activeStep) {
       case 0:
@@ -159,6 +162,7 @@ const handleSetup = async () => {
         goToNextStep();
         break;
       case 3:
+        await handleFinalReview();
         goToNextStep();
         goToNextStep();
         // handleFinalReview();
@@ -250,7 +254,10 @@ const handleSetup = async () => {
           <UploadLeadsDialog
             open={uploadleads}
             uploadCounts={uploadCounts}
-            onClose={() => setUploadLeads(false)}
+            onClose={() => {
+              setUploadLeads(false);
+              goToNextStep();
+            }}
           />
         </Box>
       </HeaderContainer>
