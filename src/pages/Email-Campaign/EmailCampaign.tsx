@@ -176,6 +176,7 @@ const EmailCampaign: React.FC<EmailCampaignProps> = ({ router }) => {
               gap: "15px",
               alignItems: "center",
               marginLeft: "auto",
+              marginBottom: "10px",
             }}
           >
             <EmailCampaignDialog

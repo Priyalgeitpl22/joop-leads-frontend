@@ -56,6 +56,7 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
     startDate: Dayjs | null;
     maxLeads: number;
     selectedEmailAccounts: EmailAccounts;
+    selectedEmailAccounts: EmailAccounts;
   }>({
     timeZone: "",
     selectedDays: [],
@@ -151,6 +152,7 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
                   onChange={(value) => handleChange("endTime", value)}
                 />
               </Grid>
+              <Grid size="grow">
               <Grid size="grow">
                 <TextField
                   label="Minutes"

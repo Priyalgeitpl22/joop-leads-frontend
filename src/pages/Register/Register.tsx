@@ -167,7 +167,7 @@ const Register = () => {
 
           <Typography variant="body2" color="black" align="center" sx={{ my: 1 }}>
             Already have an account?{" "}
-            <RouterLink to="/login" style={{ textDecoration: "none", color: "var(--theme-color-dark)" }}>
+            <RouterLink to="/login" style={{ textDecoration: "none", color: "var(--theme-color-dark)", fontWeight: "bold" }}>
               Login
             </RouterLink>
           </Typography>

@@ -34,12 +34,14 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
     string | string[]
   >("");
   const [emailAccounts, setEmailAccounts] = useState<Account[]>([]);
+  const [emailAccounts, setEmailAccounts] = useState<Account[]>([]);
 
   useEffect(() => {
     const getEmailAccounts = async () => {
       try {
         const data = await dispatch(fetchEmailAccount()).unwrap();
         setRows(data);
+        setEmailAccounts(data);
         setEmailAccounts(data);
         if (data.length > 0) {
           setSelectedEmailAccount(data[0].id);
@@ -131,6 +133,7 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
             borderRadius: "6px",
             "&:hover": { backgroundColor: "#5a46d1" },
           }}
+          onClick={sendTestEmail}
           onClick={sendTestEmail}
         >
           Send Test Email
