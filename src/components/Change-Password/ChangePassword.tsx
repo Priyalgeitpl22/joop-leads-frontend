@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
@@ -7,12 +7,12 @@ import {
   ChangePasswordCard,
   IllustrationSection,
   FormSection,
-  StyledTextField,
   StyledButton,
 } from "./ChangePassword.styled";
 import { RootState, AppDispatch } from "../../redux/store/store";
 import { changePassword } from "../../redux/slice/authSlice";
 import toast, { Toaster } from "react-hot-toast";
+import PasswordInput from "../../utils/PasswordInput";
 
 const ChangePassword: React.FC = () => {
   const navigate = useNavigate();
@@ -21,11 +21,11 @@ const ChangePassword: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState<string>("");
 
   const dispatch = useDispatch<AppDispatch>();
-  const { user, loading, passwordChangeSuccess } = useSelector(
+  const { user} = useSelector(
     (state: RootState) => state.user
   );
 
-  const handleChangePassword = () => {
+  const handleChangePassword = async() => {
     if (!existingPassword || !newPassword || !confirmPassword) {
       toast.error("All fields are required!");
       return;
@@ -41,25 +41,22 @@ const ChangePassword: React.FC = () => {
       return;
     }
 
-    dispatch(
-      changePassword({
-        email: user.email,
-        existingPassword,
-        newPassword,
-      })
-    );
-  };
-  useEffect(() => {
     try {
-      if (passwordChangeSuccess) {
-        toast.success("Password changed successfully!");
-        window.location.assign("/");
-        
-      }
+      await dispatch(
+        changePassword({
+          email: user.email,
+          existingPassword,
+          newPassword,
+        })
+      ).unwrap();
+      toast.success("Password updated successfully!");
+      navigate("/");
+      window.location.reload();
     } catch (error) {
-      toast.error("Error changing password. Please try again.");
+      toast.error(error as string);
     }
-  }, [passwordChangeSuccess]);
+  };
+  
 
   return (
     <PageContainer>
@@ -78,40 +75,29 @@ const ChangePassword: React.FC = () => {
           <Typography variant="body1" mb={3}>
             Please enter your current password and choose a new password.
           </Typography>
-          <StyledTextField
-            fullWidth
+          <PasswordInput
             label="Existing Password"
-            variant="outlined"
-            type="password"
+            name="existingPassword"
             value={existingPassword}
             onChange={(e) => setExistingPassword(e.target.value)}
-            margin="normal"
-          />
-          <StyledTextField
-            fullWidth
+           />
+         
+          <PasswordInput
             label="New Password"
-            variant="outlined"
-            type="password"
+            name="newPassword"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
-            margin="normal"
-          />
-          <StyledTextField
-            fullWidth
+           />
+          <PasswordInput
             label="Confirm Password"
-            variant="outlined"
-            type="password"
+            name="confirmPassword"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            margin="normal"
-          />
-
+           />
           <StyledButton
             variant="contained"
             onClick={handleChangePassword}
-            disabled={loading}
-          >
-            {loading ? "Changing..." : "Change Password"}
+          >Change Password
           </StyledButton>
         </FormSection>
       </ChangePasswordCard>

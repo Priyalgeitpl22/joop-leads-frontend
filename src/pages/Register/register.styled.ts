@@ -10,7 +10,7 @@ export const PageContainer = styled(Box)`
 export const RegisterCard = styled(Box)`
   background: white;
   border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-dark);
   width: 100%;
   max-width: 900px;
   display: flex;
@@ -128,4 +128,11 @@ export const SignupLink = styled.a`
     color: #004a99;
     text-decoration: underline;
   }
+`;
+
+export const NavigateLink = styled.span`
+color: #0066cc;
+font-weight: bold;
+cursor: pointer;
+text-decoration: none;
 `;

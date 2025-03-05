@@ -3,7 +3,6 @@ import { Typography } from "@mui/material";
 import { Facebook, Linkedin } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { registerUser } from "../../redux/slice/authSlice";
-import { useNavigate } from "react-router-dom";
 import { AppDispatch } from "../../redux/store/store"; 
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import {
@@ -17,10 +16,11 @@ import {
   SocialButton,
   PreviewContainer,
   PreviewImage,
+  NavigateLink,
 } from "./register.styled";
-import { Link as RouterLink } from "react-router-dom";
 import Loader from "../../components/Loader"; 
 import toast, { Toaster } from "react-hot-toast";
+import PasswordInput from "../../utils/PasswordInput";
 
 interface RegisterFormData {
   profilePicture: File | null;
@@ -39,13 +39,10 @@ const formFields: { name: keyof Omit<RegisterFormData, "profilePicture">; label:
   { name: "password", label: "Password", type: "text" },
   { name: "orgName", label: "Company Name", type: "text" },
   { name: "domain", label: "Company Domain", type: "text" },
-  // { name: "country", label: "Country", type: "text" },
-  // { name: "phone", label: "Phone Number", type: "tel" },
 ];
 
 const Register = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate(); 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [formData, setFormData] = useState<RegisterFormData>({
@@ -149,28 +146,44 @@ const Register = () => {
           </PreviewContainer>
 
           {/* Render other text fields */}
-          {formFields.map(({ name, label, type }) => (
-            <StyledTextField
-              key={name}
-              name={name}
-              label={label}
-              type={type}
-              variant="outlined"
-              value={formData[name]}
-              onChange={handleChange}
-            />
-          ))}
+          {formFields.map(({ name, label, type }) => {
+            if (name === "password") {
+              return (
+                <PasswordInput
+                  key={name}
+                  name={name}
+                  label={label}
+                  value={formData[name]}
+                  onChange={handleChange}
+                  autoComplete="new-password"
+                />
+              );
+            }
+            return (
+              <StyledTextField
+                key={name}
+                name={name}
+                label={label}
+                type={type}
+                variant="outlined"
+                value={formData[name]}
+                onChange={handleChange}
+                autoComplete="nope"
+              />
+            );
+          })}
+
 
           <StyledButton variant="contained" fullWidth onClick={handleSubmit}>
             REGISTER
           </StyledButton>
 
           <Typography variant="body2" color="black" align="center" sx={{ my: 1 }}>
-            Already have an account?{" "}
-            <RouterLink to="/login" style={{ textDecoration: "none", color: "var(--theme-color-dark)", fontWeight: "bold" }}>
+            Already have an account?{" "}<NavigateLink onClick={() => window.location.assign("/login")}>
               Login
-            </RouterLink>
+            </NavigateLink>
           </Typography>
+            
 
           <Typography variant="body2" color="black" align="center">
             OR REGISTER WITH
