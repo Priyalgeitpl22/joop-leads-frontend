@@ -48,7 +48,7 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
   );
 
   const [formData, setFormData] = useState<{
-    timeZone: string;
+    timeZone: [];
     selectedDays: number[];
     startTime: Dayjs;
     endTime: Dayjs;
@@ -57,7 +57,7 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
     maxLeads: number;
     selectedEmailAccounts: EmailAccounts[];
   }>({
-    timeZone: "",
+    timeZone: [],
     selectedDays: [],
     startTime: dayjs().hour(9).minute(0),
     endTime: dayjs().hour(18).minute(0),
@@ -69,6 +69,11 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
 
   const handleChange = (field: keyof typeof formData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleTimeZoneChange = (value: string | string[]) => {
+    setSelectedTimeZones(value);
+    handleChange("timeZone", value);
   };
 
   const daysOfWeek = Object.values(DaysOfWeek).filter(
@@ -108,13 +113,13 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
           alignItems="flex-start"
           gap={2}
         >
-          <FormControl fullWidth>
+          <FormControl fullWidth sx={{ textAlign: "left" }}>
             <MultiSelectDropdown
               width="100%"
               label="Select Time Zone"
               options={timeZones}
-              selectedValues={selectedTimeZones}
-              onChange={setSelectedTimeZones}
+              selectedValues={formData.timeZone}
+              onChange={handleTimeZoneChange}
               multiple={false}
             />
           </FormControl>

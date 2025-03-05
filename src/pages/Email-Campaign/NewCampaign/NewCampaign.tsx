@@ -16,7 +16,6 @@ import { csvSettingsType } from "../Interfaces";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../redux/store/store";
 import {
-  addEmailCampaignSettings,
   addLeadsToCampaign,
   addSequencesToCampaign,
   addEmailCampaignSettings,

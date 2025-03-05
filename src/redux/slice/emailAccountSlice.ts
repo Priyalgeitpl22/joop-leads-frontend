@@ -38,6 +38,7 @@ export interface CreateEmailAccountPayload {
   account: string;
   name: string;
   state: string;
+  type: string;
   email: string;
   imap: {
     auth: {
