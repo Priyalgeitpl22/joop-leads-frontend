@@ -21,6 +21,7 @@ import {
 import Loader from "../../components/Loader"; 
 import toast, { Toaster } from "react-hot-toast";
 import PasswordInput from "../../utils/PasswordInput";
+import { useNavigate } from "react-router-dom";
 
 interface RegisterFormData {
   profilePicture: File | null;
@@ -60,7 +61,7 @@ const Register = () => {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   // State to control the full screen loader
   const [isLoading, setIsLoading] = useState(false);
-
+  const navigate = useNavigate();
   // Handler for text input fields
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -91,10 +92,9 @@ const Register = () => {
       payload.append("profilePicture", formData.profilePicture);
     }
     try {
-      const result = await dispatch(registerUser(payload)).unwrap();
-      console.log("Registration successful:", result);
+      await dispatch(registerUser(payload)).unwrap();
       toast.success("Registration successful!");
-      window.location.assign("/verify-otp");
+      navigate("/verify-otp", { state: { email: formData.email } });
     } catch (err) {
       console.error("Registration failed:", err);
       toast.error("Registration failed. Please try again.");
