@@ -20,12 +20,14 @@ interface SettingCampaignProps {
   open: boolean;
   onClose: () => void;
   campaignId?: string;
+  handleSave: (data: any) => void
 }
 
 const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
   open,
   onClose,
   campaignId,
+  handleSave
 }) => {
   const [activeTab, setActiveTab] = useState("general");
   const dispatch = useDispatch<AppDispatch>();

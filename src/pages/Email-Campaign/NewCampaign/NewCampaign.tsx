@@ -307,6 +307,8 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
           <SetupCampaign
             campaignId={campaignId}
             handleSenderAccountsUpdate={handleSenderAccountsUpdate}
+            handleScheduleCampaignUpdate={handleScheduleCampaignUpdate}
+            handleCampaignSettingsUpdate={handleCampaignSettingsUpdate}
           />
         )}
         {activeStep === 3 && <FinalReviewCampaign campaignId={campaignId} />}

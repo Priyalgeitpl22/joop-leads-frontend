@@ -38,12 +38,14 @@ interface ScheduleCampaignProps {
   open: boolean;
   onClose: () => void;
   campaignId?: string;
+  handleSave: (data: any) => void;
 }
 
 const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
   open,
   onClose,
   campaignId,
+  handleSave
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [selectedTimeZones, setSelectedTimeZones] = useState<string | string[]>(

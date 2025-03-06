@@ -119,6 +119,7 @@ const SetupCampaign: React.FC<SetupCampaignProps> = ({
             Schedule Campaign
           </SetupButton>
           <ScheduleCampaignDialog
+            handleSave={handleScheduleCampaignUpdate}
             campaignId={campaignId}
             open={scheduleCampaign}
             onClose={() => setScheduleCampaign(false)}
@@ -155,6 +156,7 @@ const SetupCampaign: React.FC<SetupCampaignProps> = ({
             Modify Settings
           </SetupButton>
           <CampaignSettingDialog
+            handleSave={handleCampaignSettingsUpdate}
             campaignId={campaignId}
             open={settingCampaign}
             onClose={() => setSettingCampaign(false)}
