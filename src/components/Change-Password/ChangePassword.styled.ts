@@ -1,4 +1,4 @@
-import { Box, Card, TextField, Button } from "@mui/material";
+import { Box, Card, Button } from "@mui/material";
 import styled  from "@emotion/styled";
 
 export const PageContainer = styled(Box)`
@@ -11,6 +11,7 @@ export const PageContainer = styled(Box)`
 export const ChangePasswordCard = styled(Card)`
   display: flex;
   flex-direction: row;
+  border: 1px solid var(--border-dark);
   width: 80%;
   max-width: 800px;
   padding: 16px;
@@ -35,9 +36,6 @@ export const FormSection = styled(Box)`
   justify-content: center;
 `;
 
-export const StyledTextField = styled(TextField)`
-  margin-bottom: 16px;
-`;
 
 export const StyledButton = styled(Button)`
   height: 40px;

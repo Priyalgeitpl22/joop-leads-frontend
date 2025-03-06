@@ -25,9 +25,13 @@ export const addLeadsToCampaign = createAsyncThunk(
   "emailCampaign/addLeads",
   async (data: any, { rejectWithValue }) => {
     try {
-      const response = await api.post(`${BASE_URL}/add-leads-to-campaign`, data, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const response = await api.post(
+        `${BASE_URL}/add-leads-to-campaign`,
+        data,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
       return response.data;
     } catch (error: unknown) {
       let errorMessage = "Network error";
@@ -107,6 +111,46 @@ export const fetchCampaignSequences = createAsyncThunk(
       let errorMessage = "Something went wrong";
       if (error instanceof AxiosError) {
         errorMessage = error.response?.data?.message || errorMessage;
+      }
+      return rejectWithValue(errorMessage);
+    }
+  }
+);
+
+export const SendTestEmail = createAsyncThunk(
+  "accounts/send-test-email",
+  async (data: { email: string | string[] }, { rejectWithValue }) => {
+    try {
+      const response = await emailApi.post(`/accounts/send-test-email`, {
+        email: data.email,
+      });
+      return response.data;
+    } catch (error: unknown) {
+      let errorMessage = "Network error";
+      if (error instanceof AxiosError) {
+        errorMessage = error.response?.data?.message || errorMessage;
+      }
+      return rejectWithValue(errorMessage);
+    }
+  }
+);
+
+export const scheduleCampaign = createAsyncThunk(
+  "email-campaign/schedule-campaign",
+  async (
+    { campaignId, status }: { campaignId: string; status: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await api.put(`/email-campaign/schedule-campaign`, {
+        campaignId,
+        status,
+      });
+      return response.data;
+    } catch (error: unknown) {
+      let errorMessage = "Something went wrong";
+      if (error instanceof AxiosError) {
+        errorMessage = (error.response?.data as string) || errorMessage;
       }
       return rejectWithValue(errorMessage);
     }

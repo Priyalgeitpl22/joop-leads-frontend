@@ -16,9 +16,9 @@ import { CustomAppTitle } from "./assets/Custom/customAppTitle";
 import { CustomSearchBar } from "./assets/Custom/customSearchBar";
 import { SidebarFooter } from "./assets/Custom/customSidebarFooter";
 import Cookies from "js-cookie";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getUserDetails } from "./redux/slice/userSlice";
-import { AppDispatch } from "./redux/store/store";
+import { AppDispatch, RootState } from "./redux/store/store";
 import { useNavigate } from "react-router-dom";
 import Login from "./pages/Login/Login";
 import Register from "./pages/Register/Register";
@@ -42,32 +42,49 @@ const UNPROTECTED_ROUTES = [
 ];
 
 function useDemoRouter(initialPath: string): Router {
+  const navigate = useNavigate();
   const [pathname, setPathname] = React.useState(
     window.location.pathname || initialPath
   );
-  const navigate = useNavigate();
 
-  const router = React.useMemo(() => {
-    return {
-      pathname,
-      searchParams: new URLSearchParams(window.location.search),
-      navigate: (path: any) => {
-        navigate(path); // Correctly navigate using React Router
-        setPathname(path); // Update state
-      },
-    };
-  }, [navigate]);
+  React.useEffect(() => {
+    setPathname(window.location.pathname);
+  }, [window.location.pathname]);
 
-  return router;
+  return {
+    pathname,
+    searchParams: new URLSearchParams(window.location.search),
+    navigate: (path: any) => {
+      navigate(path);
+    },
+  };
 }
 
 export default function DashboardLayoutBasic() {
+  const dispatch = useDispatch<AppDispatch>();
   const router = useDemoRouter("/");
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
   const isNewCampaignPage = router.pathname === "/email-campaign/new-campaign";
 
-  // Handle unprotected routes separately
+  const { user } = useSelector((state: RootState) => state.user);
+
+  React.useEffect(() => {
+    const token = Cookies.get("access_token");
+
+    if (!UNPROTECTED_ROUTES.includes(router.pathname)) {
+      if (!token) {
+        navigate("/login");
+      } else {
+        dispatch(getUserDetails(token))
+          .unwrap()
+          .catch((error) => {
+            console.error("Failed to fetch user details:", error);
+            navigate("/login");
+          });
+      }
+    }
+  }, [dispatch, router.pathname, navigate]);
+
   if (UNPROTECTED_ROUTES.includes(router.pathname)) {
     return (
       <AppProvider router={router} theme={theme}>
@@ -84,21 +101,10 @@ export default function DashboardLayoutBasic() {
       </AppProvider>
     );
   }
-  React.useEffect(() => {
-    const token = Cookies.get("access_token");
-    if (!UNPROTECTED_ROUTES.includes(location.pathname)) {
-      if (!token) {
-        navigate("/login");
-      } else {
-        dispatch(getUserDetails(token))
-          .unwrap()
-          .catch((error) => {
-            console.error("Failed to fetch user details:", error);
-            navigate("/login");
-          });
-      }
-    }
-  }, [dispatch]);
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <AppProvider navigation={NAVIGATION} router={router} theme={theme}>
@@ -114,8 +120,7 @@ export default function DashboardLayoutBasic() {
             toolbarActions: () => (
               <>
                 <CustomSearchBar />
-                <UserProfileMenu />{" "}
-                {/* Added UserProfileMenu inside toolbarActions */}
+                <UserProfileMenu />
               </>
             ),
             sidebarFooter: SidebarFooter,

@@ -17,6 +17,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../redux/store/store";
 import { fetchEmailAccount } from "../../../redux/slice/emailAccountSlice";
 import { Account } from "./SetupCampaign/Interface";
+import { SendTestEmail } from "../../../redux/slice/emailCampaignSlice";
 
 interface SendTestEmailDialogProps {
   open: boolean;
@@ -40,6 +41,7 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
         const data = await dispatch(fetchEmailAccount()).unwrap();
         setRows(data);
         setEmailAccounts(data);
+        setEmailAccounts(data);
         if (data.length > 0) {
           setSelectedEmailAccount(data[0].id);
         }
@@ -51,11 +53,25 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
     getEmailAccounts();
   }, [dispatch]);
 
-  const sendTestEmail = () => {
-    const senderAccount = emailAccounts.filter((account) => {
-      return account.email === selectedEmailAccount;
-     })[0];  
-  }
+  const sendTestEmail = async () => {
+    if (!selectedEmailAccount) {
+      console.error("No email account selected.");
+      return;
+    }
+
+    const payload = {
+      email: selectedEmailAccount,
+    };
+
+    try {
+      const response = await dispatch(SendTestEmail(payload)).unwrap();
+      console.log("Test email sent successfully:", response);
+      onClose();
+    } catch (error) {
+      console.error("Failed to send test email:", error);
+    }
+  };
+
 
   return (
     <DialogBox open={open} onClose={onClose} fullWidth maxWidth="sm">

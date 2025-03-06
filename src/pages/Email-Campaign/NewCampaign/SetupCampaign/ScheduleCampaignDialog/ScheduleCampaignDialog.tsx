@@ -10,6 +10,7 @@ import {
   Typography,
   Box,
   IconButton,
+  Grid,
 } from "@mui/material";
 import {
   LocalizationProvider,
@@ -32,7 +33,6 @@ import {
 } from "../../../../../styles/global.styled";
 import MultiSelectDropdown from "../../../../../assets/Custom/cutomSelectOption";
 import timeZones from "../../../../../constants";
-import Grid from "@mui/material/Grid2";
 
 interface ScheduleCampaignProps {
   open: boolean;
@@ -51,20 +51,20 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
   );
 
   const [formData, setFormData] = useState<{
-    timeZone: string;
+    timeZone: [];
     selectedDays: number[];
     startTime: Dayjs;
     endTime: Dayjs;
-    emailInterval: string;
+    emailInterval: number;
     startDate: Dayjs | null;
     maxLeads: number;
-    selectedEmailAccounts: EmailAccounts;
+    selectedEmailAccounts: EmailAccounts[];
   }>({
-    timeZone: "",
+    timeZone: [],
     selectedDays: [],
     startTime: dayjs().hour(9).minute(0),
     endTime: dayjs().hour(18).minute(0),
-    emailInterval: "",
+    emailInterval: 0,
     startDate: null,
     maxLeads: 100,
     selectedEmailAccounts: [],
@@ -74,53 +74,14 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleTimeZoneChange = (value: string | string[]) => {
+    setSelectedTimeZones(value);
+    handleChange("timeZone", value);
+  };
+
   const daysOfWeek = Object.values(DaysOfWeek).filter(
     (value) => typeof value === "number"
   ) as number[];
-
-  const handleSave = async () => {
-    try {
-      if (campaignId) {
-        await dispatch(
-          addEmailCampaignSettings({
-            // sender_accounts: formData.selectedEmailAccounts,
-            campaign_id: campaignId,
-            auto_warm_up: false,
-            schedule_settings: {
-              time_zone: selectedTimeZones as string,
-              send_these_days: formData.selectedDays,
-              time_sequences: {
-                from: formData.startTime.format("HH:mm"),
-                to: formData.endTime.format("HH:mm"),
-                minutes: formData.emailInterval,
-              },
-              start_date: formData.startDate
-                ? formData.startDate.format("YYYY-MM-DD")
-                : "",
-              max_leads_per_day: formData.maxLeads,
-            },
-            // campaign_settings: {
-            //   campaign_name: "",
-            //   stop_message_on_lead: "",
-            //   email_delivery_optimization: false,
-            //   excluded_tracking: {
-            //     dont_track_open_emails: false,
-            //     dont_track_link_clicks: false,
-            //   },
-            //   priority_sending_pattern: 0,
-            //   company_auto_pause: false,
-            //   enhanced_email_delivery: false,
-            //   bounce_rate: false,
-            //   unsubscribe: false,
-            // },
-          })
-        ).unwrap();
-        onClose();
-      }
-    } catch (error) {
-      alert("Failed to save campaign settings.");
-    }
-  };
 
   const handleDayChange = (day: number) => {
     setFormData((prev) => ({
@@ -155,13 +116,13 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
           alignItems="flex-start"
           gap={2}
         >
-          <FormControl fullWidth>
+          <FormControl fullWidth sx={{ textAlign: "left" }}>
             <MultiSelectDropdown
               width="100%"
               label="Select Time Zone"
               options={timeZones}
-              selectedValues={selectedTimeZones}
-              onChange={setSelectedTimeZones}
+              selectedValues={formData.timeZone}
+              onChange={handleTimeZoneChange}
               multiple={false}
             />
           </FormControl>
@@ -183,65 +144,53 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
           </FormGroup>
 
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <Grid sx={{ minWidth: "710px"}} container spacing={2}>
-              <Grid size={4}>
+            <Grid container spacing={2} sx={{ minWidth: "710px" }}>
+              <Grid item xs={4}>
                 <MobileTimePicker
                   label="From"
                   value={formData.startTime}
                   onChange={(value) => handleChange("startTime", value)}
                 />
-              </Grid >
-              <Grid size={4}>
+              </Grid>
+              <Grid item xs={4}>
                 <MobileTimePicker
                   label="To"
                   value={formData.endTime}
                   onChange={(value) => handleChange("endTime", value)}
                 />
               </Grid>
-              <Grid size="grow">
+              <Grid item xs={4}>
                 <TextField
                   label="Minutes"
                   type="number"
                   value={formData.emailInterval}
                   onChange={(e) =>
-                    handleChange("emailInterval", Number(e.target.value))
+                    handleChange("emailInterval", Number(e.target.value) || 0)
                   }
                   fullWidth
                 />
               </Grid>
             </Grid>
           </LocalizationProvider>
+
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <Grid container sx={{ width: "100%" }} spacing={2}>
-              <Grid
-                sx={{
-                  width: "48%",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "flex-start",
-                }}
-              >
+            <Grid container spacing={2} sx={{ width: "100%" }}>
+              <Grid item xs={6}>
                 <Typography>Set Campaign Start Date</Typography>
                 <DesktopDatePicker
                   value={formData.startDate}
                   onChange={(value) => handleChange("startDate", value)}
                 />
               </Grid>
-              <Grid
-                sx={{
-                  width: "49%",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "flex-start",
-                }}
-              >
+              <Grid item xs={6}>
                 <Typography>Max Number Of New Leads Per Day</Typography>
                 <TextField
                   type="number"
                   value={formData.maxLeads}
                   onChange={(e) =>
-                    handleChange("maxLeads", Number(e.target.value))
+                    handleChange("maxLeads", Number(e.target.value) || 0)
                   }
+                  fullWidth
                 />
               </Grid>
             </Grid>
@@ -250,7 +199,14 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
       </CustomDialogContainer>
 
       <CustomDialogFooter justifyContent="flex-end">
-        <Button onClick={handleSave}>Save</Button>
+        <Button
+          onClick={() => {
+            handleSave({ schedule_settings: formData });
+            onClose();
+          }}
+        >
+          Save
+        </Button>
       </CustomDialogFooter>
     </Dialog>
   );

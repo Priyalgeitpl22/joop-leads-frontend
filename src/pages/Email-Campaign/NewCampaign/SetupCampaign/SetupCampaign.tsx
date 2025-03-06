@@ -10,9 +10,16 @@ import TaskAltIcon from "@mui/icons-material/TaskAlt";
 interface SetupCampaignProps {
   campaignId?: string;
   handleSenderAccountsUpdate: (data: any) => void;
+  handleScheduleCampaignUpdate: (data: any) => any;
+  handleCampaignSettingsUpdate: (data: any) => any;
 }
 
-const SetupCampaign: React.FC<SetupCampaignProps> = ({ campaignId, handleSenderAccountsUpdate }) => {
+const SetupCampaign: React.FC<SetupCampaignProps> = ({
+  campaignId,
+  handleSenderAccountsUpdate,
+  handleScheduleCampaignUpdate,
+  handleCampaignSettingsUpdate,
+}) => {
   const [senderAccount, setSenderAccount] = useState(false);
   const [scheduleCampaign, setScheduleCampaign] = useState(false);
   const [settingCampaign, setSettingCampaign] = useState(false);

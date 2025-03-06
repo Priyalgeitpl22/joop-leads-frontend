@@ -20,6 +20,7 @@ import {
   addLeadsToCampaign,
   addSequencesToCampaign,
   addEmailCampaignSettings,
+  scheduleCampaign,
 } from "../../../redux/slice/emailCampaignSlice";
 import UploadLeadsDialog from "./ImportLeadsCampaign/UploadLeadsDialog";
 import { Sequence } from "./SequenceCampaign/Sequences/interfaces";
@@ -85,6 +86,7 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
 
   const handleImportLeads = async () => {
     setIsLoading(true);
+    setIsLoading(true);
     setUploadCsv(true);
     const payload = {
       CSVsettings,
@@ -101,7 +103,6 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
       setCampaignId(response.payload.campaignId);
       setUploadCsv(false);
       setUploadLeads(true);
-      // goToNextStep();
     }
   };
 
@@ -148,13 +149,31 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
     }
   };
 
-  const handleFinalReview = () => {};
+  const handleFinalReview = async () => {
+    setIsLoading(true);
+
+    try {
+      const response = await dispatch(
+        scheduleCampaign({
+          campaignId: campaignId,
+          status: "SCHEDULED",
+        })
+      );
+      if (response.payload.code === 200){
+        GoBack();
+      }
+    } catch (error) {
+      console.error("Error scheduling campaign:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
 
   const handleNext = async () => {
     switch (activeStep) {
       case 0:
         await handleImportLeads();
-        goToNextStep();
         break;
       case 1:
         await handleSequences();
@@ -220,8 +239,17 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
   };
 
   const handleSenderAccountsUpdate = (data: any) => {
-    console.log(data);
+    setDialogData((prev) => ({ ...prev, senderAccount: data }));
   };
+
+  const handleScheduleCampaignUpdate = (data: any) => {
+    setDialogData((prev) => ({ ...prev, scheduleCampaign: data }));
+  };
+
+  const handleCampaignSettingsUpdate = (data: any) => {
+    setDialogData((prev) => ({ ...prev, campaignSettings: data }));
+  };
+
   return (
     <Container>
       <HeaderContainer>
@@ -234,6 +262,7 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
               margin: "14px",
               width: "35px",
               height: "35px",
+              "&:hover": { color: "var(--theme-color-light)" },
             }}
           />
           <SearchBar>
@@ -253,7 +282,8 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
           />
         </Box>
       </HeaderContainer>
-      {isLoading && <ProgressBar />}
+      {/* {isLoading && <ProgressBar />} */}
+      {/* {isLoading && <ProgressBar />} */}
       <MainContainer>
         {activeStep === 0 && (
           <ImportLeadsCampaign

@@ -241,12 +241,12 @@ const EmailCampaign: React.FC<EmailCampaignProps> = ({ router }) => {
           sx={{ boxShadow: "none", borderRadius: "8px" }}
         >
           <Table>
-            <TableHead>
-              <TableRow sx={{ backgroundColor: "#f8f9fc" }}>
-                <TableCell sx={{ fontWeight: "bold", color: "#35495c" }}>
+            <TableHead sx={{ backgroundColor: "#f8f9fc" }}>
+              <TableRow>
+                <TableCell colSpan={1}sx={{ fontWeight: "bold", color: "#35495c" }}>
                   Campaign Details
                 </TableCell>
-                <TableCell sx={{ fontWeight: "bold", color: "#35495c" }}>
+                <TableCell colSpan={11} sx={{ fontWeight: "bold", color: "#35495c" }}>
                   Report
                 </TableCell>
               </TableRow>

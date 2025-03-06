@@ -138,6 +138,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
       account: "smtp",
       name: formData.fromName,
       state: "init",
+      type: "imap",
       email: formData.fromEmail,
       imap: {
         host: formData.imapHost,

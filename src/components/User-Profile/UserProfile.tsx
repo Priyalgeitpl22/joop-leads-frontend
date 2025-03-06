@@ -6,7 +6,7 @@ import {
   StyledMenuItem,
   UserProfileContainer,
 } from "./UserProfile.styled";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../../redux/slice/authSlice";
 import { AppDispatch, RootState } from "../../redux/store/store";
@@ -27,7 +27,6 @@ const UserProfileMenu: React.FC = () => {
   const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
 
   const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
   const { user } = useSelector((state: RootState) => state.user);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {

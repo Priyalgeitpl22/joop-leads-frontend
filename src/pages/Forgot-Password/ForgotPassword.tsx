@@ -7,8 +7,8 @@ import {
   FormSection,
   StyledTextField,
   StyledButton,
+  NavigateLink,
 } from "./forgot_password.styled";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { forgetPassword } from "../../redux/slice/authSlice"; // Import Redux action
 import { AppDispatch } from "../../redux/store/store";
@@ -18,7 +18,6 @@ const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
 
   const handleSubmitEmail = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,7 +51,7 @@ const ForgotPassword = () => {
           />
         </IllustrationSection>
         <FormSection>
-          <Typography variant="h4" fontWeight="bold" mb={1}>
+          <Typography onClick={() => window.location.assign('/forgot-password')} variant="h4" fontWeight="bold" mb={1}>
             Forgot Password?
           </Typography>
           <Typography variant="body1" color="black" mb={3}>
@@ -78,12 +77,9 @@ const ForgotPassword = () => {
 
           <Typography variant="body2" align="center" sx={{ my: 2 }}>
             Remember your password?{" "}
-            <RouterLink
-              to="/login"
-              style={{ textDecoration: "none", color: "var(--theme-color-dark)" }}
-            >
+            <NavigateLink onClick={() => window.location.assign("/login")}>
               Login
-            </RouterLink>
+            </NavigateLink>
           </Typography>
         </FormSection>
       </AuthCard>
