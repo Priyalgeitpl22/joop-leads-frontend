@@ -65,17 +65,17 @@ export interface CreateEmailAccountPayload {
 export const fetchEmailAccount = createAsyncThunk(
   "accounts",
   async (_, { rejectWithValue }) => {
-  try {
-    const response = await emailApi.get("/accounts");
-    return response.data;
-  } catch (error: unknown) {
-    let errorMessage = "Something went wrong";
-    if (error instanceof AxiosError) {
-      errorMessage = (error.response?.data as string) || errorMessage;
+    try {
+      const response = await emailApi.get("/accounts");
+      return response.data;
+    } catch (error: unknown) {
+      let errorMessage = "Something went wrong";
+      if (error instanceof AxiosError) {
+        errorMessage = (error.response?.data as string) || errorMessage;
+      }
+      return rejectWithValue(errorMessage);
     }
-    return rejectWithValue(errorMessage);
-  }
-});
+  });
 
 export const addOuthEmailAccount = createAsyncThunk(
   "oauth/auth-url",
@@ -92,21 +92,21 @@ export const addOuthEmailAccount = createAsyncThunk(
 
 export const addOutlookEmailAccount = createAsyncThunk(
   "outlook/auth-url",
-async (__dirname, {rejectWithValue}) => {
-  try {
-    const origin = encodeURIComponent(window.location.href);
-    const response = await emailApi.get(`/outlook/auth-url?origin=${origin}`);
-    return response.data.url;
-  }catch (error: any){
-    return rejectWithValue(error.response?.data?.message || "Network error");
-  }
-});
+  async (__dirname, {rejectWithValue}) => {
+    try {
+      const origin = encodeURIComponent(window.location.href);
+      const response = await emailApi.get(`/outlook/auth-url?origin=${origin}`);
+      return response.data.url;
+    }catch (error: any){
+      return rejectWithValue(error.response?.data?.message || "Network error");
+    }
+  });
 
 export const verifyEmailAccount = createAsyncThunk<
-    string,
-    VerifyEmailAccountPayload,
-    { rejectValue: string }
-  >(
+  string,
+  VerifyEmailAccountPayload,
+  { rejectValue: string }
+>(
   "accounts/verify",
   async ( data: VerifyEmailAccountPayload, { rejectWithValue }) => {
     try {
@@ -123,11 +123,27 @@ export const CreateEmailAccount = createAsyncThunk<
   CreateEmailAccountPayload,
   { rejectValue: string }
 >(
-  "accounts",
+  "accounts", 
   async (data: CreateEmailAccountPayload, { rejectWithValue }) => {
+  try {
+    const response = await emailApi.post(`/accounts`, data);
+    return response.data.url;
+  } catch (error: any) {
+    return rejectWithValue(error.response?.data?.message || "Network error");
+  }
+});
+
+export const SearchEmailAccount = createAsyncThunk(
+  "accounts/search",
+  async (
+    { email, name }: { email?: string; name?: string },
+    { rejectWithValue }
+  ) => {
     try {
-      const response = await emailApi.post(`/accounts`, data);
-      return response.data.url;
+      const response = await emailApi.get(`/accounts/search`, {
+        params: { email, name },
+      });
+      return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || "Network error");
     }

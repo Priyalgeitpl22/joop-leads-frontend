@@ -17,7 +17,6 @@ import {
   InputLabel,
   Select,
 } from "@mui/material";
-import { Email, Replay, ErrorOutline } from "@mui/icons-material";
 import {
   ContentContainer,
   CustomTab,
@@ -35,7 +34,7 @@ import FolderOpenOutlinedIcon from "@mui/icons-material/FolderOpenOutlined";
 import EmailCampaignDialog from "./EmailCampaignDialog/AddEmailCampaignDialog";
 import { Search } from "lucide-react";
 import { useDispatch } from "react-redux";
-import { fetchEmailCampaigns } from "../../redux/slice/emailCampaignSlice";
+import { fetchEmailCampaigns, SearchEmailCampaign } from "../../redux/slice/emailCampaignSlice";
 import { AppDispatch } from "../../redux/store/store";
 import { IEmailCampaign } from "./NewCampaign/interfaces";
 import { formatDate } from "../../utils/utils";
@@ -59,6 +58,8 @@ const EmailCampaign: React.FC<EmailCampaignProps> = ({ router }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const dispatch = useDispatch<AppDispatch>();
   const [campaigns, setCampaigns] = useState<IEmailCampaign[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [isLoading, setIsLoading] = React.useState(false);
 
   useEffect(() => {
     const getEmailCampaigns = async () => {
@@ -69,13 +70,16 @@ const EmailCampaign: React.FC<EmailCampaignProps> = ({ router }) => {
   }, []);
 
   const getAllEmailCampaigns = async () => {
+    setIsLoading(true)
     const response = await dispatch(fetchEmailCampaigns());
-    setCampaigns(response.payload.data);
+    setCampaigns(response.payload.data || []);
   };
 
   const handleTabChange = (_: any, newValue: SetStateAction<string>) => {
-    setActiveTab(newValue);
-    if (newValue === "folder") {
+    if (newValue === "all_campaign" || newValue === "folder") {
+      setActiveTab(newValue);
+    } else {
+      setActiveTab("all_campaign");
     }
   };
 
@@ -93,6 +97,28 @@ const EmailCampaign: React.FC<EmailCampaignProps> = ({ router }) => {
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleSearch = async (query: string) => {
+    try {
+      const trimmedQuery = query.trim();
+      if (trimmedQuery === "") {
+        await getAllEmailCampaigns();
+      } else {
+        const filteredData = await dispatch(
+          SearchEmailCampaign({ campaign_name: trimmedQuery })
+        ).unwrap();
+        setCampaigns(filteredData.data);
+      }
+    } catch (error) {
+      console.error("Search failed:", error);
+    }
+  };
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const query = event.target.value;
+    setSearchQuery(query);
+    handleSearch(query);
   };
 
   const tableData = [
@@ -129,7 +155,7 @@ const EmailCampaign: React.FC<EmailCampaignProps> = ({ router }) => {
   return (
     <ContentContainer>
       <CustomTabs
-        value={activeTab}
+        value={activeTab || "all_campaign"}
         onChange={handleTabChange}
         sx={{
           display: "flex",
@@ -139,7 +165,7 @@ const EmailCampaign: React.FC<EmailCampaignProps> = ({ router }) => {
         }}
       >
         <CustomTab
-          label={`All Campaigns (${campaigns.length})`}
+          label={`All Campaigns (${campaigns?.length})`}
           value="all_campaign"
         />
         <CustomTab label="Folders" value="folder" />
@@ -158,14 +184,13 @@ const EmailCampaign: React.FC<EmailCampaignProps> = ({ router }) => {
             </FilterIcon>
             <SearchBar>
               <Search size={20} />
-              <input placeholder="Search input..." />
+              <input
+                placeholder="Search by Campaign Name"
+                value={searchQuery}
+                onChange={handleSearchChange}
+              />
             </SearchBar>
-            <Button
-              // color="white"
-              onClick={handleCreateCampaign}
-            >
-              Create Campaign
-            </Button>
+            <Button onClick={handleCreateCampaign}>Create Campaign</Button>
           </Box>
         )}
 
@@ -243,18 +268,21 @@ const EmailCampaign: React.FC<EmailCampaignProps> = ({ router }) => {
           <Table>
             <TableHead sx={{ backgroundColor: "#f8f9fc" }}>
               <TableRow>
-                <TableCell colSpan={1}sx={{ fontWeight: "bold", color: "#35495c" }}>
+                <TableCell colSpan={1}
+                sx={{ fontWeight: "bold", color: "#35495c" }}>
                   Campaign Details
                 </TableCell>
-                <TableCell colSpan={11} sx={{ fontWeight: "bold", color: "#35495c" }}>
+                <TableCell colSpan=
+                {11} sx={{ fontWeight: "bold", color:
+                "#35495c" }}>
                   Report
                 </TableCell>
               </TableRow>
             </TableHead>
 
-            {campaigns.length > 0 &&
+            {campaigns?.length > 0 ? (
               campaigns.map((campaign) => (
-                <CustomTableBody>
+                <CustomTableBody key={campaign.id}>
                   <CustomTableRow>
                     <CustomTableCell>
                       <div>
@@ -272,7 +300,7 @@ const EmailCampaign: React.FC<EmailCampaignProps> = ({ router }) => {
                             color: "var(--text-light)",
                           }}
                         >
-                          {`Drafted | ${formatDate(campaign.createdAt)} | ${campaign.sequences.length} Sequences`}
+                          {`Drafted | ${formatDate(campaign.createdAt)} | ${campaign?.sequences?.length} Sequences`}
                         </p>
                       </div>
                     </CustomTableCell>
@@ -312,7 +340,17 @@ const EmailCampaign: React.FC<EmailCampaignProps> = ({ router }) => {
                     </CustomTableCell>
                   </CustomTableRow>
                 </CustomTableBody>
-              ))}
+              ))
+            ) : (
+              <Paper className="data-grid-container" sx={{width: "150%"}}>
+                <div
+                style={{ padding: "20px", textAlign: "center", color: "#888" }}
+                >
+                  No Campaign found
+                </div>
+                    
+                  </Paper>
+            )}
           </Table>
         </TableContainer>
       )}
