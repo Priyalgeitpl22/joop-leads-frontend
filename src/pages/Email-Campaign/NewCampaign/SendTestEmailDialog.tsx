@@ -64,7 +64,7 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
 
     const payload = {
       email: selectedEmailAccount,
-      toEmail: toEmail,
+      toEmail,
     };
     try {
       setIsLoading(true);
