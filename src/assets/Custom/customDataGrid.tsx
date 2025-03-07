@@ -33,6 +33,12 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
         checkboxSelection
         onRowSelectionModelChange={handleRowSelection}
         getRowId={(row) => row._id}
+        sx={{
+          cursor: "pointer",
+          "& .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus": {
+            outline: "none",
+          },
+        }}
         slots={{
           noRowsOverlay: () => (
             <div

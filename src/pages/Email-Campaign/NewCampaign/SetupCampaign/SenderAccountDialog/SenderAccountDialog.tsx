@@ -13,8 +13,8 @@ import { Search } from "lucide-react";
 import {
   EmailAccount,
   fetchEmailAccount,
+  SearchEmailAccount,
 } from "../../../../../redux/slice/emailAccountSlice";
-import { addEmailCampaignSettings } from "../../../../../redux/slice/emailCampaignSlice";
 import {
   Button,
   CustomDialogContainer,
@@ -49,6 +49,9 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
 
   const [rows, setRows] = useState<any[]>([]);
   const [selectedAccounts, setSelectedAccounts] = React.useState<EmailAccounts>([]);
+  const [emailAccounts, setEmailAccounts] = useState<EmailAccount[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
   const columns: GridColDef[] = useMemo(
     () => [
       { field: "name", headerName: "Name", width: 150 },
@@ -112,14 +115,46 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
   );
 
   useEffect(() => {
-    dispatch(fetchEmailAccount())
-      .unwrap()
-      .then((data) => {
-        setRows(data);
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, [dispatch, user]);
+    const getEmailAccounts = async () => {
+      await getAllEmailAccounts();
+    };
+
+    getEmailAccounts();
+  }, []);
+
+  const getAllEmailAccounts = async () => {
+    try {
+      const data = await dispatch(fetchEmailAccount()).unwrap();
+      setEmailAccounts(data);
+      setRows(data);
+    } catch (error) {
+      console.error("Failed to fetch Account:", error);
+    }
+  };
+
+  const handleSearch = async (query: string) => {
+    try {
+      const trimmedQuery = query.trim();
+      if (trimmedQuery === "") {
+        setRows(emailAccounts);
+      } else {
+        const [email, name] = trimmedQuery.split(" ");
+        const filteredData = await dispatch(
+          SearchEmailAccount({ email, name })
+        ).unwrap();
+        setRows(filteredData);
+      }
+    } catch (error) {
+      console.error("Search failed:", error);
+    }
+  };
+  
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const query = event.target.value;
+    setSearchQuery(query);
+    handleSearch(query);
+  };
 
   const handleSelectedAccounts = (newSelection: any[]) => {
     setSelectedEmailAccounts(newSelection);
@@ -168,7 +203,11 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
           <Box sx={{ display: "flex" }}>
             <SearchBar>
               <Search size={20} />
-              <input placeholder="Search input..." />
+              <input
+                placeholder="Search by Email or Name"
+                value={searchQuery}
+                onChange={handleSearchChange}
+              />
             </SearchBar>
           </Box>
         </Box>
