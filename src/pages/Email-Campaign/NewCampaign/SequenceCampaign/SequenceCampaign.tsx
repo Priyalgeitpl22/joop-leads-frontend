@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
-import { SidebarContainer } from "../../../../styles/layout.styled";
 import EmailTemplate from "./EmailTemplate/EmailTemplate";
-import AddIcon from "@mui/icons-material/Add";
 import EmailFollowUpStep from "./Sequences/EmailFollowUpStep";
 import {
   AddStepButton,
@@ -26,7 +24,6 @@ import {
   SequenceVariant,
 } from "./Sequences/interfaces";
 import { SequenceType, variantDistributionType } from "./Sequences/enums";
-import { Button } from "../../../../styles/global.styled";
 
 interface ImportLeadsCampaignProps {
   handleEmailTemplateData: (data: any) => void;

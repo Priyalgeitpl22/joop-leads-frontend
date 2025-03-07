@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import {
   BorderConatiner,
   EmailFollowUp,
-  EmailFollowUpContainer,
   LeftDashedBorder,
   LeftDashedBorderLine,
   ManualFollowUpContainer,
@@ -36,6 +35,7 @@ const ManualFollowUp: React.FC<ManualFollowUpProps> = ({
     if (selectedSequence) {
       setVariants(selectedSequence.seq_variants);
       setWaitDays(selectedSequence.seq_delay_details?.delay_in_days || 1);
+      console.log(variants);
     }
   }, [selectedSequence]);
 

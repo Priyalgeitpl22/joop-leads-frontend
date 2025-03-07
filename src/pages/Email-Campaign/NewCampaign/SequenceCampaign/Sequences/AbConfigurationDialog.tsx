@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Box,
   Button,
@@ -23,31 +23,10 @@ interface AbConfigurationDialogProps {
   onClose: () => void;
 }
 
-type SettingKey =
-  | "blockList"
-  | "unsubscribeList"
-  | "bouncedLeads"
-  | "existingCampaign";
-
 const AbConfigurationDialog: React.FC<AbConfigurationDialogProps> = ({
   open,
   onClose,
 }) => {
-  const [settings, setSettings] = useState<{
-    blockList: boolean;
-    unsubscribeList: boolean;
-    bouncedLeads: boolean;
-    existingCampaign: boolean;
-  }>({
-    blockList: false,
-    unsubscribeList: false,
-    bouncedLeads: false,
-    existingCampaign: false,
-  });
-
-  const handleToggle = (key: SettingKey) => {
-    setSettings((prev) => ({ ...prev, [key]: !prev[key] }));
-  };
 
   return (
     <DialogBox open={open} onClose={onClose} fullWidth maxWidth="sm">

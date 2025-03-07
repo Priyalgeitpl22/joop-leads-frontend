@@ -4,7 +4,6 @@ import {
   Box,
   Typography,
   Table,
-  TableBody,
   TableCell,
   TableContainer,
   TableHead,
@@ -52,14 +51,13 @@ interface EmailCampaignProps {
   router?: any;
 }
 
-const EmailCampaign: React.FC<EmailCampaignProps> = ({ router }) => {
+const EmailCampaign: React.FC<EmailCampaignProps> = () => {
   const [activeTab, setActiveTab] = useState("all_campaign");
   const [createFolder, setCreateFolder] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const dispatch = useDispatch<AppDispatch>();
   const [campaigns, setCampaigns] = useState<IEmailCampaign[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [isLoading, setIsLoading] = React.useState(false);
 
   useEffect(() => {
     const getEmailCampaigns = async () => {
@@ -70,7 +68,6 @@ const EmailCampaign: React.FC<EmailCampaignProps> = ({ router }) => {
   }, []);
 
   const getAllEmailCampaigns = async () => {
-    setIsLoading(true)
     const response = await dispatch(fetchEmailCampaigns());
     setCampaigns(response.payload.data || []);
   };

@@ -45,8 +45,10 @@ export default function Chats() {
     const handleAnyEvent = (eventName: string, ...args: any[]) => {
       console.log(`📡 Event received: ${eventName}`, args);
       setLastEvent(eventName);
+      console.log(lastEvent);
       if (eventName === "receiveMessage") {
         setMessages((prevMessages) => [...prevMessages, args[0]]);
+        console.log(messages);
       }
     };
 

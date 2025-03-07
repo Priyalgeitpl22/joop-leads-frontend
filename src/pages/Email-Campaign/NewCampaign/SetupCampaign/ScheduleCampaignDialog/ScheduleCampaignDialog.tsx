@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   Dialog,
-  DialogTitle,
   FormControl,
   FormGroup,
   FormControlLabel,
@@ -20,9 +19,6 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../../../redux/store/store";
-import { addEmailCampaignSettings } from "../../../../../redux/slice/emailCampaignSlice";
 import { EmailAccounts } from "../Interface";
 import { DaysOfWeek } from "../enums";
 import {
@@ -44,14 +40,8 @@ interface ScheduleCampaignProps {
 const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
   open,
   onClose,
-  campaignId,
   handleSave
 }) => {
-  const dispatch = useDispatch<AppDispatch>();
-  const [selectedTimeZones, setSelectedTimeZones] = useState<string | string[]>(
-    ""
-  );
-
   const [formData, setFormData] = useState<{
     timeZone: [];
     selectedDays: number[];
@@ -77,7 +67,7 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
   };
 
   const handleTimeZoneChange = (value: string | string[]) => {
-    setSelectedTimeZones(value);
+    // setSelectedTimeZones(value);
     handleChange("timeZone", value);
   };
 

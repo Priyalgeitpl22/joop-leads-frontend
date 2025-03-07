@@ -7,12 +7,8 @@ import {
   FormControlLabel,
   Checkbox,
   Slider,
-  Button,
 } from "@mui/material";
 import { TextField } from "../../../../../styles/layout.styled";
-import { AppDispatch } from "../../../../../redux/store/store";
-import { useDispatch } from "react-redux";
-import { addEmailCampaignSettings } from "../../../../../redux/slice/emailCampaignSlice";
 import dayjs, { Dayjs } from "dayjs";
 
 interface GeneralCampaignSettingProps {
@@ -142,7 +138,7 @@ const GeneralCampaignSetting: React.FC<GeneralCampaignSettingProps> = ({}) => {
       </Typography>
       <Slider
         value={formData.priority}
-        onChange={(e, newValue) => handleChange("priority", newValue)}
+        onChange={(newValue) => handleChange("priority", newValue)}
         step={10}
         marks
         min={0}
@@ -160,7 +156,7 @@ const GeneralCampaignSetting: React.FC<GeneralCampaignSettingProps> = ({}) => {
       <FormControlLabel
         control={<Checkbox />}
         value={formData.companyAutoPause}
-        onChange={(e, newValue) => handleChange("companyAutoPause", newValue)}
+        onChange={(newValue) => handleChange("companyAutoPause", newValue)}
         label="Auto-pause if one of the leads from the same domain replies."
       />
 

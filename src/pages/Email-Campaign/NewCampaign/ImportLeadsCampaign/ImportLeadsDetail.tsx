@@ -35,6 +35,7 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
       [field]: value,
     }));
 
+    console.log(emailFieldMapping);
     const column = csv_columns.find((o) => o.key === value)?.key as string;
 
     setEmailFieldAdded((prev) => {
@@ -42,6 +43,7 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
         ...prev,
         [field]: column,
       };
+      console.log(emailFieldsAdded);
 
       onEmailFieldsChange(updatedFields);
       return updatedFields;
@@ -50,7 +52,6 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
-      const selectedFile = event.target.files[0];
       onFileChange(event);
     }
   };

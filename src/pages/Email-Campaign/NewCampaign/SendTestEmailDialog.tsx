@@ -16,9 +16,7 @@ import MultiSelectDropdown from "../../../assets/Custom/cutomSelectOption";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../redux/store/store";
 import { fetchEmailAccount } from "../../../redux/slice/emailAccountSlice";
-import { Account } from "./SetupCampaign/Interface";
 import { SendTestEmail } from "../../../redux/slice/emailCampaignSlice";
-import Loader from "../../../components/Loader";
 
 interface SendTestEmailDialogProps {
   open: boolean;
@@ -34,7 +32,6 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
   const [selectedEmailAccount, setSelectedEmailAccount] = useState<
     string | string[]
   >("");
-  const [emailAccounts, setEmailAccounts] = useState<Account[]>([]);
   const [toEmail, setToEmail] = useState<string>("");
   const [isLoading, setIsLoading] = React.useState(false);
 
@@ -43,8 +40,6 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
       try {
         const data = await dispatch(fetchEmailAccount()).unwrap();
         setRows(data);
-        setEmailAccounts(data);
-        setEmailAccounts(data);
         if (data.length > 0) {
           setSelectedEmailAccount(data[0].id);
         }
@@ -68,6 +63,7 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
     };
     try {
       setIsLoading(true);
+      console.log(isLoading);
       const response = await dispatch(SendTestEmail(payload)).unwrap();
       console.log("Test email sent successfully:", response);
       onClose();

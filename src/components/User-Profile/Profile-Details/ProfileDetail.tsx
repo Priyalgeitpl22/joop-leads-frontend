@@ -16,7 +16,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../redux/store/store";
 import toast, {Toaster} from 'react-hot-toast';
 import Loader from "../../Loader";
-import { User } from "../UserProfile";
 
 interface ProfileDetailProps {
   open: boolean;
@@ -61,7 +60,7 @@ const ProfileDetail: React.FC<ProfileDetailProps> = ({ open, onClose }) => {
   };
 
   const handleSave = async () => {
-    // setLoading(true);
+    setLoading(false);
     const formDataToSend = new FormData();
     formDataToSend.append("id", userData?.id || "");
     formDataToSend.append("name", formData.name);

@@ -1,12 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Box, IconButton, Typography } from "@mui/material";
-import MailOutlineIcon from "@mui/icons-material/MailOutline";
-import CloseIcon from "@mui/icons-material/Close";
+import { Box, Typography } from "@mui/material";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import HourglassBottomIcon from "@mui/icons-material/HourglassBottom";
 import {
   AbConfiguration,
-  AddVarientButton,
   BorderConatiner,
   EmailFollowUp,
   EmailFollowUpContainer,
@@ -45,6 +41,7 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({
 
   useEffect(() => {
     if (selectedSequence) {
+      setVariants(selectedSequence?.seq_variants);
       updateSequenceData({
         ...selectedSequence,
         seq_variants: variants,
@@ -52,35 +49,31 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({
     }
   }, [variants]);
 
-  const getNextVariantLabel = (variants: SequenceVariant[]) => {
-    if (variants.length === 0) return "A";
+  // const getNextVariantLabel = (variants: SequenceVariant[]) => {
+  //   if (variants.length === 0) return "A";
 
-    const lastLabel = variants[variants.length - 1].variantLabel ?? "A";
-    return String.fromCharCode(lastLabel.charCodeAt(0) + 1);
-  };
+  //   const lastLabel = variants[variants.length - 1].variantLabel ?? "A";
+  //   return String.fromCharCode(lastLabel.charCodeAt(0) + 1);
+  // };
 
-  const handleAddVariant = () => {
-    const newVariant: SequenceVariant = {
-      subject: `Subject ${variants.length + 1}`,
-      emailBody: "",
-      variantLabel: getNextVariantLabel(variants),
-    };
+  // const handleAddVariant = () => {
+  //   const newVariant: SequenceVariant = {
+  //     subject: `Subject ${variants.length + 1}`,
+  //     emailBody: "",
+  //     variantLabel: getNextVariantLabel(variants),
+  //   };
 
-    setVariants([...variants, newVariant]);
+  //   setVariants([...variants, newVariant]);
 
-    if (selectedSequence) {
-      const updatedSequence: Sequence = {
-        ...selectedSequence,
-        seq_variants: [...selectedSequence.seq_variants, newVariant],
-      };
+  //   if (selectedSequence) {
+  //     const updatedSequence: Sequence = {
+  //       ...selectedSequence,
+  //       seq_variants: [...selectedSequence.seq_variants, newVariant],
+  //     };
 
-      updateSequenceData(updatedSequence);
-    }
-  };
-
-  const handleRemoveVariant = (index: number) => {
-    setVariants((prevVariants) => prevVariants.filter((_, i) => i !== index));
-  };
+  //     updateSequenceData(updatedSequence);
+  //   }
+  // };
 
   const handleWaitDaysChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newWaitDays = Number(e.target.value);
@@ -95,15 +88,6 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({
       updateSequenceData(updatedSequence);
     }
   };
-
-  const colors = [
-    "var(--theme-color)",
-    "#ff6b6b",
-    "#ffb400",
-    "#4caf50",
-    "#2196f3",
-    "#9c27b0",
-  ];
 
   return (
     <>

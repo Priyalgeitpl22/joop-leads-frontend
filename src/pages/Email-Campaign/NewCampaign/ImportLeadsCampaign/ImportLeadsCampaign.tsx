@@ -5,8 +5,6 @@ import ImportLeadsDetail from "./ImportLeadsDetail";
 import ImportSettingsDialog from "./ImportSettingDialog";
 import Papa from "papaparse";
 import { ImportedLeadsData } from "../NewCampaign";
-import { csvSettingsType } from "../../Interfaces";
-import { DialogFooter } from "../SequenceCampaign/sequenceCampaign.styled";
 import { CustomDialogFooter } from "../../../../styles/global.styled";
 import { FileUploadContainer } from "./importLeads.styled";
 
@@ -30,10 +28,6 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [columns, setColumns] = useState<string[]>([]);
   const [csvData, setCSVData] = useState<any[]>([]);
-  const [mappedData, setMappedData] = useState<any[]>([]);
-  const [CSVsettings, setCSVsettings] = useState<csvSettingsType>();
-  const [csvFile, selectedCSVFile] = useState<string>("");
-  const [fileName, setFileName] = useState<string>("");
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -49,6 +43,7 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
             const data = result.data as any[];
             setColumns(firstRow);
             setCSVData(data);
+            console.log(csvData);
           },
           skipEmptyLines: true,
         });

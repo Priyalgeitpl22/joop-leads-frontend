@@ -1,5 +1,5 @@
 import { ImportContacts } from "@mui/icons-material";
-import { Box, Button, Card, CardContent, Input, styled, Typography } from "@mui/material";
+import { Box, Button, Card, CardContent, styled, Typography } from "@mui/material";
 
 export const ManualTemplateContainer = styled(Box)(`
     background: white;

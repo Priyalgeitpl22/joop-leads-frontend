@@ -3,7 +3,6 @@ import { Box, Tab, Tabs, Typography } from "@mui/material";
 import { SidebarContainer } from "../../../../styles/layout.styled";
 import { Search } from "lucide-react";
 import React from "react";
-import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../redux/store/store";
 import {
@@ -35,13 +34,12 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
     React.useState<SequenceVariant | null>();
   const [contacts, setContacts] = React.useState<IContacts[]>([]);
   const [sequences, setSequences] = React.useState<Sequence[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
   const dispatch = useDispatch<AppDispatch>();
   const quillRef = useRef<typeof ReactQuill | null>(null);
-  const [isLoading, setIsLoading] = React.useState(false);
 
   const handleChange = (event: any, newValue: number) => {
     setSelectedVariant(newValue);
+    console.log(event);
     setSelectedTemplate(
       sequences.find((seq) => seq.seq_number === Number(newValue))
         ?.seq_variants[0] || null
@@ -50,7 +48,6 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
 
   useEffect(() => {
     if (campaignId) {
-      setIsLoading(true),
       Promise.all([
         dispatch(fetchCampaignContacts(campaignId)).unwrap(),
         dispatch(fetchCampaignSequences(campaignId)).unwrap(),
@@ -66,7 +63,6 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
 
           setSelectedContact(contactsData.data[0]);
 
-          setIsLoading(false);
           // toast.success("Data fetched successfully");
         })
         .catch((error) => {

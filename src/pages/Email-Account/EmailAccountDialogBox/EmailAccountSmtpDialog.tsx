@@ -123,11 +123,11 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
 
     dispatch(verifyEmailAccount(payload))
       .unwrap()
-      .then((url: any) => {
+      .then(() => {
         setIsVerified(true);
         setIsSaveDisabled(false);
       })
-      .catch((error: any) => {
+      .catch(() => {
         setIsVerified(false);
         setIsSaveDisabled(true);
       });
@@ -164,10 +164,10 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
 
     dispatch(CreateEmailAccount(payload))
       .unwrap()
-      .then((url: any) => {
+      .then(() => {
         onClose();
       })
-      .catch((error: any) => {
+      .catch(() => {
       });
   };
 

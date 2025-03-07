@@ -11,7 +11,7 @@ import {
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { useSocket } from "../../context/SocketContext";
 import { NotificationContainer } from "./notification.styled";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 const NotificationComponent: React.FC = () => {
   const [notifications, setNotifications] = useState<string[]>([]);

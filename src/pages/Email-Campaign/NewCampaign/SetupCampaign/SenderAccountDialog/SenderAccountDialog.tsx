@@ -14,7 +14,6 @@ import {
   EmailAccount,
   fetchEmailAccount,
 } from "../../../../../redux/slice/emailAccountSlice";
-import { addEmailCampaignSettings } from "../../../../../redux/slice/emailCampaignSlice";
 import {
   Button,
   CustomDialogContainer,
@@ -87,7 +86,7 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
         field: "warm_up",
         headerName: "Warmup Enabled",
         width: 120,
-        renderCell: (params: any) => <StyledWarmup>Yes</StyledWarmup>,
+        renderCell: () => <StyledWarmup>Yes</StyledWarmup>,
       },
       {
         field: "daily_limit",
@@ -119,10 +118,12 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
       })
       .catch(console.error)
       .finally(() => setLoading(false));
+      console.log(loading);
   }, [dispatch, user]);
 
   const handleSelectedAccounts = (newSelection: any[]) => {
     setSelectedEmailAccounts(newSelection);
+    console.log(selectedEmailAccounts);
   
     const formattedSelection: EmailAccounts = newSelection?.map((id) => ({
       account_id: id,

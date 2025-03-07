@@ -20,13 +20,13 @@ import {
 import EmailAccountDialog from "./EmailAccountDialogBox/EmailAccountDialog";
 import AdvancedSettingDialog from "./AdvancedSettingDialogBox/AdvancedSettingDialog";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   EmailAccount,
   fetchEmailAccount,
   SearchEmailAccount,
 } from "../../redux/slice/emailAccountSlice";
-import { AppDispatch, RootState } from "../../redux/store/store";
+import { AppDispatch } from "../../redux/store/store";
 import { SearchBar } from "../../components/Header/header.styled";
 import { Search } from "lucide-react";
 // import toast from "react-hot-toast";
@@ -42,8 +42,6 @@ const EmailAccounts: React.FC = () => {
   const [isSettingOpen, setIsSettingOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [emailAccounts, setEmailAccounts] = useState<EmailAccount[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const { user } = useSelector((state: RootState) => state.user);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [rows, setRows] = useState<any[]>([]);
 

@@ -12,7 +12,6 @@ import SequenceCampaign from "./SequenceCampaign/SequenceCampaign";
 import ImportLeadsCampaign from "./ImportLeadsCampaign/ImportLeadsCampaign";
 import SetupCampaign from "./SetupCampaign/SetupCampaign";
 import FinalReviewCampaign from "./FinalReviewCampaign/FinalReviewCampaign";
-import { useNavigate } from "react-router-dom";
 import { csvSettingsType } from "../Interfaces";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../redux/store/store";
@@ -45,7 +44,7 @@ interface NewCampaignProps {
   router?: any;
 }
 
-const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
+const NewCampaign: React.FC<NewCampaignProps> = () => {
   const [activeStep, setActiveStep] = React.useState(0);
   const [uploadCsv, setUploadCsv] = React.useState<boolean>(false);
   const [emailFieldsToBeAdded, setEmailFieldsToBeAdded] =
@@ -67,7 +66,6 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
   const [isCsvUploaded, setIsCsvUploaded] = React.useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
 
   const handleFileChange = (file: File) => {
     setSelectedFile(file);
@@ -88,6 +86,7 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
   const handleImportLeads = async () => {
     setIsLoading(true);
     setUploadCsv(true);
+    console.log(uploadCsv);
     const payload = {
       CSVsettings,
       csvFile: selectedFile,

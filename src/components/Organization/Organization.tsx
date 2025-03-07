@@ -117,7 +117,7 @@ const OrganizationForm: React.FC = () => {
       const response = await dispatch(
         updateOrganization({ orgId: user.orgId, data: { ...values, aiOrgId: user.aiOrgId } })
       );
-      // setLoading(false);
+      setLoading(false);
 
       if (updateOrganization.fulfilled.match(response)) {
         alert("Organization updated successfully!");

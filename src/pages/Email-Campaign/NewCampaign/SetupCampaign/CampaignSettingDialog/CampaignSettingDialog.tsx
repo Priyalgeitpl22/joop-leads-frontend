@@ -1,11 +1,8 @@
-import { SetStateAction, useState } from "react";
+import { useState } from "react";
 import { Box, Checkbox, Dialog, FormControlLabel, IconButton, Radio, RadioGroup, Slider, TextField, Typography } from "@mui/material";
 import {
-  ContentContainer,
-  CustomTab,
-  CustomTabs,
+  ContentContainer
 } from "../../../EmailCampaign.styled";
-import GeneralCampaignSetting from "./GeneralCampaignSetting";
 import CloseIcon from "@mui/icons-material/Close";
 import {
   Button,
@@ -13,8 +10,6 @@ import {
   CustomDialogHeader,
 } from "../../../../../styles/global.styled";
 import dayjs, { Dayjs } from "dayjs";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../../../redux/store/store";
 
 interface SettingCampaignProps {
   open: boolean;
@@ -26,11 +21,8 @@ interface SettingCampaignProps {
 const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
   open,
   onClose,
-  campaignId,
   handleSave
 }) => {
-  const [activeTab, setActiveTab] = useState("general");
-  const dispatch = useDispatch<AppDispatch>();
   const [formData, setFormData] = useState({
     campaignName: "",
     timeZone: "",
@@ -56,11 +48,6 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleTabChange = (_: any, newValue: SetStateAction<string>) => {
-    setActiveTab(newValue);
-  };
-
-
   return (
     <>
       <Dialog
@@ -81,7 +68,6 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
         </CustomDialogHeader>
 
         <ContentContainer>
-          {activeTab === "general" && (
             <Box sx={{ padding: 3, margin: "auto" }}>
               <Box>
                 <Typography variant="h6">Campaign Name</Typography>
@@ -161,7 +147,7 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
               </Typography>
               <Slider
                 value={formData.priority}
-                onChange={(e, newValue) => handleChange("priority", newValue)}
+                onChange={(newValue) => handleChange("priority", newValue)}
                 step={10}
                 marks
                 min={0}
@@ -179,7 +165,7 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
               <FormControlLabel
                 control={<Checkbox />}
                 value={formData.companyAutoPause}
-                onChange={(e, newValue) =>
+                onChange={(newValue) =>
                   handleChange("companyAutoPause", newValue)
                 }
                 label="Auto-pause if one of the leads from the same domain replies."
@@ -239,7 +225,6 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
                 label="Add unsubscribe message in all emails"
               />
             </Box>
-          )}
         </ContentContainer>
 
 
