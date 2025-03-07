@@ -28,8 +28,8 @@ import SendTestEmailDialog from "./SendTestEmailDialog";
 import { ILeadsCounts } from "./interfaces";
 import { CustomizedStepper } from "./stepper";
 import { Button, SecondaryButton } from "../../../styles/global.styled";
-import { EmailAccounts } from "./SetupCampaign/Interface";
-import ProgressBar from "../../../assets/Custom/linearProgress";
+import { Button2 } from "../../../styles/layout.styled";
+import Loader from "../../../components/Loader";
 export interface ImportedLeadsData {
   campaignName?: string;
   clientId?: string;
@@ -64,6 +64,7 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
     scheduleCampaign: {},
     campaignSettings: {},
   });
+  const [isCsvUploaded, setIsCsvUploaded] = React.useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
@@ -85,7 +86,6 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
   };
 
   const handleImportLeads = async () => {
-    setIsLoading(true);
     setIsLoading(true);
     setUploadCsv(true);
     const payload = {
@@ -112,6 +112,7 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
       campaign_id: campaignId,
       sequences,
     };
+    setIsLoading(true)
     const response = await dispatch(addSequencesToCampaign(payload));
     if (response.payload.code) {
       setIsLoading(false);
@@ -119,6 +120,7 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
         setCampaignId(response.payload.data.campaign_id);
       }
     }
+    setIsLoading(false)
   };
 
   const handleSetup = async () => {
@@ -151,21 +153,23 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
 
   const handleFinalReview = async () => {
     setIsLoading(true);
-
     try {
+      setIsLoading(true)
       const response = await dispatch(
         scheduleCampaign({
           campaignId: campaignId,
           status: "SCHEDULED",
         })
       );
+      setIsLoading(true)
       if (response.payload.code === 200){
+        setIsLoading(true)
         GoBack();
       }
     } catch (error) {
       console.error("Error scheduling campaign:", error);
-    } finally {
-      setIsLoading(false);
+    // } finally {
+    //   setIsLoading(false);
     }
   };
 
@@ -250,6 +254,10 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
     setDialogData((prev) => ({ ...prev, campaignSettings: data }));
   };
 
+  if (isLoading) {
+    return <Loader />;
+  }
+
   return (
     <Container>
       <HeaderContainer>
@@ -290,6 +298,7 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
             handleLeadsData={handleLeadsData}
             handleCSVUpload={handleFileChange}
             saveCSVSetting={saveCSVSetting}
+            setIsCsvUploaded={setIsCsvUploaded}
           />
         )}
         {activeStep === 1 && (
@@ -331,7 +340,18 @@ const NewCampaign: React.FC<NewCampaignProps> = ({ router }) => {
             <Button onClick={handleNext}>Schedule Campaign</Button>
           </>
         ) : (
-          <Button onClick={handleNext}>Save and Next</Button>
+          <Button2
+            onClick={handleNext}
+            disabled={isCsvUploaded === false}
+            color={isCsvUploaded ? "white" : "lightgray"}
+            background={isCsvUploaded ? "var(--theme-color)" : "#878484"}
+            style={{
+              width: "10%",
+              cursor: isCsvUploaded ? "pointer" : "not-allowed",
+            }}
+          >
+            Save and Next
+          </Button2>
         )}
       </FooterContainer>
     </Container>

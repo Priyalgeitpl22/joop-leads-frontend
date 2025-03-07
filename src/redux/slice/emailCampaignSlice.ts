@@ -119,10 +119,11 @@ export const fetchCampaignSequences = createAsyncThunk(
 
 export const SendTestEmail = createAsyncThunk(
   "accounts/send-test-email",
-  async (data: { email: string | string[] }, { rejectWithValue }) => {
+  async (data: { email: string | string[], toEmail: string  }, { rejectWithValue }) => {
     try {
       const response = await emailApi.post(`/accounts/send-test-email`, {
         email: data.email,
+        toEmail: data.toEmail,
       });
       return response.data;
     } catch (error: unknown) {
@@ -153,6 +154,23 @@ export const scheduleCampaign = createAsyncThunk(
         errorMessage = (error.response?.data as string) || errorMessage;
       }
       return rejectWithValue(errorMessage);
+    }
+  }
+);
+
+export const SearchEmailCampaign = createAsyncThunk(
+  "email-campaign/email-campaigns-search",
+  async (
+    { campaign_name }: { campaign_name?: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await api.get("/email-campaign/email-campaigns-search", {
+        params: { campaign_name },
+      });
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Network error");
     }
   }
 );

@@ -18,6 +18,7 @@ import { AppDispatch } from "../../../redux/store/store";
 import { fetchEmailAccount } from "../../../redux/slice/emailAccountSlice";
 import { Account } from "./SetupCampaign/Interface";
 import { SendTestEmail } from "../../../redux/slice/emailCampaignSlice";
+import Loader from "../../../components/Loader";
 
 interface SendTestEmailDialogProps {
   open: boolean;
@@ -34,6 +35,8 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
     string | string[]
   >("");
   const [emailAccounts, setEmailAccounts] = useState<Account[]>([]);
+  const [toEmail, setToEmail] = useState<string>("");
+  const [isLoading, setIsLoading] = React.useState(false);
 
   useEffect(() => {
     const getEmailAccounts = async () => {
@@ -61,17 +64,23 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
 
     const payload = {
       email: selectedEmailAccount,
+      toEmail,
     };
-
     try {
+      setIsLoading(true);
       const response = await dispatch(SendTestEmail(payload)).unwrap();
       console.log("Test email sent successfully:", response);
       onClose();
     } catch (error) {
       console.error("Failed to send test email:", error);
+    } finally{
+      setIsLoading(false);
     }
   };
 
+  // if (isLoading){
+  //   return <Loader/>
+  // }
 
   return (
     <DialogBox open={open} onClose={onClose} fullWidth maxWidth="sm">
@@ -105,10 +114,10 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
         </Typography>
 
         <TextField
-          name="fullName"
+          name="toEmail"
           fullWidth
           variant="outlined"
-          // value="sibananda.k@geitpl.com"
+          onChange={(e) => setToEmail(e.target.value)}
           sx={{ marginTop: "15px" }}
           InputProps={{
             sx: { height: "40px" },

@@ -38,6 +38,7 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
   const [loading, setLoading] = useState<boolean>(true);
   const dispatch = useDispatch<AppDispatch>();
   const quillRef = useRef<typeof ReactQuill | null>(null);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const handleChange = (event: any, newValue: number) => {
     setSelectedVariant(newValue);
@@ -49,6 +50,7 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
 
   useEffect(() => {
     if (campaignId) {
+      setIsLoading(true),
       Promise.all([
         dispatch(fetchCampaignContacts(campaignId)).unwrap(),
         dispatch(fetchCampaignSequences(campaignId)).unwrap(),
@@ -64,12 +66,12 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
 
           setSelectedContact(contactsData.data[0]);
 
-          // setLoading(false);
-          toast.success("Data fetched successfully");
+          setIsLoading(false);
+          // toast.success("Data fetched successfully");
         })
         .catch((error) => {
           console.error("Failed to fetch data:", error);
-          toast.error("Failed to fetch data");
+          // toast.error("Failed to fetch data");
         });
     }
   }, [dispatch]);
@@ -175,21 +177,6 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
             </Tabs>
           </TabsHeader>
 
-          {/* <Typography
-            sx={{
-              fontWeight: "bold",
-              fontSize: 14,
-              background: "var(--background-light)6d5",
-              padding: "15px",
-              borderRadius: "5px",
-              display: "block",
-              borderBottom: "1px solid #E0E0E0",
-            }}
-          >
-            This sequence has been sent. Select "scheduled" leads to see any
-            copy changes.
-          </Typography> */}
-
           {selectedVariant && (
             <Box sx={{ padding: "8px", width: "100%", height: "92%", border: "1px solid var(--border-grey)" }}>
               <Typography sx={{ margin: "12px 5px 0px 16px"}} fontSize={14} color="gray">
@@ -201,9 +188,6 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
               </Typography>
 
               <Box mt={2}>
-                {/* <Typography fontSize={14} mt={2}>
-                  {selectedTemplate?.emailBody}
-                </Typography> */}
                 <ReactQuill
                   ref={quillRef}
                   value={selectedTemplate?.emailBody}

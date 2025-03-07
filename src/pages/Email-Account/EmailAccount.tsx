@@ -1,21 +1,20 @@
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  Box,
+import { 
+  Box, 
   Checkbox,
-  Menu,
-  Typography,
-  Link,
-  FormControl,
-  InputLabel,
+  Menu, 
+  Typography, 
+  Link, 
+  FormControl, 
+  InputLabel, 
   Select,
-  MenuItem,
+  MenuItem, 
 } from "@mui/material";
 import {
   EmailAccountsContainer,
   EmailAccountHeader,
   EmailAccountTable,
   FilterIcon,
-  StyledWarmup,
   SectionTitle,
 } from "./EmailAccount.styled";
 import EmailAccountDialog from "./EmailAccountDialogBox/EmailAccountDialog";
@@ -25,89 +24,90 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   EmailAccount,
   fetchEmailAccount,
+  SearchEmailAccount,
 } from "../../redux/slice/emailAccountSlice";
 import { AppDispatch, RootState } from "../../redux/store/store";
 import { SearchBar } from "../../components/Header/header.styled";
 import { Search } from "lucide-react";
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
 import { CustomDataTable } from "../../assets/Custom/customDataGrid";
 import { GridColDef } from "@mui/x-data-grid";
 import { formatDate } from "../../utils/utils";
 import { Button, SecondaryButton } from "../../styles/global.styled";
+// import ProgressBar from "../../assets/Custom/linearProgress";
 
 const EmailAccounts: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const label = { inputProps: { "aria-label": "Checkbox demo" } };
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [isSettingOpen, setIsSettingOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [emailAccounts, setEmailAccounts] = useState<EmailAccount[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const { user } = useSelector((state: RootState) => state.user);
-
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [rows, setRows] = useState<any[]>([]);
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: "name", headerName: "Name", width: 150 },
-      { field: "email", headerName: "Email", width: 250 },
-      {
-        field: "type",
-        headerName: "Type",
-        width: 120,
-        renderCell: (params: any) => {
-          if (params.value === "gmail") {
-            return (
-              <img
-                src="https://img.icons8.com/color/48/000000/gmail-new.png"
-                alt="Gmail Icon"
-                width="24"
-                height="24"
-              />
-            );
-          } else if (params.value === "outlook") {
-            return (
-              <img
-                src="https://img.icons8.com/color/48/000000/microsoft-outlook-2019.png"
-                alt="Outlook Icon"
-                width="24"
-                height="24"
-              />
-            );
-          } else if (params.value === "imap") {
+    { field: "name", headerName: "Name", width: 150 },
+    { field: "email", headerName: "Email", width: 250 },
+    {
+      field: "type",
+      headerName: "Type",
+      width: 120,
+      renderCell: (params: any) => {
+        if (params.value === "gmail") {
+          return (
+            <img
+              src="https://img.icons8.com/color/48/000000/gmail-new.png"
+              alt="Gmail Icon"
+              width="24"
+              height="24"
+            />
+          );
+        } else if (params.value === "outlook") {
+          return (
+            <img
+              src="https://img.icons8.com/color/48/000000/microsoft-outlook-2019.png"
+              alt="Outlook Icon"
+              width="24"
+              height="24"
+            />
+          );
+        } else if (params.value === "imap") {
             return <CustomIcon />;
           } else {
-            return null;
-          }
-        },
+          return null;
+        }
       },
-      {
-        field: "warm_up",
-        headerName: "Warmup Enabled",
-        width: 120,
-        renderCell: (params: any) => <StyledWarmup>Yes</StyledWarmup>,
-      },
-      {
-        field: "daily_limit",
-        headerName: "Daily Limit",
-        width: 120,
-        valueGetter: () => "0 / 100",
-      },
-      {
-        field: "reputation",
-        headerName: "Reputation",
-        width: 120,
-        renderCell: () => <StyledWarmup>100%</StyledWarmup>,
-      },
-      {
-        field: "createdAt",
-        headerName: "Created At",
-        width: 180,
-        valueGetter: (params: any) => (params ? formatDate(params) : null),
-      },
-    ],
-    []
-  );
+    },
+    {
+      field: "warm_up",
+      headerName: "Warmup Enabled",
+      width: 120,
+      renderCell: () => <Box sx={{ marginTop: "8px" }}>Yes</Box>,
+    },
+    {
+      field: "daily_limit",
+      headerName: "Daily Limit",
+      width: 120,
+      valueGetter: () => "0 / 100",
+    },
+    {
+      field: "reputation",
+      headerName: "Reputation",
+      width: 120,
+      renderCell: () => <Box sx={{ marginTop: "8px" }}>100%</Box>,
+    },
+    {
+      field: "createdAt",
+      headerName: "Created At",
+      width: 180,
+      valueGetter: (params: any) => (params ? formatDate(params) : null),
+    },
+  ],
+  []
+);
 
   useEffect(() => {
     const getEmailAccounts = async () => {
@@ -118,18 +118,36 @@ const EmailAccounts: React.FC = () => {
   }, []);
 
   const getAllEmailAccounts = async () => {
-    dispatch(fetchEmailAccount())
-      .unwrap()
-      .then((data) => {
-        setEmailAccounts(data);
-        setRows(data);
-        // setLoading(false);
-        toast.success("Email Accounts fetched successfully");
-      })
-      .catch((error) => {
-        console.error("Failed to fetch Account:", error);
-        toast.error("Failed to fetch Account");
-      });
+    try {
+      const data = await dispatch(fetchEmailAccount()).unwrap();
+      setEmailAccounts(data);
+      setRows(data);
+    } catch (error) {
+      console.error("Failed to fetch Account:", error);
+    }
+  };
+
+  const handleSearch = async (query: string) => {
+    try {
+      const trimmedQuery = query.trim();
+      if (trimmedQuery === "") {
+        setRows(emailAccounts);
+      } else {
+        const [email, name] = trimmedQuery.split(" ");
+        const filteredData = await dispatch(
+          SearchEmailAccount({ email, name })
+        ).unwrap();
+        setRows(filteredData);
+      }
+    } catch (error) {
+      console.error("Search failed:", error);
+    }
+  };
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const query = event.target.value;
+    setSearchQuery(query);
+    handleSearch(query);
   };
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -191,7 +209,11 @@ const EmailAccounts: React.FC = () => {
           </FilterIcon>
           <SearchBar>
             <Search size={20} />
-            <input placeholder="Search input..." />
+            <input
+              placeholder="Search by Email or Name"
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
           </SearchBar>
           <EmailAccountDialog
             open={isDialogOpen}
