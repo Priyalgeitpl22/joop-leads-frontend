@@ -32,7 +32,7 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
         onPaginationModelChange={setPaginationModel}
         checkboxSelection
         onRowSelectionModelChange={handleRowSelection}
-        getRowId={(row) => row._id}
+        getRowId={(row) => row._id || row.id}
         slots={{
           noRowsOverlay: () => (
             <div
