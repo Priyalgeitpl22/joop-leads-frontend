@@ -28,7 +28,7 @@ import { ILeadsCounts } from "./interfaces";
 import { CustomizedStepper } from "./stepper";
 import { Button, SecondaryButton } from "../../../styles/global.styled";
 import { Button2 } from "../../../styles/layout.styled";
-import Loader from "../../../components/Loader";
+import ProgressBar from "../../../assets/Custom/linearProgress";
 export interface ImportedLeadsData {
   campaignName?: string;
   clientId?: string;
@@ -97,7 +97,6 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
 
     if (response.payload.code === 200) {
       setIsLoading(false);
-      console.log(response);
       setUploadCounts(response.payload.counts);
       setCampaignId(response.payload.campaignId);
       setUploadCsv(false);
@@ -111,7 +110,7 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
       campaign_id: campaignId,
       sequences,
     };
-    setIsLoading(true)
+    setIsLoading(true);
     const response = await dispatch(addSequencesToCampaign(payload));
     if (response.payload.code) {
       setIsLoading(false);
@@ -119,7 +118,7 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
         setCampaignId(response.payload.data.campaign_id);
       }
     }
-    setIsLoading(false)
+    setIsLoading(false);
   };
 
   const handleSetup = async () => {
@@ -153,25 +152,25 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
   const handleFinalReview = async () => {
     setIsLoading(true);
     try {
-      setIsLoading(true)
+      setIsLoading(true);
       const response = await dispatch(
         scheduleCampaign({
           campaignId: campaignId,
           status: "SCHEDULED",
         })
       );
-      setIsLoading(true)
-      if (response.payload.code === 200){
-        setIsLoading(true)
-        GoBack();
+      setIsLoading(true);
+      if (response) {
+        setIsLoading(false);
+        if (response.payload.code === 200) {
+          GoBack();
+        }
       }
     } catch (error) {
+      setIsLoading(false);
       console.error("Error scheduling campaign:", error);
-    // } finally {
-    //   setIsLoading(false);
     }
   };
-
 
   const handleNext = async () => {
     switch (activeStep) {
@@ -253,9 +252,9 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
     setDialogData((prev) => ({ ...prev, campaignSettings: data }));
   };
 
-  if (isLoading) {
-    return <Loader />;
-  }
+  // if (isLoading) {
+  //   return <Loader />;
+  // }
 
   return (
     <Container>
@@ -289,8 +288,7 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
           />
         </Box>
       </HeaderContainer>
-      {/* {isLoading && <ProgressBar />} */}
-      {/* {isLoading && <ProgressBar />} */}
+      {isLoading && <ProgressBar />}
       <MainContainer>
         {activeStep === 0 && (
           <ImportLeadsCampaign

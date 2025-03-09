@@ -2,14 +2,20 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { api, emailApi } from "../../services/api";
 import { AxiosError } from "axios";
 import { CampaignSettingsPayload } from "../../pages/Email-Campaign/NewCampaign/SetupCampaign/Interface";
+import Cookies from "js-cookie";
 
 const BASE_URL = "/email-campaign";
+const token = Cookies.get("access_token");
 
 export const fetchEmailCampaigns = createAsyncThunk(
   "emailCampaign/fetchAll",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get(`${BASE_URL}`);
+      const response = await api.get(`${BASE_URL}`,
+        {
+          headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` },
+        }
+      );
       return response.data;
     } catch (error: unknown) {
       let errorMessage = "Something went wrong";
@@ -25,11 +31,13 @@ export const addLeadsToCampaign = createAsyncThunk(
   "emailCampaign/addLeads",
   async (data: any, { rejectWithValue }) => {
     try {
+      if (!token) return rejectWithValue("No authentication token found");
+
       const response = await api.post(
         `${BASE_URL}/add-leads-to-campaign`,
         data,
         {
-          headers: { "Content-Type": "multipart/form-data" },
+          headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` },
         }
       );
       return response.data;
@@ -53,7 +61,7 @@ export const addEmailCampaignSettings = createAsyncThunk<
     try {
       const response = await api.post(
         `${BASE_URL}/add-email-campaign-settings`,
-        data
+        data, {headers: {Authorization: `Bearer ${token}` }}
       );
       return response.data;
     } catch (error: unknown) {
@@ -72,7 +80,7 @@ export const addSequencesToCampaign = createAsyncThunk(
     try {
       const response = await api.post(
         `${BASE_URL}/add-sequence-to-campaign`,
-        data
+        data, {headers: { Authorization: `Bearer ${token}` }}
       );
       return response.data;
     } catch (error: unknown) {
@@ -89,7 +97,11 @@ export const fetchCampaignContacts = createAsyncThunk(
   "emailCampaign/fetchAll",
   async (campaignId: string, { rejectWithValue }) => {
     try {
-      const response = await api.get(`${BASE_URL}/contacts/${campaignId}`);
+      const response = await api.get(`${BASE_URL}/contacts/${campaignId}`,
+        {
+          headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` },
+        }
+      );
       return response.data;
     } catch (error: unknown) {
       let errorMessage = "Something went wrong";
@@ -105,7 +117,11 @@ export const fetchCampaignSequences = createAsyncThunk(
   "emailCampaign/fetchAll",
   async (campaignId: string, { rejectWithValue }) => {
     try {
-      const response = await api.get(`${BASE_URL}/sequences/${campaignId}`);
+      const response = await api.get(`${BASE_URL}/sequences/${campaignId}`,
+        {
+          headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` },
+        }
+      );
       return response.data;
     } catch (error: unknown) {
       let errorMessage = "Something went wrong";
@@ -119,12 +135,15 @@ export const fetchCampaignSequences = createAsyncThunk(
 
 export const SendTestEmail = createAsyncThunk(
   "accounts/send-test-email",
-  async (data: { email: string | string[], toEmail: string  }, { rejectWithValue }) => {
+  async (data: { email: string | string[], toEmail: string }, { rejectWithValue }) => {
     try {
       const response = await emailApi.post(`/accounts/send-test-email`, {
         email: data.email,
         toEmail: data.toEmail,
-      });
+      },
+        {
+          headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` },
+        });
       return response.data;
     } catch (error: unknown) {
       let errorMessage = "Network error";
@@ -146,7 +165,10 @@ export const scheduleCampaign = createAsyncThunk(
       const response = await api.put(`/email-campaign/schedule-campaign`, {
         campaignId,
         status,
-      });
+      },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        });
       return response.data;
     } catch (error: unknown) {
       let errorMessage = "Something went wrong";
@@ -167,7 +189,12 @@ export const SearchEmailCampaign = createAsyncThunk(
     try {
       const response = await api.get("/email-campaign/email-campaigns-search", {
         params: { campaign_name },
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`
+        }
       });
+
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || "Network error");
