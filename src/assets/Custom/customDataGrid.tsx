@@ -48,8 +48,6 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
           ),
         }}
       />
-     
-
     </Paper>
     </Box>
   );

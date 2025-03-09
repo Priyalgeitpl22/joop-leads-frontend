@@ -39,7 +39,7 @@ interface ContactsState {
   loading: boolean;
   error: string | null;
 
-  campaignList: CampaignList[] | null; 
+  campaignList: CampaignList[] | null;
   campaignLoading: boolean;
   campaignError: string | null;
 }
@@ -74,29 +74,34 @@ export interface CreateContactsAccountPayload {
   orgId: string;
 }
 
+const token = Cookies.get("access_token");
 
 export const fetchContacts = createAsyncThunk<
-  ContactsAccount[], 
+  ContactsAccount[],
   void,
-  { rejectValue: string } 
+  { rejectValue: string }
 >(
   "email-campaign/all-contacts",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get("/email-campaign/all-contacts");
+      const response = await api.get("/email-campaign/all-contacts", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       return response.data.data;
     } catch (error: unknown) {
       let errorMessage = "Something went wrong";
       if (error instanceof AxiosError) {
         errorMessage = (error.response?.data as string) || errorMessage;
       }
-      return rejectWithValue(errorMessage); 
+      return rejectWithValue(errorMessage);
     }
   }
 );
 
 export const getCampaignListById = createAsyncThunk<
-  CampaignList[], 
+  CampaignList[],
   VerifyViewContactPayload,
   { rejectValue: string }
 >(
@@ -135,7 +140,7 @@ const contactsSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      
+
       .addCase(fetchContacts.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -149,7 +154,7 @@ const contactsSlice = createSlice({
         state.error = action.payload ?? action.error.message ?? "Something went wrong";
       })
 
-      
+
       .addCase(getCampaignListById.pending, (state) => {
         state.campaignLoading = true;
         state.campaignError = null;
@@ -158,13 +163,13 @@ const contactsSlice = createSlice({
         state.campaignLoading = false;
         state.campaignList = action.payload;
       })
-      
+
       .addCase(getCampaignListById.rejected, (state, action) => {
         state.campaignLoading = false;
         state.campaignError = action.payload || "Something went wrong";
       })
-      
-      
+
+
       .addCase(CreateContactsAccount.pending, (state) => {
         state.loading = true;
         state.error = null;

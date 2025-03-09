@@ -13,7 +13,7 @@ export const fetchEmailCampaigns = createAsyncThunk(
     try {
       const response = await api.get(`${BASE_URL}`,
         {
-          headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
       return response.data;
@@ -99,7 +99,7 @@ export const fetchCampaignContacts = createAsyncThunk(
     try {
       const response = await api.get(`${BASE_URL}/contacts/${campaignId}`,
         {
-          headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
       return response.data;
@@ -119,7 +119,7 @@ export const fetchCampaignSequences = createAsyncThunk(
     try {
       const response = await api.get(`${BASE_URL}/sequences/${campaignId}`,
         {
-          headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
       return response.data;
@@ -142,7 +142,7 @@ export const SendTestEmail = createAsyncThunk(
         toEmail: data.toEmail,
       },
         {
-          headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${token}` },
         });
       return response.data;
     } catch (error: unknown) {
@@ -190,7 +190,6 @@ export const SearchEmailCampaign = createAsyncThunk(
       const response = await api.get("/email-campaign/email-campaigns-search", {
         params: { campaign_name },
         headers: {
-          "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`
         }
       });
