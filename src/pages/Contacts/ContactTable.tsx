@@ -21,11 +21,11 @@ import {
     ContactsContainer,
 } from "./ContactTable.styled";
 
+// import ImportContactCsv from "./importContactCsv/UploadContactCsvDialog";
 
-// import AdvancedSettingDialog from "./AdvancedSettingDialogBox/AdvancedSettingDialog";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import { useDispatch, useSelector } from "react-redux";
-import { ContactsAccount } from "../../redux/slice/contactSlice";
+import { ContactsAccount, getCampaignListById, VerifyViewContactPayload } from "../../redux/slice/contactSlice";
 import { AppDispatch, RootState } from "../../redux/store/store";
 import { SearchBar } from "../../components/Header/header.styled";
 import { Search } from "lucide-react";
@@ -38,6 +38,8 @@ import ProgressBar from "../../assets/Custom/linearProgress";
 import { fetchContacts } from "../../redux/slice/contactSlice";
 import ContactsAccountDialogBox from "./ContactsAccountDialogBox/ContactsAccountDialogBox";
 import { SearchEmailAccount } from "../../redux/slice/emailAccountSlice";
+import ViewDrawer from "./ViewDrawer"
+import AdvancedSettingDialog from "../Email-Account/AdvancedSettingDialogBox/AdvancedSettingDialog";
 
 const ContactTable: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -47,28 +49,30 @@ const ContactTable: React.FC = () => {
     const [contactAccount, setContactAccount] = useState<ContactsAccount[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const { user } = useSelector((state: RootState) => state.user);
+
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [rows, setRows] = useState<any[]>([]);
+
+    const [open, setOpen] = useState(false);
+    const [selectedId, setSelectedId] = useState<string | null>(null);
+
 
 
 
     const columns: GridColDef[] = useMemo(
         () => [
-
-           
-         
-              {
+            {
                 field: "fullName",
                 headerName: "Full Name",
                 width: 150,
                 renderCell: (params) => (
-                  <Box sx={{ marginTop: "8px" }}>
-                    {params.row.first_name} {params.row.last_name}
-                  </Box>
+                    <Box sx={{ marginTop: "8px" }}>
+                        {params.row.first_name} {params.row.last_name}
+                    </Box>
                 ),
-              },
-              
-              
+            },
+
+
             { field: "email", headerName: "Email", width: 250 },
             { field: "phone_number", headerName: "Phone", width: 150 },
 
@@ -79,8 +83,8 @@ const ContactTable: React.FC = () => {
                 width: 120,
                 valueGetter: () => "",
             },
-         
-              
+
+
             {
                 field: "",
                 headerName: "Uploaded By",
@@ -88,21 +92,20 @@ const ContactTable: React.FC = () => {
                 renderCell: () => <Box sx={{ marginTop: "8px" }}></Box>,
             },
             {
-                field: "createdAt",      
+                field: "createdAt",
                 headerName: "Uploaded Date",
                 width: 180,
                 valueGetter: (params: any) => (params ? formatDate(params) : null),
             },
-
             {
                 field: "view",
                 headerName: "View",
                 width: 180,
                 renderCell: (params: any) => (
-                    <IconButton>
+                    <IconButton onClick={(event) => handleViewClick(event, params.row.id)}>
                         <VisibilityIcon />
                     </IconButton>
-                ),
+         ),
             }
         ],
         []
@@ -121,7 +124,6 @@ const ContactTable: React.FC = () => {
             const data = await dispatch(fetchContacts()).unwrap();
             setContactAccount(data);
             setRows(data);
-            console.log("tableeee", data);
         } catch (error) {
             console.error("Failed to fetch Account:", error);
         }
@@ -143,6 +145,7 @@ const ContactTable: React.FC = () => {
             console.error("Search failed:", error);
         }
     };
+
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const query = event.target.value;
@@ -166,6 +169,15 @@ const ContactTable: React.FC = () => {
         setIsSettingOpen(true);
     };
 
+
+    const handleViewClick = (event: React.MouseEvent, id: string) => {
+        event.stopPropagation();
+        setSelectedId(id);
+        setOpen(true);
+        const payload: VerifyViewContactPayload = { id };
+        dispatch(getCampaignListById(payload));
+
+    };
     const isMenuOpen = Boolean(anchorEl);
 
     const CustomIcon = () => (
@@ -220,10 +232,13 @@ const ContactTable: React.FC = () => {
                         open={isDialogOpen}
                         onClose={() => setIsDialogOpen(false)}
                     />
-                    {/* <AdvancedSettingDialog
+                    {/* <ImportContactCsv
             open={isSettingOpen}
             onClose={() => setIsSettingOpen(false)}
-          /> */}
+            />
+             */}
+
+
                     <SecondaryButton onClick={handleSettingDialog}>
                         Upload Contacts
                     </SecondaryButton>
@@ -289,6 +304,7 @@ const ContactTable: React.FC = () => {
                 rows={rows}
                 pageSizeOptions={[10, 10]}
             />
+            <ViewDrawer open={open} onClose={() => setOpen(false)} selectedId={selectedId} />
             {/* </ContactTable> */}
         </ContactsContainer>
     );

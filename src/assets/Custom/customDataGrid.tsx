@@ -2,6 +2,8 @@ import * as React from "react";
 import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
 import "./DataGridStyles.css"; // Import the CSS file
+import ViewDrawer from "../../pages/Contacts/ViewDrawer";
+import { Box } from "@mui/material";
 
 interface CustomDataTableProps {
   columns: GridColDef[];
@@ -10,6 +12,7 @@ interface CustomDataTableProps {
   handleRowSelection?: (selection: any) => void;
 }
 
+
 export const CustomDataTable: React.FC<CustomDataTableProps> = ({
   columns,
   rows,
@@ -17,14 +20,16 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
   handleRowSelection
 }) => {
   const [paginationModel, setPaginationModel] =
-    React.useState<GridPaginationModel>({
-      page: 0,
-      pageSize: pageSizeOptions[0] || 5,
-    });
+  React.useState<GridPaginationModel>({
+    page: 0,
+    pageSize: pageSizeOptions[0] || 5,
+  });
+  
 
   return (
-    <Paper className="data-grid-container">
-      <DataGrid
+    <Box>
+    <Paper className="data-grid-container" sx={{ height: "500px", width:"100%" }}>
+      <DataGrid 
         rows={rows}
         columns={columns}
         pageSizeOptions={[5, 10]}
@@ -36,13 +41,16 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
         slots={{
           noRowsOverlay: () => (
             <div
-              style={{ padding: "20px", textAlign: "center", color: "#888" }}
+              style={{padding: "20px", textAlign: "center", color: "#888" }}
             >
               No email accounts found
             </div>
           ),
         }}
       />
+     
+
     </Paper>
+    </Box>
   );
 };

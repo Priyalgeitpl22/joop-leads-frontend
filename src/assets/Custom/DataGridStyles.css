@@ -1,14 +1,14 @@
-/* DataGridStyles.css */
+
 .data-grid-container {
-    height: 100%; /* Ensure parent takes full height */
+    height: 100%;
     width: 100%;
     display: flex;
     flex-direction: column;
   }
   
   .MuiDataGrid-root {
-    height: 100% !important; /* Ensure DataGrid takes full height */
-    border: none !important; /* Remove border */
+    height: 100% !important;
+    border: none !important;
     max-height: '4px';
   }
   
@@ -22,6 +22,3 @@
     color: var(--text-secondary);
   }
   
-  /* .MuiDataGrid-root.MuiDataGrid-root--densityStandard.MuiDataGrid-root--noToolbar.MuiDataGrid-withBorderColor.css-1jouqri-MuiDataGrid-root {
-    background: red;
-} */
