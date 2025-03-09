@@ -1,103 +1,111 @@
-import { createAsyncThunk} from "@reduxjs/toolkit";
-import { api, emailApi } from "../../services/api";
+
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { api } from "../../services/api";
 import { AxiosError } from "axios";
 import Cookies from "js-cookie";
 
+export interface CampaignList {
+  id: string;
+  first_name: string | null;
+  last_name: string | null;
+  email: string;
+  phone_number: string | null;
+  company_name: string | null;
+  website: string | null;
+  linkedin_profile: string | null;
+  campaign_id: string;
+  location: string | null;
+  orgId: string | null;
+  file_name: string | null;
+  blocked: boolean | null;
+  unsubscribed: boolean | null;
+  active: boolean | null;
+  createdAt: string;
+}
+
 export interface ContactsAccount {
   id: string;
-  first_name : string;
-  last_name : string;
-  email: string;
-  phone_number : string;
-  type: string;
-  createdAt:string;
-}
-
-export interface VerifyEmailAccountPayload {
-    id: string;
-    first_name : string;
-    last_name : string;
-    email: string;
-    phone_number : string;
-    type: string;
-    createdAt:string;
-}
-
-export interface CreateContactsAccountPayload{
   first_name: string;
-  last_name:string;
+  last_name: string;
   email: string;
-  phone_number:String
-  company_name:String
-  website:String
-  linkedin_profile:String
-  campaign_id:String
-  location:String
-  orgId:String
-  file_name:String
-  blocked:Boolean
-  unsubscribed:Boolean
-  active:Boolean
+  phone_number: string;
+  type: string;
+  createdAt: string;
 }
 
-const token = Cookies.get("access_token");
 
-export const fetchContacts = createAsyncThunk(
+interface ContactsState {
+  contacts: ContactsAccount[] | null;
+  loading: boolean;
+  error: string | null;
+
+  campaignList: CampaignList[] | null; 
+  campaignLoading: boolean;
+  campaignError: string | null;
+}
+
+
+const initialState: ContactsState = {
+  contacts: null,
+  loading: false,
+  error: null,
+
+  campaignList: null,
+  campaignLoading: false,
+  campaignError: null,
+
+};
+
+
+export interface VerifyViewContactPayload {
+  id: string;
+}
+
+
+export interface CreateContactsAccountPayload {
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone_number: string;
+  company_name: string;
+  website: string;
+  linkedin_profile: string;
+  location: string;
+  orgId: string;
+}
+
+
+export const fetchContacts = createAsyncThunk<
+  ContactsAccount[], 
+  void,
+  { rejectValue: string } 
+>(
   "email-campaign/all-contacts",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get("/email-campaign/all-contacts",
-        {
-          headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` },
-        }
-      );
-      console.log("response",response.data.data);
+      const response = await api.get("/email-campaign/all-contacts");
       return response.data.data;
-
     } catch (error: unknown) {
       let errorMessage = "Something went wrong";
       if (error instanceof AxiosError) {
         errorMessage = (error.response?.data as string) || errorMessage;
       }
-      return rejectWithValue(errorMessage);
-    }
-  });
-
-export const addOuthEmailAccount = createAsyncThunk(
-  "oauth/auth-url",
-  async (_, { rejectWithValue }) => {
-    try {
-      const origin = encodeURIComponent(window.location.href);
-      const response = await emailApi.get(`/oauth/auth-url?origin=${origin}`);
-      return response.data.url;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || "Network error");
+      return rejectWithValue(errorMessage); 
     }
   }
 );
 
-export const addOutlookEmailAccount = createAsyncThunk(
-  "outlook/auth-url",
-  async (__dirname, {rejectWithValue}) => {
-    try {
-      const origin = encodeURIComponent(window.location.href);
-      const response = await emailApi.get(`/outlook/auth-url?origin=${origin}`);
-      return response.data.url;
-    }catch (error: any){
-      return rejectWithValue(error.response?.data?.message || "Network error");
-    }
-  });
-
-export const verifyEmailAccount = createAsyncThunk<
-  string,
-  VerifyEmailAccountPayload,
+export const getCampaignListById = createAsyncThunk<
+  CampaignList[], 
+  VerifyViewContactPayload,
   { rejectValue: string }
 >(
-  "accounts/verify",
-  async ( data: VerifyEmailAccountPayload, { rejectWithValue }) => {
+  "email-campaign/contacts",
+  async (data: VerifyViewContactPayload, { rejectWithValue }) => {
     try {
-      const response = await emailApi.post(`/accounts/verify`, data);
-      return response.data.url;
+      const response = await api.get(`/email-campaign/contacts/${data.id}`);
+      // Ensure that response.data.data is indeed an array of Campaign objects
+      return response.data.data as CampaignList[];
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || "Network error");
     }
@@ -109,29 +117,72 @@ export const CreateContactsAccount = createAsyncThunk<
   CreateContactsAccountPayload,
   { rejectValue: string }
 >(
-  "/email-campaign/create-contacts", 
+  "/email-campaign/create-contacts",
   async (data: CreateContactsAccountPayload, { rejectWithValue }) => {
-  try {
-    const response = await api.post(`/email-campaign/create-contacts`, data);
-    return response.data.url;
-  } catch (error: any) {
-    return rejectWithValue(error.response?.data?.message || "Network error");
-  }
-});
-
-export const SearchEmailAccount = createAsyncThunk(
-  "accounts/search",
-  async (
-    { email, name }: { email?: string; name?: string },
-    { rejectWithValue }
-  ) => {
     try {
-      const response = await emailApi.get(`/accounts/search`, {
-        params: { email, name },
-      });
-      return response.data;
+      const response = await api.post(`/email-campaign/create-contacts`, data);
+      return response.data.url;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || "Network error");
     }
   }
 );
+
+
+const contactsSlice = createSlice({
+  name: "contacts",
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      
+      .addCase(fetchContacts.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchContacts.fulfilled, (state, action: PayloadAction<ContactsAccount[]>) => {
+        state.loading = false;
+        state.contacts = action.payload;
+      })
+      .addCase(fetchContacts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload ?? action.error.message ?? "Something went wrong";
+      })
+
+      
+      .addCase(getCampaignListById.pending, (state) => {
+        state.campaignLoading = true;
+        state.campaignError = null;
+      })
+      .addCase(getCampaignListById.fulfilled, (state, action: PayloadAction<CampaignList[]>) => {
+        state.campaignLoading = false;
+        state.campaignList = action.payload;
+      })
+      
+      .addCase(getCampaignListById.rejected, (state, action) => {
+        state.campaignLoading = false;
+        state.campaignError = action.payload || "Something went wrong";
+      })
+      
+      
+      .addCase(CreateContactsAccount.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(CreateContactsAccount.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(CreateContactsAccount.rejected, (state, action: PayloadAction<string | undefined>) => {
+        state.loading = false;
+        state.error = action.payload || "Something went wrong";
+      });
+  },
+});
+
+
+export default contactsSlice.reducer;
+
+
+
+
+
