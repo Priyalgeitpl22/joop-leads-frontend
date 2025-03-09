@@ -1,345 +1,185 @@
-import {
-  Avatar,
-  Box,
-  Typography,
-  Card,
-  Divider,
-  FormControl,
-  InputLabel,
-  Select,
-} from "@mui/material";
-import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import StarBorderOutlinedIcon from "@mui/icons-material/StarBorderOutlined";
-import {
-  EmailInboxContainer,
-  EmailInboxHeader,
-  EmailInboxMessages,
-} from "./EmailInboxArea.styled";
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/store/store";
+import { EmailInboxMessagesContainer } from "./EmailInboxArea.styled";
+import { Avatar, CircularProgress } from "@mui/material";
 
-export default function EmailInboxArea() {
+const EmailInboxArea: React.FC = () => {
+  const selectedAccountId = useSelector(
+    (state: RootState) => state.emailInbox.selectedAccountId
+  );
+  const selectedMailboxId = useSelector(
+    (state: RootState) => state.emailInbox.selectedMailboxId
+  );
+  const mailboxMessages = useSelector(
+    (state: RootState) => state.emailInbox.mailboxMessages
+  );
+  const loading = useSelector((state: RootState) => state.emailInbox.loading);
+  const accounts = useSelector((state: RootState) => state.emailInbox.accounts);
+
+  const selectedAccount = accounts.find(
+    (account) => account._id === selectedAccountId
+  );
+
+  const [expandedMessageId, setExpandedMessageId] = useState<string | null>(
+    null
+  );
+
+  const toggleMessageBody = (messageId: string) => {
+    setExpandedMessageId(expandedMessageId === messageId ? null : messageId);
+  };
 
   return (
-    <EmailInboxContainer>
-      <EmailInboxHeader
-        style={{
-          position: "sticky",
-          top: 0,
-          background: "white",
-          zIndex: 10,
-          padding: "10px",
-          borderBottom: "1px solid #ddd",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <Box display="flex" alignItems="center" gap={2}>
-          <Avatar style={{ backgroundColor: "var(--theme-color)" }}>N</Avatar>
-          <Typography variant="subtitle1">Noel Clarke</Typography>
-          <StarBorderOutlinedIcon sx={{height: "20px"}}/>
-          <InfoOutlinedIcon sx={{height: "18px"}}/>
-          <ContentCopyOutlinedIcon sx={{height: "15px"}}/>
-        </Box>
-        <FormControl fullWidth sx={{ backgroundColor: "white", width: "30%" }}>
-          <InputLabel sx={{margin: "-5px"}}>Mark lead as</InputLabel>
-          <Select
-            name="Mark lead as"
-            label="Mark lead as"
-            sx={{
-              height: "40px",
-              ".MuiSelect-select": {
-                padding: "10px",
-              },
+    <EmailInboxMessagesContainer>
+      {loading ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+          }}
+        >
+          <CircularProgress />
+        </div>
+      ) : selectedMailboxId && mailboxMessages?.length > 0 ? (
+        <div>
+          <div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                width: "100%",
+                alignItems: "center",
+                background: "#dedede",
+                marginBottom: "3%",
+                borderRadius: "5px",
+                padding: "2%",
+              }}
+            >
+              <div>
+                <b>
+                  <span className="text-gray-700 font-bold">
+                    {selectedAccount
+                      ? selectedAccount.name
+                      : "No Account Selected"}
+                  </span>
+                </b>
+                <span style={{ margin: "15px", fontSize: "14px" }}>
+                  ✅ Completed
+                </span>
+              </div>
+
+              <div>
+                <select style={{ height: "30px", cursor: "pointer" }}>
+                  <option>Do not Contact</option>
+                  <option>Information Request</option>
+                  <option>Out of Office</option>
+                  <option>Wrong Person</option>
+                  <option>Interested</option>
+                  <option>Meeting Request</option>
+                  <option>Not Interested</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {mailboxMessages.map((message: any) => {
+            const isExpanded = expandedMessageId === message._id;
+            return (
+              <div
+                key={message._id}
+                style={{
+                  border: "1px solid #ddd",
+                  borderRadius: "8px",
+                  padding: "10px",
+                  marginBottom: "10px",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                    marginBottom: "5px",
+                  }}
+                >
+                  <Avatar src="https://ssl.gstatic.com/ui/v1/icons/mail/profile_placeholder.png" />
+                  <div>
+                    <strong>{message.from?.[0]?.name}</strong>
+                    <div style={{ fontSize: "14px", color: "#555" }}>
+                      {message.from?.[0]?.address || "No Email"}
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ fontSize: "14px", color: "#777" }}>
+                  To: <strong>{message.to?.[0]?.name}</strong> (
+                  {message.to?.[0]?.address || "No Email"})
+                </div>
+
+                <div style={{ fontWeight: "bold", marginTop: "5px" }}>
+                  {message.subject || "No Subject"}
+                </div>
+
+                <div
+                  onClick={() => toggleMessageBody(message._id)}
+                  style={{
+                    marginTop: "10px",
+                    cursor: "pointer",
+                    whiteSpace: isExpanded ? "normal" : "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    color: isExpanded ? "black" : "#444343",
+                  }}
+                >
+                  {isExpanded
+                    ? message.body
+                    : message.body.split("\n")[0] + " ..."}
+                </div>
+
+                <div
+                  style={{ fontSize: "14px", color: "#777", marginTop: "5px" }}
+                >
+                  Date: {new Date(message.date).toLocaleString()}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "20px",
+            borderRadius: "8px",
+            backgroundColor: "#f8f9fa",
+            color: "#555",
+            fontSize: "16px",
+            fontWeight: "bold",
+            marginTop: "20px",
+            height: "100%",
+            width: "100%",
+          }}
+        >
+          <img
+            src="https://cdn-icons-png.flaticon.com/512/2748/2748558.png"
+            alt="No Messages"
+            style={{
+              width: "80px",
+              height: "80px",
+              marginBottom: "10px",
+              opacity: 0.6,
             }}
-            MenuProps={{
-              PaperProps: {
-                style: {
-                  maxHeight: 150,
-                },
-              },
-            }}
-          ></Select>
-        </FormControl>
-
-      </EmailInboxHeader>
-
-      <EmailInboxMessages
-        style={{
-          overflowY: "auto",
-          padding: "10px",
-        }}
-      >
-        <Typography variant="body2" color="textSecondary">
-          Replied to <strong>Dharmendra 500 Leads</strong> (Email Sequence: 3)
-          on Jan 24, 2025, 4:34 PM MST
-        </Typography>
-
-        <Card variant="outlined" sx={{ mt: 2, p: 2 }}>
-          <Typography variant="subtitle1" fontWeight="bold">
-            Re: Checking In: Tech Talent Solutions
-          </Typography>
-
-          <Box display="flex" alignItems="center" gap={1} mt={1}>
-            <Avatar src="https://ssl.gstatic.com/ui/v1/icons/mail/profile_placeholder.png" />
-            <Box>
-              <Typography fontWeight="bold">Noel Clarke</Typography>
-              <Typography variant="body2" color="textSecondary">
-                noelwclarke@gmail.com
-              </Typography>
-            </Box>
-          </Box>
-
-          <Typography variant="body2" mt={2}>
-            <strong>To:</strong> yogesh@goldeneagle.work
-          </Typography>
-          <Typography variant="body2">
-            <strong>CC:</strong> noel@theengine.com
-          </Typography>
-
-          <Divider sx={{ my: 2 }} />
-
-          <Typography variant="body2">
-            Unsubscribe Yours, Noel W. Clarke (Babson MBA ‘09) 1-919-999-0955
-            Mobile noelwclarke@gmail.com
-            <br />
-            <a href="http://www.linkedin.com/in/noelwclarke">
-              LinkedIn Profile
-            </a>
-          </Typography>
-        </Card>
-        <Card variant="outlined" sx={{ mt: 2, p: 2 }}>
-          <Typography variant="subtitle1" fontWeight="bold">
-            Re: Checking In: Tech Talent Solutions
-          </Typography>
-
-          <Box display="flex" alignItems="center" gap={1} mt={1}>
-            <Avatar src="https://ssl.gstatic.com/ui/v1/icons/mail/profile_placeholder.png" />
-            <Box>
-              <Typography fontWeight="bold">Noel Clarke</Typography>
-              <Typography variant="body2" color="textSecondary">
-                noelwclarke@gmail.com
-              </Typography>
-            </Box>
-          </Box>
-
-          <Typography variant="body2" mt={2}>
-            <strong>To:</strong> yogesh@goldeneagle.work
-          </Typography>
-          <Typography variant="body2">
-            <strong>CC:</strong> noel@theengine.com
-          </Typography>
-
-          <Divider sx={{ my: 2 }} />
-
-          <Typography variant="body2">
-            Unsubscribe Yours, Noel W. Clarke (Babson MBA ‘09) 1-919-999-0955
-            Mobile noelwclarke@gmail.com
-            <br />
-            <a href="http://www.linkedin.com/in/noelwclarke">
-              LinkedIn Profile
-            </a>
-          </Typography>
-        </Card>
-        <Card variant="outlined" sx={{ mt: 2, p: 2 }}>
-          <Typography variant="subtitle1" fontWeight="bold">
-            Re: Checking In: Tech Talent Solutions
-          </Typography>
-
-          <Box display="flex" alignItems="center" gap={1} mt={1}>
-            <Avatar src="https://ssl.gstatic.com/ui/v1/icons/mail/profile_placeholder.png" />
-            <Box>
-              <Typography fontWeight="bold">Noel Clarke</Typography>
-              <Typography variant="body2" color="textSecondary">
-                noelwclarke@gmail.com
-              </Typography>
-            </Box>
-          </Box>
-
-          <Typography variant="body2" mt={2}>
-            <strong>To:</strong> yogesh@goldeneagle.work
-          </Typography>
-          <Typography variant="body2">
-            <strong>CC:</strong> noel@theengine.com
-          </Typography>
-
-          <Divider sx={{ my: 2 }} />
-
-          <Typography variant="body2">
-            Unsubscribe Yours, Noel W. Clarke (Babson MBA ‘09) 1-919-999-0955
-            Mobile noelwclarke@gmail.com
-            <br />
-            <a href="http://www.linkedin.com/in/noelwclarke">
-              LinkedIn Profile
-            </a>
-          </Typography>
-        </Card>
-        <Card variant="outlined" sx={{ mt: 2, p: 2 }}>
-          <Typography variant="subtitle1" fontWeight="bold">
-            Re: Checking In: Tech Talent Solutions
-          </Typography>
-
-          <Box display="flex" alignItems="center" gap={1} mt={1}>
-            <Avatar src="https://ssl.gstatic.com/ui/v1/icons/mail/profile_placeholder.png" />
-            <Box>
-              <Typography fontWeight="bold">Noel Clarke</Typography>
-              <Typography variant="body2" color="textSecondary">
-                noelwclarke@gmail.com
-              </Typography>
-            </Box>
-          </Box>
-
-          <Typography variant="body2" mt={2}>
-            <strong>To:</strong> yogesh@goldeneagle.work
-          </Typography>
-          <Typography variant="body2">
-            <strong>CC:</strong> noel@theengine.com
-          </Typography>
-
-          <Divider sx={{ my: 2 }} />
-
-          <Typography variant="body2">
-            Unsubscribe Yours, Noel W. Clarke (Babson MBA ‘09) 1-919-999-0955
-            Mobile noelwclarke@gmail.com
-            <br />
-            <a href="http://www.linkedin.com/in/noelwclarke">
-              LinkedIn Profile
-            </a>
-          </Typography>
-        </Card>
-        <Card variant="outlined" sx={{ mt: 2, p: 2 }}>
-          <Typography variant="subtitle1" fontWeight="bold">
-            Re: Checking In: Tech Talent Solutions
-          </Typography>
-
-          <Box display="flex" alignItems="center" gap={1} mt={1}>
-            <Avatar src="https://ssl.gstatic.com/ui/v1/icons/mail/profile_placeholder.png" />
-            <Box>
-              <Typography fontWeight="bold">Noel Clarke</Typography>
-              <Typography variant="body2" color="textSecondary">
-                noelwclarke@gmail.com
-              </Typography>
-            </Box>
-          </Box>
-
-          <Typography variant="body2" mt={2}>
-            <strong>To:</strong> yogesh@goldeneagle.work
-          </Typography>
-          <Typography variant="body2">
-            <strong>CC:</strong> noel@theengine.com
-          </Typography>
-
-          <Divider sx={{ my: 2 }} />
-
-          <Typography variant="body2">
-            Unsubscribe Yours, Noel W. Clarke (Babson MBA ‘09) 1-919-999-0955
-            Mobile noelwclarke@gmail.com
-            <br />
-            <a href="http://www.linkedin.com/in/noelwclarke">
-              LinkedIn Profile
-            </a>
-          </Typography>
-        </Card>
-        <Card variant="outlined" sx={{ mt: 2, p: 2 }}>
-          <Typography variant="subtitle1" fontWeight="bold">
-            Re: Checking In: Tech Talent Solutions
-          </Typography>
-
-          <Box display="flex" alignItems="center" gap={1} mt={1}>
-            <Avatar src="https://ssl.gstatic.com/ui/v1/icons/mail/profile_placeholder.png" />
-            <Box>
-              <Typography fontWeight="bold">Noel Clarke</Typography>
-              <Typography variant="body2" color="textSecondary">
-                noelwclarke@gmail.com
-              </Typography>
-            </Box>
-          </Box>
-
-          <Typography variant="body2" mt={2}>
-            <strong>To:</strong> yogesh@goldeneagle.work
-          </Typography>
-          <Typography variant="body2">
-            <strong>CC:</strong> noel@theengine.com
-          </Typography>
-
-          <Divider sx={{ my: 2 }} />
-
-          <Typography variant="body2">
-            Unsubscribe Yours, Noel W. Clarke (Babson MBA ‘09) 1-919-999-0955
-            Mobile noelwclarke@gmail.com
-            <br />
-            <a href="http://www.linkedin.com/in/noelwclarke">
-              LinkedIn Profile
-            </a>
-          </Typography>
-        </Card>
-        <Card variant="outlined" sx={{ mt: 2, p: 2 }}>
-          <Typography variant="subtitle1" fontWeight="bold">
-            Re: Checking In: Tech Talent Solutions
-          </Typography>
-
-          <Box display="flex" alignItems="center" gap={1} mt={1}>
-            <Avatar src="https://ssl.gstatic.com/ui/v1/icons/mail/profile_placeholder.png" />
-            <Box>
-              <Typography fontWeight="bold">Noel Clarke</Typography>
-              <Typography variant="body2" color="textSecondary">
-                noelwclarke@gmail.com
-              </Typography>
-            </Box>
-          </Box>
-
-          <Typography variant="body2" mt={2}>
-            <strong>To:</strong> yogesh@goldeneagle.work
-          </Typography>
-          <Typography variant="body2">
-            <strong>CC:</strong> noel@theengine.com
-          </Typography>
-
-          <Divider sx={{ my: 2 }} />
-
-          <Typography variant="body2">
-            Unsubscribe Yours, Noel W. Clarke (Babson MBA ‘09) 1-919-999-0955
-            Mobile noelwclarke@gmail.com
-            <br />
-            <a href="http://www.linkedin.com/in/noelwclarke">
-              LinkedIn Profile
-            </a>
-          </Typography>
-        </Card>
-        <Card variant="outlined" sx={{ mt: 2, p: 2 }}>
-          <Typography variant="subtitle1" fontWeight="bold">
-            Re: Checking In: Tech Talent Solutions
-          </Typography>
-
-          <Box display="flex" alignItems="center" gap={1} mt={1}>
-            <Avatar src="https://ssl.gstatic.com/ui/v1/icons/mail/profile_placeholder.png" />
-            <Box>
-              <Typography fontWeight="bold">Noel Clarke</Typography>
-              <Typography variant="body2" color="textSecondary">
-                noelwclarke@gmail.com
-              </Typography>
-            </Box>
-          </Box>
-
-          <Typography variant="body2" mt={2}>
-            <strong>To:</strong> yogesh@goldeneagle.work
-          </Typography>
-          <Typography variant="body2">
-            <strong>CC:</strong> noel@theengine.com
-          </Typography>
-
-          <Divider sx={{ my: 2 }} />
-
-          <Typography variant="body2">
-            Unsubscribe Yours, Noel W. Clarke (Babson MBA ‘09) 1-919-999-0955
-            Mobile noelwclarke@gmail.com
-            <br />
-            <a href="http://www.linkedin.com/in/noelwclarke">
-              LinkedIn Profile
-            </a>
-          </Typography>
-        </Card>
-      </EmailInboxMessages>
-    </EmailInboxContainer>
+          />
+          No mail found.
+        </div>
+      )}
+    </EmailInboxMessagesContainer>
   );
-}
+};
+
+export default EmailInboxArea;
