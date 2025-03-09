@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Drawer, Typography, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { RootState } from "../../redux/store/store";
@@ -14,7 +14,7 @@ interface ViewDrawerProps {
 
 const ViewDrawer: React.FC<ViewDrawerProps> = ({ open, onClose, selectedId }) => {
 
-    const {campaignList, campaignLoading, campaignError} = useSelector(
+    const {campaignList} = useSelector(
         (state: RootState) => state.contact
       );
 

@@ -1,8 +1,7 @@
 import * as React from "react";
 import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
-import "./DataGridStyles.css"; // Import the CSS file
-import ViewDrawer from "../../pages/Contacts/ViewDrawer";
+import "./DataGridStyles.css";
 import { Box } from "@mui/material";
 
 interface CustomDataTableProps {

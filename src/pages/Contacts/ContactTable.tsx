@@ -19,20 +19,16 @@ import {
   ContactsHeader,
   ContactsContainer,
 } from "./ContactTable.styled";
-
-// import ImportContactCsv from "./importContactCsv/UploadContactCsvDialog";
-
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   ContactsAccount,
   getCampaignListById,
   VerifyViewContactPayload,
 } from "../../redux/slice/contactSlice";
-import { AppDispatch, RootState } from "../../redux/store/store";
+import { AppDispatch } from "../../redux/store/store";
 import { SearchBar } from "../../components/Header/header.styled";
 import { Search } from "lucide-react";
-import toast from "react-hot-toast";
 import { CustomDataTable } from "../../assets/Custom/customDataGrid";
 import { GridColDef } from "@mui/x-data-grid";
 import { formatDate } from "../../utils/utils";
@@ -50,7 +46,6 @@ const ContactTable: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [contactAccount, setContactAccount] = useState<ContactsAccount[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const { user } = useSelector((state: RootState) => state.user);
 
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [rows, setRows] = useState<any[]>([]);
@@ -123,7 +118,7 @@ const ContactTable: React.FC = () => {
   const getAllEmailAccounts = async () => {
     try {
       const data = await dispatch(fetchContacts()).unwrap();
-      if(data) {
+      if (data) {
         setLoading(false);
       }
       setContactAccount(data);
@@ -170,6 +165,7 @@ const ContactTable: React.FC = () => {
   };
 
   const handleSettingDialog = () => {
+    console.log(isSettingOpen);
     setIsSettingOpen(true);
   };
 
@@ -210,12 +206,6 @@ const ContactTable: React.FC = () => {
             open={isDialogOpen}
             onClose={() => setIsDialogOpen(false)}
           />
-          {/* <ImportContactCsv
-            open={isSettingOpen}
-            onClose={() => setIsSettingOpen(false)}
-            />
-             */}
-
           <SecondaryButton onClick={handleSettingDialog}>
             Upload Contacts
           </SecondaryButton>
@@ -275,7 +265,6 @@ const ContactTable: React.FC = () => {
           <Button>Apply</Button>
         </Box>
       </Menu>
-      {/* <ContactTable> */}
       <CustomDataTable
         columns={columns}
         rows={rows}
@@ -286,7 +275,6 @@ const ContactTable: React.FC = () => {
         onClose={() => setOpen(false)}
         selectedId={selectedId}
       />
-      {/* </ContactTable> */}
     </ContactsContainer>
   );
 };
