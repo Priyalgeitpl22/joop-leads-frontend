@@ -1,79 +1,95 @@
 import { styled } from "@mui/material/styles";
-import {
-  Box,
-  Typography,
-  ListItem,
-  TypographyProps,
-  List,
-} from "@mui/material";
-import { motion } from "framer-motion";
+import { Box, List, ListItem } from "@mui/material";
 
 export const EmailInboxListContainer = styled(Box)({
-  width: 290,
-  borderRight: "1px solid rgba(0, 0, 0, 0.12)",
-  display: "flex",
-  flexDirection: "column",
+  width: "28%",
+  borderRight: "1px solid #ddd",
   padding: "10px",
+  height: "100vh",
+  overflowY: "auto",
+});
+
+export const SearchContainer = styled(Box)({
+  display: "flex",
+  alignItems: "center",
+  marginBottom: "15px",
+  padding: "8px",
+  borderRadius: "8px",
+  border: "1px solid #ccc",
+  backgroundColor: "#f8f9fa",
+});
+
+export const SearchInput = styled("input")({
+  border: "none",
+  outline: "none",
+  background: "transparent",
+  flex: 1,
 });
 
 export const EmailInboxListHeader = styled(Box)({
-  padding: "10px",
-  borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
-  backgroundColor: "var(--background-light)",
   display: "flex",
-  flexDirection: "column",
-  justifyContent: "center",
+  justifyContent: "space-between",
   alignItems: "center",
-  gap: "8px",
+  marginBottom: "10px",
+  borderBottom: "1px solid #eee",
 });
 
-export const ThreadList = styled(List)`
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  position: relative;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  gap: 5px;
-  display: flex;
-  flex-direction: column;
-`;
-interface EmailInboxListItemProps {
-  active?: boolean;
-}
+export const HeaderTitle = styled(Box)({
+  fontSize: "18px",
+  fontWeight: "bold",
+});
 
-export const EmailInboxListItem = styled(motion.create(ListItem), {
-  shouldForwardProp: (prop) => prop !== "active",
-})<EmailInboxListItemProps>(({ active }) => ({
-  "&:hover": {
-    backgroundColor: "var(--theme-color)",
+export const HeaderIcons = styled(Box)({
+  display: "flex",
+  gap: "10px",
+  "& svg": {
     cursor: "pointer",
+    color: "#777",
   },
-  padding: "12px 16px",
-  backgroundColor: active ? "var(--theme-color)" : "transparent",
-  borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
-  borderRadius: "8px",
-}));
+});
 
-export const TimeStamp = styled(Typography)({
+export const AccountList = styled(List)({
+  padding: 0,
+});
+
+export const AccountItem = styled(ListItem)({
   display: "flex",
   flexDirection: "row",
-  fontSize: "0.75rem",
-  color: "rgba(0, 0, 0, 0.6)",
-  alignItems: "center",
+  gap: "8px",
+  padding: "10px",
+  borderBottom: "1px solid #eee",
+  cursor: "pointer",
+  transition: "background 0.2s",
+  borderRadius: "8px",
+  marginBottom: "5px",
+  backgroundColor: "#fff",
+  "&:hover": {
+    backgroundColor: "#f1f3f5",
+  },
 });
 
-export const MessagePreview = styled(Typography)<TypographyProps>({
-  color: "rgba(0, 0, 0, 0.6)",
-  fontSize: "0.7rem",
+export const AccountAvatar = styled(Box)({
+  width: "35px",
+  height: "35px",
+  borderRadius: "50%",
+  backgroundColor: "rgb(9 16 115)",
+  color: "#fff",
   display: "flex",
+  justifyContent: "center",
   alignItems: "center",
-  whiteSpace: "nowrap",
-  overflow: "hidden",
-  maxWidth: "22ch",
-  textOverflow: "clip",
+  fontWeight: "bold",
+  fontSize: "15px",
 });
 
-MessagePreview.defaultProps = {
-  component: "span",
-};
+export const AccountDetails = styled(Box)({
+  display: "flex",
+  flexDirection: "column",
+  marginLeft: "10px",
+  "& strong": {
+    fontSize: "15px",
+  },
+  "& div": {
+    fontSize: "15px",
+    color: "#777",
+  },
+});

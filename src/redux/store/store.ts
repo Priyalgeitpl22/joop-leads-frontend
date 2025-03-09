@@ -6,16 +6,18 @@ import threadReducer from "../slice/threadSlice";
 import chatsReducer from "../slice/chatSlice";
 import authReducer from "../slice/authSlice";
 import contactReducer from "../slice/contactSlice";
+import emailInboxReducer from "../slice/emailInboxSlice";
 
 export const store = configureStore({
   reducer: {
-    user: userReducer, 
+    user: userReducer,
     organization: organizationReducer,
     agents: agentsReducer,
     thread: threadReducer,
     chats: chatsReducer,
     auth: authReducer,
-    contact:contactReducer
+    contact:contactReducer,
+    emailInbox: emailInboxReducer,
   },
 });
 
