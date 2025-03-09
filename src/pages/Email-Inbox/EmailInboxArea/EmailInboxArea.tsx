@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store/store";
 import { EmailInboxMessagesContainer } from "./EmailInboxArea.styled";
 import { Avatar, CircularProgress } from "@mui/material";
+import { Reply, ReplyAll, Trash2 } from "lucide-react";
 
 const EmailInboxArea: React.FC = () => {
   const selectedAccountId = useSelector(
@@ -17,9 +18,9 @@ const EmailInboxArea: React.FC = () => {
   const loading = useSelector((state: RootState) => state.emailInbox.loading);
   const accounts = useSelector((state: RootState) => state.emailInbox.accounts);
 
-  const selectedAccount = accounts.find(
-    (account) => account._id === selectedAccountId
-  );
+  // const selectedAccount = accounts.find(
+  //   (account) => account._id === selectedAccountId
+  // );
 
   const [expandedMessageId, setExpandedMessageId] = useState<string | null>(
     null
@@ -44,7 +45,7 @@ const EmailInboxArea: React.FC = () => {
         </div>
       ) : selectedMailboxId && mailboxMessages?.length > 0 ? (
         <div>
-          <div>
+          {/* <div>
             <div
               style={{
                 display: "flex",
@@ -82,7 +83,7 @@ const EmailInboxArea: React.FC = () => {
                 </select>
               </div>
             </div>
-          </div>
+          </div> */}
 
           {mailboxMessages.map((message: any) => {
             const isExpanded = expandedMessageId === message._id;
@@ -99,27 +100,66 @@ const EmailInboxArea: React.FC = () => {
                 <div
                   style={{
                     display: "flex",
-                    alignItems: "center",
-                    gap: "10px",
-                    marginBottom: "5px",
+                    justifyContent: "space-between",
+                    marginBottom: "12px",
                   }}
                 >
-                  <Avatar src="https://ssl.gstatic.com/ui/v1/icons/mail/profile_placeholder.png" />
-                  <div>
-                    <strong>{message.from?.[0]?.name}</strong>
-                    <div style={{ fontSize: "14px", color: "#555" }}>
-                      {message.from?.[0]?.address || "No Email"}
+                  <h4>{message.subject || "No Subject"}</h4>
+                  <div style={{ display: "flex", gap: "15px" }}>
+                    <div>
+                      <Reply />
+                    </div>
+                    <div>
+                      <ReplyAll />
+                    </div>
+                    <div>
+                      <Trash2 />
                     </div>
                   </div>
                 </div>
-
-                <div style={{ fontSize: "14px", color: "#777" }}>
-                  To: <strong>{message.to?.[0]?.name}</strong> (
-                  {message.to?.[0]?.address || "No Email"})
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    marginBottom: "10px",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                      // marginBottom: "5px",
+                    }}
+                  >
+                    <Avatar src="https://ssl.gstatic.com/ui/v1/icons/mail/profile_placeholder.png" />
+                    <div>
+                      <strong>{message.from?.[0]?.name}</strong>
+                      <div style={{ fontSize: "15px", color: "#555" }}>
+                        {message.from?.[0]?.address || "No Email"}
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      fontSize: "15px",
+                      color: "#777",
+                      marginTop: "5px",
+                    }}
+                  >
+                    Date: {new Date(message.date).toLocaleString()}
+                  </div>
                 </div>
 
-                <div style={{ fontWeight: "bold", marginTop: "5px" }}>
-                  {message.subject || "No Subject"}
+                <div
+                  style={{
+                    fontSize: "15px",
+                    color: "#777",
+                    marginBottom: "20px",
+                  }}
+                >
+                  To: <strong>{message.to?.[0]?.name}</strong> (
+                  {message.to?.[0]?.address || "No Email"})
                 </div>
 
                 <div
@@ -131,17 +171,12 @@ const EmailInboxArea: React.FC = () => {
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     color: isExpanded ? "black" : "#444343",
+                    fontSize: "15px"
                   }}
                 >
                   {isExpanded
                     ? message.body
-                    : message.body.split("\n")[0] + " ..."}
-                </div>
-
-                <div
-                  style={{ fontSize: "14px", color: "#777", marginTop: "5px" }}
-                >
-                  Date: {new Date(message.date).toLocaleString()}
+                    : message.body.split("\n").slice(0, 10).join("\n") + " ..."}
                 </div>
               </div>
             );
