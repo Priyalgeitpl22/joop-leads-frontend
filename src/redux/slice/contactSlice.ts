@@ -1,6 +1,7 @@
 import { createAsyncThunk} from "@reduxjs/toolkit";
 import { api, emailApi } from "../../services/api";
 import { AxiosError } from "axios";
+import Cookies from "js-cookie";
 
 export interface ContactsAccount {
   id: string;
@@ -37,14 +38,19 @@ export interface CreateContactsAccountPayload{
   blocked:Boolean
   unsubscribed:Boolean
   active:Boolean
-
 }
+
+const token = Cookies.get("access_token");
 
 export const fetchContacts = createAsyncThunk(
   "email-campaign/all-contacts",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get("/email-campaign/all-contacts");
+      const response = await api.get("/email-campaign/all-contacts",
+        {
+          headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` },
+        }
+      );
       console.log("response",response.data.data);
       return response.data.data;
 
