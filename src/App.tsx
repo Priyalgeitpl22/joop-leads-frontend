@@ -29,6 +29,7 @@ import PasswordResetConfirmation from "./pages/Forgot-Password/PasswordResetConf
 import ResetPassword from "./pages/Forgot-Password/ResetPassword";
 import VerifyOtp from "./pages/Verify-OTP/VerifyOtp";
 import UserProfileMenu from "./assets/Custom/customUserProfile";
+import ContactTable from "./pages/Contacts/ContactTable";
 
 const UNPROTECTED_ROUTES = [
   "/login",
@@ -141,6 +142,7 @@ export default function DashboardLayoutBasic() {
             {router.pathname === "/inbox" && <EmailInboxs />}
             {router.pathname === "/leads" && <Leads />}
             {router.pathname === "/chats" && <Chats />}
+            {router.pathname === "/contacts" && <ContactTable />}
             {router.pathname === "/organization" && <Organization />}
           </PageContainer>
         </DashboardLayout>

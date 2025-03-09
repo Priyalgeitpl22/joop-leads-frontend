@@ -3,6 +3,7 @@ import { Navigation } from "@toolpad/core/AppProvider";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import ContactMailIcon from "@mui/icons-material/ContactMail";
 import ArchiveIcon from "@mui/icons-material/Archive";
+import ContactPhoneIcon from "@mui/icons-material/ContactPhone";
 import ForumIcon from "@mui/icons-material/Forum";
 import FollowTheSignsIcon from "@mui/icons-material/FollowTheSigns";
 
@@ -51,5 +52,13 @@ export const NAVIGATION: Navigation = [
     segment: "chats",
     title: "Chats",
     icon: <ForumIcon style={{ color: "var(--icon-hover)" }}/>,
+  },
+  {
+    kind: "divider",
+  },
+  {
+    segment: "contacts",
+    title: "Contacts",
+    icon: <ContactPhoneIcon style={{ color: "var(--icon-hover)" }} />,
   },
 ];
