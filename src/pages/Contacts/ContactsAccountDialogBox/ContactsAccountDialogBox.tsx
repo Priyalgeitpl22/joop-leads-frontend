@@ -75,10 +75,10 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
     };
   dispatch(CreateContactsAccount(payload))
   .unwrap()
-  .then((url: any) => {
+  .then(() => {
     onClose();
   })
-  .catch((error: any) => {
+  .catch(() => {
   });
   };
   
