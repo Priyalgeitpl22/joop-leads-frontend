@@ -1,151 +1,154 @@
-import React, { useEffect } from "react";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../redux/store/store";
 import {
-  ListItemAvatar,
-  Avatar,
-  ListItemText,
-  Box,
-  Typography,
-} from "@mui/material";
-import { AnimatePresence, motion } from "framer-motion";
-import {
-  EmailInboxListContainer,
-  EmailInboxListHeader,
-  EmailInboxListItem,
-  ThreadList,
-  TimeStamp,
-  MessagePreview,
-} from "./EmailInboxList.styled";
-import { useSocket } from "../../../context/SocketContext";
-import { useDispatch } from "react-redux";
-import { getAllThreads, Thread } from "../../../redux/slice/threadSlice";
+  getAllMailBox,
+  setSelectedAccount,
+  resetMailboxes
+} from "../../../redux/slice/emailInboxSlice";
+import { Search } from "lucide-react";
+import ReplayIcon from "@mui/icons-material/Replay";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import SortOutlinedIcon from "@mui/icons-material/SortOutlined";
-import { AppDispatch } from "../../../redux/store/store";
-import { formatTimestamp } from "../../../utils/utils";
-import { SearchBar } from "../../../components/Header/header.styled";
-import ReplayIcon from "@mui/icons-material/Replay";
-import { Search } from "lucide-react";
 
-const listItemVariants = {
-  hidden: { opacity: 0, x: -20 },
-  visible: { opacity: 1, x: 0 },
-};
 
-interface EmailInboxListProps {
-  threads: Thread[];
-  onSelectThread: (threadId: string) => void;
-  type: string;
-  selectedThreadId: string | null;
-}
-
-const MotionEmailInboxListItem = motion(EmailInboxListItem);
-
-const EmailInboxList: React.FC<EmailInboxListProps> = ({
-  threads,
-  onSelectThread,
-  type,
-  selectedThreadId,
-}) => {
-  const { socket } = useSocket();
+const EmailInboxList: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const accounts = useSelector((state: RootState) => state.emailInbox.accounts);
 
-  useEffect(() => {
-    if (!socket) return;
-
-    const handleEmailInboxStarted = (data: { threadId: string }) => {
-      console.log("New thread started with ID:", data.threadId);
-      dispatch(getAllThreads());
-      onSelectThread(data.threadId);
-    };
-
-    socket.on("EmailInboxStarted", handleEmailInboxStarted);
-    return () => {
-      socket.off("EmailInboxStarted", handleEmailInboxStarted);
-    };
-  }, [socket, dispatch, onSelectThread, type]);
+  const handleAccountClick = (accountId: string) => {
+    dispatch(resetMailboxes()); 
+    dispatch(setSelectedAccount(accountId));
+    dispatch(getAllMailBox(accountId));
+  };
 
   return (
-    <EmailInboxListContainer>
-      <EmailInboxListHeader>
-        <Box sx={{display: "flex"}}>
-          <SearchBar style={{ width: "100%", marginRight: "10%"}}>
-            <Search size={20} />
-            <input placeholder="Search leads..." />
-          </SearchBar>
-          <SortOutlinedIcon />
-        </Box>
-        <Box sx={{display: "flex", gap: "150px" }}>
-          <Typography
-            variant="h6"
-            sx={{ fontFamily: "cursive", fontWeight: 600 }}
-          >
-            Threads
-          </Typography>
-          <Box>
-            <ReplayIcon/>
-            <FilterAltOutlinedIcon/>
-          </Box>
-        </Box>
-      </EmailInboxListHeader>
-      <Box sx={{ overflowY: "auto", flex: 1 }}>
-        {threads && threads.length > 0 ? (
-          <AnimatePresence>
-            <ThreadList>
-              {threads.map((thread, index) => {
-                const isActive = thread.id === selectedThreadId;
+    <div
+      style={{
+        width: "30%",
+        borderRight: "1px solid #ddd",
+        padding: "10px",
+        height: "100vh",
+        overflowY: "auto",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          marginBottom: "15px",
+          padding: "8px",
+          borderRadius: "8px",
+          border: "1px solid #ccc",
+          backgroundColor: "#f8f9fa",
+        }}
+      >
+        <Search size={18} style={{ marginRight: "8px", color: "#777" }} />
+        <input
+          type="text"
+          placeholder="Search Account"
+          style={{
+            border: "none",
+            outline: "none",
+            background: "transparent",
+            flex: 1,
+          }}
+        />
+      </div>
 
-                return (
-                  <MotionEmailInboxListItem
-                    key={thread.id}
-                    active={isActive}
-                    onClick={() => onSelectThread(thread.id)}
-                    variants={listItemVariants}
-                    initial="hidden"
-                    animate="visible"
-                    transition={{ delay: index * 0.1 }}
-                    whileTap={{ scale: 0.98 }}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "10px",
+          borderBottom: "1px solid #eee",
+        }}
+      >
+        <h3 style={{ fontSize: "18px", fontWeight: "bold", margin: 0 }}>
+          Inbox
+        </h3>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <ReplayIcon
+            fontSize="small"
+            style={{ cursor: "pointer", color: "#777" }}
+          />
+          <FilterAltOutlinedIcon
+            fontSize="small"
+            style={{ cursor: "pointer", color: "#777" }}
+          />
+          <SortOutlinedIcon
+            fontSize="small"
+            style={{ cursor: "pointer", color: "#777" }}
+          />
+        </div>
+      </div>
+
+      <div>
+        {accounts.length > 0 ? (
+          accounts.map((account) => (
+            <div
+              key={account._id}
+              onClick={() => handleAccountClick(account._id)}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                padding: "10px",
+                borderBottom: "1px solid #eee",
+                cursor: "pointer",
+                transition: "background 0.2s",
+                borderRadius: "8px",
+                marginBottom: "5px",
+                backgroundColor: "#fff",
+              }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.backgroundColor = "#f1f3f5")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.backgroundColor = "#fff")
+              }
+            >
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "10px" }}
+                >
+                  <div
+                    style={{
+                      width: "35px",
+                      height: "35px",
+                      borderRadius: "50%",
+                      backgroundColor: "rgb(9 16 115)",
+                      color: "#fff",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      fontWeight: "bold",
+                      fontSize: "15px",
+                    }}
                   >
-                    <ListItemAvatar>
-                      <Avatar
-                        sx={{
-                          bgcolor: "var(--theme-color)",
-                          width: 32,
-                          height: 32,
-                        }}
-                      >
-                        {thread.type[0]?.toUpperCase() || "?"}
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary="Unknown Visitor"
-                      secondary={
-                        <MessagePreview>Click to view messages</MessagePreview>
-                      }
-                      primaryTypographyProps={{
-                        variant: "body1",
-                        fontSize: "0.9rem",
-                      }}
-                    />
-                    <TimeStamp>{formatTimestamp(thread.createdAt)}</TimeStamp>
-                  </MotionEmailInboxListItem>
-                );
-              })}
-            </ThreadList>
-          </AnimatePresence>
+                    {account.name[0]?.toUpperCase()}
+                  </div>
+                  <div>
+                    <strong style={{ fontSize: "15px" }}>{account.name}</strong>
+                    <div style={{ fontSize: "15px", color: "#777" }}>
+                      {account.email}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))
         ) : (
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "100%",
-            }}
-          >
-            <Typography variant="body1">No threads available</Typography>
-          </Box>
+          <div>No accounts available</div>
         )}
-      </Box>
-    </EmailInboxListContainer>
+      </div>
+    </div>
   );
 };
 

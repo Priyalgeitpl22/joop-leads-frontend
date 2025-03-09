@@ -9,7 +9,7 @@ import {
 import { motion } from "framer-motion";
 
 export const EmailInboxListContainer = styled(Box)({
-  width: 290,
+  width: 330,
   borderRight: "1px solid rgba(0, 0, 0, 0.12)",
   display: "flex",
   flexDirection: "column",

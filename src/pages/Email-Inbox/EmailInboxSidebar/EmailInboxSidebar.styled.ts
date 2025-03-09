@@ -6,15 +6,16 @@ interface SidebarItemProps {
   online?: boolean;
 }
 
-export const SidebarContainer = styled(Box)({
-  width: 230,
-  height: "95%",
-  backgroundColor: "var(--background-light)",
-  borderRight: "1px solid #e0e0e0",
-  overflowY: "auto",
-  padding: "10px",
-  borderRadius: "10px",
-});
+export const SidebarContainer = styled(Box)`
+  width: 210px;
+  height: 100vh;
+  background-color: var(--background-light);
+  border-right: 1px solid #e0e0e0;
+  overflow-y: auto;
+  padding: 10px;
+  border-radius: 10px;
+  flex-shrink: 0;
+`;
 
 export const StatusIndicator = styled("div", {
   shouldForwardProp: (prop) => prop !== "online",
@@ -38,16 +39,6 @@ export const SidebarItem = styled(ListItem, {
   borderRadius: "8px",
 }));
 
-// export const ActiveIndicator = styled(motion.div)({
-//   position: "absolute",
-//   left: 0,
-//   top: 0,
-//   bottom: 0,
-//   width: 4,
-//   backgroundColor: "var(--theme-color)",
-//   borderRadius: "0 4px 4px 0",
-// });
-
 export const Count = styled(Typography)(`
   marginLeft: 'auto';
   color: '#757575';
@@ -60,33 +51,32 @@ export const Count = styled(Typography)(`
   justify-content: center;
 `);
 
-// export const CountBadge = styled(motion.div)({
-//   color: "#757575",
-//   backgroundColor: "#7dd1e3",
-//   width: "18px",
-//   height: "20px",
-//   borderRadius: "10px",
-// });
-
 export const EmailInboxContainer = styled(Box)`
   width: 100%;
-  height: 100%;
+  height: 85vh; /* Full screen height */
   display: flex;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   background: white;
   position: relative;
   flex-direction: row;
+  overflow: hidden; /* Prevent parent from scrolling */
 `;
 
 export const EmailInboxList = styled(List)`
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  position: relative;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  gap: 5px;
+  width: 25%;
+  height: 100%;
+  overflow-y: auto; /* Enable scrolling */
   display: flex;
   flex-direction: column;
+  border-right: 1px solid #e0e0e0;
+  padding-top: 8px;
+  padding-bottom: 8px;
+`;
+
+export const EmailInboxArea = styled(Box)`
+  flex: 1; /* Take remaining space */
+  height: 100%;
+  overflow-y: auto; /* Enable scrolling */
+  padding: 16px;
 `;
