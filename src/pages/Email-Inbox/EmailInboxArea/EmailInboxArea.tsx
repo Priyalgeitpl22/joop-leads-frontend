@@ -6,9 +6,6 @@ import { Avatar, CircularProgress } from "@mui/material";
 import { Reply, ReplyAll, Trash2 } from "lucide-react";
 
 const EmailInboxArea: React.FC = () => {
-  const selectedAccountId = useSelector(
-    (state: RootState) => state.emailInbox.selectedAccountId
-  );
   const selectedMailboxId = useSelector(
     (state: RootState) => state.emailInbox.selectedMailboxId
   );
@@ -16,7 +13,6 @@ const EmailInboxArea: React.FC = () => {
     (state: RootState) => state.emailInbox.mailboxMessages
   );
   const loading = useSelector((state: RootState) => state.emailInbox.loading);
-  const accounts = useSelector((state: RootState) => state.emailInbox.accounts);
 
   // const selectedAccount = accounts.find(
   //   (account) => account._id === selectedAccountId
