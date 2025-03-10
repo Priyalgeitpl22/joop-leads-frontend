@@ -1,92 +1,72 @@
 import { styled } from "@mui/material/styles";
-import { Box, ListItem, List, Typography } from "@mui/material";
+import { Box, List, ListItem, Divider } from "@mui/material";
 
 interface SidebarItemProps {
   active?: boolean;
-  online?: boolean;
 }
 
-export const SidebarContainer = styled(Box)({
-  width: 230,
-  height: "95%",
-  backgroundColor: "var(--background-light)",
-  borderRight: "1px solid #e0e0e0",
-  overflowY: "auto",
-  padding: "10px",
-  borderRadius: "10px",
-});
-
-export const StatusIndicator = styled("div", {
-  shouldForwardProp: (prop) => prop !== "online",
-})<SidebarItemProps>(({ online }) => ({
-  width: 8,
-  height: 8,
-  borderRadius: "50%",
-  backgroundColor: online ? "#4caf50" : "var(--background-light)",
-}));
-
-export const SidebarItem = styled(ListItem, {
-  shouldForwardProp: (prop) => prop !== "active",
-})<SidebarItemProps>(({ active }) => ({
-  "&:hover": {
-    backgroundColor: "var(--theme-color)",
-    cursor: "pointer",
-  },
-  backgroundColor: active ? "var(--theme-color)" : "transparent",
-  position: "relative",
-  padding: "8px 16px",
-  borderRadius: "8px",
-}));
-
-// export const ActiveIndicator = styled(motion.div)({
-//   position: "absolute",
-//   left: 0,
-//   top: 0,
-//   bottom: 0,
-//   width: 4,
-//   backgroundColor: "var(--theme-color)",
-//   borderRadius: "0 4px 4px 0",
-// });
-
-export const Count = styled(Typography)(`
-  marginLeft: 'auto';
-  color: '#757575';
-  background: var(--theme-color);
-  border-radius: 12px;
-  width: 18px;
-  height: 24px;
-  align-items: center;
-  display: flex;
-  justify-content: center;
-`);
-
-// export const CountBadge = styled(motion.div)({
-//   color: "#757575",
-//   backgroundColor: "#7dd1e3",
-//   width: "18px",
-//   height: "20px",
-//   borderRadius: "10px",
-// });
+export const SidebarContainer = styled(Box)`
+  width: 12%;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 10px;
+  background-color: #fff;
+  border-right: 1px solid #ddd;
+`;
 
 export const EmailInboxContainer = styled(Box)`
   width: 100%;
-  height: 100%;
+  height: 85vh;
   display: flex;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   background: white;
   position: relative;
   flex-direction: row;
+  overflow: hidden;`
+;
+
+export const SidebarHeader = styled(Box)`
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 8px;
 `;
 
-export const EmailInboxList = styled(List)`
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  position: relative;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  gap: 5px;
+export const StyledDivider = styled(Divider)`
+  margin-bottom: 10px;
+`;
+
+export const StyledList = styled(List)`
+  padding-top: 15px;
+`;
+
+export const StyledListItem = styled(ListItem, {
+  shouldForwardProp: (prop) => prop !== "active",
+})<SidebarItemProps>(({ active }) => ({
+  padding: "8px 15px",
+  borderRadius: "8px",
+  cursor: "pointer",
+  fontSize: "15px",
+  borderBottom: "1px solid #eee",
+  backgroundColor: active ? "#f1f3f5" : "transparent",
+  color: active ? "rgb(9 16 115)" : "#333",
+  fontWeight: active ? "bold" : "normal",
+  transition: "background 0.2s",
+  "&:hover": { backgroundColor: "#f1f3f5" },
+}));
+
+export const NoMailboxMessage = styled(Box)`
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  color: #555;
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 20px;
+  height: 100%;
+  width: 100%;
 `;

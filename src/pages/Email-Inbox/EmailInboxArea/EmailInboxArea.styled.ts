@@ -5,6 +5,7 @@ export const EmailInboxContainer = styled(Box)({
   flex: 1,
   display: "flex",
   flexDirection: "column",
+  width: "50%",
   height: "100%",
   backgroundColor: "var(--background-light)",
 });
@@ -68,7 +69,23 @@ export const PlaceholderContainer = styled(Box)({
   textAlign: "center",
   background: "var(--background-light)f",
 });
+export const EmailInboxMessagesContainer = styled(Box)`
+  flex: 1;
+  overflow-y: auto; /* Enables vertical scrolling */
+  height: calc(100vh - 60px); /* Adjust height based on header/footer */
+  padding: 20px;
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #c1c1c1 transparent;
 
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #c1c1c1;
+    border-radius: 8px;
+  }
+`;
 export const BotMessage = styled(Box)({
   display: "flex",
   flexDirection: "column",
