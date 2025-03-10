@@ -2,6 +2,8 @@ import styled from "@emotion/styled";
 import { motion } from "framer-motion";
 
 export const DialogContainer = styled.div`
+  
+  
   min-height: 450px;
   display: flex;
   flex-direction: column;

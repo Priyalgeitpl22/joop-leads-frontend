@@ -37,7 +37,15 @@ import ProgressBar from "../../assets/Custom/linearProgress";
 import { fetchContacts } from "../../redux/slice/contactSlice";
 import ContactsAccountDialogBox from "./ContactsAccountDialogBox/ContactsAccountDialogBox";
 import { SearchEmailAccount } from "../../redux/slice/emailAccountSlice";
-import ViewDrawer from "./ViewDrawer";
+import ViewDrawer from "./View-Drawer/ViewDrawer";
+import UploadContactCsvDialog from "./UploadContactCsvDialog/UploadContactCsvDialog";
+import { csvSettingsType } from "../Email-Campaign/Interfaces";
+
+export interface ImportedLeadsData {
+  csvSettings: csvSettingsType;
+  
+}
+
 
 const ContactTable: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -46,12 +54,33 @@ const ContactTable: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [contactAccount, setContactAccount] = useState<ContactsAccount[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
+  const [CSVsettings, setCSVsettings] = React.useState<csvSettingsType>();
+  const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
+  const [emailFieldsToBeAdded, setEmailFieldsToBeAdded] =
+  React.useState<ImportedLeadsData>();
+  
+
 
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [rows, setRows] = useState<any[]>([]);
 
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+
+    const [isCsvUploaded, setIsCsvUploaded] = React.useState(false);
+  
+    const saveCSVSetting = (settings: any) => {
+      setCSVsettings(settings);
+    };
+
+    const handleFileChange = (file: File) => {
+      setSelectedFile(file);
+    };
+    
+    const handleLeadsData = (data: ImportedLeadsData) => {
+        setEmailFieldsToBeAdded(data);
+      };
 
   const columns: GridColDef[] = useMemo(
     () => [
@@ -137,7 +166,7 @@ const ContactTable: React.FC = () => {
       } else {
         const [email, name] = trimmedQuery.split(" ");
         const filteredData = await dispatch(
-          SearchEmailAccount({ email, name })
+           SearchEmailAccount({ email, name })
         ).unwrap();
         setRows(filteredData);
       }
@@ -148,7 +177,7 @@ const ContactTable: React.FC = () => {
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value;
-    setSearchQuery(query);
+  setSearchQuery(query);
     handleSearch(query);
   };
 
@@ -160,12 +189,12 @@ const ContactTable: React.FC = () => {
     setAnchorEl(null);
   };
 
-  const handleOpenDialog = () => {
-    setIsDialogOpen(true);
-  };
+  // const handleOpenDialog = () => {
+  //   setIsDialogOpen(true);
+  // };
 
   const handleSettingDialog = () => {
-    console.log(isSettingOpen);
+    
     setIsSettingOpen(true);
   };
 
@@ -177,6 +206,9 @@ const ContactTable: React.FC = () => {
     dispatch(getCampaignListById(payload));
   };
   const isMenuOpen = Boolean(anchorEl);
+
+  const handleOpenDialog = () => setIsUploadDialogOpen(true);
+  const handleCloseDialog = () => setIsUploadDialogOpen(false);
 
   return (
     <ContactsContainer>
@@ -206,7 +238,9 @@ const ContactTable: React.FC = () => {
             open={isDialogOpen}
             onClose={() => setIsDialogOpen(false)}
           />
-          <SecondaryButton onClick={handleSettingDialog}>
+   
+
+          <SecondaryButton onClick={handleOpenDialog}>
             Upload Contacts
           </SecondaryButton>
           <Button onClick={handleOpenDialog}>Add Contacts</Button>
@@ -270,11 +304,23 @@ const ContactTable: React.FC = () => {
         rows={rows}
         pageSizeOptions={[10, 10]}
       />
+     
+  <UploadContactCsvDialog
+    open={isUploadDialogOpen}
+    onClose={handleCloseDialog}
+    handleLeadsData={handleLeadsData}
+    handleCSVUpload={handleFileChange}
+    saveCSVSetting={saveCSVSetting}
+    setIsCsvUploaded={setIsCsvUploaded}
+  />
+
+    
       <ViewDrawer
         open={open}
         onClose={() => setOpen(false)}
         selectedId={selectedId}
       />
+
     </ContactsContainer>
   );
 };

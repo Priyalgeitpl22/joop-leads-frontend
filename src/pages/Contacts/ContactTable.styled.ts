@@ -8,6 +8,7 @@ import {
 import { motion } from "framer-motion";
 
 export const ContactsContainer = styled.div`
+  border:2px solid red
   width: 98%;
   height: 98%;
   display: flex;
