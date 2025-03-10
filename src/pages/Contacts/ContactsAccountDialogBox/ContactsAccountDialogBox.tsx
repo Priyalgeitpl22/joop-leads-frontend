@@ -95,15 +95,14 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
         <form onSubmit={handleSubmit}>
           <DialogContent>
             <Box display="flex" flexDirection="column" gap={2}>
-              <Typography variant="h6" fontWeight="bold">
-                Contact Form
-              </Typography>
+
               <TextField
                 label="First Name"
                 name="first_name"
                 value={formData.first_name}
                 onChange={handleChange}
                 fullWidth
+                required
               />
               <TextField
                 label="Last Name"
@@ -111,6 +110,7 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
                 value={formData.last_name}
                 onChange={handleChange}
                 fullWidth
+                required
               />
               <TextField
                 label="Email"
@@ -119,6 +119,7 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
                 onChange={handleChange}
                 fullWidth
                 type="email"
+                required
               />
               <TextField
                 label="Phone Number"
@@ -126,6 +127,7 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
                 value={formData.phone_number}
                 onChange={handleChange}
                 fullWidth
+                required
               />
               <TextField
                 label="Company Name"
@@ -157,14 +159,6 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
                 onChange={handleChange}
                 fullWidth
               />
-              <TextField
-                label="Organization ID"
-                name="orgId"
-                value={formData.orgId}
-                onChange={handleChange}
-                fullWidth
-                required
- />
             </Box>
           </DialogContent>
           <DialogActions>
@@ -179,4 +173,3 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
 };
 
 export default ContactsAccountDialogBox;
-

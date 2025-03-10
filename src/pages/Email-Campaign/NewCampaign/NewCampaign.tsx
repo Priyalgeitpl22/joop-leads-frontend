@@ -72,6 +72,7 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
   };
 
   const handleLeadsData = (data: ImportedLeadsData) => {
+  
     setEmailFieldsToBeAdded(data);
   };
 
