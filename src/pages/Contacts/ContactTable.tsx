@@ -50,7 +50,6 @@ export interface ImportedLeadsData {
 const ContactTable: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
-  const [isSettingOpen, setIsSettingOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [contactAccount, setContactAccount] = useState<ContactsAccount[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -75,6 +74,10 @@ const ContactTable: React.FC = () => {
     };
 
     const handleFileChange = (file: File) => {
+      console.log(isCsvUploaded);
+      console.log(selectedFile);
+      console.log(CSVsettings);
+      console.log(emailFieldsToBeAdded);      
       setSelectedFile(file);
     };
     
@@ -187,15 +190,6 @@ const ContactTable: React.FC = () => {
 
   const handleMenuClose = () => {
     setAnchorEl(null);
-  };
-
-  // const handleOpenDialog = () => {
-  //   setIsDialogOpen(true);
-  // };
-
-  const handleSettingDialog = () => {
-    
-    setIsSettingOpen(true);
   };
 
   const handleViewClick = (event: React.MouseEvent, id: string) => {

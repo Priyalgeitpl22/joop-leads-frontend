@@ -1,9 +1,7 @@
 import React from "react";
 import {
-  Avatar,
   Stack,
   Divider,
-  Box,
   Typography,
 } from "@mui/material";
 import EmailIcon from "@mui/icons-material/Email";
@@ -29,7 +27,7 @@ interface ViewDrawerProps {
   selectedId: string | null;
 }
 
-const ViewDrawer: React.FC<ViewDrawerProps> = ({ open, onClose, selectedId }) => {
+const ViewDrawer: React.FC<ViewDrawerProps> = ({ open, onClose }) => {
   const { campaignList } = useSelector((state: RootState) => state.contact);
 
   return (

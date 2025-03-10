@@ -12,7 +12,7 @@ interface ImportLeadsDetailProps {
   columns: string[];
   onFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onEmailFieldsChange: (data: any) => void;
-  setIsNextDisabled: (status: boolean) => void;
+  setIsNextDisabled?: (status: boolean) => void;
 }
 
 const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
@@ -20,7 +20,7 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
   columns,
   onFileChange,
   onEmailFieldsChange,
-  setIsNextDisabled,
+  // setIsNextDisabled,
 }) => {
   const [emailFieldMapping, setEmailFieldMapping] = useState<
     Record<string, string>
@@ -48,8 +48,8 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
       };
 
       onEmailFieldsChange(updatedFields);
-      const hasSelection = Object.values(updatedFields).some((v) => v);
-      setIsNextDisabled(hasSelection);
+      // const hasSelection = Object.values(updatedFields).some((v) => v);
+      // setIsNextDisabled(hasSelection);
       return updatedFields;
     });
   };

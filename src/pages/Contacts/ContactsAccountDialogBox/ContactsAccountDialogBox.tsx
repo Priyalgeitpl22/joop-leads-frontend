@@ -3,7 +3,6 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
-  Typography,
   Box,
   Button,
   IconButton,

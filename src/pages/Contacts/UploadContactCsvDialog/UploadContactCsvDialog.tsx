@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Box, Typography, Dialog, Button } from "@mui/material";
+import { Box, Typography, Dialog } from "@mui/material";
 import UploadFileOutlinedIcon from "@mui/icons-material/UploadFileOutlined";
 import ImportLeadsDetail from "../../Email-Campaign/NewCampaign/ImportLeadsCampaign/ImportLeadsDetail";
 import ImportSettingDialog from "../../Email-Campaign/NewCampaign/ImportLeadsCampaign/ImportSettingDialog";
@@ -63,10 +63,6 @@ const UploadContactCsvDialog: React.FC<UploadContactCsvDialog> = ({
       }
     }
   };
-
-  const handleUploadClick =()=>{
-    console.log("save");
-  }
 
   return (
      <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
