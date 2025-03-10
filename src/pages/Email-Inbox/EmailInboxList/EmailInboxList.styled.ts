@@ -3,10 +3,25 @@ import { Box, List, ListItem } from "@mui/material";
 
 export const EmailInboxListContainer = styled(Box)({
   width: "28%",
+  minWidth: "250px",
   borderRight: "1px solid #ddd",
   padding: "10px",
   height: "100vh",
   overflowY: "auto",
+  backgroundColor: "#fff",
+  transition: "width 0.3s ease-in-out",
+
+  "@media (max-width: 1024px)": {
+    width: "35%",
+  },
+  "@media (max-width: 768px)": {
+    width: "45%",
+  },
+  "@media (max-width: 600px)": {
+    width: "100%",
+    borderRight: "none",
+    height: "auto",
+  },
 });
 
 export const SearchContainer = styled(Box)({
@@ -17,6 +32,7 @@ export const SearchContainer = styled(Box)({
   borderRadius: "8px",
   border: "1px solid #ccc",
   backgroundColor: "#f8f9fa",
+  width: "100%",
 });
 
 export const SearchInput = styled("input")({
@@ -24,6 +40,12 @@ export const SearchInput = styled("input")({
   outline: "none",
   background: "transparent",
   flex: 1,
+  fontSize: "14px",
+  padding: "5px",
+
+  "@media (max-width: 600px)": {
+    fontSize: "12px",
+  },
 });
 
 export const EmailInboxListHeader = styled(Box)({
@@ -32,19 +54,34 @@ export const EmailInboxListHeader = styled(Box)({
   alignItems: "center",
   marginBottom: "10px",
   borderBottom: "1px solid #eee",
+  paddingBottom: "8px",
+
+  "@media (max-width: 600px)": {
+    flexDirection: "column",
+    alignItems: "flex-start",
+  },
 });
 
 export const HeaderTitle = styled(Box)({
   fontSize: "18px",
   fontWeight: "bold",
+
+  "@media (max-width: 600px)": {
+    fontSize: "16px",
+  },
 });
 
 export const HeaderIcons = styled(Box)({
   display: "flex",
   gap: "10px",
+
   "& svg": {
     cursor: "pointer",
     color: "#777",
+  },
+
+  "@media (max-width: 600px)": {
+    gap: "5px",
   },
 });
 
@@ -55,7 +92,8 @@ export const AccountList = styled(List)({
 export const AccountItem = styled(ListItem)({
   display: "flex",
   flexDirection: "row",
-  gap: "8px",
+  alignItems: "center",
+  gap: "10px",
   padding: "10px",
   borderBottom: "1px solid #eee",
   cursor: "pointer",
@@ -63,8 +101,20 @@ export const AccountItem = styled(ListItem)({
   borderRadius: "8px",
   marginBottom: "5px",
   backgroundColor: "#fff",
+  '&[data-selected="true"]': {
+    backgroundColor: "#d6e4ff",
+    fontWeight: "bold",
+  },
+
   "&:hover": {
     backgroundColor: "#f1f3f5",
+  },
+
+  "@media (max-width: 600px)": {
+    padding: "8px",
+    flexDirection: "row",
+    alignItems: "center",
+    textAlign: "left",
   },
 });
 
@@ -79,17 +129,49 @@ export const AccountAvatar = styled(Box)({
   alignItems: "center",
   fontWeight: "bold",
   fontSize: "15px",
+  flexShrink: 0,
+
+  "@media (max-width: 600px)": {
+    width: "30px",
+    height: "30px",
+    fontSize: "13px",
+  },
 });
 
 export const AccountDetails = styled(Box)({
   display: "flex",
   flexDirection: "column",
-  marginLeft: "10px",
+
   "& strong": {
     fontSize: "15px",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    maxWidth: "200px",
+
+    "@media (max-width: 600px)": {
+      maxWidth: "150px",
+      fontSize: "14px",
+    },
   },
+
   "& div": {
-    fontSize: "15px",
+    fontSize: "14px",
     color: "#777",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    maxWidth: "200px",
+
+    "@media (max-width: 600px)": {
+      maxWidth: "150px",
+      fontSize: "12px",
+    },
   },
 });
+
+
+
+
+
+

@@ -1,10 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  Dialog,
-  Typography,
-  Box,
-  IconButton,
-} from "@mui/material";
+import { Dialog, Typography, Box, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../../redux/store/store";
@@ -24,7 +19,7 @@ import { CustomDataTable } from "../../../../../assets/Custom/customDataGrid";
 import { GridColDef } from "@mui/x-data-grid";
 import { formatDate } from "../../../../../utils/utils";
 import { StyledWarmup } from "./SenderAccountDialog.styled";
-import { EmailAccounts } from "../Interface";
+import { Account, EmailAccounts } from "../Interface";
 
 interface SenderAccountDialogProps {
   open: boolean;
@@ -37,7 +32,7 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
   open,
   onClose,
   campaignId,
-  handleSave
+  handleSave,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [loading, setLoading] = useState(true);
@@ -47,7 +42,9 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
   >([]);
 
   const [rows, setRows] = useState<any[]>([]);
-  const [selectedAccounts, setSelectedAccounts] = React.useState<EmailAccounts>([]);
+  const [selectedAccounts, setSelectedAccounts] = React.useState<EmailAccounts>(
+    []
+  );
   const columns: GridColDef[] = useMemo(
     () => [
       { field: "name", headerName: "Name", width: 150 },
@@ -118,17 +115,27 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
       })
       .catch(console.error)
       .finally(() => setLoading(false));
-      console.log(loading);
+    console.log(loading);
   }, [dispatch, user]);
 
   const handleSelectedAccounts = (newSelection: any[]) => {
+    console.log(rows);
     setSelectedEmailAccounts(newSelection);
     console.log(selectedEmailAccounts);
-  
+
+    const filteredAccount = rows.filter((o) => {
+      return o._id === newSelection[newSelection.length-1];
+    })[0] as Account;
+
+    console.log(filteredAccount);
+
     const formattedSelection: EmailAccounts = newSelection?.map((id) => ({
       account_id: id,
+      user: filteredAccount.type === 'imap' ? filteredAccount.smtp.auth.user : undefined,
+      pass: filteredAccount.type === 'imap' ? filteredAccount.smtp.auth.pass : undefined,
+      oauth2: filteredAccount.type !== 'imap' ? filteredAccount.oauth2 : undefined
     }));
-  
+
     setSelectedAccounts(formattedSelection);
   };
 

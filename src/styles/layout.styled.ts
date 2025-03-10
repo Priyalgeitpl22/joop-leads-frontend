@@ -46,7 +46,7 @@ export const Logo = styled.div`
   gap: 0.75rem;
 `;
 
-export const NavItem = styled(Link)`
+export const NavItem = styled(NavLink)`
   display: flex;
   align-items: center;
   gap: 0.75rem;
