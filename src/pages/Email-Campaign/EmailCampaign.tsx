@@ -46,6 +46,7 @@ import ErrorOutlinedIcon from "@mui/icons-material/ErrorOutlined";
 import AttachMoneyOutlinedIcon from "@mui/icons-material/AttachMoneyOutlined";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
 import { TableIcons, TableItem } from "../../styles/layout.styled";
+import { useNavigate } from "react-router-dom";
 
 interface EmailCampaignProps {
   router?: any;
@@ -58,6 +59,7 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [campaigns, setCampaigns] = useState<IEmailCampaign[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getEmailCampaigns = async () => {
@@ -148,6 +150,10 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
   ];
 
   const isMenuOpen = Boolean(anchorEl);
+
+  const handleEditCampaign = () => {
+    navigate('/email-campaign/edit-email-campaign')
+  }
 
   return (
     <ContentContainer>
@@ -297,7 +303,7 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
                             color: "var(--text-light)",
                           }}
                         >
-                          {`Drafted | ${formatDate(campaign.createdAt)} | ${campaign?.sequences?.length} Sequences`}
+                          {`${campaign?.status} | ${formatDate(campaign.createdAt)} | ${campaign?.sequences?.length} Sequences`}
                         </p>
                       </div>
                     </CustomTableCell>
@@ -333,7 +339,7 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
                       </CustomTableCell>
                     ))}
                     <CustomTableCell>
-                      <ModeEditOutlineOutlinedIcon />
+                      <ModeEditOutlineOutlinedIcon onClick={handleEditCampaign}/>
                     </CustomTableCell>
                   </CustomTableRow>
                 </CustomTableBody>

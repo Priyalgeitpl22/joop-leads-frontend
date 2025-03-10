@@ -185,10 +185,6 @@ const Register = () => {
                       },
                     }}
                   >
-                    <MenuItem value="">
-                      <em>Select Domain</em>
-                    </MenuItem>
-
                     {industriesData.industries.map((industry, index) => (
                       <MenuItem key={index} value={industry}>
                         {industry}

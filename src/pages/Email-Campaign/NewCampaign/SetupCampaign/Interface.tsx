@@ -60,6 +60,8 @@ export interface CampaignSettings {
 }
 
 export interface EmailAccount {
+  name?: any;
+  email?: any;
   account_id: string;
   user?: string;
   pass?: string;

@@ -62,7 +62,7 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
     scheduleCampaign: {},
     campaignSettings: {},
   });
-  const [isCsvUploaded, setIsCsvUploaded] = React.useState(false);
+  const [isNextDisabled, setIsNextDisabled] = React.useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -258,7 +258,14 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
   return (
     <Container>
       <HeaderContainer>
-        <Box sx={{ width: "100%", display: "flex", alignItems: "center" }}>
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            gap: "25%",
+          }}
+        >
           <WestOutlinedIcon
             onClick={GoBack}
             sx={{
@@ -291,7 +298,7 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
             handleLeadsData={handleLeadsData}
             handleCSVUpload={handleFileChange}
             saveCSVSetting={saveCSVSetting}
-            setIsCsvUploaded={setIsCsvUploaded}
+            setIsNextDisabled={setIsNextDisabled}
           />
         )}
         {activeStep === 1 && (
@@ -335,12 +342,23 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
         ) : (
           <Button2
             onClick={handleNext}
-            disabled={isCsvUploaded === false}
-            color={isCsvUploaded ? "white" : "lightgray"}
-            background={isCsvUploaded ? "var(--theme-color)" : "#878484"}
+            disabled={isNextDisabled === false}
+            color={
+              isNextDisabled
+                ? "white"
+                : "lightgray"
+            }
+            background={
+              isNextDisabled
+                ? "var(--theme-color)"
+                : "#878484"
+            }
             style={{
               width: "10%",
-              cursor: isCsvUploaded ? "pointer" : "not-allowed",
+              cursor:
+                isNextDisabled
+                  ? "pointer"
+                  : "not-allowed",
             }}
           >
             Save and Next

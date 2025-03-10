@@ -8,6 +8,7 @@ import { Search } from "lucide-react";
 import {
   EmailAccount,
   fetchEmailAccount,
+  SearchEmailAccount,
 } from "../../../../../redux/slice/emailAccountSlice";
 import {
   Button,
@@ -37,6 +38,8 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
   const dispatch = useDispatch<AppDispatch>();
   const [loading, setLoading] = useState(true);
   const { user } = useSelector((state: RootState) => state.user);
+  const [emailAccounts, setEmailAccounts] = useState<EmailAccount[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedEmailAccounts, setSelectedEmailAccounts] = useState<
     EmailAccount[]
   >([]);
@@ -119,15 +122,12 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
   }, [dispatch, user]);
 
   const handleSelectedAccounts = (newSelection: any[]) => {
-    console.log(rows);
+    console.log("selectedEmailAccounts", selectedEmailAccounts);
     setSelectedEmailAccounts(newSelection);
-    console.log(selectedEmailAccounts);
 
     const filteredAccount = rows.filter((o) => {
       return o._id === newSelection[newSelection.length-1];
     })[0] as Account;
-
-    console.log(filteredAccount);
 
     const formattedSelection: EmailAccounts = newSelection?.map((id) => ({
       account_id: id,
@@ -137,6 +137,47 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
     }));
 
     setSelectedAccounts(formattedSelection);
+  };
+
+  useEffect(() => {
+    const getEmailAccounts = async () => {
+      await getAllEmailAccounts();
+    };
+
+    getEmailAccounts();
+  }, []);
+
+  const getAllEmailAccounts = async () => {
+    try {
+      const data = await dispatch(fetchEmailAccount()).unwrap();
+      setEmailAccounts(data);
+      setRows(data);
+    } catch (error) {
+      console.error("Failed to fetch Account:", error);
+    }
+  };
+
+  const handleSearch = async (query: string) => {
+    try {
+      const trimmedQuery = query.trim();
+      if (trimmedQuery === "") {
+        setRows(emailAccounts);
+      } else {
+        const [email, name] = trimmedQuery.split(" ");
+        const filteredData = await dispatch(
+          SearchEmailAccount({ email, name })
+        ).unwrap();
+        setRows(filteredData);
+      }
+    } catch (error) {
+      console.error("Search failed:", error);
+    }
+  };
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const query = event.target.value;
+    setSearchQuery(query);
+    handleSearch(query);
   };
 
   return (
@@ -176,7 +217,11 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
           <Box sx={{ display: "flex" }}>
             <SearchBar>
               <Search size={20} />
-              <input placeholder="Search input..." />
+              <input
+                placeholder="Search by Email or Name"
+                value={searchQuery}
+                onChange={handleSearchChange}
+              />
             </SearchBar>
           </Box>
         </Box>
