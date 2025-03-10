@@ -8,7 +8,7 @@ export const EmailInboxListContainer = styled(Box)({
   padding: "10px",
   height: "100vh",
   overflowY: "auto",
-  backgroundColor: "#fff",
+  backgroundColor: "var(--text-white)",
   transition: "width 0.3s ease-in-out",
 
   "@media (max-width: 1024px)": {
@@ -100,14 +100,14 @@ export const AccountItem = styled(ListItem)({
   transition: "background 0.2s",
   borderRadius: "8px",
   marginBottom: "5px",
-  backgroundColor: "#fff",
+  backgroundColor: "var(--icon-light)",
   '&[data-selected="true"]': {
-    backgroundColor: "#d6e4ff",
+    backgroundColor: "var(--background-hover)",
     fontWeight: "bold",
   },
 
   "&:hover": {
-    backgroundColor: "#f1f3f5",
+    backgroundColor: "var(--background-hover)",
   },
 
   "@media (max-width: 600px)": {
@@ -123,7 +123,7 @@ export const AccountAvatar = styled(Box)({
   height: "35px",
   borderRadius: "50%",
   backgroundColor: "rgb(9 16 115)",
-  color: "#fff",
+  color: "var(--icon-light)",
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
@@ -169,9 +169,3 @@ export const AccountDetails = styled(Box)({
     },
   },
 });
-
-
-
-
-
-

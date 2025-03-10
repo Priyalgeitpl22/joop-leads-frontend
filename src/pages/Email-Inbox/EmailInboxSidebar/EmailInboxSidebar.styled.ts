@@ -10,7 +10,7 @@ export const SidebarContainer = styled(Box)`
   height: 100vh;
   overflow-y: auto;
   padding: 10px;
-  background-color: #fff;
+  background-color: "var(--text-white)";
   border-right: 1px solid #ddd;
 `;
 
@@ -20,10 +20,11 @@ export const EmailInboxContainer = styled(Box)`
   display: flex;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  background: white;
+  background: var(--icon-light);
   position: relative;
   flex-direction: row;
-  overflow: hidden;`
+  overflow: hidden;
+`;
 ;
 
 export const SidebarHeader = styled(Box)`
@@ -48,11 +49,11 @@ export const StyledListItem = styled(ListItem, {
   cursor: "pointer",
   fontSize: "15px",
   borderBottom: "1px solid #eee",
-  backgroundColor: active ? "#f1f3f5" : "transparent",
-  color: active ? "rgb(9 16 115)" : "#333",
+  backgroundColor: active ? "var(--background-hover)" : "transparent",
+  color: active ? "rgb(9 16 115)" : "var(--input-text)",
   fontWeight: active ? "bold" : "normal",
   transition: "background 0.2s",
-  "&:hover": { backgroundColor: "#f1f3f5" },
+  "&:hover": { backgroundColor: "var(--background-hover)" },
 }));
 
 export const NoMailboxMessage = styled(Box)`

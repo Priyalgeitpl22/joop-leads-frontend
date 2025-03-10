@@ -6,7 +6,6 @@ import {
   HeaderContainer,
   MainContainer,
 } from "./NewCampaign.styled";
-import { SearchBar } from "../../../components/Header/header.styled";
 import WestOutlinedIcon from "@mui/icons-material/WestOutlined";
 import SequenceCampaign from "./SequenceCampaign/SequenceCampaign";
 import ImportLeadsCampaign from "./ImportLeadsCampaign/ImportLeadsCampaign";
@@ -271,9 +270,6 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
               "&:hover": { color: "var(--theme-color-light)" },
             }}
           />
-          <SearchBar>
-            <input placeholder="Untitled Campaign" />
-          </SearchBar>
           <CustomizedStepper
             activeStep={activeStep}
             setActiveStep={setActiveStep}
