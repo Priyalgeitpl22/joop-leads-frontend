@@ -1,14 +1,11 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store/store";
-import { EmailInboxMessagesContainer } from "./EmailInboxArea.styled";
+import { EmailInboxMessagesBox, EmailInboxMessagesContainer, EmailInboxMessagesHeading } from "./EmailInboxArea.styled";
 import { Avatar, CircularProgress } from "@mui/material";
 import { Reply, ReplyAll, Trash2 } from "lucide-react";
 
 const EmailInboxArea: React.FC = () => {
-  const selectedAccountId = useSelector(
-    (state: RootState) => state.emailInbox.selectedAccountId
-  );
   const selectedMailboxId = useSelector(
     (state: RootState) => state.emailInbox.selectedMailboxId
   );
@@ -16,11 +13,6 @@ const EmailInboxArea: React.FC = () => {
     (state: RootState) => state.emailInbox.mailboxMessages
   );
   const loading = useSelector((state: RootState) => state.emailInbox.loading);
-  const accounts = useSelector((state: RootState) => state.emailInbox.accounts);
-
-  // const selectedAccount = accounts.find(
-  //   (account) => account._id === selectedAccountId
-  // );
 
   const [expandedMessageId, setExpandedMessageId] = useState<string | null>(
     null
@@ -33,70 +25,16 @@ const EmailInboxArea: React.FC = () => {
   return (
     <EmailInboxMessagesContainer>
       {loading ? (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100vh",
-          }}
-        >
+        <EmailInboxMessagesBox>
           <CircularProgress />
-        </div>
+        </EmailInboxMessagesBox>
       ) : selectedMailboxId && mailboxMessages?.length > 0 ? (
         <div>
-          {/* <div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                width: "100%",
-                alignItems: "center",
-                background: "#dedede",
-                marginBottom: "3%",
-                borderRadius: "5px",
-                padding: "2%",
-              }}
-            >
-              <div>
-                <b>
-                  <span className="text-gray-700 font-bold">
-                    {selectedAccount
-                      ? selectedAccount.name
-                      : "No Account Selected"}
-                  </span>
-                </b>
-                <span style={{ margin: "15px", fontSize: "14px" }}>
-                  ✅ Completed
-                </span>
-              </div>
-
-              <div>
-                <select style={{ height: "30px", cursor: "pointer" }}>
-                  <option>Do not Contact</option>
-                  <option>Information Request</option>
-                  <option>Out of Office</option>
-                  <option>Wrong Person</option>
-                  <option>Interested</option>
-                  <option>Meeting Request</option>
-                  <option>Not Interested</option>
-                </select>
-              </div>
-            </div>
-          </div> */}
-
           {mailboxMessages.map((message: any) => {
             const isExpanded = expandedMessageId === message._id;
             return (
-              <div
-                key={message._id}
-                style={{
-                  border: "1px solid #ddd",
-                  borderRadius: "8px",
-                  padding: "10px",
-                  marginBottom: "10px",
-                }}
-              >
+              <EmailInboxMessagesHeading
+                key={message._id}>
                 <div
                   style={{
                     display: "flex",
@@ -171,14 +109,14 @@ const EmailInboxArea: React.FC = () => {
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     color: isExpanded ? "black" : "#444343",
-                    fontSize: "15px"
+                    fontSize: "15px",
                   }}
                 >
                   {isExpanded
                     ? message.body
                     : message.body.split("\n").slice(0, 10).join("\n") + " ..."}
                 </div>
-              </div>
+              </EmailInboxMessagesHeading>
             );
           })}
         </div>

@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Typography } from '@mui/material';
-import { Facebook, Linkedin } from 'lucide-react';
 import { 
   PageContainer, 
   LoginCard, 
@@ -8,8 +7,6 @@ import {
   FormSection, 
   StyledTextField, 
   StyledButton, 
-  SocialButtonsContainer, 
-  SocialButton, 
   NavigateLink
 } from './login.styled';
 import {  useNavigate } from 'react-router-dom';
@@ -112,26 +109,6 @@ function Login() {
             Don't have an account?{' '}
             <NavigateLink onClick={() => window.location.assign('/signup')}>Register</NavigateLink>
           </Typography>
-
-          <Typography variant="body2" color="black" align="center" sx={{ my: 1 }}>
-            OR LOGIN WITH
-          </Typography>
-
-          <SocialButtonsContainer>
-            <SocialButton>
-              <Facebook size={24} color="#4267B2" />
-            </SocialButton>
-            <SocialButton>
-              <img 
-                src="https://www.google.com/images/branding/googleg/1x/googleg_standard_color_128dp.png"
-                alt="Google"
-                style={{ width: 24, height: 24 }}
-              />
-            </SocialButton>
-            <SocialButton>
-              <Linkedin size={24} color="#0077B5" />
-            </SocialButton>
-          </SocialButtonsContainer>
         </FormSection>
       </LoginCard>
 

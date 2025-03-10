@@ -13,7 +13,6 @@ import Home from "./pages/Home/Home";
 import NewCampaign from "./pages/Email-Campaign/NewCampaign/NewCampaign";
 import theme from "./styles/theme";
 import { CustomAppTitle } from "./assets/Custom/customAppTitle";
-import { CustomSearchBar } from "./assets/Custom/customSearchBar";
 import { SidebarFooter } from "./assets/Custom/customSidebarFooter";
 import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
@@ -120,7 +119,6 @@ export default function DashboardLayoutBasic() {
             appTitle: CustomAppTitle,
             toolbarActions: () => (
               <>
-                <CustomSearchBar />
                 <UserProfileMenu />
               </>
             ),
