@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../redux/store/store";
 import {
@@ -26,6 +26,17 @@ import {
 const EmailInboxList: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const accounts = useSelector((state: RootState) => state.emailInbox.accounts);
+  const selectedAccountId = useSelector(
+    (state: RootState) => state.emailInbox.selectedAccountId
+  );
+
+  useEffect(() => {
+    if (accounts.length > 0 && !selectedAccountId) {
+      const firstAccountId = accounts[0]._id;
+      dispatch(setSelectedAccount(firstAccountId));
+      dispatch(getAllMailBox(firstAccountId));
+    }
+  }, [accounts, selectedAccountId, dispatch]);
 
   const handleAccountClick = (accountId: string) => {
     dispatch(resetMailboxes());
@@ -55,6 +66,7 @@ const EmailInboxList: React.FC = () => {
             <AccountItem
               key={account._id}
               onClick={() => handleAccountClick(account._id)}
+              data-selected={selectedAccountId === account._id}
             >
               <AccountAvatar>{account.name[0]?.toUpperCase()}</AccountAvatar>
               <AccountDetails>

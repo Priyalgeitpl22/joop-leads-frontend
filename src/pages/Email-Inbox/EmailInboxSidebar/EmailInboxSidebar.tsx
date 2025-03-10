@@ -54,6 +54,19 @@ const EmailInboxSideBar = () => {
       index === self.findIndex((m) => m.name === mailbox.name)
   );
 
+  useEffect(() => {
+    if (uniqueMailboxes.length > 0 && selectedAccountId && !selectedMailboxId) {
+      const firstMailbox = uniqueMailboxes[0];
+      dispatch(setSelectedMailbox(firstMailbox._id));
+      dispatch(
+        getAllAccountMailBox({
+          accountId: selectedAccountId,
+          mailBoxId: firstMailbox._id,
+        })
+      );
+    }
+  }, [uniqueMailboxes, selectedMailboxId, selectedAccountId, dispatch]);
+
   return (
     <SidebarContainer>
       <SidebarHeader>For Me</SidebarHeader>
