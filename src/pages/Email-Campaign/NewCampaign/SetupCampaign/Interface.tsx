@@ -61,9 +61,13 @@ export interface CampaignSettings {
 
 export interface EmailAccount {
   account_id: string;
+  user?: string;
+  pass?: string;
+  oauth2?: any;
 }
 
 export interface Account {
+  oauth2?: any;
   email: string
   type: string,
   imap: {

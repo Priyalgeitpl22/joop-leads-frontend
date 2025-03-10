@@ -157,14 +157,14 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
                 onChange={handleChange}
                 fullWidth
               />
-              <TextField
+              {/* <TextField
                 label="Organization ID"
                 name="orgId"
                 value={formData.orgId}
                 onChange={handleChange}
                 fullWidth
                 required
- />
+              /> */}
             </Box>
           </DialogContent>
           <DialogActions>
