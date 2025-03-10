@@ -13,7 +13,6 @@ import Home from "./pages/Home/Home";
 import NewCampaign from "./pages/Email-Campaign/NewCampaign/NewCampaign";
 import theme from "./styles/theme";
 import { CustomAppTitle } from "./assets/Custom/customAppTitle";
-import { CustomSearchBar } from "./assets/Custom/customSearchBar";
 import { SidebarFooter } from "./assets/Custom/customSidebarFooter";
 import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
@@ -30,6 +29,7 @@ import ResetPassword from "./pages/Forgot-Password/ResetPassword";
 import VerifyOtp from "./pages/Verify-OTP/VerifyOtp";
 import UserProfileMenu from "./assets/Custom/customUserProfile";
 import ContactTable from "./pages/Contacts/ContactTable";
+import EditEmailCampaign from "./pages/Email-Campaign/EditEmailCampaign/EditEmailCampaign";
 
 const UNPROTECTED_ROUTES = [
   "/login",
@@ -120,7 +120,6 @@ export default function DashboardLayoutBasic() {
             appTitle: CustomAppTitle,
             toolbarActions: () => (
               <>
-                <CustomSearchBar />
                 <UserProfileMenu />
               </>
             ),
@@ -139,6 +138,9 @@ export default function DashboardLayoutBasic() {
               <EmailCampaign router={router} />
             )}
             {router.pathname === "/email-accounts" && <EmailAccount />}
+            {router.pathname === "/email-campaign/edit-email-campaign" && (
+              <EditEmailCampaign/>
+            )}
             {router.pathname === "/inbox" && <EmailInboxs />}
             {router.pathname === "/leads" && <Leads />}
             {router.pathname === "/chats" && <Chats />}

@@ -27,7 +27,7 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
 
   return (
     <Box>
-    <Paper className="data-grid-container">
+    <Paper className="data-grid-container" sx={{ minHeight: "380px"}}>
       <DataGrid 
         rows={rows}
         columns={columns}

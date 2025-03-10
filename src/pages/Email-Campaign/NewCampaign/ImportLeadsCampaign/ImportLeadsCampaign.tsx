@@ -12,14 +12,14 @@ interface ImportLeadsCampaignProps {
   handleLeadsData: (data: ImportedLeadsData) => void;
   handleCSVUpload: (data: any) => void;
   saveCSVSetting: (data: any) => void;
-  setIsCsvUploaded: (status: boolean) => void;
+  setIsNextDisabled: (status: boolean) => void;
 }
 
 const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
   handleLeadsData,
   handleCSVUpload,
   saveCSVSetting,
-  setIsCsvUploaded,
+  setIsNextDisabled,
 }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [error, setError] = useState("");
@@ -50,11 +50,9 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
 
         setShowDetail(true);
         setOpenDialog(true);
-        setIsCsvUploaded(true);
       } else {
         setError("Please upload a valid CSV file.");
         setSelectedFile(null);
-        setIsCsvUploaded(false);
       }
     }
   };
@@ -68,7 +66,7 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
         flexDirection: "column",
         width: "100%",
         padding: "2px 0",
-        paddingTop: "50px"
+        paddingTop: "50px",
       }}
     >
       {showDetail ? (
@@ -77,6 +75,7 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
           columns={columns}
           file={selectedFile}
           onFileChange={handleFileChange}
+          setIsNextDisabled={setIsNextDisabled}
         />
       ) : (
         <>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../redux/store/store";
 import {
@@ -10,10 +10,10 @@ import { Search } from "lucide-react";
 import ReplayIcon from "@mui/icons-material/Replay";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import SortOutlinedIcon from "@mui/icons-material/SortOutlined";
+// import { SearchBar } from "../../components/Header/header.styled";
+import { SearchBar } from "../../../components/Header/header.styled";
 import {
   EmailInboxListContainer,
-  SearchContainer,
-  SearchInput,
   EmailInboxListHeader,
   HeaderTitle,
   HeaderIcons,
@@ -22,10 +22,27 @@ import {
   AccountAvatar,
   AccountDetails,
 } from "./EmailInboxList.styled";
+import { fetchEmailAccount } from "../../../redux/slice/emailAccountSlice";
+import { EmailAccount } from "../../Email-Campaign/NewCampaign/SetupCampaign/Interface";
 
 const EmailInboxList: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const accounts = useSelector((state: RootState) => state.emailInbox.accounts);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [rows, setRows] = useState<any[]>([]);
+  const [emailAccounts, setEmailAccounts] = useState<EmailAccount[]>([]);
+  
+  const selectedAccountId = useSelector(
+    (state: RootState) => state.emailInbox.selectedAccountId
+  );
+
+  useEffect(() => {
+    if (accounts.length > 0 && !selectedAccountId) {
+      const firstAccountId = accounts[0]._id;
+      dispatch(setSelectedAccount(firstAccountId));
+      dispatch(getAllMailBox(firstAccountId));
+    }
+  }, [accounts, selectedAccountId, dispatch]);
 
   const handleAccountClick = (accountId: string) => {
     dispatch(resetMailboxes());
@@ -33,12 +50,57 @@ const EmailInboxList: React.FC = () => {
     dispatch(getAllMailBox(accountId));
   };
 
+  useEffect(() => {
+    const getEmailAccounts = async () => {
+      await getAllEmailAccounts();
+    };
+
+    getEmailAccounts();
+  }, []);
+
+  const getAllEmailAccounts = async () => {
+    try {
+      const data = await dispatch(fetchEmailAccount()).unwrap();
+      setEmailAccounts(data);
+      setRows(data);
+    } catch (error) {
+      console.error("Failed to fetch Account:", error);
+    }
+  };
+
+  const handleSearch = (query: string) => {
+    const trimmedQuery = query.trim().toLowerCase();
+
+    if (trimmedQuery === "") {
+      setRows(emailAccounts);
+      return;
+    }
+
+    const filteredData = emailAccounts.filter(
+      (account) =>
+        account.name.toLowerCase().includes(trimmedQuery) ||
+        account.email.toLowerCase().includes(trimmedQuery)
+    );
+
+    setRows(filteredData);
+  };
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const query = event.target.value;
+    setSearchQuery(query);
+    handleSearch(query);
+  };
+
   return (
     <EmailInboxListContainer>
-      <SearchContainer>
-        <Search size={18} />
-        <SearchInput type="text" placeholder="Search Account" />
-      </SearchContainer>
+      <SearchBar>
+        <Search size={20} />
+        <input
+          placeholder="Search by Email or Name"
+          value={searchQuery}
+          onChange={handleSearchChange}
+        />
+      </SearchBar>
 
       <EmailInboxListHeader>
         <HeaderTitle>Inbox</HeaderTitle>
@@ -48,13 +110,13 @@ const EmailInboxList: React.FC = () => {
           <SortOutlinedIcon fontSize="small" />
         </HeaderIcons>
       </EmailInboxListHeader>
-
       <AccountList>
-        {accounts.length > 0 ? (
-          accounts.map((account) => (
+        {rows.length > 0 ? (
+          rows.map((account) => (
             <AccountItem
               key={account._id}
               onClick={() => handleAccountClick(account._id)}
+              data-selected={selectedAccountId === account._id}
             >
               <AccountAvatar>{account.name[0]?.toUpperCase()}</AccountAvatar>
               <AccountDetails>
@@ -64,7 +126,7 @@ const EmailInboxList: React.FC = () => {
             </AccountItem>
           ))
         ) : (
-          <div>No accounts available</div>
+          <div>No accounts found</div>
         )}
       </AccountList>
     </EmailInboxListContainer>

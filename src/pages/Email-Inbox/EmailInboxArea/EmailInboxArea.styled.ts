@@ -119,3 +119,17 @@ export const UserMessageBubble = styled(Box)({
   maxWidth: "80%",
   wordWrap: "break-word",
 });
+
+export const EmailInboxMessagesBox = styled(Box)({
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  height: "100vh",
+})
+
+export const EmailInboxMessagesHeading = styled(Box)({
+  border: "1px solid #ddd",
+  borderRadius: "8px",
+  padding: "10px",
+  marginBottom: "10px",
+});

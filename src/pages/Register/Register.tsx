@@ -1,10 +1,10 @@
 import { useRef, useState } from "react";
-import { Typography } from "@mui/material";
-import { Facebook, Linkedin } from "lucide-react";
+import { FormControl, FormHelperText, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { registerUser } from "../../redux/slice/authSlice";
 import { AppDispatch } from "../../redux/store/store"; 
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import industriesData from "../../components/Organization/Industry.json";
 import {
   PageContainer,
   RegisterCard,
@@ -12,8 +12,6 @@ import {
   FormSection,
   StyledTextField,
   StyledButton,
-  SocialButtonsContainer,
-  SocialButton,
   PreviewContainer,
   PreviewImage,
   NavigateLink,
@@ -34,17 +32,24 @@ interface RegisterFormData {
   password: string;
 }
 
-const formFields: { name: keyof Omit<RegisterFormData, "profilePicture">; label: string; type: string }[] = [
+const formFields: {
+  name: keyof Omit<RegisterFormData, "profilePicture">;
+  label: string;
+  type: string;
+}[] = [
   { name: "fullName", label: "Full Name", type: "text" },
   { name: "email", label: "Email Address", type: "email" },
   { name: "password", label: "Password", type: "text" },
   { name: "orgName", label: "Company Name", type: "text" },
-  { name: "domain", label: "Company Domain", type: "text" },
+  { name: "domain", label: "Domain", type: "text" },
 ];
 
 const Register = () => {
   const dispatch = useDispatch<AppDispatch>();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [errors, setErrors] = useState<{
+    [key in keyof RegisterFormData]?: string;
+  }>({});
 
   const [formData, setFormData] = useState<RegisterFormData>({
     profilePicture: null,
@@ -107,6 +112,12 @@ const Register = () => {
     fileInputRef.current?.click();
   };
 
+  const handleSelectChange = (event: SelectChangeEvent<string>) => {
+    const { name, value } = event.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
+  };
+
   return (
     <PageContainer>
       <RegisterCard>
@@ -147,6 +158,46 @@ const Register = () => {
 
           {/* Render other text fields */}
           {formFields.map(({ name, label, type }) => {
+            if (name === "domain") {
+              return (
+                <FormControl
+                  key={name}
+                  variant="outlined"
+                  fullWidth
+                  error={!!errors[name]}
+                  sx={{ mb: 2 }}
+                >
+                  <InputLabel id="domain-label">{label}</InputLabel>
+
+                  <Select
+                    labelId="domain-label"
+                    id="domain"
+                    name="domain"
+                    value={formData.domain}
+                    onChange={handleSelectChange}
+                    label={label}
+                    sx={{
+                      borderRadius: "10px",
+                      backgroundColor: "var(--text-white)",
+
+                      "& .MuiOutlinedInput-input": {
+                        backgroundColor: "var(--text-white)",
+                      },
+                    }}
+                  >
+                    {industriesData.industries.map((industry, index) => (
+                      <MenuItem key={index} value={industry}>
+                        {industry}
+                      </MenuItem>
+                    ))}
+                  </Select>
+
+                  {errors[name] && (
+                    <FormHelperText>{errors[name]}</FormHelperText>
+                  )}
+                </FormControl>
+              );
+            }
             if (name === "password") {
               return (
                 <PasswordInput
@@ -183,27 +234,6 @@ const Register = () => {
               Login
             </NavigateLink>
           </Typography>
-            
-
-          <Typography variant="body2" color="black" align="center">
-            OR REGISTER WITH
-          </Typography>
-
-          <SocialButtonsContainer>
-            <SocialButton>
-              <Facebook size={20} color="#4267B2" />
-            </SocialButton>
-            <SocialButton>
-              <img
-                src="https://www.google.com/images/branding/googleg/1x/googleg_standard_color_128dp.png"
-                alt="Google"
-                style={{ width: 20, height: 20 }}
-              />
-            </SocialButton>
-            <SocialButton>
-              <Linkedin size={20} color="#0077B5" />
-            </SocialButton>
-          </SocialButtonsContainer>
         </FormSection>
       </RegisterCard>
 

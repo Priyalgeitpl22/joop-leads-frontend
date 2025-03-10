@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { motion } from "framer-motion";
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { Box, TextField as MuiTextField } from "@mui/material";
 import { InputLabel as MuiInputLabel } from "@mui/material";
 

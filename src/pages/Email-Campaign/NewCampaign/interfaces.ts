@@ -10,6 +10,7 @@ export interface ILeadsCounts {
 }
 
 export interface IEmailCampaign {
+  status: any;
   id: string;
   campaignName: string;
   sequences: Sequence[];
