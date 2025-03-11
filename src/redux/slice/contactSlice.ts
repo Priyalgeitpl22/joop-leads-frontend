@@ -102,10 +102,10 @@ ContactsAccount[],
 void,
 { rejectValue: string }
 >(
-  "email-campaign/all-contacts",
+  "contact/all-contacts",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get("/email-campaign/all-contacts", {
+      const response = await api.get("/contact/all-contacts", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -127,11 +127,11 @@ export const getCampaignListById = createAsyncThunk<
   VerifyViewContactPayload,
   { rejectValue: string }
 >(
-  "email-campaign/contacts",
+  "contact",
   async (data: VerifyViewContactPayload, { rejectWithValue }) => {
     try {
       const token = Cookies.get("access_token");
-      const response = await api.get(`/email-campaign/contact/${data.id}`, {
+      const response = await api.get(`/contact/${data.id}`, {
         headers: {
           Authorization: token ? `Bearer ${token}` : "",
         },
@@ -156,7 +156,7 @@ export const CreateContactsAccount = createAsyncThunk<
       const token = Cookies.get("access_token"); 
 
       const response = await api.post(
-        `/email-campaign/create-contacts`,
+        `/contact/create-contacts`,
         data, 
         {
           headers: {
@@ -166,6 +166,50 @@ export const CreateContactsAccount = createAsyncThunk<
       );
 
       return response.data; 
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Network error");
+    }
+  }
+);
+
+export const SearchContacts = createAsyncThunk(
+  "contact/search-contacts",
+  async (
+    { first_name, email }: { first_name?: string; email?: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const queryParams: any = {};
+      if (first_name) queryParams.first_name = first_name;
+      if (email) queryParams.email = email;
+
+      const response = await api.get("/contact/search-contacts", {
+        params: queryParams,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      return response.data.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Network error");
+    }
+  }
+);
+
+export const DeactivateContacts = createAsyncThunk(
+  "contact/deactivate",
+  async (contactIds: string[], { rejectWithValue }) => {
+    try {
+      const response = await api.patch("/contact/deactivate", 
+        { contactIds },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || "Network error");
     }
