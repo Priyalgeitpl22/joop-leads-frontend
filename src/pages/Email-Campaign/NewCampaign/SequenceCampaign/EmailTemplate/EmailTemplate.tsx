@@ -12,6 +12,7 @@ import {
 } from "./emailTemplate.styled";
 import "./EmailEditor.css";
 import ReactQuill from "react-quill";
+import { Menu, MenuItem } from "@mui/material";
 
 export const modules = {
   toolbar: [
@@ -28,6 +29,15 @@ export const modules = {
   ],
 };
 
+const variableOptions = [
+  "first_name",
+  "last_name",
+  "email",
+  "website",
+  "day of week",
+  "time of day",
+];
+
 interface EmailTemplateProps {
   handleEmailTemplateData: (data: { subject: string; emailBody: string }) => void;
   updateSequenceData: (sequence: Sequence) => void;
@@ -41,22 +51,31 @@ const EmailTemplate: React.FC<EmailTemplateProps> = ({
 }) => {
   const [emailBody, setEmailBody] = useState(selectedSequence?.seq_variants[0]?.emailBody || "");
   const [subject, setSubject] = useState(selectedSequence?.seq_variants[0]?.subject || "");
-  
+
   const quillRef = useRef<typeof ReactQuill | null>(null);
+  const subjectRef = useRef<HTMLInputElement | null>(null);
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
 
   useEffect(() => {
     setEmailBody(selectedSequence?.seq_variants[0]?.emailBody || "");
     setSubject(selectedSequence?.seq_variants[0]?.subject || "");
   }, [selectedSequence]);
 
-  const insertVariable = () => {
-    if (quillRef.current) {
-      const editor = quillRef.current.getEditor();
-      const range = editor.getSelection();
-      if (range) {
-        editor.insertText(range.index, "{{Variable}}");
-      }
+  const handleOpenMenu = () => {
+    if (subjectRef.current) {
+      setAnchorEl(subjectRef.current);
     }
+  };
+
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+  };
+
+  const insertVariable = (variable: string) => {
+    setSubject((prev) => prev + ` {{${variable}}}`);
+    handleCloseMenu();
   };
 
   const handleDataChange = (newSubject: string, newEmailBody: string) => {
@@ -82,12 +101,44 @@ const EmailTemplate: React.FC<EmailTemplateProps> = ({
     <EmailTemplateWrapper>
       <EmailTemplateHeader>
         <SubjectBox>Subject:</SubjectBox>
-        <SubjectText
-          placeholder="Hi {{ first_name }}"
-          value={subject}
-          onChange={(e) => handleDataChange(e.target.value, emailBody)}
-        />
-        <VariablesButton onClick={insertVariable}>{"{ } Variables"}</VariablesButton>
+        <div
+          style={{
+            position: "relative",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+          }}
+        >
+          <SubjectText
+            ref={subjectRef}
+            placeholder="Hi {{ first_name }}"
+            value={subject}
+            onChange={(e) => handleDataChange(e.target.value, emailBody)}
+          />
+          <VariablesButton onClick={handleOpenMenu}>
+            {"{ } Variables"}
+          </VariablesButton>
+        </div>
+
+        <Menu
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleCloseMenu}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "left",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "left",
+          }}
+        >
+          {variableOptions.map((variable) => (
+            <MenuItem key={variable} onClick={() => insertVariable(variable)}>
+              {variable}
+            </MenuItem>
+          ))}
+        </Menu>
       </EmailTemplateHeader>
 
       <ReactQuill
