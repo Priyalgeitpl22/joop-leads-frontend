@@ -172,16 +172,19 @@ export const CreateContactsAccount = createAsyncThunk<
   }
 );
 
-
 export const SearchContacts = createAsyncThunk(
-  "email-campaign/search-contacts",
+  "contact/search-contacts",
   async (
     { first_name, email }: { first_name?: string; email?: string },
     { rejectWithValue }
   ) => {
     try {
+      const queryParams: any = {};
+      if (first_name) queryParams.first_name = first_name;
+      if (email) queryParams.email = email;
+
       const response = await api.get("/contact/search-contacts", {
-        params: { first_name, email },
+        params: queryParams,
         headers: {
           Authorization: `Bearer ${token}`,
         },
