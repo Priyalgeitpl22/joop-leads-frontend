@@ -25,6 +25,7 @@ body {
   --background-darker: #030426; /* Even Darker Background */
   --background-secondary: #d2d4f3;
   --background-hover:  #f1f3f5;
+  --background-head: #f8f9fc;
 
   /* 🌈 Accent & Highlights */
   --accent-color: #9E8BD0; /* Accent Color */

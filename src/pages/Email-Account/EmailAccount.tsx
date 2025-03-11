@@ -20,6 +20,7 @@ import {
 import EmailAccountDialog from "./EmailAccountDialogBox/EmailAccountDialog";
 import AdvancedSettingDialog from "./AdvancedSettingDialogBox/AdvancedSettingDialog";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
+import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
 import { useDispatch } from "react-redux";
 import {
   EmailAccount,
@@ -34,7 +35,8 @@ import { CustomDataTable } from "../../assets/Custom/customDataGrid";
 import { GridColDef } from "@mui/x-data-grid";
 import { formatDate } from "../../utils/utils";
 import { Button, SecondaryButton } from "../../styles/global.styled";
-import ProgressBar from "../../assets/Custom/linearProgress";
+import { CustomTableCell } from "../Email-Campaign/EmailCampaign.styled";
+import { useNavigate } from "react-router-dom";
 // import ProgressBar from "../../assets/Custom/linearProgress";
 
 const EmailAccounts: React.FC = () => {
@@ -46,68 +48,83 @@ const EmailAccounts: React.FC = () => {
   const [emailAccounts, setEmailAccounts] = useState<EmailAccount[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [rows, setRows] = useState<any[]>([]);
+  const navigate = useNavigate();
 
   const columns: GridColDef[] = useMemo(
     () => [
-    { field: "name", headerName: "Name", width: 150 },
-    { field: "email", headerName: "Email", width: 250 },
-    {
-      field: "type",
-      headerName: "Type",
-      width: 120,
-      renderCell: (params: any) => {
-        if (params.value === "gmail") {
-          return (
-            <img
-              src="https://img.icons8.com/color/48/000000/gmail-new.png"
-              alt="Gmail Icon"
-              width="24"
-              height="24"
-            />
-          );
-        } else if (params.value === "outlook") {
-          return (
-            <img
-              src="https://img.icons8.com/color/48/000000/microsoft-outlook-2019.png"
-              alt="Outlook Icon"
-              width="24"
-              height="24"
-            />
-          );
-        } else if (params.value === "imap") {
+      { field: "name", headerName: "Name", width: 150 },
+      { field: "email", headerName: "Email", width: 250 },
+      {
+        field: "type",
+        headerName: "Type",
+        width: 100,
+        renderCell: (params: any) => {
+          if (params.value === "gmail") {
+            return (
+              <img
+                src="https://img.icons8.com/color/48/000000/gmail-new.png"
+                alt="Gmail Icon"
+                width="24"
+                height="24"
+              />
+            );
+          } else if (params.value === "outlook") {
+            return (
+              <img
+                src="https://img.icons8.com/color/48/000000/microsoft-outlook-2019.png"
+                alt="Outlook Icon"
+                width="24"
+                height="24"
+              />
+            );
+          } else if (params.value === "imap") {
             return <CustomIcon />;
           } else {
-          return null;
-        }
+            return null;
+          }
+        },
       },
-    },
-    {
-      field: "warm_up",
-      headerName: "Warmup Enabled",
-      width: 120,
-      renderCell: () => <Box>Yes</Box>,
-    },
-    {
-      field: "daily_limit",
-      headerName: "Daily Limit",
-      width: 120,
-      valueGetter: () => "0 / 100",
-    },
-    {
-      field: "reputation",
-      headerName: "Reputation",
-      width: 120,
-      renderCell: () => <Box>100%</Box>,
-    },
-    {
-      field: "createdAt",
-      headerName: "Created At",
-      width: 180,
-      valueGetter: (params: any) => (params ? formatDate(params) : null),
-    },
-  ],
-  []
-);
+      {
+        field: "warm_up",
+        headerName: "Warmup Enabled",
+        width: 120,
+        renderCell: () => <Box sx={{ marginTop: "8px" }}>Yes</Box>,
+      },
+      {
+        field: "daily_limit",
+        headerName: "Daily Limit",
+        width: 120,
+        valueGetter: () => "0 / 100",
+      },
+      {
+        field: "reputation",
+        headerName: "Reputation",
+        width: 100,
+        renderCell: () => <Box sx={{ marginTop: "8px" }}>100%</Box>,
+      },
+      {
+        field: "createdAt",
+        headerName: "Created At",
+        width: 150,
+        valueGetter: (params: any) => (params ? formatDate(params) : null),
+      },
+      {
+        field: "edit",
+        headerName: "Action",
+        width: 80,
+        sortable: false,
+        renderCell: (params) => (
+          <CustomTableCell>
+            <ModeEditOutlineOutlinedIcon
+              onClick={() => handleEditEmailAccount(params.row)}
+              sx={{ cursor: "pointer" }}
+            />
+          </CustomTableCell>
+        ),
+      },
+    ],
+    []
+  );
 
   useEffect(() => {
     const getEmailAccounts = async () => {
@@ -177,6 +194,12 @@ const EmailAccounts: React.FC = () => {
 
   const isMenuOpen = Boolean(anchorEl);
 
+  const handleEditEmailAccount = (_row: any) => {
+    navigate('/email-account/edit-email-account')
+  }
+
+  console.log("Loader", loading)
+
   const CustomIcon = () => (
     <svg
       fill="none"
@@ -238,7 +261,7 @@ const EmailAccounts: React.FC = () => {
           <Button onClick={handleOpenDialog}>Add Account</Button>
         </Box>
       </EmailAccountHeader>
-      {loading && <ProgressBar />}
+      {/* {loading && <ProgressBar />} */}
       <Menu
         anchorEl={anchorEl}
         open={isMenuOpen}
