@@ -147,6 +147,7 @@ export const Button2 = styled("button", {
     width: 100%;
     height: 100%;
     border-radius: 5px;
+    white-space: nowrap;  
     padding: 12px;
     color: ${color};
     background-color: ${background};

@@ -33,8 +33,10 @@ const UploadContactCsvDialog: React.FC<UploadContactCsvDialog> = ({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [columns, setColumns] = useState<string[]>([]);
   const [csvData, setCSVData] = useState<any[]>([]);
+  const [isNextDisabled, setIsNextDisabled] = useState(false);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(isNextDisabled);
     const file = event.target.files?.[0];
     if (file) {
       if (file.type === "text/csv") {
@@ -79,6 +81,7 @@ const UploadContactCsvDialog: React.FC<UploadContactCsvDialog> = ({
     >
       {showDetail ? (
         <ImportLeadsDetail
+          setIsNextDisabled={setIsNextDisabled}
           onEmailFieldsChange={handleLeadsData}
           columns={columns}
           file={selectedFile}
