@@ -1,0 +1,47 @@
+import { SetStateAction, useState } from "react";
+import {
+  ContentContainer,
+  CustomTab,
+  CustomTabs,
+} from "../../Email-Campaign/EmailCampaign.styled";
+import EditGeneralEmailAccount from "./EditGeneralEmailAccount";
+import EditCampaignEmailAccount from "./EditCampaignEmailAccount";
+import EditWarmupEmailAccount from "./EditWarmupEmailAccount";
+
+const EditEmailAccount = () => {
+  const [activeTab, setActiveTab] = useState<string>("general");
+
+  const handleTabChange = (_: any, newValue: SetStateAction<string>) => {
+    const validTabs = [
+      "general",
+      "warmUp",
+      "campaign",
+    ];
+    setActiveTab(validTabs.includes(newValue as string) ? newValue : "general");
+  };
+
+  return (
+    <ContentContainer>
+      <CustomTabs
+        value={activeTab}
+        onChange={handleTabChange}
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          borderBottom: 1,
+          borderColor: "divider",
+        }}
+      >
+        <CustomTab label="General" value="general" />
+        <CustomTab label="Warm Up" value="warmUp" />
+        <CustomTab label="Campaign" value="campaign" />
+      </CustomTabs>
+
+      {activeTab === "general" && (<EditGeneralEmailAccount/>)}
+      {activeTab === "warmUp" && (<EditWarmupEmailAccount/>)}
+      {activeTab === "campaign" && (<EditCampaignEmailAccount/>)}
+    </ContentContainer>
+  );
+};
+
+export default EditEmailAccount;

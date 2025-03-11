@@ -27,27 +27,35 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
 
   return (
     <Box>
-    <Paper className="data-grid-container" sx={{ minHeight: "480px" }}>
-      <DataGrid 
-        rows={rows}
-        columns={columns}
-        pageSizeOptions={[5, 10]}
-        paginationModel={paginationModel}
-        onPaginationModelChange={setPaginationModel}
-        checkboxSelection
-        onRowSelectionModelChange={handleRowSelection}
-        getRowId={(row) => row._id || row.id}
-        slots={{
-          noRowsOverlay: () => (
-            <div
+      <Paper
+      className="data-grid-container" sx=
+      {{ minHeight: "380px"}}>
+        <DataGrid 
+          rows={rows}
+          columns={columns}
+          pageSizeOptions={pageSizeOptions}
+          paginationModel={paginationModel}
+          onPaginationModelChange={setPaginationModel}
+          checkboxSelection
+          onRowSelectionModelChange={handleRowSelection}
+          getRowId={(row) => row._id || row.id}
+          slots={{
+            noRowsOverlay: () => (
+              <div
               style={{padding: "20px", textAlign: "center", color: "#888" }}
-            >
-              No email accounts found
-            </div>
-          ),
-        }}
-      />
-    </Paper>
+              >
+                No email accounts found
+              </div>
+            ),
+          }}
+          sx={{
+            cursor: "pointer",
+            "& .MuiDataGrid-cell:focus, & .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-columnHeader:focus-within": {
+              outline: "none",
+            },
+          }}
+        />
+      </Paper>
     </Box>
   );
 };
