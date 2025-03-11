@@ -29,7 +29,7 @@ import ResetPassword from "./pages/Forgot-Password/ResetPassword";
 import VerifyOtp from "./pages/Verify-OTP/VerifyOtp";
 import UserProfileMenu from "./assets/Custom/customUserProfile";
 import ContactTable from "./pages/Contacts/ContactTable";
-import EditEmailCampaign from "./pages/Email-Campaign/EditEmailCampaign/EditEmailCampaign";
+import EditEmailAccount from "./pages/Email-Account/EditEmailAccount/EditEmailAccount";
 
 const UNPROTECTED_ROUTES = [
   "/login",
@@ -138,8 +138,8 @@ export default function DashboardLayoutBasic() {
               <EmailCampaign router={router} />
             )}
             {router.pathname === "/email-accounts" && <EmailAccount />}
-            {router.pathname === "/email-campaign/edit-email-campaign" && (
-              <EditEmailCampaign/>
+            {router.pathname === "/email-account/edit-email-account" && (
+              <EditEmailAccount/>
             )}
             {router.pathname === "/inbox" && <EmailInboxs />}
             {router.pathname === "/leads" && <Leads />}
