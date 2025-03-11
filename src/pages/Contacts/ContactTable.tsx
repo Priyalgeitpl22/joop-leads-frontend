@@ -10,6 +10,7 @@ import {
   Select,
   MenuItem,
   IconButton,
+  Tooltip,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
@@ -47,8 +48,10 @@ import { ILeadsCounts } from "../Email-Campaign/NewCampaign/interfaces";
 import { useNavigate } from "react-router-dom";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import PersonOffIcon from "@mui/icons-material/PersonOff";
-
+import HowToRegIcon from '@mui/icons-material/HowToReg'
 import AddCircleIcon from "@mui/icons-material/AddCircle";
+import toast, { Toaster } from 'react-hot-toast';
+
 
 export interface ImportedLeadsData {
   csvSettings: csvSettingsType;
@@ -56,7 +59,7 @@ export interface ImportedLeadsData {
 
 const ContactTable: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [contactAccount, setContactAccount] = useState<ContactsAccount[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -126,7 +129,7 @@ const ContactTable: React.FC = () => {
         headerName: "Used in Campaign (Count)",
         width: 120,
       },
-  
+
 
       {
         field: "createdAt",
@@ -137,7 +140,6 @@ const ContactTable: React.FC = () => {
       {
         field: "active",
         headerName: "Status",
-        width: 180,
         renderCell: (params: any) => (
           <span
             style={{
@@ -153,7 +155,6 @@ const ContactTable: React.FC = () => {
       {
         field: "view",
         headerName: "View",
-        width: 180,
         renderCell: (params) => (
           <IconButton
             onClick={(event) => handleViewClick(event, params.row.id)}
@@ -225,27 +226,41 @@ const ContactTable: React.FC = () => {
 
   const selectedRowsData = rows.filter((row) => selectedIds.includes(row.id));
 
-    const allActive =
+  const allActive =
     selectedRowsData.length > 0 &&
     selectedRowsData.every((row) => row.active === true);
-    
+
   const allInactive =
     selectedRowsData.length > 0 &&
     selectedRowsData.every((row) => row.active === false);
- 
-    const handleDeactivate = async () => {
-      if (selectedIds.length > 0) {
-        try {
-          await dispatch(DeactivateContacts(selectedIds)).unwrap();
-          setSelectedIds([]);
-        await getFetchAllContacts();
-          
-        } catch (error) {
-          console.error("Active Deactive failed:", error);
+
+
+
+
+  const handleDeactivate = async () => {
+    if (selectedIds.length > 0) {
+
+      try {
+        const response = await dispatch(DeactivateContacts(selectedIds)).unwrap();
+        console.log("responsse", response);
+        if (response?.code === 200) {
+          console.log("responseeee", response.payload?.code);
+          toast.success(response?.message || "Contacts have been deactivated successfully.");
+        } else {
+          toast.error("Failed to deactivate contacts.");
         }
+        setSelectedIds([]);
+        await getFetchAllContacts();
+      } catch (error) {
+        console.error("Active Deactivate failed:", error);
+        toast.error("Something went wrong while deactivating contacts.");
       }
-    };
-    
+    } else {
+      toast.error("No contacts selected for deactivation.");
+    }
+  };
+
+
 
   const handleViewClick = (event: React.MouseEvent, id: string) => {
     event.stopPropagation();
@@ -285,12 +300,14 @@ const ContactTable: React.FC = () => {
     }
   };
 
+
   const goToNextStep = () => {
     navigate(`/email-campaign/new-campaign?campaignId=${campaignId}`);
   };
 
   return (
     <ContactsContainer>
+      <Toaster position="top-right" />
       <ContactsHeader>
         <SectionTitle>Contacts</SectionTitle>
         <Box
@@ -318,41 +335,46 @@ const ContactTable: React.FC = () => {
             onClose={handleAccountCloseDialog}
           />
 
-          <SecondaryButton onClick={handleOpenDialog}>
-            <CloudUploadIcon/>
-          </SecondaryButton>
-
-          <SecondaryButton onClick={handleAccountOpenDialog}>
-            <PersonAddIcon/>
-          </SecondaryButton>
+          <Tooltip title="Upload Bulk Contacts">
+            <SecondaryButton onClick={handleOpenDialog}>
+              <CloudUploadIcon />
+            </SecondaryButton>
+          </Tooltip>
 
 
-      
-{selectedIds.length > 0 && allActive && (
-  <SecondaryButton onClick={handleDeactivate}>
-    <PersonOffIcon  />
-    </SecondaryButton>
-)}
+          <Tooltip title="Add Contact">
+            <SecondaryButton onClick={handleAccountOpenDialog}>
+              <PersonAddIcon />
+            </SecondaryButton>
+          </Tooltip>
 
 
-{selectedIds.length > 0 && allInactive && (
-  <SecondaryButton onClick={handleDeactivate}>
-    <PersonAddIcon/>
-  </SecondaryButton>
-)}
-
-
-           {selectedIds.length > 0 && (
-            <SecondaryButton onClick={handleCreateCampaign}>
-              <IconButton
-                color="primary"
-                onClick={handleCreateCampaign}
-                title="Create Campaign">
-                <AddCircleIcon/>
-              </IconButton>
+          {selectedIds.length > 0 && allActive && (
+            <Tooltip title="Deactivate User" arrow>
+              <SecondaryButton onClick={handleDeactivate}>
+                <PersonOffIcon />
               </SecondaryButton>
-            
-          )} 
+            </Tooltip>
+          )}
+
+
+          {selectedIds.length > 0 && allInactive && (
+            <Tooltip title="Activate User" arrow>
+              <SecondaryButton onClick={handleDeactivate}>
+                <HowToRegIcon />
+              </SecondaryButton>
+            </Tooltip>
+          )}
+
+
+          {selectedIds.length > 0 && (
+            <Tooltip title="Create Campaign">
+              <SecondaryButton onClick={handleCreateCampaign}>
+                <AddCircleIcon />
+              </SecondaryButton>
+            </Tooltip>
+
+          )}
 
         </Box>
       </ContactsHeader>
@@ -439,6 +461,7 @@ const ContactTable: React.FC = () => {
         onClose={() => setOpen(false)}
         selectedId={selectedId}
       />
+
     </ContactsContainer>
   );
 };
