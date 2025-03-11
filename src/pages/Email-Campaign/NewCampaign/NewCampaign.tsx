@@ -76,11 +76,10 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
     const params = new URLSearchParams(location.search);
     const campaignId = params.get("campaignId");
 
-    if(campaignId)
-    setCampaignId(campaignId);
-
-    console.log(activeStep);
-    setActiveStep(1);
+    if(campaignId) {
+      setActiveStep(1);
+      setCampaignId(campaignId);
+    }
   },[])
 
   const handleLeadsData = (data: ImportedLeadsData) => {

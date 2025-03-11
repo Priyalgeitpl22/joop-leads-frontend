@@ -12,7 +12,7 @@ import {
   IconButton,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import {
   FilterIcon,
   SectionTitle,
@@ -23,7 +23,9 @@ import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import { useDispatch } from "react-redux";
 import {
   ContactsAccount,
+  DeactivateContacts,
   getCampaignListById,
+  SearchContacts,
   VerifyViewContactPayload,
 } from "../../redux/slice/contactSlice";
 import { AppDispatch } from "../../redux/store/store";
@@ -36,7 +38,6 @@ import { Button, SecondaryButton } from "../../styles/global.styled";
 import ProgressBar from "../../assets/Custom/linearProgress";
 import { fetchContacts } from "../../redux/slice/contactSlice";
 import ContactsAccountDialogBox from "./ContactsAccountDialogBox/ContactsAccountDialogBox";
-import { SearchEmailAccount } from "../../redux/slice/emailAccountSlice";
 import ViewDrawer from "./View-Drawer/ViewDrawer";
 import UploadContactCsvDialog from "./UploadContactCsvDialog/UploadContactCsvDialog";
 import { csvSettingsType } from "../Email-Campaign/Interfaces";
@@ -44,6 +45,10 @@ import { addLeadsToCampaign } from "../../redux/slice/emailCampaignSlice";
 import UploadLeadsDialog from "../Email-Campaign/NewCampaign/ImportLeadsCampaign/UploadLeadsDialog";
 import { ILeadsCounts } from "../Email-Campaign/NewCampaign/interfaces";
 import { useNavigate } from "react-router-dom";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import PersonOffIcon from "@mui/icons-material/PersonOff";
+
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 export interface ImportedLeadsData {
   csvSettings: csvSettingsType;
@@ -51,13 +56,14 @@ export interface ImportedLeadsData {
 
 const ContactTable: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+  
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [contactAccount, setContactAccount] = useState<ContactsAccount[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
   const [CSVsettings, setCSVsettings] = React.useState<csvSettingsType>();
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
+  const [isAddAccountDialogOPen, setIsAddAccountDialogOPen] = useState(false);
   const [emailFieldsToBeAdded, setEmailFieldsToBeAdded] =
     React.useState<ImportedLeadsData>();
 
@@ -66,6 +72,9 @@ const ContactTable: React.FC = () => {
   const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
+
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const [isCsvUploaded, setIsCsvUploaded] = React.useState(false);
@@ -87,6 +96,10 @@ const ContactTable: React.FC = () => {
 
   const handleLeadsData = (data: ImportedLeadsData) => {
     setEmailFieldsToBeAdded(data);
+  };
+
+  const handleCreateCampaign = () => {
+    console.log("Working");
   };
 
   const columns: GridColDef[] = useMemo(
@@ -113,18 +126,28 @@ const ContactTable: React.FC = () => {
         headerName: "Used in Campaign (Count)",
         width: 120,
       },
-      {
-        field: "uploaded_by",
-        headerName: "Uploaded By",
-        width: 150,
-        valueGetter: (params: any) => params.full_name || "N/A",
-      },
+  
 
       {
         field: "createdAt",
         headerName: "Uploaded Date",
         width: 180,
         valueGetter: (params: any) => (params ? formatDate(params) : "N/A"),
+      },
+      {
+        field: "active",
+        headerName: "Status",
+        width: 180,
+        renderCell: (params: any) => (
+          <span
+            style={{
+              color: params?.row?.active ? "green" : "red",
+              fontWeight: "500 ",
+            }}
+          >
+            {params?.row?.active ? "✔ Active" : "❌ Inactive"}
+          </span>
+        ),
       },
 
       {
@@ -144,14 +167,14 @@ const ContactTable: React.FC = () => {
   );
 
   useEffect(() => {
-    const getEmailAccounts = async () => {
-      await getAllEmailAccounts();
+    const getContactsAccounts = async () => {
+      await getFetchAllContacts();
     };
 
-    getEmailAccounts();
+    getContactsAccounts();
   }, []);
 
-  const getAllEmailAccounts = async () => {
+  const getFetchAllContacts = async () => {
     try {
       const data = await dispatch(fetchContacts()).unwrap();
       if (data) {
@@ -171,9 +194,9 @@ const ContactTable: React.FC = () => {
       if (trimmedQuery === "") {
         setRows(contactAccount);
       } else {
-        const [email, name] = trimmedQuery.split(" ");
+        const [first_name, email] = trimmedQuery.split(" ");
         const filteredData = await dispatch(
-          SearchEmailAccount({ email, name })
+          SearchContacts({ first_name, email })
         ).unwrap();
         setRows(filteredData);
       }
@@ -196,6 +219,34 @@ const ContactTable: React.FC = () => {
     setAnchorEl(null);
   };
 
+  const handleSelectedRows = (selectedIds: string[]) => {
+    setSelectedIds(selectedIds);
+  };
+
+  const selectedRowsData = rows.filter((row) => selectedIds.includes(row.id));
+
+    const allActive =
+    selectedRowsData.length > 0 &&
+    selectedRowsData.every((row) => row.active === true);
+    
+  const allInactive =
+    selectedRowsData.length > 0 &&
+    selectedRowsData.every((row) => row.active === false);
+ 
+    const handleDeactivate = async () => {
+      if (selectedIds.length > 0) {
+        try {
+          await dispatch(DeactivateContacts(selectedIds)).unwrap();
+          setSelectedIds([]);
+        await getFetchAllContacts();
+          
+        } catch (error) {
+          console.error("Active Deactive failed:", error);
+        }
+      }
+    };
+    
+
   const handleViewClick = (event: React.MouseEvent, id: string) => {
     event.stopPropagation();
     setSelectedId(id);
@@ -207,6 +258,9 @@ const ContactTable: React.FC = () => {
 
   const handleOpenDialog = () => setIsUploadDialogOpen(true);
   const handleCloseDialog = () => setIsUploadDialogOpen(false);
+
+  const handleAccountOpenDialog = () => setIsAddAccountDialogOPen(true);
+  const handleAccountCloseDialog = () => setIsAddAccountDialogOPen(false);
 
   const handleUploadContacts = async (data: any) => {
     console.log(emailFieldsToBeAdded);
@@ -260,14 +314,46 @@ const ContactTable: React.FC = () => {
             />
           </SearchBar>
           <ContactsAccountDialogBox
-            open={isDialogOpen}
-            onClose={() => setIsDialogOpen(false)}
+            open={isAddAccountDialogOPen}
+            onClose={handleAccountCloseDialog}
           />
 
           <SecondaryButton onClick={handleOpenDialog}>
-            Upload Contacts
+            <CloudUploadIcon/>
           </SecondaryButton>
-          <Button onClick={handleOpenDialog}>Add Contacts</Button>
+
+          <SecondaryButton onClick={handleAccountOpenDialog}>
+            <PersonAddIcon/>
+          </SecondaryButton>
+
+
+      
+{selectedIds.length > 0 && allActive && (
+  <SecondaryButton onClick={handleDeactivate}>
+    <PersonOffIcon  />
+    </SecondaryButton>
+)}
+
+
+{selectedIds.length > 0 && allInactive && (
+  <SecondaryButton onClick={handleDeactivate}>
+    <PersonAddIcon/>
+  </SecondaryButton>
+)}
+
+
+           {selectedIds.length > 0 && (
+            <SecondaryButton onClick={handleCreateCampaign}>
+              <IconButton
+                color="primary"
+                onClick={handleCreateCampaign}
+                title="Create Campaign">
+                <AddCircleIcon/>
+              </IconButton>
+              </SecondaryButton>
+            
+          )} 
+
         </Box>
       </ContactsHeader>
       {loading && <ProgressBar />}
@@ -327,6 +413,7 @@ const ContactTable: React.FC = () => {
         columns={columns}
         rows={rows}
         pageSizeOptions={[10, 10]}
+        handleRowSelection={handleSelectedRows}
       />
 
       <UploadContactCsvDialog
