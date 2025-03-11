@@ -6,6 +6,7 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import { CSV_COLUMNS, CSV_COLUMNS as csv_columns } from "../../../../constants";
+import { Button2 } from "../../../../styles/layout.styled";
 
 interface ImportLeadsDetailProps {
   file?: File | null;
@@ -13,6 +14,8 @@ interface ImportLeadsDetailProps {
   onFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onEmailFieldsChange: (data: any) => void;
   setIsNextDisabled: (status: boolean) => void;
+  isUplaodContacts: boolean;
+  handleUploadContacts?: (data: any) => void;
 }
 
 const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
@@ -21,6 +24,8 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
   onFileChange,
   onEmailFieldsChange,
   setIsNextDisabled,
+  isUplaodContacts,
+  handleUploadContacts
 }) => {
   const [emailFieldMapping, setEmailFieldMapping] = useState<
     Record<string, string>
@@ -82,6 +87,9 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
         background: "#FAFBFF",
         overflowY: "auto",
         height: "462px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "10px"
       }}
     >
       <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 3 }}>
@@ -192,6 +200,13 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
           </Box>
         ))}
       </Box>
+      {isUplaodContacts && <Button2
+            onClick={handleUploadContacts}
+            color="white"
+            background="var(--theme-color)"
+          >
+            Save and Next
+          </Button2>}
     </Box>
   );
 };

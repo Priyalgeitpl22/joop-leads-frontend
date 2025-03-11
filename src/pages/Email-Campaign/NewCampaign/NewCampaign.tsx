@@ -28,6 +28,7 @@ import { CustomizedStepper } from "./stepper";
 import { Button, SecondaryButton } from "../../../styles/global.styled";
 import { Button2 } from "../../../styles/layout.styled";
 import ProgressBar from "../../../assets/Custom/linearProgress";
+import { useLocation } from "react-router-dom";
 export interface ImportedLeadsData {
   campaignName?: string;
   clientId?: string;
@@ -65,13 +66,25 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
   const [isNextDisabled, setIsNextDisabled] = React.useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
+  const location = useLocation();
 
   const handleFileChange = (file: File) => {
     setSelectedFile(file);
   };
 
+  React.useEffect(()=> {
+    const params = new URLSearchParams(location.search);
+    const campaignId = params.get("campaignId");
+
+    if(campaignId)
+    setCampaignId(campaignId);
+
+    console.log(activeStep);
+    setActiveStep(1);
+  },[])
+
   const handleLeadsData = (data: ImportedLeadsData) => {
-  
+    debugger
     setEmailFieldsToBeAdded(data);
   };
 
@@ -343,7 +356,7 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
         ) : (
           <Button2
             onClick={handleNext}
-            disabled={isNextDisabled === false}
+            // disabled={isNextDisabled === false}
             color={
               isNextDisabled
                 ? "white"

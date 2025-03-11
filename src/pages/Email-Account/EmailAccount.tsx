@@ -34,11 +34,13 @@ import { CustomDataTable } from "../../assets/Custom/customDataGrid";
 import { GridColDef } from "@mui/x-data-grid";
 import { formatDate } from "../../utils/utils";
 import { Button, SecondaryButton } from "../../styles/global.styled";
+import ProgressBar from "../../assets/Custom/linearProgress";
 // import ProgressBar from "../../assets/Custom/linearProgress";
 
 const EmailAccounts: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+  const [loading, setLoading] = useState(true);
   const [isSettingOpen, setIsSettingOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [emailAccounts, setEmailAccounts] = useState<EmailAccount[]>([]);
@@ -83,7 +85,7 @@ const EmailAccounts: React.FC = () => {
       field: "warm_up",
       headerName: "Warmup Enabled",
       width: 120,
-      renderCell: () => <Box sx={{ marginTop: "8px" }}>Yes</Box>,
+      renderCell: () => <Box>Yes</Box>,
     },
     {
       field: "daily_limit",
@@ -95,7 +97,7 @@ const EmailAccounts: React.FC = () => {
       field: "reputation",
       headerName: "Reputation",
       width: 120,
-      renderCell: () => <Box sx={{ marginTop: "8px" }}>100%</Box>,
+      renderCell: () => <Box>100%</Box>,
     },
     {
       field: "createdAt",
@@ -117,13 +119,22 @@ const EmailAccounts: React.FC = () => {
 
   const getAllEmailAccounts = async () => {
     try {
+      setLoading(true);
       const data = await dispatch(fetchEmailAccount()).unwrap();
-      setEmailAccounts(data);
-      setRows(data);
+      setTimeout(() => {
+        setLoading(false);
+        setEmailAccounts(data);
+        setRows(data);
+      }, 1000);
+      
     } catch (error) {
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
+      
       console.error("Failed to fetch Account:", error);
     }
-  };
+  };  
 
   const handleSearch = async (query: string) => {
     try {
@@ -227,7 +238,7 @@ const EmailAccounts: React.FC = () => {
           <Button onClick={handleOpenDialog}>Add Account</Button>
         </Box>
       </EmailAccountHeader>
-      {/* {loading && <ProgressBar />} */}
+      {loading && <ProgressBar />}
       <Menu
         anchorEl={anchorEl}
         open={isMenuOpen}

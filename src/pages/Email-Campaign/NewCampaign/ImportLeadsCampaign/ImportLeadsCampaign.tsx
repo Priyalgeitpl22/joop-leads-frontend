@@ -71,6 +71,7 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
     >
       {showDetail ? (
         <ImportLeadsDetail
+          isUplaodContacts={false}
           onEmailFieldsChange={handleLeadsData}
           columns={columns}
           file={selectedFile}

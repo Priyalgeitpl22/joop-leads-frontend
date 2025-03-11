@@ -14,6 +14,7 @@ interface UploadContactCsvDialog {
   handleCSVUpload: (data: any) => void;
   saveCSVSetting: (data: any) => void;
   setIsCsvUploaded: (status: boolean) => void;
+  handleUploadContacts: (data: any) => void;
   open: boolean;
   onClose: () => void;
 }
@@ -23,6 +24,7 @@ const UploadContactCsvDialog: React.FC<UploadContactCsvDialog> = ({
   handleCSVUpload,
   saveCSVSetting,
   setIsCsvUploaded,
+  handleUploadContacts,
   open,
   onClose,
 }) => {
@@ -81,6 +83,8 @@ const UploadContactCsvDialog: React.FC<UploadContactCsvDialog> = ({
     >
       {showDetail ? (
         <ImportLeadsDetail
+          isUplaodContacts={true}
+          handleUploadContacts={handleUploadContacts}
           setIsNextDisabled={setIsNextDisabled}
           onEmailFieldsChange={handleLeadsData}
           columns={columns}

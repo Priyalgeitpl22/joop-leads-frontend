@@ -40,12 +40,14 @@ import { SearchEmailAccount } from "../../redux/slice/emailAccountSlice";
 import ViewDrawer from "./View-Drawer/ViewDrawer";
 import UploadContactCsvDialog from "./UploadContactCsvDialog/UploadContactCsvDialog";
 import { csvSettingsType } from "../Email-Campaign/Interfaces";
+import { addLeadsToCampaign } from "../../redux/slice/emailCampaignSlice";
+import UploadLeadsDialog from "../Email-Campaign/NewCampaign/ImportLeadsCampaign/UploadLeadsDialog";
+import { ILeadsCounts } from "../Email-Campaign/NewCampaign/interfaces";
+import { useNavigate } from "react-router-dom";
 
 export interface ImportedLeadsData {
   csvSettings: csvSettingsType;
-  
 }
-
 
 const ContactTable: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -57,33 +59,35 @@ const ContactTable: React.FC = () => {
   const [CSVsettings, setCSVsettings] = React.useState<csvSettingsType>();
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
   const [emailFieldsToBeAdded, setEmailFieldsToBeAdded] =
-  React.useState<ImportedLeadsData>();
-  
-
+    React.useState<ImportedLeadsData>();
 
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [rows, setRows] = useState<any[]>([]);
+  const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
-    const [isCsvUploaded, setIsCsvUploaded] = React.useState(false);
-  
-    const saveCSVSetting = (settings: any) => {
-      setCSVsettings(settings);
-    };
+  const [isCsvUploaded, setIsCsvUploaded] = React.useState(false);
+  const [uploadleads, setUploadLeads] = React.useState<boolean>(false);
+  const [uploadCounts, setUploadCounts] = React.useState<ILeadsCounts>();
+  const [campaignId, setCampaignId] = React.useState("");
 
-    const handleFileChange = (file: File) => {
-      console.log(isCsvUploaded);
-      console.log(selectedFile);
-      console.log(CSVsettings);
-      console.log(emailFieldsToBeAdded);      
-      setSelectedFile(file);
-    };
-    
-    const handleLeadsData = (data: ImportedLeadsData) => {
-        setEmailFieldsToBeAdded(data);
-      };
+  const saveCSVSetting = (settings: any) => {
+    setCSVsettings(settings);
+  };
+
+  const handleFileChange = (file: File) => {
+    console.log(isCsvUploaded);
+    console.log(selectedFile);
+    console.log(CSVsettings);
+    console.log(emailFieldsToBeAdded);
+    setSelectedFile(file);
+  };
+
+  const handleLeadsData = (data: ImportedLeadsData) => {
+    setEmailFieldsToBeAdded(data);
+  };
 
   const columns: GridColDef[] = useMemo(
     () => [
@@ -169,7 +173,7 @@ const ContactTable: React.FC = () => {
       } else {
         const [email, name] = trimmedQuery.split(" ");
         const filteredData = await dispatch(
-           SearchEmailAccount({ email, name })
+          SearchEmailAccount({ email, name })
         ).unwrap();
         setRows(filteredData);
       }
@@ -180,7 +184,7 @@ const ContactTable: React.FC = () => {
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value;
-  setSearchQuery(query);
+    setSearchQuery(query);
     handleSearch(query);
   };
 
@@ -203,6 +207,33 @@ const ContactTable: React.FC = () => {
 
   const handleOpenDialog = () => setIsUploadDialogOpen(true);
   const handleCloseDialog = () => setIsUploadDialogOpen(false);
+
+  const handleUploadContacts = async (data: any) => {
+    console.log(emailFieldsToBeAdded);
+    console.log(CSVsettings);
+    console.log;
+    console.log(data);
+
+    const payload = {
+      CSVsettings: CSVsettings,
+      csvFile: selectedFile,
+      emailFieldsToBeAdded: emailFieldsToBeAdded,
+    };
+
+    const response = await dispatch(addLeadsToCampaign(payload));
+
+    if (response.payload.code === 200) {
+      console.log(response);
+      setUploadCounts(response.payload.counts);
+      setCampaignId(response.payload.campaignId);
+      // setUploadCsv(false);
+      setUploadLeads(true);
+    }
+  };
+
+  const goToNextStep = () => {
+    navigate(`/email-campaign/new-campaign?campaignId=${campaignId}`);
+  };
 
   return (
     <ContactsContainer>
@@ -232,7 +263,6 @@ const ContactTable: React.FC = () => {
             open={isDialogOpen}
             onClose={() => setIsDialogOpen(false)}
           />
-   
 
           <SecondaryButton onClick={handleOpenDialog}>
             Upload Contacts
@@ -298,23 +328,30 @@ const ContactTable: React.FC = () => {
         rows={rows}
         pageSizeOptions={[10, 10]}
       />
-     
-  <UploadContactCsvDialog
-    open={isUploadDialogOpen}
-    onClose={handleCloseDialog}
-    handleLeadsData={handleLeadsData}
-    handleCSVUpload={handleFileChange}
-    saveCSVSetting={saveCSVSetting}
-    setIsCsvUploaded={setIsCsvUploaded}
-  />
 
-    
+      <UploadContactCsvDialog
+        handleUploadContacts={handleUploadContacts}
+        open={isUploadDialogOpen}
+        onClose={handleCloseDialog}
+        handleLeadsData={handleLeadsData}
+        handleCSVUpload={handleFileChange}
+        saveCSVSetting={saveCSVSetting}
+        setIsCsvUploaded={setIsCsvUploaded}
+      />
+
+      <UploadLeadsDialog
+        open={uploadleads}
+        uploadCounts={uploadCounts}
+        onClose={() => {
+          setUploadLeads(false);
+          goToNextStep();
+        }}
+      />
       <ViewDrawer
         open={open}
         onClose={() => setOpen(false)}
         selectedId={selectedId}
       />
-
     </ContactsContainer>
   );
 };
