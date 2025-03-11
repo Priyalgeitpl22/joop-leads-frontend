@@ -33,32 +33,32 @@ export const NAVIGATION: Navigation = [
     kind: "divider",
   },
   {
-    segment: "inbox",
-    title: "Master Inbox",
-    icon: <ArchiveIcon style={{ color: "var(--icon-hover)" }}/>,
-  },
-  {
-    kind: "divider",
-  },
-  {
-    segment: "leads",
-    title: "All Leads",
-    icon: <FollowTheSignsIcon style={{ color: "var(--icon-hover)" }}/>,
-  },
-  {
-    kind: "divider",
-  },
-  {
-    segment: "chats",
-    title: "Chats",
-    icon: <ForumIcon style={{ color: "var(--icon-hover)" }}/>,
-  },
-  {
-    kind: "divider",
-  },
-  {
     segment: "contacts",
     title: "Contacts",
     icon: <ContactPhoneIcon style={{ color: "var(--icon-hover)" }} />,
   },
+  {
+    kind: "divider",
+  },
+  {
+    segment: "inbox",
+    title: "Master Inbox",
+    icon: <ArchiveIcon style={{ color: "var(--icon-hover)" }}/>,
+  },
+  // {
+  //   segment: "leads",
+  //   title: "All Leads",
+  //   icon: <FollowTheSignsIcon style={{ color: "var(--icon-hover)" }}/>,
+  // },
+  // {
+  //   kind: "divider",
+  // },
+  // {
+  //   segment: "chats",
+  //   title: "Chats",
+  //   icon: <ForumIcon style={{ color: "var(--icon-hover)" }}/>,
+  // },
+  // {
+  //   kind: "divider",
+  // },
 ];
