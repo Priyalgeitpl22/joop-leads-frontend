@@ -37,7 +37,7 @@ const formFields: {
   label: string;
   type: string;
 }[] = [
-  { name: "fullName", label: "Full Name", type: "text" },
+  { name: "fullName", label: "Full Name", type: "text"},
   { name: "email", label: "Email Address", type: "email" },
   { name: "password", label: "Password", type: "text" },
   { name: "orgName", label: "Company Name", type: "text" },

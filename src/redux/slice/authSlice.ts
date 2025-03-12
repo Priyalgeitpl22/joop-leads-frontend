@@ -122,7 +122,7 @@ export const loginUser = createAsyncThunk(
       const response = await api.post("/auth/login", loginData);
       const { token } = response.data;
       Cookies.set("access_token", token, { expires: 7, path: "" });
-      return response.data;
+       return response.data;
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message || "Network error"

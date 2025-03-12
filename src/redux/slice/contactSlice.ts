@@ -214,6 +214,28 @@ export const DeactivateContacts = createAsyncThunk(
   }
 );
 
+export const CreateCampaignWithContacts = createAsyncThunk(
+  "contact/create",
+  async ( contactIds: string[], { rejectWithValue }) => {
+    try {
+      const response = await api.post(
+        "/contact/create", 
+        { contactIds },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      return response.data; 
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Network error");
+    }
+  }
+);
+
+
 
 
 const contactsSlice = createSlice({
