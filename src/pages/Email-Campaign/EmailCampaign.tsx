@@ -47,7 +47,13 @@ import ErrorOutlinedIcon from "@mui/icons-material/ErrorOutlined";
 import AttachMoneyOutlinedIcon from "@mui/icons-material/AttachMoneyOutlined";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
 import { TableIcons, TableItem } from "../../styles/layout.styled";
+<<<<<<< HEAD
 import { GridDeleteIcon } from "@mui/x-data-grid";
+=======
+import { useNavigate } from "react-router-dom";
+import { GridDeleteIcon } from "@mui/x-data-grid";
+import { useNavigate } from "react-router-dom";
+>>>>>>> edit_email_campaign
 interface EmailCampaignProps {
   router?: any;
 }
@@ -59,6 +65,7 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [campaigns, setCampaigns] = useState<IEmailCampaign[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getEmailCampaigns = async () => {
@@ -119,6 +126,10 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
     handleSearch(query);
   };
 
+  const handleDetailCampaign = () => {
+    navigate(`/email-campaign/view-email-campaign`);
+  }
+
   const tableData = [
     {
       count: 0,
@@ -149,6 +160,10 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
   ];
 
   const isMenuOpen = Boolean(anchorEl);
+
+  const handleEditCampaign = () => {
+    navigate("email-campaign/new-campaign")
+  }
 
   return (
     <ContentContainer>
@@ -289,6 +304,7 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
                             marginBottom: "8px",
                             color: "var(--title-color)",
                           }}
+                          onClick = { handleDetailCampaign }
                         >
                           {campaign.campaignName}
                         </h3>
@@ -338,7 +354,11 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
                         sx={{ display: "flex", gap: 3, alignItems: "center" }}
                       >
                         <Tooltip title="Edit">
+<<<<<<< HEAD
                           <ModeEditOutlineOutlinedIcon />
+=======
+                          <ModeEditOutlineOutlinedIcon onClick={handleEditCampaign}  />
+>>>>>>> edit_email_campaign
                         </Tooltip>
                         <Tooltip title="Delete">
                           <GridDeleteIcon />
@@ -359,6 +379,10 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
                 >
                   No Campaign found
                 </div>
+<<<<<<< HEAD
+=======
+                    
+>>>>>>> edit_email_campaign
               </Paper>
             )}
           </Table>

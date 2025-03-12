@@ -1,4 +1,4 @@
-import { createAsyncThunk} from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { emailApi } from "../../services/api";
 import { AxiosError } from "axios";
 
@@ -75,7 +75,8 @@ export const fetchEmailAccount = createAsyncThunk(
       }
       return rejectWithValue(errorMessage);
     }
-  });
+  }
+);
 
 export const addOuthEmailAccount = createAsyncThunk(
   "oauth/auth-url",
@@ -92,15 +93,16 @@ export const addOuthEmailAccount = createAsyncThunk(
 
 export const addOutlookEmailAccount = createAsyncThunk(
   "outlook/auth-url",
-  async (__dirname, {rejectWithValue}) => {
+  async (__dirname, { rejectWithValue }) => {
     try {
       const origin = encodeURIComponent(window.location.href);
       const response = await emailApi.get(`/outlook/auth-url?origin=${origin}`);
       return response.data.url;
-    }catch (error: any){
+    } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || "Network error");
     }
-  });
+  }
+);
 
 export const verifyEmailAccount = createAsyncThunk<
   string,
@@ -149,3 +151,51 @@ export const SearchEmailAccount = createAsyncThunk(
     }
   }
 );
+
+export const getEmailAccountSmtpDetail = createAsyncThunk(
+  "accounts/getEmailAccountSmtpDetail",
+  async (id: string, { rejectWithValue }) => {
+    try {
+      const response = await emailApi.get(`/accounts/${id}`);
+      console.log("id---------", id, response);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Network error");
+    }
+  }
+);
+
+export const updateEmailAccountSmtpDetail = createAsyncThunk(
+  "emailAccounts/updateEmailAccountSmtpDetail",
+  async ({ id, data }: { id: string; data: any }, { rejectWithValue }) => {
+    try {
+      const response = await emailApi.put(`/accounts/${id}`, data);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to update email account"
+      );
+    }
+  }
+);
+
+const emailAccountSlice = createSlice({
+  name: "emailAccounts",
+  initialState: {
+    accounts: {} as Record<string, any>,
+    loading: false,
+    error: null,
+  },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder.addCase(getEmailAccountSmtpDetail.fulfilled, (state, action) => {
+      if (state.accounts) {
+        state.accounts[action.meta.arg] = action.payload;
+      }
+    });
+  },
+  
+});
+
+
+export default emailAccountSlice.reducer;

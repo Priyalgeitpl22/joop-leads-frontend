@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store/store";
-import { EmailInboxMessagesBox, EmailInboxMessagesContainer, EmailInboxMessagesHeading } from "./EmailInboxArea.styled";
-import { Avatar, CircularProgress } from "@mui/material";
+import {
+  EmailInboxMessagesBox,
+  EmailInboxMessagesContainer,
+  EmailInboxMessagesHeading,
+} from "./EmailInboxArea.styled";
+import { Avatar, CircularProgress, Pagination } from "@mui/material";
 import { Reply, ReplyAll, Trash2 } from "lucide-react";
 
 const EmailInboxArea: React.FC = () => {
@@ -17,10 +21,20 @@ const EmailInboxArea: React.FC = () => {
   const [expandedMessageId, setExpandedMessageId] = useState<string | null>(
     null
   );
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const messagesPerPage = 5;
 
   const toggleMessageBody = (messageId: string) => {
     setExpandedMessageId(expandedMessageId === messageId ? null : messageId);
   };
+
+  // **Paginate Messages**
+  const totalMessages = mailboxMessages.length;
+  const totalPages = Math.ceil(totalMessages / messagesPerPage);
+  const displayedMessages = mailboxMessages.slice(
+    (currentPage - 1) * messagesPerPage,
+    currentPage * messagesPerPage
+  );
 
   return (
     <EmailInboxMessagesContainer>
@@ -28,13 +42,12 @@ const EmailInboxArea: React.FC = () => {
         <EmailInboxMessagesBox>
           <CircularProgress />
         </EmailInboxMessagesBox>
-      ) : selectedMailboxId && mailboxMessages?.length > 0 ? (
+      ) : selectedMailboxId && totalMessages > 0 ? (
         <div>
-          {mailboxMessages.map((message: any) => {
+          {displayedMessages.map((message: any) => {
             const isExpanded = expandedMessageId === message._id;
             return (
-              <EmailInboxMessagesHeading
-                key={message._id}>
+              <EmailInboxMessagesHeading key={message._id} style={{marginBottom: "10px"}}>
                 <div
                   style={{
                     display: "flex",
@@ -67,7 +80,6 @@ const EmailInboxArea: React.FC = () => {
                       display: "flex",
                       alignItems: "center",
                       gap: "10px",
-                      // marginBottom: "5px",
                     }}
                   >
                     <Avatar src="https://ssl.gstatic.com/ui/v1/icons/mail/profile_placeholder.png" />
@@ -119,6 +131,21 @@ const EmailInboxArea: React.FC = () => {
               </EmailInboxMessagesHeading>
             );
           })}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                // marginTop: "20%",
+              }}
+            >
+              <Pagination
+                count={totalPages}
+                page={currentPage}
+                onChange={(_, page) => setCurrentPage(page)}
+                color="primary"
+              />
+            </div>
+          
         </div>
       ) : (
         <div

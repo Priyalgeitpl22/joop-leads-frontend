@@ -16,7 +16,7 @@ export const SidebarContainer = styled(Box)`
 
 export const EmailInboxContainer = styled(Box)`
   width: 100%;
-  height: 85vh;
+  height: 83vh;
   display: flex;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);

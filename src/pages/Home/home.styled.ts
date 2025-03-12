@@ -3,26 +3,26 @@ import { Box, Card, styled } from "@mui/material";
 export const ContentContainer = styled("div")({
   padding: "16px",
   display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  minHeight: "100%",
-  backgroundColor: "#f8f9fc",
+  // justifyContent: "center",
+  // alignItems: "center",
+  // minHeight: "100%",
+  // backgroundColor: "red",
 });
 
 export const HeaderOptions = styled(Box)`
   height: 40px;
   display: flex;
-  background-color: var(--background-color)
+  background-color: #e7e7e7;
   padding: 5px;
   border-radius: 8px;
-`
+`;
 
 export const SideCard = styled(Card)({
   width: "25%",
-  height: "50%",
+  // height: "50%",
   padding: "16px",
   textAlign: "center",
-  backgroundColor: "#f3f1ff",
+  backgroundColor: "#e4e4e4!important",
   borderRadius: "12px",
   boxShadow: "none",
   alignContent: "center",
@@ -44,19 +44,19 @@ export const metricStyles = [
   {
     label: "Unique Bounced",
     value: 43,
-    color: "#fdeaea",
+    color: "#ebeaea",
     borderColor: "#e65984",
   },
   {
     label: "Unique Replied",
     value: 21,
-    color: "#eaf8f0",
+    color: "#dde9e2",
     borderColor: "#2188bd",
   },
   {
     label: "Unique Positive Replies",
     value: 16,
-    color: "#e5ffeb",
+    color: "#d7e9d7 ",
     borderColor: "#a7cc7d",
   },
 ];
