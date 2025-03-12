@@ -9,14 +9,12 @@ export interface UploadedUser {
   fullName: string;
   email: string;
 }
-
 export interface Campaign {
   id: string;
   campaignName: string;
   status: string;
   createdAt: string;
 }
-
 export interface EmailCampaign {
   campaign: Campaign;
 }
