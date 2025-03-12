@@ -1,7 +1,7 @@
 export const CSV_COLUMNS = [
-  { key: "first_name", label: "First Name" },
-  { key: "last_name", label: "Last Name" },
-  { key: "email", label: "Email" },
+  { key: "first_name", label: "First Name", required : true},
+  { key: "last_name", label: "Last Name"},
+  { key: "email", label: "Email", required : true },
   { key: "phone_number", label: "Phone Number" },
   { key: "company_name", label: "Company Name" },
   { key: "website", label: "Website" },

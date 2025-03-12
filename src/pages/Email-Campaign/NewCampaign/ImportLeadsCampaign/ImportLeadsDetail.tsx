@@ -176,10 +176,11 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
         />
         {columns.map((field, index) => (
           <Box
-            key={index}
-            sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}
+          key={index}
+          sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}
           >
             <Typography sx={{ flex: 1 }}>{field}</Typography>
+
             <Select
               displayEmpty
               onChange={(event) => handleEmailFieldsChange(event, field)}
@@ -192,8 +193,10 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
               }}
             >
               {CSV_COLUMNS.map((column) => (
-                <MenuItem value={column.key} sx={{ fontSize: "13px" }}>
-                  {column.label}
+              <MenuItem value={column.key}
+                disabled={column.required && column.key === "ignore_field"}
+                sx={{ fontSize: "13px" }}>
+                  {column.label} {column.required ? "*" : ""}
                 </MenuItem>
               ))}
             </Select>

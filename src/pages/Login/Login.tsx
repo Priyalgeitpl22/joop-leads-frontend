@@ -37,13 +37,14 @@ function Login() {
     if (loginSubmitted) {
       (async () => {
         try {
-          await dispatch(loginUser({ email, password })).unwrap();
 
+      await dispatch(loginUser({ email, password })).unwrap();
+          
           const token = Cookies.get("access_token");
           if (token) {
             await dispatch(getUserDetails(token)).unwrap();
           }
-
+          
           toast.success("Logged in successfully!");
           window.location.assign('/')
         } catch (err) {

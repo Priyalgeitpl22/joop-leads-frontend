@@ -67,6 +67,8 @@ const ContactTable: React.FC = () => {
   const [CSVsettings, setCSVsettings] = React.useState<csvSettingsType>();
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
   const [isAddAccountDialogOPen, setIsAddAccountDialogOPen] = useState(false);
+  const [rowSelectionModel, setRowSelectionModel] = useState<string[]>([]);
+
   const [emailFieldsToBeAdded, setEmailFieldsToBeAdded] =
     React.useState<ImportedLeadsData>();
 
@@ -222,6 +224,7 @@ const ContactTable: React.FC = () => {
 
   const handleSelectedRows = (selectedIds: string[]) => {
     setSelectedIds(selectedIds);
+    setRowSelectionModel(selectedIds);
   };
 
   const selectedRowsData = rows.filter((row) => selectedIds.includes(row.id));
@@ -250,6 +253,8 @@ const ContactTable: React.FC = () => {
           toast.error("Failed to deactivate contacts.");
         }
         setSelectedIds([]);
+        setRowSelectionModel([])
+        
         await getFetchAllContacts();
       } catch (error) {
         console.error("Active Deactivate failed:", error);
@@ -335,14 +340,14 @@ const ContactTable: React.FC = () => {
             onClose={handleAccountCloseDialog}
           />
 
-          <Tooltip title="Upload Bulk Contacts">
+          <Tooltip title="Upload Bulk Contacts" arrow>
             <SecondaryButton onClick={handleOpenDialog}>
               <CloudUploadIcon />
             </SecondaryButton>
           </Tooltip>
 
 
-          <Tooltip title="Add Contact">
+          <Tooltip title="Add Contact" arrow>
             <SecondaryButton onClick={handleAccountOpenDialog}>
               <PersonAddIcon />
             </SecondaryButton>
@@ -368,7 +373,7 @@ const ContactTable: React.FC = () => {
 
 
           {selectedIds.length > 0 && (
-            <Tooltip title="Create Campaign">
+            <Tooltip title="Create Campaign" arrow>
               <SecondaryButton onClick={handleCreateCampaign}>
                 <AddCircleIcon />
               </SecondaryButton>
@@ -435,6 +440,7 @@ const ContactTable: React.FC = () => {
         columns={columns}
         rows={rows}
         pageSizeOptions={[10, 10]}
+        rowSelectionModel={rowSelectionModel}
         handleRowSelection={handleSelectedRows}
       />
 

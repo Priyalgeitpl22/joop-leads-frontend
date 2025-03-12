@@ -9,6 +9,7 @@ interface CustomDataTableProps {
   rows: any[];
   pageSizeOptions?: number[];
   handleRowSelection?: (selection: any) => void;
+  rowSelectionModel?: string[];
 }
 
 
@@ -16,7 +17,8 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
   columns,
   rows,
   pageSizeOptions = [5, 10],
-  handleRowSelection
+  handleRowSelection,
+  rowSelectionModel, 
 }) => {
   
   
@@ -39,6 +41,7 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
           onPaginationModelChange={setPaginationModel}
           checkboxSelection
           onRowSelectionModelChange={handleRowSelection}
+          rowSelectionModel={rowSelectionModel} 
           getRowId={(row) => row._id || row.id}
           slots={{
             noRowsOverlay: () => (
