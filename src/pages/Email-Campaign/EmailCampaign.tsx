@@ -49,6 +49,7 @@ import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutl
 import { TableIcons, TableItem } from "../../styles/layout.styled";
 import { useNavigate } from "react-router-dom";
 import { GridDeleteIcon } from "@mui/x-data-grid";
+import { useNavigate } from "react-router-dom";
 interface EmailCampaignProps {
   router?: any;
 }
