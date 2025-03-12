@@ -47,13 +47,8 @@ import ErrorOutlinedIcon from "@mui/icons-material/ErrorOutlined";
 import AttachMoneyOutlinedIcon from "@mui/icons-material/AttachMoneyOutlined";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
 import { TableIcons, TableItem } from "../../styles/layout.styled";
-<<<<<<< HEAD
-import { GridDeleteIcon } from "@mui/x-data-grid";
-=======
-import { useNavigate } from "react-router-dom";
 import { GridDeleteIcon } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
->>>>>>> edit_email_campaign
 interface EmailCampaignProps {
   router?: any;
 }
@@ -354,11 +349,7 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
                         sx={{ display: "flex", gap: 3, alignItems: "center" }}
                       >
                         <Tooltip title="Edit">
-<<<<<<< HEAD
-                          <ModeEditOutlineOutlinedIcon />
-=======
                           <ModeEditOutlineOutlinedIcon onClick={handleEditCampaign}  />
->>>>>>> edit_email_campaign
                         </Tooltip>
                         <Tooltip title="Delete">
                           <GridDeleteIcon />
@@ -379,10 +370,6 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
                 >
                   No Campaign found
                 </div>
-<<<<<<< HEAD
-=======
-                    
->>>>>>> edit_email_campaign
               </Paper>
             )}
           </Table>
