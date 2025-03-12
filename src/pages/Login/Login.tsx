@@ -1,29 +1,29 @@
-import { useState, useEffect } from 'react';
-import { Typography } from '@mui/material';
-import { 
-  PageContainer, 
-  LoginCard, 
-  IllustrationSection, 
-  FormSection, 
-  StyledTextField, 
-  StyledButton, 
-  NavigateLink
-} from './login.styled';
-import {  useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { loginUser } from '../../redux/slice/authSlice';
-import { AppDispatch, RootState } from '../../redux/store/store';
-import Loader from '../../components/Loader';
+import { useState, useEffect } from "react";
+import { Typography } from "@mui/material";
+import {
+  PageContainer,
+  LoginCard,
+  IllustrationSection,
+  FormSection,
+  StyledTextField,
+  StyledButton,
+  NavigateLink,
+} from "./login.styled";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "../../redux/slice/authSlice";
+import { AppDispatch, RootState } from "../../redux/store/store";
+import Loader from "../../components/Loader";
 import Cookies from "js-cookie";
-import { getUserDetails } from '../../redux/slice/userSlice';
+import { getUserDetails } from "../../redux/slice/userSlice";
 import toast, { Toaster } from "react-hot-toast";
-import PasswordInput from '../../utils/PasswordInput';
+import PasswordInput from "../../utils/PasswordInput";
 
 function Login() {
   // Local state for controlled inputs.
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
   // A flag to trigger the login effect.
   const [loginSubmitted, setLoginSubmitted] = useState(false);
 
@@ -37,19 +37,23 @@ function Login() {
     if (loginSubmitted) {
       (async () => {
         try {
+          const response = await dispatch(
+            loginUser({ email, password })
+          ).unwrap();
+          if (response?.code === 200) {
+            toast.success(response?.message);
 
-      await dispatch(loginUser({ email, password })).unwrap();
-          
-          const token = Cookies.get("access_token");
-          if (token) {
-            await dispatch(getUserDetails(token)).unwrap();
+            const token = Cookies.get("access_token");
+            if (token) {
+              await dispatch(getUserDetails(token)).unwrap();
+            }
+
+            window.location.assign("/");
+          } else {
+            toast.error(response?.message);
           }
-          
-          toast.success("Logged in successfully!");
-          window.location.assign('/')
-        } catch (err) {
-          console.error('Login failed:', err);
-          toast.error("Login failed. Please try again.");
+        } catch (err: any) {
+          toast.error(err);
         } finally {
           setLoginSubmitted(false);
         }
@@ -60,21 +64,21 @@ function Login() {
   const handleSignIn = () => {
     setLoginSubmitted(true);
   };
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>)=>{
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
-  }
+  };
 
   return (
     <PageContainer>
       <LoginCard>
         <IllustrationSection>
-          <img 
-            src="https://cdn.dribbble.com/users/2058540/screenshots/8225403/media/bc617eec455a72c77feab587e09daa96.gif" 
+          <img
+            src="https://cdn.dribbble.com/users/2058540/screenshots/8225403/media/bc617eec455a72c77feab587e09daa96.gif"
             alt="Login illustration"
-            style={{ maxWidth: '100%', height: 'auto' }}
+            style={{ maxWidth: "100%", height: "auto" }}
           />
         </IllustrationSection>
-        
+
         <FormSection>
           <Typography variant="h4" fontWeight="bold" mb={1}>
             Welcome!
@@ -83,32 +87,45 @@ function Login() {
             Sign in to your Account
           </Typography>
 
-          <StyledTextField 
-            fullWidth 
-            label="Email Address" 
-            variant="outlined" 
-            type="email" 
+          <StyledTextField
+            fullWidth
+            label="Email Address"
+            variant="outlined"
+            type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
-          <PasswordInput 
+          <PasswordInput
             label="Password"
             value={password}
             onChange={handlePasswordChange}
-            autoComplete='new-password'
+            autoComplete="new-password"
           />
-          <NavigateLink style={{alignSelf: 'flex-end', marginBlock: 2 }} onClick={() => window.location.assign('/forgot-password')}>Forgot Password?</NavigateLink>          
-          <StyledButton 
-            variant="contained" 
-            fullWidth 
+          <NavigateLink
+            style={{ alignSelf: "flex-end", marginBlock: 2 }}
+            onClick={() => window.location.assign("/forgot-password")}
+          >
+            Forgot Password?
+          </NavigateLink>
+          <StyledButton
+            variant="contained"
+            fullWidth
             onClick={handleSignIn}
             disabled={loading}
           >
             SIGN IN
           </StyledButton>
-          <Typography variant="body2" color="black" align="center" sx={{ my: 2 }}>
-            Don't have an account?{' '}
-            <NavigateLink onClick={() => window.location.assign('/signup')}>Register</NavigateLink>
+          <Typography
+            variant="body2"
+            color="black"
+            align="center"
+            sx={{ my: 2 }}
+          >
+            Don't have an account?{" "}
+            <NavigateLink onClick={() => window.location.assign("/signup")}>
+              Register
+            </NavigateLink>
           </Typography>
         </FormSection>
       </LoginCard>

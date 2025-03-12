@@ -21,18 +21,26 @@ const ChangePassword: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState<string>("");
 
   const dispatch = useDispatch<AppDispatch>();
-  const { user} = useSelector(
-    (state: RootState) => state.user
-  );
+  const { user } = useSelector((state: RootState) => state.user);
 
-  const handleChangePassword = async() => {
-    if (!existingPassword || !newPassword || !confirmPassword) {
+  const handleChangePassword = async () => {
+    if (!existingPassword && !newPassword && !confirmPassword) {
       toast.error("All fields are required!");
       return;
-    }
+      }
 
-    if (newPassword !== confirmPassword) {
-      toast.error("New password and confirm password do not match!");
+    const errorMessage = 
+    !existingPassword ? "Please enter existing password." :
+    !newPassword ? "Please enter new password." :
+    !confirmPassword ? "Please enter confirm password." :
+    newPassword !== confirmPassword ? "New password and confirm password do not match!" :
+    null;
+
+
+
+    if (errorMessage) {
+      toast.error(errorMessage);
+      
       return;
     }
 
@@ -42,13 +50,15 @@ const ChangePassword: React.FC = () => {
     }
 
     try {
-      await dispatch(
+      const response = await dispatch(
         changePassword({
           email: user.email,
           existingPassword,
           newPassword,
         })
       ).unwrap();
+      console.log("response", response);
+      debugger;
       toast.success("Password updated successfully!");
       navigate("/");
       window.location.reload();
@@ -56,10 +66,10 @@ const ChangePassword: React.FC = () => {
       toast.error(error as string);
     }
   };
-  
 
   return (
     <PageContainer>
+      <Toaster position="top-right" />
       <ChangePasswordCard>
         <IllustrationSection>
           <img
@@ -80,28 +90,25 @@ const ChangePassword: React.FC = () => {
             name="existingPassword"
             value={existingPassword}
             onChange={(e) => setExistingPassword(e.target.value)}
-           />
-         
+          />
+
           <PasswordInput
             label="New Password"
             name="newPassword"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
-           />
+          />
           <PasswordInput
             label="Confirm Password"
             name="confirmPassword"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-           />
-          <StyledButton
-            variant="contained"
-            onClick={handleChangePassword}
-          >Change Password
+          />
+          <StyledButton variant="contained" onClick={handleChangePassword}>
+            Change Password
           </StyledButton>
         </FormSection>
       </ChangePasswordCard>
-      <Toaster />
     </PageContainer>
   );
 };

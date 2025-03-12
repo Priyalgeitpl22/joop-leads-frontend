@@ -24,6 +24,7 @@ import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import { useDispatch } from "react-redux";
 import {
   ContactsAccount,
+  CreateCampaignWithContacts,
   DeactivateContacts,
   getCampaignListById,
   SearchContacts,
@@ -103,8 +104,20 @@ const ContactTable: React.FC = () => {
     setEmailFieldsToBeAdded(data);
   };
 
-  const handleCreateCampaign = () => {
-    console.log("Working");
+  const handleCreateCampaign = async () => {
+    if (selectedIds.length > 0) {
+
+      try {
+        debugger
+        const response = await dispatch(CreateCampaignWithContacts(selectedIds)).unwrap();
+        const campaignId = response.campaignId;
+        navigate(`/email-campaign/new-campaign?campaignId=${campaignId}`);
+      } catch (error) {
+        toast.error("Something went wrong with create contacts.");
+      }
+    } else {
+      toast.error("No contacts selected for create contacts");
+    }
   };
 
   const columns: GridColDef[] = useMemo(
@@ -245,19 +258,16 @@ const ContactTable: React.FC = () => {
 
       try {
         const response = await dispatch(DeactivateContacts(selectedIds)).unwrap();
-        console.log("responsse", response);
         if (response?.code === 200) {
-          console.log("responseeee", response.payload?.code);
-          toast.success(response?.message || "Contacts have been deactivated successfully.");
+       toast.success(response?.message || "Contacts have been deactivated successfully.");
         } else {
           toast.error("Failed to deactivate contacts.");
         }
         setSelectedIds([]);
         setRowSelectionModel([])
-        
+
         await getFetchAllContacts();
       } catch (error) {
-        console.error("Active Deactivate failed:", error);
         toast.error("Something went wrong while deactivating contacts.");
       }
     } else {

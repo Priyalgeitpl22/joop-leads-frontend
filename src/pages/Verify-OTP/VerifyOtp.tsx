@@ -29,7 +29,6 @@ const VerifyOtp = () => {
   const navigate = useNavigate();
   const [otpSubmitted, setOtpSubmitted] = useState<boolean>(false);
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
-
   useEffect(() => {
     if (isTimerRunning && timer > 0) {
       const interval = setInterval(() => {
@@ -103,6 +102,9 @@ const VerifyOtp = () => {
   }, [otpSubmitted, dispatch, email, otp, navigate]);
 
   return (
+    <>
+    <Toaster/>
+   
     <PageContainer>
       <VerifyCard>
         <IllustrationSection>
@@ -150,8 +152,8 @@ const VerifyOtp = () => {
       </VerifyCard>
 
       {isLoading && <Loader />}
-      <Toaster />
-    </PageContainer>
+      </PageContainer>
+    </>
   );
 };
 

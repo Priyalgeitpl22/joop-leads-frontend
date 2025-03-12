@@ -61,7 +61,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
       fullWidth
       InputProps={{
         readOnly: readOnly,
-        endAdornment: (
+        endAdornment: value && (
           <InputAdornment position="end">
             <IconButton onClick={togglePasswordVisibility} edge="end">
               {showPassword ? <Visibility /> : <VisibilityOff />}
@@ -74,3 +74,5 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
 };
 
 export default PasswordInput;
+
+
