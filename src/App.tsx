@@ -13,7 +13,6 @@ import Home from "./pages/Home/Home";
 import NewCampaign from "./pages/Email-Campaign/NewCampaign/NewCampaign";
 import theme from "./styles/theme";
 import { CustomAppTitle } from "./assets/Custom/customAppTitle";
-import { SidebarFooter } from "./assets/Custom/customSidebarFooter";
 import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserDetails } from "./redux/slice/userSlice";
@@ -123,7 +122,7 @@ export default function DashboardLayoutBasic() {
                 <UserProfileMenu />
               </>
             ),
-            sidebarFooter: SidebarFooter,
+            
           }}
         >
           <PageContainer
