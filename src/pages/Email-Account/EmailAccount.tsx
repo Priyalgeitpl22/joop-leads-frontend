@@ -116,7 +116,7 @@ const EmailAccounts: React.FC = () => {
         renderCell: (params) => (
           <CustomTableCell>
             <ModeEditOutlineOutlinedIcon
-              onClick={() => handleEditEmailAccount(params.row)}
+              onClick={() => handleEditEmailAccount(params.row.id)}
               sx={{ cursor: "pointer" }}
             />
           </CustomTableCell>
@@ -140,18 +140,18 @@ const EmailAccounts: React.FC = () => {
       const data = await dispatch(fetchEmailAccount()).unwrap();
       setTimeout(() => {
         setLoading(false);
+        const mappedRows = data.map((account: { _id: any; }) => ({
+          ...account,
+          id: account._id,
+        }));
+        console.log("Mapped Rows:", mappedRows);
         setEmailAccounts(data);
-        setRows(data);
+        setRows(mappedRows);
       }, 1000);
-      
     } catch (error) {
-      setTimeout(() => {
-        setLoading(false);
-      }, 1000);
-      
-      console.error("Failed to fetch Account:", error);
+      setLoading(false);
     }
-  };  
+  };
 
   const handleSearch = async (query: string) => {
     try {
@@ -194,9 +194,14 @@ const EmailAccounts: React.FC = () => {
 
   const isMenuOpen = Boolean(anchorEl);
 
-  const handleEditEmailAccount = (_row: any) => {
-    navigate('/email-account/edit-email-account')
-  }
+  const handleEditEmailAccount = (id: string) => {
+    if (!id) {
+      console.warn("No ID found for this email account");
+      return;
+    }
+    navigate(`/email-account/edit-email-account/${id}`);
+    console.log("Navigating to:", `/email-account/edit-email-account/${id}`);
+  };
 
   console.log("Loader", loading)
 

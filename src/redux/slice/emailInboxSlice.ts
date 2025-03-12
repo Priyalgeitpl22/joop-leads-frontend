@@ -78,12 +78,17 @@ export const getAllMailBox = createAsyncThunk(
 export const getAllAccountMailBox = createAsyncThunk(
   "emailInbox/getAllAccountMailBox",
   async (
-    { accountId, mailBoxId }: { accountId: string; mailBoxId: string },
+    {
+      accountId,
+      mailBoxId,
+      page = 1,
+      limit = 989,
+    }: { accountId: string; mailBoxId: string; page?: number; limit?: number },
     { rejectWithValue }
   ) => {
     try {
       const response = await emailApi.get(
-        `/accounts/${accountId}/${mailBoxId}/messages`
+        `/accounts/${accountId}/${mailBoxId}/messages?page=${page}&limit=${limit}`
       );
       return response.data;
     } catch (error: any) {
@@ -151,7 +156,7 @@ const emailInboxSlice = createSlice({
       })
       .addCase(getAllAccountMailBox.fulfilled, (state, action) => {
         state.loading = false;
-        state.mailboxMessages = action.payload;
+        state.mailboxMessages = action.payload.data?.messages || [];
       })
       .addCase(getAllAccountMailBox.rejected, (state, action) => {
         state.loading = false;

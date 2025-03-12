@@ -8,15 +8,12 @@ import EditGeneralEmailAccount from "./EditGeneralEmailAccount";
 import EditCampaignEmailAccount from "./EditCampaignEmailAccount";
 import EditWarmupEmailAccount from "./EditWarmupEmailAccount";
 
-const EditEmailAccount = () => {
+const EditEmailAccount = ({ id }: { id?: string }) => {
   const [activeTab, setActiveTab] = useState<string>("general");
+  console.log("EditEmailAccount ID:", id);
 
   const handleTabChange = (_: any, newValue: SetStateAction<string>) => {
-    const validTabs = [
-      "general",
-      "warmUp",
-      "campaign",
-    ];
+    const validTabs = ["general", "warmUp", "campaign"];
     setActiveTab(validTabs.includes(newValue as string) ? newValue : "general");
   };
 
@@ -34,12 +31,12 @@ const EditEmailAccount = () => {
       >
         <CustomTab label="General" value="general" />
         <CustomTab label="Warm Up" value="warmUp" />
-        <CustomTab label="Campaign" value="campaign" />
+        {/* <CustomTab label="Campaign" value="campaign" /> */}
       </CustomTabs>
 
-      {activeTab === "general" && (<EditGeneralEmailAccount/>)}
-      {activeTab === "warmUp" && (<EditWarmupEmailAccount/>)}
-      {activeTab === "campaign" && (<EditCampaignEmailAccount/>)}
+      {activeTab === "general" && <EditGeneralEmailAccount id={id}/>}
+      {activeTab === "warmUp" && <EditWarmupEmailAccount />}
+      {activeTab === "campaign" && <EditCampaignEmailAccount />}
     </ContentContainer>
   );
 };

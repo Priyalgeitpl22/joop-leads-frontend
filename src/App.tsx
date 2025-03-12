@@ -30,6 +30,7 @@ import VerifyOtp from "./pages/Verify-OTP/VerifyOtp";
 import UserProfileMenu from "./assets/Custom/customUserProfile";
 import ContactTable from "./pages/Contacts/ContactTable";
 import EditEmailAccount from "./pages/Email-Account/EditEmailAccount/EditEmailAccount";
+import ViewEmailCampaign from "./pages/Email-Campaign/ViewEmailCampaign/ViewEmailCampaign";
 
 const UNPROTECTED_ROUTES = [
   "/login",
@@ -138,9 +139,13 @@ export default function DashboardLayoutBasic() {
               <EmailCampaign router={router} />
             )}
             {router.pathname === "/email-accounts" && <EmailAccount />}
-            {router.pathname === "/email-account/edit-email-account" && (
-              <EditEmailAccount/>
-            )}
+            {/* {router.pathname === "/email-account/edit-email-account/:id" && (
+              <EditEmailAccount />
+            )} */}
+            {router.pathname.startsWith(
+              "/email-account/edit-email-account/"
+            ) && <EditEmailAccount id={router.pathname.split("/").pop()} />}
+            {router.pathname.startsWith("/email-campaign/view-email-campaign") && <ViewEmailCampaign/>}
             {router.pathname === "/inbox" && <EmailInboxs />}
             {router.pathname === "/leads" && <Leads />}
             {router.pathname === "/chats" && <Chats />}

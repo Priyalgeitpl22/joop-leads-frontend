@@ -72,7 +72,8 @@ export const PlaceholderContainer = styled(Box)({
 export const EmailInboxMessagesContainer = styled(Box)`
   flex: 1;
   overflow-y: auto; /* Enables vertical scrolling */
-  height: calc(100vh - 60px); /* Adjust height based on header/footer */
+  // height: calc(100vh - 60px); /* Adjust height based on header/footer */
+  height: "100%";
   padding: 20px;
   scrollbar-width: thin; /* Firefox */
   scrollbar-color: #c1c1c1 transparent;

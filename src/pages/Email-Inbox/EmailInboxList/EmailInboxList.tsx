@@ -7,16 +7,12 @@ import {
   resetMailboxes,
 } from "../../../redux/slice/emailInboxSlice";
 import { Search } from "lucide-react";
-import ReplayIcon from "@mui/icons-material/Replay";
-import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
-import SortOutlinedIcon from "@mui/icons-material/SortOutlined";
 // import { SearchBar } from "../../components/Header/header.styled";
 import { SearchBar } from "../../../components/Header/header.styled";
 import {
   EmailInboxListContainer,
   EmailInboxListHeader,
   HeaderTitle,
-  HeaderIcons,
   AccountList,
   AccountItem,
   AccountAvatar,
@@ -104,11 +100,6 @@ const EmailInboxList: React.FC = () => {
 
       <EmailInboxListHeader>
         <HeaderTitle>Inbox</HeaderTitle>
-        <HeaderIcons>
-          <ReplayIcon fontSize="small" />
-          <FilterAltOutlinedIcon fontSize="small" />
-          <SortOutlinedIcon fontSize="small" />
-        </HeaderIcons>
       </EmailInboxListHeader>
       <AccountList>
         {rows.length > 0 ? (

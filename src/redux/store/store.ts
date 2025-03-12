@@ -7,6 +7,7 @@ import chatsReducer from "../slice/chatSlice";
 import authReducer from "../slice/authSlice";
 import contactReducer from "../slice/contactSlice";
 import emailInboxReducer from "../slice/emailInboxSlice";
+import emailAccountReducer from "../slice/emailAccountSlice"
 
 export const store = configureStore({
   reducer: {
@@ -18,6 +19,7 @@ export const store = configureStore({
     auth: authReducer,
     contact:contactReducer,
     emailInbox: emailInboxReducer,
+    emailAccount: emailAccountReducer,
   },
 });
 

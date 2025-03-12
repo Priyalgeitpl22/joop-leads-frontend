@@ -48,7 +48,7 @@ function Login() {
               await dispatch(getUserDetails(token)).unwrap();
             }
 
-            window.location.assign("/");
+            window.location.assign("/dashboard");
           } else {
             toast.error(response?.message);
           }
