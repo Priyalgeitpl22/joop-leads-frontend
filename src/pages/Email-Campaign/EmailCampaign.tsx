@@ -15,6 +15,7 @@ import {
   FormControl,
   InputLabel,
   Select,
+  Tooltip,
 } from "@mui/material";
 import {
   ContentContainer,
@@ -46,6 +47,7 @@ import ErrorOutlinedIcon from "@mui/icons-material/ErrorOutlined";
 import AttachMoneyOutlinedIcon from "@mui/icons-material/AttachMoneyOutlined";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
 import { TableIcons, TableItem } from "../../styles/layout.styled";
+import { GridDeleteIcon } from "@mui/x-data-grid";
 interface EmailCampaignProps {
   router?: any;
 }
@@ -332,20 +334,32 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
                       </CustomTableCell>
                     ))}
                     <CustomTableCell>
-                      <ModeEditOutlineOutlinedIcon/>
+                      <Box
+                        sx={{ display: "flex", gap: 3, alignItems: "center" }}
+                      >
+                        <Tooltip title="Edit">
+                          <ModeEditOutlineOutlinedIcon />
+                        </Tooltip>
+                        <Tooltip title="Delete">
+                          <GridDeleteIcon />
+                        </Tooltip>
+                      </Box>
                     </CustomTableCell>
                   </CustomTableRow>
                 </CustomTableBody>
               ))
             ) : (
-              <Paper className="data-grid-container" sx={{width: "150%"}}>
+              <Paper className="data-grid-container" sx={{ width: "150%" }}>
                 <div
-                style={{ padding: "20px", textAlign: "center", color: "#888" }}
+                  style={{
+                    padding: "20px",
+                    textAlign: "center",
+                    color: "#888",
+                  }}
                 >
                   No Campaign found
                 </div>
-                    
-                  </Paper>
+              </Paper>
             )}
           </Table>
         </TableContainer>
