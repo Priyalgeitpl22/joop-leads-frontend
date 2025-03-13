@@ -28,6 +28,29 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [columns, setColumns] = useState<string[]>([]);
   const [csvData, setCSVData] = useState<any[]>([]);
+  // const dispatch = useDispatch<AppDispatch>();
+
+  // useEffect(() => {
+  //   debugger
+  //   const params = new URLSearchParams(location.search);
+  //   const campaignId = params.get("id");
+
+  //   if (campaignId) {
+  //     fetchCampaignDetails(campaignId);
+  //   }
+  // }, [dispatch]);
+
+  // const fetchCampaignDetails = async (id: string) => {
+  //   try {
+  //     const response = await dispatch(getCampaignById(id)).unwrap();
+  //     const campaign = response.campaign;
+  //     return response.campaign;
+
+  //   } catch (error) {
+  //     console.error("Error fetching campaign:", error);
+  //     return null;
+  //   }
+  // };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -132,6 +155,15 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
               Upload your CSV files to import leads.
             </CustomDialogFooter>
           </FileUploadContainer>
+          {/* <ViewImportedCsvFile handleLeadsData={function (data: ImportedLeadsData): void {
+              throw new Error("Function not implemented.");
+            } } handleCSVUpload={function (data: any): void {
+              throw new Error("Function not implemented.");
+            } } saveCSVSetting={function (data: any): void {
+              throw new Error("Function not implemented.");
+            } } setIsNextDisabled={function (status: boolean): void {
+              throw new Error("Function not implemented.");
+            } }/> */}
         </>
       )}
 

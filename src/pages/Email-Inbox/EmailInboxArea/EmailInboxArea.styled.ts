@@ -1,5 +1,5 @@
 import { styled } from "@mui/material/styles";
-import { Box, Typography, Button } from "@mui/material";
+import { Box, Typography, Button, Pagination } from "@mui/material";
 
 export const EmailInboxContainer = styled(Box)({
   flex: 1,
@@ -133,4 +133,14 @@ export const EmailInboxMessagesHeading = styled(Box)({
   borderRadius: "8px",
   padding: "10px",
   marginBottom: "10px",
+});
+
+export const EmailPagination = styled(Pagination)({
+  "& .Mui-selected": {
+    backgroundColor: "var(--theme-color) !important",
+    color: "#fff !important",
+  },
+  "& .MuiPaginationItem-root:hover": {
+    backgroundColor: "rgba(0, 0, 0, 0.1)",
+  },
 });

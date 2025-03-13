@@ -33,18 +33,12 @@ const EmailInboxSideBar = () => {
   const handleMailboxClick = (mailbox: { _id: string }) => {
     if (!selectedAccountId) return;
     dispatch(setSelectedMailbox(mailbox._id));
-    // dispatch(
-    //   getAllAccountMailBox({
-    //     accountId: selectedAccountId,
-    //     mailBoxId: mailbox._id,
-    //   })
-    // );
     dispatch(
       getAllAccountMailBox({
         accountId: selectedAccountId,
         mailBoxId: mailbox._id,
         page: 1,
-        limit: 10,
+        limit: 5,
       })
     );
   };
@@ -66,18 +60,12 @@ const EmailInboxSideBar = () => {
     if (uniqueMailboxes.length > 0 && selectedAccountId && !selectedMailboxId) {
       const firstMailbox = uniqueMailboxes[0];
       dispatch(setSelectedMailbox(firstMailbox._id));
-      // dispatch(
-      //   getAllAccountMailBox({
-      //     accountId: selectedAccountId,
-      //     mailBoxId: firstMailbox._id,
-      //   })
-      // );
       dispatch(
         getAllAccountMailBox({
           accountId: selectedAccountId,
           mailBoxId: firstMailbox._id,
           page: 1,
-          limit: 10,
+          limit: 5,
         })
       );
     }

@@ -23,12 +23,13 @@ export interface Message {
 }
 
 interface EmailInboxState {
-  mailboxMessages: any;
+  mailboxMessages: Message[];
   accounts: Account[];
   mailboxes: Mailbox[];
-  messages: Message[];
   selectedAccountId: string | null;
   selectedMailboxId: string | null;
+  currentPage: number;
+  totalMessages: number;
   loading: boolean;
   error: string | null;
 }
@@ -36,12 +37,13 @@ interface EmailInboxState {
 const initialState: EmailInboxState = {
   accounts: [],
   mailboxes: [],
-  messages: [],
+  mailboxMessages: [],
   selectedAccountId: null,
   selectedMailboxId: null,
+  currentPage: 1,
+  totalMessages: 0,
   loading: false,
   error: null,
-  mailboxMessages: []
 };
 
 export const getAllChats = createAsyncThunk(
@@ -82,7 +84,7 @@ export const getAllAccountMailBox = createAsyncThunk(
       accountId,
       mailBoxId,
       page = 1,
-      limit = 10,
+      limit = 5,
     }: { accountId: string; mailBoxId: string; page?: number; limit?: number },
     { rejectWithValue }
   ) => {
@@ -90,7 +92,13 @@ export const getAllAccountMailBox = createAsyncThunk(
       const response = await emailApi.get(
         `/accounts/${accountId}/${mailBoxId}/messages?page=${page}&limit=${limit}`
       );
-      return response.data;
+
+
+      return {
+        messages: response.data?.data?.messages || [], 
+        totalMessages: response.data?.data?.totalMessages || 0,
+        currentPage: Number(response.data?.data?.currentPage) || 1,
+      };
     } catch (error: any) {
       console.error("API Error:", error);
       return rejectWithValue(error.response?.data?.message || "Network error");
@@ -106,13 +114,16 @@ const emailInboxSlice = createSlice({
     setSelectedAccount: (state, action: PayloadAction<string | null>) => {
       state.selectedAccountId = action.payload;
       state.mailboxes = [];
-      state.messages = [];
+      state.mailboxMessages = [];
+    },
+    setCurrentPage: (state, action: PayloadAction<number>) => {
+      state.currentPage = action.payload;
     },
 
     // Store selected mailbox & clear previous messages
     setSelectedMailbox: (state, action: PayloadAction<string | null>) => {
       state.selectedMailboxId = action.payload;
-      state.messages = [];
+      state.mailboxMessages = [];
     },
     resetMailboxes: (state) => {
       state.mailboxes = [];
@@ -149,14 +160,15 @@ const emailInboxSlice = createSlice({
         state.error = action.payload as string;
       })
 
-      // Fetch Messages
       .addCase(getAllAccountMailBox.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(getAllAccountMailBox.fulfilled, (state, action) => {
         state.loading = false;
-        state.mailboxMessages = action.payload.data?.messages || [];
+        state.mailboxMessages = action.payload.messages;
+        state.totalMessages = action.payload?.totalMessages || 0;
+        state.currentPage = action.payload?.currentPage || 1;
       })
       .addCase(getAllAccountMailBox.rejected, (state, action) => {
         state.loading = false;
@@ -165,6 +177,11 @@ const emailInboxSlice = createSlice({
   },
 });
 
-export const { setSelectedAccount, setSelectedMailbox ,resetMailboxes} =
-  emailInboxSlice.actions;
+  export const {
+    setSelectedAccount,
+    setSelectedMailbox,
+    resetMailboxes,
+    setCurrentPage,
+  } = emailInboxSlice.actions;
+
 export default emailInboxSlice.reducer;

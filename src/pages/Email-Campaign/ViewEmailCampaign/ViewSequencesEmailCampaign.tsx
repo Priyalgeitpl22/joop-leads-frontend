@@ -6,7 +6,14 @@ import {
   EmailCampaignContainer,
 } from "./../EmailCampaign.styled";
 import { Button2 } from "../../../styles/layout.styled";
+import { useNavigate } from "react-router-dom";
 const ViewSequencesEmailCampaign = () => {
+  const navigate = useNavigate();
+
+  const handleAddSequence = () => {
+    navigate("/email-campaign/new-campaign")
+  }
+
   return (
     <EmailCampaignContainer>
       <motion.div
@@ -44,6 +51,7 @@ const ViewSequencesEmailCampaign = () => {
               style={{ width: "40%" }}
               color={""}
               background={""}
+              onClick={handleAddSequence}
             >
               Add Sequences
             </Button2>

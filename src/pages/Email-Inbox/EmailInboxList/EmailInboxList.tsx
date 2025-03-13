@@ -5,9 +5,10 @@ import {
   getAllMailBox,
   setSelectedAccount,
   resetMailboxes,
+  setSelectedMailbox,
+  getAllAccountMailBox,
 } from "../../../redux/slice/emailInboxSlice";
 import { Search } from "lucide-react";
-// import { SearchBar } from "../../components/Header/header.styled";
 import { SearchBar } from "../../../components/Header/header.styled";
 import {
   EmailInboxListContainer,
@@ -26,8 +27,7 @@ const EmailInboxList: React.FC = () => {
   const accounts = useSelector((state: RootState) => state.emailInbox.accounts);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [rows, setRows] = useState<any[]>([]);
-  const [emailAccounts, setEmailAccounts] = useState<EmailAccount[]>([]);
-  
+  const [emailAccounts, setEmailAccounts] = useState<EmailAccount[]>([])
   const selectedAccountId = useSelector(
     (state: RootState) => state.emailInbox.selectedAccountId
   );
@@ -40,10 +40,22 @@ const EmailInboxList: React.FC = () => {
     }
   }, [accounts, selectedAccountId, dispatch]);
 
-  const handleAccountClick = (accountId: string) => {
+  const handleAccountClick = async (accountId: string) => {
     dispatch(resetMailboxes());
     dispatch(setSelectedAccount(accountId));
-    dispatch(getAllMailBox(accountId));
+    const response = await dispatch(getAllMailBox(accountId)).unwrap();
+    if (response.length > 0) {
+      const firstMailbox = response[0];
+      dispatch(setSelectedMailbox(firstMailbox._id));
+      dispatch(
+        getAllAccountMailBox({
+          accountId,
+          mailBoxId: firstMailbox._id,
+          page: 1,
+          limit: 5,
+        })
+      );
+    }
   };
 
   useEffect(() => {
@@ -89,19 +101,26 @@ const EmailInboxList: React.FC = () => {
 
   return (
     <EmailInboxListContainer>
-      <SearchBar>
-        <Search size={20} />
-        <input
-          placeholder="Search by Email or Name"
-          value={searchQuery}
-          onChange={handleSearchChange}
-        />
-      </SearchBar>
+      <div
+        style={{ position: "sticky", top: 0, background: "#fff", zIndex: 10 }}
+      >
+        <SearchBar>
+          <Search size={20} />
+          <input
+            placeholder="Search by Email or Name"
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
+        </SearchBar>
 
-      <EmailInboxListHeader>
-        <HeaderTitle>Inbox</HeaderTitle>
-      </EmailInboxListHeader>
-      <AccountList>
+        <EmailInboxListHeader>
+          <HeaderTitle>Inbox</HeaderTitle>
+        </EmailInboxListHeader>
+      </div>
+
+      <AccountList
+        style={{ overflowY: "auto", maxHeight: "calc(100vh - 120px)" }}
+      >
         {rows.length > 0 ? (
           rows.map((account) => (
             <AccountItem

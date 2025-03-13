@@ -87,7 +87,7 @@ const CustomTable = () => {
         <CustomTableBody>
           {tableData.map((row, index) => (
             <React.Fragment key={index}>
-              <div>
+              <TableRow>
                 <CustomTableCell>
                   <LeadInfo>
                     <Checkbox />
@@ -114,7 +114,7 @@ const CustomTable = () => {
                 <CustomTableCell>
                   <strong>{row.status}</strong>
                 </CustomTableCell>
-              </div>
+              </TableRow>
             </React.Fragment>
           ))}
         </CustomTableBody>

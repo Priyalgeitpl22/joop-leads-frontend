@@ -35,7 +35,7 @@ interface ScheduleCampaignProps {
   onClose: () => void;
   campaignId?: string;
   handleSave: (data: any) => void;
-  campaignSchedule: any;
+  campaignSchedule?: any;
 }
 
 const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({

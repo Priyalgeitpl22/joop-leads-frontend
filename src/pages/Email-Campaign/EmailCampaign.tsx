@@ -34,10 +34,7 @@ import FolderOpenOutlinedIcon from "@mui/icons-material/FolderOpenOutlined";
 import EmailCampaignDialog from "./EmailCampaignDialog/AddEmailCampaignDialog";
 import { Search } from "lucide-react";
 import { useDispatch } from "react-redux";
-import {
-  fetchEmailCampaigns,
-  SearchEmailCampaign,
-} from "../../redux/slice/emailCampaignSlice";
+import { DeleteEmailCampaign, fetchEmailCampaigns, SearchEmailCampaign } from "../../redux/slice/emailCampaignSlice";
 import { AppDispatch } from "../../redux/store/store";
 import { IEmailCampaign } from "./NewCampaign/interfaces";
 import { formatDate } from "../../utils/utils";
@@ -161,6 +158,17 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
 
   const handleEditCampaign = (id: string) => {
     navigate(`email-campaign/new-campaign?edit&id=${id}`);
+  }
+
+  const handleCampaignDelete = async (campaignId: string) => {
+    try {
+      const response = await dispatch(DeleteEmailCampaign(campaignId)).unwrap();
+      console.log("Campaign deleted successfully:", response);
+
+      await getAllEmailCampaigns();
+    } catch (error) {
+      console.error("Failed to delete campaign:", error);
+    }
   };
 
   return (
@@ -360,7 +368,9 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
                           />
                         </Tooltip>
                         <Tooltip title="Delete">
-                          <GridDeleteIcon />
+                          <GridDeleteIcon
+                            onClick={() => handleCampaignDelete(campaign.id)}
+                          />
                         </Tooltip>
                       </Box>
                     </CustomTableCell>

@@ -1,4 +1,4 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { api, emailApi } from "../../services/api";
 import { AxiosError } from "axios";
 import { CampaignSettingsPayload } from "../../pages/Email-Campaign/NewCampaign/SetupCampaign/Interface";
@@ -6,6 +6,11 @@ import Cookies from "js-cookie";
 
 const BASE_URL = "/email-campaign";
 const token = Cookies.get("access_token");
+interface Campaign {
+  id: string;
+  name: string;
+}
+
 
 export const fetchEmailCampaigns = createAsyncThunk(
   "emailCampaign/fetchAll",
@@ -219,3 +224,58 @@ export const SearchEmailCampaign = createAsyncThunk(
     }
   }
 );
+
+export const DeleteEmailCampaign = createAsyncThunk<
+  string,
+  string,
+  { rejectValue: string }
+>("emailCampaigns/deleteEmailCampaign", async (id, { rejectWithValue }) => {
+  try {
+    const response = await api.delete(`${BASE_URL}/delete?campaign_id=${id}`);
+    if (response.status !== 200) {
+      throw new Error("Failed to delete campaign");
+    }
+
+    return id;
+  } catch (error: unknown) {
+    let errorMessage = "Failed to delete campaign";
+    if (error instanceof AxiosError) {
+      errorMessage = error.response?.data?.message || errorMessage;
+    }
+    return rejectWithValue(errorMessage);
+  }
+});
+
+
+const emailCampaignSlice = createSlice({
+  name: "emailCampaigns",
+  initialState: {
+    campaigns: [] as Campaign[],
+    loading: false,
+    error: null as string | null,
+  },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchEmailCampaigns.fulfilled, (state, action) => {
+        state.campaigns = action.payload;
+      })
+      .addCase(DeleteEmailCampaign.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(DeleteEmailCampaign.fulfilled, (state, action) => {
+        state.loading = false;
+        if (action.payload) {
+          state.campaigns = state.campaigns.filter(
+            (campaign) => campaign.id !== action.payload
+          );
+        }
+      })
+      .addCase(DeleteEmailCampaign.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
+  },
+});
+
+export default emailCampaignSlice.reducer;

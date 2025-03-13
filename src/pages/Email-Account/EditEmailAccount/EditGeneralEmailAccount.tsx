@@ -9,9 +9,10 @@ import Grid2 from "@mui/material/Grid2";
 import { Button2, TextField, InputLabel } from "../../../styles/layout.styled";
 import ReactQuill from "react-quill";
 import {
-  CreateEmailAccount,
-  CreateEmailAccountPayload,
+  addOuthEmailAccount,
+  addOutlookEmailAccount,
   getEmailAccountSmtpDetail,
+  updateEmailAccountSmtpDetail,
   verifyEmailAccount,
   VerifyEmailAccountPayload,
 } from "../../../redux/slice/emailAccountSlice";
@@ -52,6 +53,7 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
 
   const [isSaveDisabled, setIsSaveDisabled] = useState(true);
   const [isVerified, setIsVerified] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -135,7 +137,8 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
       proxy: null,
       smtpEhloName: "localhost",
     };
-
+    setLoading(true);
+    console.log("Loader", loading)
     dispatch(verifyEmailAccount(payload))
       .unwrap()
       .then(() => {
@@ -145,25 +148,18 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
       .catch(() => {
         setIsVerified(false);
         setIsSaveDisabled(true);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
-  const handleCreateAccount = () => {
-    const payload: CreateEmailAccountPayload = {
-      account: "smtp",
+  const handleUpdatAccount = () => {
+    if (!id) return;
+
+    const payload = {
       name: formData.fromName,
-      state: "init",
-      type: "imap",
       email: formData.fromEmail,
-      imap: {
-        host: formData.imapHost,
-        port: formData.imapPort,
-        secure: formData.imapSecurity,
-        auth: {
-          user: formData.imapUserName,
-          pass: formData.imapPassword,
-        },
-      },
       smtp: {
         host: formData.smtpHost,
         port: formData.smtpPort,
@@ -173,17 +169,51 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
           pass: formData.password,
         },
       },
-      proxy: null,
-      smtpEhloName: "localhost",
+      imap: {
+        host: formData.imapHost,
+        port: formData.imapPort,
+        secure: formData.imapSecurity,
+        auth: {
+          user: formData.imapUserName,
+          pass: formData.imapPassword,
+        },
+      },
+      replyToAddress: formData.replyToAddressChecked
+        ? formData.replyToAddress
+        : "",
+      bccEmail: formData.bccEmail,
+      trackingDomain: formData.trackingDomainChecked
+        ? formData.trackingDomainChecked
+        : false,
+      tags: formData.tags,
+      clients: formData.clients,
+      signature: formData.signature,
+      messagePerDay: formData.messagePerDay,
+      timeGap: formData.timeGap,
+      type: formData.type,
     };
 
-    dispatch(CreateEmailAccount(payload))
+    dispatch(updateEmailAccountSmtpDetail({ id, data: payload }))
       .unwrap()
       .then(() => {
-        
+        console.log("account updated successfully")
       })
-      .catch(() => {});
+      .catch((error) => {
+        console.log("Failed to update email account: " + error);
+      });
   };
+
+  const handleGoogleAccount = async () =>{
+    const response = await dispatch(addOuthEmailAccount()).unwrap();
+    if(response){
+    window.location.href=response}
+  }
+
+  const handleOutlookAccount = async () =>{
+    const response = await dispatch(addOutlookEmailAccount()).unwrap();
+    if(response){
+    window.location.href=response}
+  }
 
   return (
     <div style={{ padding: "3%" }}>
@@ -409,7 +439,7 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
             <Grid2 size={{ xs: 3, sm: 3 }}>
               <Button2
                 disabled={isSaveDisabled}
-                onClick={handleCreateAccount}
+                onClick={handleUpdatAccount}
                 color={isSaveDisabled ? "black" : "white"}
                 background={isSaveDisabled ? "#d3d3d3" : "var(--theme-color)"}
                 style={{
@@ -424,7 +454,7 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
         </div>
       )}
 
-      {formData.type === "gmail" && (
+      {(formData.type === "gmail" || formData.type === "outlook") && (
         <div>
           <b>
             <div>SMTP Settings (sending emails)</div>
@@ -479,14 +509,25 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
               </label>
             </Grid2>
             <Grid2 size={{ xs: 10, sm: 10 }}>
-              <Button2
-                // onClick={handleVerifyAccount}
-                color={"white"}
-                background={"var(--theme-color)"}
-                style={{ cursor: "pointer" }}
-              >
-                Reconnect
-              </Button2>
+              {formData.type === "gmail" ? (
+                <Button2
+                  onClick={handleGoogleAccount}
+                  color={"white"}
+                  background={"var(--theme-color)"}
+                  style={{ cursor: "pointer", width: "20%" }}
+                >
+                  Reconnect
+                </Button2>
+              ) : (
+                <Button2
+                  onClick={handleOutlookAccount}
+                  color={"white"}
+                  background={"var(--theme-color)"}
+                  style={{ cursor: "pointer", width: "20%" }}
+                >
+                  Reconnect
+                </Button2>
+              )}
             </Grid2>
           </Grid2>
         </div>

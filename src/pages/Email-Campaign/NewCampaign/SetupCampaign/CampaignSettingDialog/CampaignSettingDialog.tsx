@@ -15,7 +15,7 @@ interface SettingCampaignProps {
   onClose: () => void;
   campaignId?: string;
   handleSave: (data: any) => void
-  campaignSetting: any;
+  campaignSetting?: any;
 }
 
 const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({

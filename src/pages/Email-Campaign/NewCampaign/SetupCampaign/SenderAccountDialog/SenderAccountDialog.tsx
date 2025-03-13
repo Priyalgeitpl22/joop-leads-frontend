@@ -27,7 +27,7 @@ interface SenderAccountDialogProps {
   onClose: () => void;
   campaignId?: string;
   handleSave: (data: any) => void;
-  senderAccounts: any;
+  senderAccounts?: any;
 }
 
 const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
