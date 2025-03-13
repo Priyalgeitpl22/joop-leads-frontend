@@ -3,8 +3,10 @@ import {
   Stack,
   Divider,
   Typography,
+  IconButton,
 } from "@mui/material";
 import EmailIcon from "@mui/icons-material/Email";
+import CloseIcon from "@mui/icons-material/Close";
 import PhoneIcon from "@mui/icons-material/Phone";
 import BusinessIcon from "@mui/icons-material/Business";
 import PersonIcon from "@mui/icons-material/Person";
@@ -19,7 +21,7 @@ import {
   SectionTitle,
   ContactCard,
   CampaignCard,
-} from "./ViewDrawer.styled"; 
+} from "./ViewDrawer.styled";
 
 interface ViewDrawerProps {
   open: boolean;
@@ -32,15 +34,13 @@ const ViewDrawer: React.FC<ViewDrawerProps> = ({ open, onClose }) => {
 
   return (
     <StyledDrawer anchor="right" open={open} onClose={onClose}>
-  
-      <TitleContainer>
-      <Title>Contact Details</Title>
-      </TitleContainer>
-
-      {/* <Divider sx={{ my: 2 }} /> */}
-
-      
       <ContactCard>
+        <TitleContainer>
+          <Title>Contact Details</Title>
+        </TitleContainer>
+        <IconButton onClick={onClose} sx={{ ml: "auto" }}>
+          <CloseIcon />
+        </IconButton>
         <Stack spacing={1.5}>
           <Typography>
             <PersonIcon sx={{ verticalAlign: "middle", mr: 1 }} />
@@ -86,7 +86,7 @@ const ViewDrawer: React.FC<ViewDrawerProps> = ({ open, onClose }) => {
         </>
       ) : null}
 
-         </StyledDrawer>
+    </StyledDrawer>
   );
 };
 

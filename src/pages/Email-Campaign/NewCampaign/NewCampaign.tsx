@@ -72,18 +72,17 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
     setSelectedFile(file);
   };
 
-  React.useEffect(()=> {
+  React.useEffect(() => {
     const params = new URLSearchParams(location.search);
     const campaignId = params.get("campaignId");
 
-    if(campaignId) {
+    if (campaignId) {
       setActiveStep(1);
       setCampaignId(campaignId);
     }
-  },[])
+  }, [])
 
   const handleLeadsData = (data: ImportedLeadsData) => {
-    debugger
     setEmailFieldsToBeAdded(data);
   };
 

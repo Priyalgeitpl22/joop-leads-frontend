@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { IconButton, InputAdornment, styled, TextField } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { validatePassword } from "./Validation";
 
 interface PasswordInputProps {
   name?: string;
@@ -12,7 +13,7 @@ interface PasswordInputProps {
   error?: boolean;
   helperText?: string;
   required?: boolean;
-  readOnly?: boolean; 
+  readOnly?: boolean;
   fullWidth?: boolean;
 }
 
@@ -38,11 +39,22 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
   label,
   value,
   onChange,
-  error,
-  helperText,
   readOnly = false,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newPassword = e.target.value;
+    onChange(e);
+
+    if (!validatePassword(newPassword)) {
+      setPasswordError(
+        "Password must be at least 8 characters long, with 1 uppercase, 1 lowercase, 1 number, and 1 special character."
+      );
+    } else {
+      setPasswordError(null);
+    }
+  };
 
   const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
@@ -53,10 +65,10 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
       variant="outlined"
       type={showPassword ? "text" : "password"}
       value={value}
-      onChange={onChange}
+      onChange={handleChange}
       autoComplete="new-password"
-      error={error}
-      helperText={helperText}
+      error={!!passwordError}
+      helperText={passwordError}
       required
       fullWidth
       InputProps={{
@@ -74,5 +86,3 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
 };
 
 export default PasswordInput;
-
-

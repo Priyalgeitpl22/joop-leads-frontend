@@ -108,7 +108,6 @@ const ContactTable: React.FC = () => {
     if (selectedIds.length > 0) {
 
       try {
-        debugger
         const response = await dispatch(CreateCampaignWithContacts(selectedIds)).unwrap();
         const campaignId = response.campaignId;
         navigate(`/email-campaign/new-campaign?campaignId=${campaignId}`);
@@ -149,7 +148,7 @@ const ContactTable: React.FC = () => {
       {
         field: "createdAt",
         headerName: "Uploaded Date",
-        width: 180,
+        width: 150,
         valueGetter: (params: any) => (params ? formatDate(params) : "N/A"),
       },
       {
@@ -259,7 +258,7 @@ const ContactTable: React.FC = () => {
       try {
         const response = await dispatch(DeactivateContacts(selectedIds)).unwrap();
         if (response?.code === 200) {
-       toast.success(response?.message || "Contacts have been deactivated successfully.");
+          toast.success(response?.message || "Contacts have been deactivated successfully.");
         } else {
           toast.error("Failed to deactivate contacts.");
         }

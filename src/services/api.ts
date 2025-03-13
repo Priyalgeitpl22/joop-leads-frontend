@@ -4,7 +4,7 @@ export const baseURL = import.meta.env.VITE_BASE_URL;
 // export const baseURL = "http://localhost:5003/api"
 
 export const api = axios.create({
-  baseURL: baseURL, 
+  baseURL: baseURL,
   headers: {
     "Content-Type": "application/json",
   },
