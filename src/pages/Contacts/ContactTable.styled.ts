@@ -31,7 +31,7 @@ export const ContactsHeader = styled.section`
 `;
 
 export const SectionTitle = styled.h2`
-  font-size: 2rem;
+  font-size: 24px;
   font-weight: 600;
   color: #35495c;
   display: flex;

@@ -7,7 +7,7 @@ import ContactPhoneIcon from "@mui/icons-material/ContactPhone";
 
 export const NAVIGATION: Navigation = [
   {
-    segment: "dashboard",
+    segment: "",
     title: "Dashboard",
     icon: <DashboardIcon style={{ color: "var(--icon-hover)" }} />,
   },

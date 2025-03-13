@@ -12,7 +12,6 @@ interface CustomDataTableProps {
   rowSelectionModel?: string[];
 }
 
-
 export const CustomDataTable: React.FC<CustomDataTableProps> = ({
   columns,
   rows,
@@ -20,8 +19,7 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
   handleRowSelection,
   rowSelectionModel, 
 }) => {
-  
-  
+
   const [paginationModel, setPaginationModel] =
   React.useState<GridPaginationModel>({
     page: 0,
@@ -32,7 +30,7 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
     <Box>
       <Paper
       className="data-grid-container" sx=
-      {{ minHeight: "380px"}}>
+      {{ minHeight: "480px"}}>
         <DataGrid 
           rows={rows}
           columns={columns}

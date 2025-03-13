@@ -1,14 +1,14 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { 
-  Box, 
+import {
+  Box,
   Checkbox,
-  Menu, 
-  Typography, 
-  Link, 
-  FormControl, 
-  InputLabel, 
+  Menu,
+  Typography,
+  Link,
+  FormControl,
+  InputLabel,
   Select,
-  MenuItem, 
+  MenuItem,
 } from "@mui/material";
 import {
   EmailAccountsContainer,
@@ -37,6 +37,7 @@ import { formatDate } from "../../utils/utils";
 import { Button, SecondaryButton } from "../../styles/global.styled";
 import { CustomTableCell } from "../Email-Campaign/EmailCampaign.styled";
 import { useNavigate } from "react-router-dom";
+import ProgressBar from "../../assets/Custom/linearProgress";
 // import ProgressBar from "../../assets/Custom/linearProgress";
 
 const EmailAccounts: React.FC = () => {
@@ -88,7 +89,7 @@ const EmailAccounts: React.FC = () => {
         field: "warm_up",
         headerName: "Warmup Enabled",
         width: 120,
-        renderCell: () => <Box sx={{ marginTop: "8px" }}>Yes</Box>,
+        renderCell: () => <Box>Yes</Box>,
       },
       {
         field: "daily_limit",
@@ -100,7 +101,7 @@ const EmailAccounts: React.FC = () => {
         field: "reputation",
         headerName: "Reputation",
         width: 100,
-        renderCell: () => <Box sx={{ marginTop: "8px" }}>100%</Box>,
+        renderCell: () => <Box>100%</Box>,
       },
       {
         field: "createdAt",
@@ -140,7 +141,7 @@ const EmailAccounts: React.FC = () => {
       const data = await dispatch(fetchEmailAccount()).unwrap();
       setTimeout(() => {
         setLoading(false);
-        const mappedRows = data.map((account: { _id: any; }) => ({
+        const mappedRows = data.map((account: { _id: any }) => ({
           ...account,
           id: account._id,
         }));
@@ -203,7 +204,7 @@ const EmailAccounts: React.FC = () => {
     console.log("Navigating to:", `/email-account/edit-email-account/${id}`);
   };
 
-  console.log("Loader", loading)
+  console.log("Loader", loading);
 
   const CustomIcon = () => (
     <svg
@@ -231,7 +232,7 @@ const EmailAccounts: React.FC = () => {
   return (
     <EmailAccountsContainer>
       <EmailAccountHeader>
-        <SectionTitle>Email Account</SectionTitle>
+        <SectionTitle>Email Accounts</SectionTitle>
         <Box
           sx={{
             display: "flex",
@@ -241,9 +242,9 @@ const EmailAccounts: React.FC = () => {
             marginBottom: "10px",
           }}
         >
-          <FilterIcon onClick={handleMenuOpen}>
+          {/* <FilterIcon onClick={handleMenuOpen}>
             <FilterAltOutlinedIcon />
-          </FilterIcon>
+          </FilterIcon> */}
           <SearchBar>
             <Search size={20} />
             <input
@@ -266,7 +267,7 @@ const EmailAccounts: React.FC = () => {
           <Button onClick={handleOpenDialog}>Add Account</Button>
         </Box>
       </EmailAccountHeader>
-      {/* {loading && <ProgressBar />} */}
+      {loading && <ProgressBar />}
       <Menu
         anchorEl={anchorEl}
         open={isMenuOpen}
@@ -319,7 +320,7 @@ const EmailAccounts: React.FC = () => {
           <Button>Apply</Button>
         </Box>
       </Menu>
-      <EmailAccountTable>
+      <EmailAccountTable >
         <CustomDataTable
           columns={columns}
           rows={rows}

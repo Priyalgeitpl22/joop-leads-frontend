@@ -68,6 +68,44 @@ export const SecondaryButton = styled.button`
   }
 `;
 
+
+export const IconsButton = styled.button`
+  font-weight: semibold;
+  width: fit-content;
+  padding: 6px 16px;
+  border: none;
+  border-radius: 6px;
+  color: var(--theme-color);
+  background-color: var(--text-white);
+  cursor: pointer;
+  font-size: 16px;  
+  white-space: nowrap;
+  box-shadow: var(--shadow-dark);
+
+  &:hover svg {
+    color: var(--text-white);
+    fill: var(--text-white);
+  }
+
+  &:hover {
+    background: var(--hover-color);
+    color: var(--text-white);
+  }
+
+  &:hover .input {
+    color: var(--text-white);
+  }
+
+  &:active {
+    background: var(--active-color);
+    color: var(--text-white);
+  }
+
+  &:active .input {
+    color: var(--text-white);
+  }
+`;
+
 export const CustomDialogFooter = styled.div<CustomDialogFooterProps>`
   color: var(--theme-color);
   text-align: center;

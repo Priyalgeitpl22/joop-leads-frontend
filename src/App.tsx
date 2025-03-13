@@ -133,7 +133,7 @@ export default function DashboardLayoutBasic() {
               "& a": { display: "none" },
             }}
           >
-            {router.pathname === "/dashboard" && <Home />}
+            {router.pathname === "/" && <Home />}
             {router.pathname === "/email-campaign" && (
               <EmailCampaign router={router} />
             )}

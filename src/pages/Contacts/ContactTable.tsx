@@ -36,7 +36,7 @@ import { Search } from "lucide-react";
 import { CustomDataTable } from "../../assets/Custom/customDataGrid";
 import { GridColDef } from "@mui/x-data-grid";
 import { formatDate } from "../../utils/utils";
-import { Button, SecondaryButton } from "../../styles/global.styled";
+import { Button, IconsButton, SecondaryButton } from "../../styles/global.styled";
 import ProgressBar from "../../assets/Custom/linearProgress";
 import { fetchContacts } from "../../redux/slice/contactSlice";
 import ContactsAccountDialogBox from "./ContactsAccountDialogBox/ContactsAccountDialogBox";
@@ -274,8 +274,6 @@ const ContactTable: React.FC = () => {
     }
   };
 
-
-
   const handleViewClick = (event: React.MouseEvent, id: string) => {
     event.stopPropagation();
     setSelectedId(id);
@@ -350,42 +348,42 @@ const ContactTable: React.FC = () => {
           />
 
           <Tooltip title="Upload Bulk Contacts" arrow>
-            <SecondaryButton onClick={handleOpenDialog}>
+            <IconsButton onClick={handleOpenDialog}>
               <CloudUploadIcon />
-            </SecondaryButton>
+            </IconsButton>
           </Tooltip>
 
 
           <Tooltip title="Add Contact" arrow>
-            <SecondaryButton onClick={handleAccountOpenDialog}>
+            <IconsButton onClick={handleAccountOpenDialog}>
               <PersonAddIcon />
-            </SecondaryButton>
+            </IconsButton>
           </Tooltip>
 
 
           {selectedIds.length > 0 && allActive && (
             <Tooltip title="Deactivate User" arrow>
-              <SecondaryButton onClick={handleDeactivate}>
+              <IconsButton onClick={handleDeactivate}>
                 <PersonOffIcon />
-              </SecondaryButton>
+              </IconsButton>
             </Tooltip>
           )}
 
 
           {selectedIds.length > 0 && allInactive && (
             <Tooltip title="Activate User" arrow>
-              <SecondaryButton onClick={handleDeactivate}>
+              <IconsButton onClick={handleDeactivate}>
                 <HowToRegIcon />
-              </SecondaryButton>
+              </IconsButton>
             </Tooltip>
           )}
 
 
           {selectedIds.length > 0 && (
             <Tooltip title="Create Campaign" arrow>
-              <SecondaryButton onClick={handleCreateCampaign}>
+              <IconsButton onClick={handleCreateCampaign}>
                 <AddCircleIcon />
-              </SecondaryButton>
+              </IconsButton>
             </Tooltip>
 
           )}
