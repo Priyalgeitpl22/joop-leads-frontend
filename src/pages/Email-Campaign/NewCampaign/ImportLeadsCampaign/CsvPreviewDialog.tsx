@@ -9,10 +9,10 @@ import {
   TableCell,
   TableBody,
   TableContainer,
-  Paper,
   IconButton,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { styles } from "./CsvPreview.style"; 
 
 interface CSVPreviewDialogProps {
   open: boolean;
@@ -20,32 +20,40 @@ interface CSVPreviewDialogProps {
   csvData: string[][];
 }
 
-const CSVPreviewDialog: React.FC<CSVPreviewDialogProps> = ({ open, onClose, csvData }) => {
+const CSVPreviewDialog: React.FC<CSVPreviewDialogProps> = ({
+  open,
+  onClose,
+  csvData,
+}) => {
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
-      <DialogTitle sx={{ display: "flex", justifyContent: "space-between" }}>
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="xl" sx={styles.dialog}>
+      <DialogTitle sx={styles.dialogTitle}>
         CSV Preview
         <IconButton onClick={onClose}>
           <CloseIcon />
         </IconButton>
       </DialogTitle>
-      <DialogContent dividers>
-        <TableContainer component={Paper}>
+
+      <DialogContent dividers sx={styles.dialogContent}>
+        <TableContainer sx={styles.tableContainer}>
           <Table size="small">
             <TableHead>
               <TableRow>
                 {csvData[0]?.map((header, index) => (
-                  <TableCell key={index} sx={{ fontWeight: "bold" }}>
+                  <TableCell key={index} sx={styles.headerCell}>
                     {header}
                   </TableCell>
                 ))}
               </TableRow>
             </TableHead>
+
             <TableBody>
-              {csvData.slice(1, 6).map((row, rowIndex) => (
+              {csvData.slice(1).map((row, rowIndex) => (
                 <TableRow key={rowIndex}>
                   {row.map((cell, cellIndex) => (
-                    <TableCell key={cellIndex}>{cell}</TableCell>
+                    <TableCell key={cellIndex} sx={styles.cell}>
+                      {cell}
+                    </TableCell>
                   ))}
                 </TableRow>
               ))}

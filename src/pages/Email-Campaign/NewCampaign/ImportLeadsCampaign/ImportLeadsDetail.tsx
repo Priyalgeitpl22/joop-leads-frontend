@@ -16,6 +16,7 @@ interface ImportLeadsDetailProps {
   setIsNextDisabled: (status: boolean) => void;
   isUplaodContacts: boolean;
   handleUploadContacts?: (data: any) => void;
+  onDeleteFile?: () => void 
 }
 
 const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
@@ -25,7 +26,8 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
   onEmailFieldsChange,
   setIsNextDisabled,
   isUplaodContacts,
-  handleUploadContacts
+  handleUploadContacts,
+  onDeleteFile,
 }) => {
   const [emailFieldMapping, setEmailFieldMapping] = useState<
     Record<string, string>
@@ -74,7 +76,7 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
 
   const handleDeleteFile = () => {
     if (fileInputRef.current) {
-      fileInputRef.current.value = ""; // Reset file input
+      fileInputRef.current.value = "";
     }
     onFileChange({
       target: { files: null } as unknown as HTMLInputElement,

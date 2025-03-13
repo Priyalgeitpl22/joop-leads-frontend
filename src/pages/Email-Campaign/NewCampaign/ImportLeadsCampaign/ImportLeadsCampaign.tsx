@@ -28,7 +28,7 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [columns, setColumns] = useState<string[]>([]);
   const [csvData, setCSVData] = useState<any[]>([]);
-
+  
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -56,6 +56,11 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
       }
     }
   };
+  const handleDeleteFile = () => {
+    setSelectedFile(null);
+    setShowDetail(false);
+    setOpenDialog(false);
+  };
 
   return (
     <Box
@@ -76,6 +81,7 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
           columns={columns}
           file={selectedFile}
           onFileChange={handleFileChange}
+          onDeleteFile={handleDeleteFile}
           setIsNextDisabled={setIsNextDisabled}
         />
       ) : (
