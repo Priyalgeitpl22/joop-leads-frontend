@@ -24,6 +24,9 @@ import {
   SequenceVariant,
 } from "./Sequences/interfaces";
 import { SequenceType, variantDistributionType } from "./Sequences/enums";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../../redux/store/store";
+import { getCampaignById } from "../../../../redux/slice/emailCampaignSlice";
 
 interface ImportLeadsCampaignProps {
   handleEmailTemplateData: (data: any) => void;
@@ -47,12 +50,21 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
   const [showStepOptions, setShowStepOptions] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedVariant, setSelectedVariant] = useState<SequenceVariant>();
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleAddStep = () => {
     setShowStepOptions(!showStepOptions);
   };
 
   useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const campaignId = params.get("id");
+
+    console.log(selectedVariant);
+    if (campaignId) {
+      fetchCampaignDetails(campaignId);
+    }
+    else {
     if (sequences.length === 0) {
       const newSequence: Sequence = {
         seq_number: sequences.length + 1,
@@ -66,8 +78,20 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
       };
       setSelectedVariant(newSequence.seq_variants[0]);
       addSequence(newSequence);
+      }
     }
-  }, [selectedVariant]);
+  }, []);
+
+  const fetchCampaignDetails = async (id: string) => {
+    try {
+      const response = await dispatch(getCampaignById(id)).unwrap();
+      const sequences = response.campaign.sequences;
+      updateSequences(sequences)
+    } catch (error) {
+      console.error("Error fetching campaign:", error);
+      return null;
+    }
+  };
 
   const handleAddEmailStep = () => {
     const newSequence: Sequence = {

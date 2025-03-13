@@ -27,6 +27,25 @@ export const fetchEmailCampaigns = createAsyncThunk(
   }
 );
 
+export const getCampaignById = createAsyncThunk(
+  "emailCampaign/fetchById",
+  async (id: string, { rejectWithValue }) => {
+    try {
+      const response = await api.get(`${BASE_URL}/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      return response.data;
+    } catch (error: unknown) {
+      let errorMessage = "Something went wrong";
+      if (error instanceof AxiosError) {
+        errorMessage = error.response?.data?.message || errorMessage;
+      }
+      return rejectWithValue(errorMessage);
+    }
+  }
+);
+
 export const addLeadsToCampaign = createAsyncThunk(
   "emailCampaign/addLeads",
   async (data: any, { rejectWithValue }) => {

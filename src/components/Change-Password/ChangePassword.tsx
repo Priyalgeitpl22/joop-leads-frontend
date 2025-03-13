@@ -50,14 +50,13 @@ const ChangePassword: React.FC = () => {
     }
 
     try {
-      const response = await dispatch(
+      await dispatch(
         changePassword({
           email: user.email,
           existingPassword,
           newPassword,
         })
       ).unwrap();
-      console.log("response", response);
       toast.success("Password updated successfully!");
       navigate("/");
       window.location.reload();

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   FormControl,
@@ -35,12 +35,14 @@ interface ScheduleCampaignProps {
   onClose: () => void;
   campaignId?: string;
   handleSave: (data: any) => void;
+  campaignSchedule: any;
 }
 
 const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
   open,
   onClose,
-  handleSave
+  handleSave,
+  campaignSchedule
 }) => {
   const [formData, setFormData] = useState<{
     timeZone: [];
@@ -62,12 +64,28 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
     selectedEmailAccounts: [],
   });
 
+  useEffect(() => {
+    if (campaignSchedule) {
+      setFormData((prev) => ({
+        ...prev,
+        timeZone: campaignSchedule.timeZone || [],
+        selectedDays: campaignSchedule.selectedDays || [],
+        startTime: dayjs(campaignSchedule.startTime),
+        endTime: dayjs(campaignSchedule.endTime),
+        emailInterval: campaignSchedule.emailInterval || 0,
+        startDate: campaignSchedule.startDate
+          ? dayjs(campaignSchedule.startDate)
+          : null,
+        maxLeads: campaignSchedule.maxLeads || 100,
+      }));
+    }
+  }, [open, campaignSchedule]);
+
   const handleChange = (field: keyof typeof formData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleTimeZoneChange = (value: string | string[]) => {
-    // setSelectedTimeZones(value);
     handleChange("timeZone", value);
   };
 

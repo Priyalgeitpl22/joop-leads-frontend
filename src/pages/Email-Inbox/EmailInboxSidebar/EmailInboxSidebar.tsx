@@ -44,7 +44,7 @@ const EmailInboxSideBar = () => {
         accountId: selectedAccountId,
         mailBoxId: mailbox._id,
         page: 1,
-        limit: 989,
+        limit: 10,
       })
     );
   };
@@ -77,7 +77,7 @@ const EmailInboxSideBar = () => {
           accountId: selectedAccountId,
           mailBoxId: firstMailbox._id,
           page: 1,
-          limit: 989,
+          limit: 10,
         })
       );
     }

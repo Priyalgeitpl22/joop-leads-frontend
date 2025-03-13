@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, Checkbox, Dialog, FormControlLabel, IconButton, Radio, RadioGroup, Slider, TextField, Typography } from "@mui/material";
 import {
   ContentContainer
@@ -9,34 +9,27 @@ import {
   CustomDialogFooter,
   CustomDialogHeader,
 } from "../../../../../styles/global.styled";
-import dayjs, { Dayjs } from "dayjs";
 
 interface SettingCampaignProps {
   open: boolean;
   onClose: () => void;
   campaignId?: string;
   handleSave: (data: any) => void
+  campaignSetting: any;
 }
 
 const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
   open,
   onClose,
-  handleSave
+  handleSave,
+  campaignSetting
 }) => {
   const [formData, setFormData] = useState({
     campaignName: "",
-    timeZone: "",
-    selectedDays: [],
-    startTime: dayjs().hour(9).minute(0),
-    endTime: dayjs().hour(18).minute(0),
-    emailInterval: "",
-    startDate: null as Dayjs | null,
-    maxLeads: 100,
-    selectedEmailAccounts: [],
     stopSending: "replies",
+    emailDeliveryOptimization: false,
     trackEmailOpens: false,
     trackLinkClicks: false,
-    emailDeliveryOptimization: false,
     priority: 50,
     companyAutoPause: false,
     EmailDelivery: false,
@@ -47,6 +40,25 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
   const handleChange = (field: keyof typeof formData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
+
+  useEffect(() => {
+    if (campaignSetting) {
+      setFormData((prev) => ({
+        ...prev,
+        campaignName: campaignSetting.campaignName || "",
+        stopSending: campaignSetting.stopSending || "replies",
+        emailDeliveryOptimization:
+          campaignSetting.emailDeliveryOptimization ?? false,
+        trackEmailOpens: campaignSetting.trackEmailOpens ?? false,
+        trackLinkClicks: campaignSetting.trackLinkClicks ?? false,
+        priority: campaignSetting.priority ?? 50,
+        companyAutoPause: campaignSetting.companyAutoPause ?? false,
+        EmailDelivery: campaignSetting.EmailDelivery ?? false,
+        BounceRate: campaignSetting.BounceRate ?? false,
+        Unsubscribe: campaignSetting.Unsubscribe ?? false,
+      }));
+    }
+  }, [open, campaignSetting]); 
 
   return (
     <>

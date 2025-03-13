@@ -19,6 +19,7 @@ import {
   addSequencesToCampaign,
   addEmailCampaignSettings,
   scheduleCampaign,
+  getCampaignById,
 } from "../../../redux/slice/emailCampaignSlice";
 import UploadLeadsDialog from "./ImportLeadsCampaign/UploadLeadsDialog";
 import { Sequence } from "./SequenceCampaign/Sequences/interfaces";
@@ -332,7 +333,7 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
             handleCampaignSettingsUpdate={handleCampaignSettingsUpdate}
           />
         )}
-        {activeStep === 3 && <FinalReviewCampaign campaignId={campaignId} />}
+        {activeStep === 3 && <FinalReviewCampaign />}
       </MainContainer>
       <FooterContainer>
         {activeStep !== 0 && (
@@ -355,22 +356,11 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
           <Button2
             onClick={handleNext}
             // disabled={isNextDisabled === false}
-            color={
-              isNextDisabled
-                ? "white"
-                : "lightgray"
-            }
-            background={
-              isNextDisabled
-                ? "var(--theme-color)"
-                : "#878484"
-            }
+            color={isNextDisabled ? "white" : "lightgray"}
+            background={isNextDisabled ? "var(--theme-color)" : "#878484"}
             style={{
               width: "10%",
-              cursor:
-                isNextDisabled
-                  ? "pointer"
-                  : "not-allowed",
+              cursor: isNextDisabled ? "pointer" : "not-allowed",
             }}
           >
             Save and Next
