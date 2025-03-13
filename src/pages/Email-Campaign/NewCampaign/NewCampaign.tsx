@@ -19,7 +19,6 @@ import {
   addSequencesToCampaign,
   addEmailCampaignSettings,
   scheduleCampaign,
-  getCampaignById,
 } from "../../../redux/slice/emailCampaignSlice";
 import UploadLeadsDialog from "./ImportLeadsCampaign/UploadLeadsDialog";
 import { Sequence } from "./SequenceCampaign/Sequences/interfaces";
