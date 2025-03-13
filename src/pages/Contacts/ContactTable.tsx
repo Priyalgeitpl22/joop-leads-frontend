@@ -36,7 +36,7 @@ import { Search } from "lucide-react";
 import { CustomDataTable } from "../../assets/Custom/customDataGrid";
 import { GridColDef } from "@mui/x-data-grid";
 import { formatDate } from "../../utils/utils";
-import { Button, IconsButton, SecondaryButton } from "../../styles/global.styled";
+import { Button, IconsButton } from "../../styles/global.styled";
 import ProgressBar from "../../assets/Custom/linearProgress";
 import { fetchContacts } from "../../redux/slice/contactSlice";
 import ContactsAccountDialogBox from "./ContactsAccountDialogBox/ContactsAccountDialogBox";

@@ -14,12 +14,10 @@ import {
   EmailAccountsContainer,
   EmailAccountHeader,
   EmailAccountTable,
-  FilterIcon,
   SectionTitle,
 } from "./EmailAccount.styled";
 import EmailAccountDialog from "./EmailAccountDialogBox/EmailAccountDialog";
 import AdvancedSettingDialog from "./AdvancedSettingDialogBox/AdvancedSettingDialog";
-import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
 import { useDispatch } from "react-redux";
 import {
@@ -176,11 +174,7 @@ const EmailAccounts: React.FC = () => {
     setSearchQuery(query);
     handleSearch(query);
   };
-
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
+  
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
