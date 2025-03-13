@@ -19,6 +19,7 @@ import {
   addSequencesToCampaign,
   addEmailCampaignSettings,
   scheduleCampaign,
+  getCampaignById,
 } from "../../../redux/slice/emailCampaignSlice";
 import UploadLeadsDialog from "./ImportLeadsCampaign/UploadLeadsDialog";
 import { Sequence } from "./SequenceCampaign/Sequences/interfaces";
@@ -72,18 +73,50 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
     setSelectedFile(file);
   };
 
-  React.useEffect(()=> {
+  React.useEffect(() => {
     const params = new URLSearchParams(location.search);
     const campaignId = params.get("campaignId");
 
-    if(campaignId) {
-      setActiveStep(1);
+    const fetchDataAndProceed = async (id: string) => {
+      try {
+        setIsLoading(true);
+        const campaign = await fetchCampaignDetails(id);
+
+        if (campaign) {
+          setCampaignId(id);
+          setActiveStep(3);
+        }
+      } catch (error) {
+        console.error("Failed to fetch campaign details:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (campaignId) {
       setCampaignId(campaignId);
+      setActiveStep(1);
+    } else {
+      const isEdit = params.has("edit");
+      const id = params.get("id");
+
+      if (isEdit && id) {
+        fetchDataAndProceed(id);
+      }
     }
-  },[])
+  }, [location.search]);
+
+  const fetchCampaignDetails = async (id: string) => {
+    try {
+      const response = await dispatch(getCampaignById(id)).unwrap();
+      return response.campaign;
+    } catch (error) {
+      console.error("Error fetching campaign:", error);
+      return null;
+    }
+  };
 
   const handleLeadsData = (data: ImportedLeadsData) => {
-    debugger
     setEmailFieldsToBeAdded(data);
   };
 
@@ -333,7 +366,7 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
             handleCampaignSettingsUpdate={handleCampaignSettingsUpdate}
           />
         )}
-        {activeStep === 3 && <FinalReviewCampaign campaignId={campaignId} />}
+        {activeStep === 3 && <FinalReviewCampaign />}
       </MainContainer>
       <FooterContainer>
         {activeStep !== 0 && (
@@ -356,22 +389,11 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
           <Button2
             onClick={handleNext}
             // disabled={isNextDisabled === false}
-            color={
-              isNextDisabled
-                ? "white"
-                : "lightgray"
-            }
-            background={
-              isNextDisabled
-                ? "var(--theme-color)"
-                : "#878484"
-            }
+            color={isNextDisabled ? "white" : "lightgray"}
+            background={isNextDisabled ? "var(--theme-color)" : "#878484"}
             style={{
               width: "10%",
-              cursor:
-                isNextDisabled
-                  ? "pointer"
-                  : "not-allowed",
+              cursor: isNextDisabled ? "pointer" : "not-allowed",
             }}
           >
             Save and Next

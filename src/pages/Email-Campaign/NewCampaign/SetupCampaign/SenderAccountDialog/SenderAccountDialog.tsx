@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Dialog, Typography, Box, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../../../../redux/store/store";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../../../redux/store/store";
 import { SearchBar } from "../../../../../components/Header/header.styled";
 import { Search } from "lucide-react";
 import {
@@ -27,6 +27,7 @@ interface SenderAccountDialogProps {
   onClose: () => void;
   campaignId?: string;
   handleSave: (data: any) => void;
+  senderAccounts: any;
 }
 
 const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
@@ -34,15 +35,14 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
   onClose,
   campaignId,
   handleSave,
+  senderAccounts,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const [loading, setLoading] = useState(true);
-  const { user } = useSelector((state: RootState) => state.user);
   const [emailAccounts, setEmailAccounts] = useState<EmailAccount[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [selectedEmailAccounts, setSelectedEmailAccounts] = useState<
-    EmailAccount[]
-  >([]);
+  const [selectedEmailAccounts, setSelectedEmailAccounts] = useState<string[]>(
+    []
+  );
 
   const [rows, setRows] = useState<any[]>([]);
   const [selectedAccounts, setSelectedAccounts] = React.useState<EmailAccounts>(
@@ -111,29 +111,40 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
   );
 
   useEffect(() => {
+    if (senderAccounts) {
+      const accountIds = senderAccounts.map((o: any) => o.account_id);
+      setSelectedEmailAccounts(accountIds);
+      setEmailAccounts(senderAccounts);
+    }
+
     dispatch(fetchEmailAccount())
       .unwrap()
       .then((data) => {
         setRows(data);
       })
       .catch(console.error)
-      .finally(() => setLoading(false));
-    console.log(loading);
-  }, [dispatch, user]);
+  }, [open]);
 
   const handleSelectedAccounts = (newSelection: any[]) => {
     console.log("selectedEmailAccounts", selectedEmailAccounts);
     setSelectedEmailAccounts(newSelection);
 
     const filteredAccount = rows.filter((o) => {
-      return o._id === newSelection[newSelection.length-1];
+      return o._id === newSelection[newSelection.length - 1];
     })[0] as Account;
 
     const formattedSelection: EmailAccounts = newSelection?.map((id) => ({
       account_id: id,
-      user: filteredAccount.type === 'imap' ? filteredAccount.smtp.auth.user : undefined,
-      pass: filteredAccount.type === 'imap' ? filteredAccount.smtp.auth.pass : undefined,
-      oauth2: filteredAccount.type !== 'imap' ? filteredAccount.oauth2 : undefined
+      user:
+        filteredAccount.type === "imap"
+          ? filteredAccount.smtp.auth.user
+          : undefined,
+      pass:
+        filteredAccount.type === "imap"
+          ? filteredAccount.smtp.auth.pass
+          : undefined,
+      oauth2:
+        filteredAccount.type !== "imap" ? filteredAccount.oauth2 : undefined,
     }));
 
     setSelectedAccounts(formattedSelection);
@@ -230,6 +241,11 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
           rows={rows}
           pageSizeOptions={[5, 10]}
           handleRowSelection={handleSelectedAccounts}
+          rowSelectionModel={selectedEmailAccounts} // Ensuring selected rows are preserved
+          // onRowSelectionModelChange={(newSelection: any) => {
+          //   console.log("Selected Rows:", newSelection);
+          //   handleSelectedAccounts(newSelection);
+          // }}
         />
       </CustomDialogContainer>
 

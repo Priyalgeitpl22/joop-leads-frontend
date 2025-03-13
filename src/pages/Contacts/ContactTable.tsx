@@ -108,7 +108,6 @@ const ContactTable: React.FC = () => {
     if (selectedIds.length > 0) {
 
       try {
-        debugger
         const response = await dispatch(CreateCampaignWithContacts(selectedIds)).unwrap();
         const campaignId = response.campaignId;
         navigate(`/email-campaign/new-campaign?campaignId=${campaignId}`);

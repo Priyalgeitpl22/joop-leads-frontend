@@ -34,7 +34,10 @@ import FolderOpenOutlinedIcon from "@mui/icons-material/FolderOpenOutlined";
 import EmailCampaignDialog from "./EmailCampaignDialog/AddEmailCampaignDialog";
 import { Search } from "lucide-react";
 import { useDispatch } from "react-redux";
-import { fetchEmailCampaigns, SearchEmailCampaign } from "../../redux/slice/emailCampaignSlice";
+import {
+  fetchEmailCampaigns,
+  SearchEmailCampaign,
+} from "../../redux/slice/emailCampaignSlice";
 import { AppDispatch } from "../../redux/store/store";
 import { IEmailCampaign } from "./NewCampaign/interfaces";
 import { formatDate } from "../../utils/utils";
@@ -123,7 +126,7 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
 
   const handleDetailCampaign = () => {
     navigate(`/email-campaign/view-email-campaign`);
-  }
+  };
 
   const tableData = [
     {
@@ -156,9 +159,9 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
 
   const isMenuOpen = Boolean(anchorEl);
 
-  const handleEditCampaign = () => {
-    navigate("email-campaign/new-campaign")
-  }
+  const handleEditCampaign = (id: string) => {
+    navigate(`email-campaign/new-campaign?edit&id=${id}`);
+  };
 
   return (
     <ContentContainer>
@@ -255,7 +258,7 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
           (label) => (
             <FormControl fullWidth sx={{ mt: 2 }}>
               <InputLabel shrink={false}>{label}</InputLabel>
-              <Select sx={{background: "white!important"}}>
+              <Select sx={{ background: "white!important" }}>
                 <MenuItem value="">Select {label}</MenuItem>
               </Select>
             </FormControl>
@@ -276,13 +279,16 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
           <Table>
             <TableHead sx={{ backgroundColor: "#f8f9fc" }}>
               <TableRow>
-                <TableCell colSpan={1}
-                sx={{ fontWeight: "bold", color: "#35495c" }}>
+                <TableCell
+                  colSpan={1}
+                  sx={{ fontWeight: "bold", color: "#35495c" }}
+                >
                   Campaign Details
                 </TableCell>
-                <TableCell colSpan=
-                {11} sx={{ fontWeight: "bold", color:
-                "#35495c" }}>
+                <TableCell
+                  colSpan={11}
+                  sx={{ fontWeight: "bold", color: "#35495c" }}
+                >
                   Report
                 </TableCell>
               </TableRow>
@@ -299,7 +305,7 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
                             marginBottom: "8px",
                             color: "var(--title-color)",
                           }}
-                          onClick = { handleDetailCampaign }
+                          onClick={handleDetailCampaign}
                         >
                           {campaign.campaignName}
                         </h3>
@@ -349,7 +355,9 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
                         sx={{ display: "flex", gap: 3, alignItems: "center" }}
                       >
                         <Tooltip title="Edit">
-                          <ModeEditOutlineOutlinedIcon onClick={handleEditCampaign}  />
+                          <ModeEditOutlineOutlinedIcon
+                            onClick={() => handleEditCampaign(campaign.id)}
+                          />
                         </Tooltip>
                         <Tooltip title="Delete">
                           <GridDeleteIcon />

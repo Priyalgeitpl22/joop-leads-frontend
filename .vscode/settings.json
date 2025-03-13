@@ -1,0 +1,27 @@
+{
+  "cSpell.words": [
+      "juco",
+      "Organisation",
+      "organisations"
+  ],
+  "workbench.colorCustomizations": {
+      "activityBar.activeBackground": "#806cad",
+      "activityBar.activeBorder": "#422c74",
+      "activityBar.background": "#806cad",
+      "activityBar.foreground": "#e7e7e7",
+      "activityBar.inactiveForeground": "#e7e7e799",
+      "activityBarBadge.background": "#422c74",
+      "activityBarBadge.foreground": "#e7e7e7",
+      "sash.hoverBorder": "#806cad",
+      "statusBar.background": "#806cad",
+      "statusBar.foreground": "#e7e7e7",
+      "statusBarItem.hoverBackground": "#806cad",
+      "statusBarItem.remoteBackground": "#806cad",
+      "statusBarItem.remoteForeground": "#e7e7e7",
+      "titleBar.activeBackground": "#806cad",
+      "titleBar.activeForeground": "#e7e7e7",
+      "titleBar.inactiveBackground": "#806cad",
+      "titleBar.inactiveForeground": "#e7e7e799"
+  },
+  "peacock.color": "#215732"
+}

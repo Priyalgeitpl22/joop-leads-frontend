@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { Box, Typography, Select, MenuItem, IconButton } from "@mui/material";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -7,8 +7,6 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import { CSV_COLUMNS, CSV_COLUMNS as csv_columns } from "../../../../constants";
 import { Button2 } from "../../../../styles/layout.styled";
-import Papa from "papaparse";
-import CSVPreviewDialog from "./CsvPreviewDialog";
 
 interface ImportLeadsDetailProps {
   file?: File | null;
@@ -19,7 +17,6 @@ interface ImportLeadsDetailProps {
   isUplaodContacts: boolean;
   handleUploadContacts?: (data: any) => void;
 }
-
 
 const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
   file,
@@ -37,25 +34,6 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
     Record<string, string>
   >({});
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [csvData, setCsvData] = useState<string[][]>([]);
-
-  const [isCSVModalOpen, setCSVModalOpen] = useState(false);
-  useEffect(() => {
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        if (e.target?.result) {
-          Papa.parse(e.target.result as string, {
-            complete: (result) => setCsvData(result.data as string[][]),
-          });
-        }
-      };
-      reader.readAsText(file);
-    }
-  }, [file]);
-  
-
- 
 
   const handleEmailFieldsChange = (event: any, field: string) => {
     const value = event.target.value;
@@ -95,11 +73,15 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
   };
 
   const handleDeleteFile = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""; // Reset file input
+    }
     onFileChange({
-      target: { files: null },
+      target: { files: null } as unknown as HTMLInputElement,
     } as React.ChangeEvent<HTMLInputElement>);
+    window.location.reload()
   };
-
+  
   return (
     <Box
       sx={{
@@ -143,7 +125,7 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
           )}
         </Box>
         <Box sx={{ display: "flex", gap: 1 }}>
-          <IconButton onClick={() => setCSVModalOpen(true)} disabled={!file}>
+          <IconButton>
             <VisibilityIcon sx={{ color: "var(--theme-color)" }} />
           </IconButton>
           <IconButton onClick={handleReupload}>
@@ -202,7 +184,6 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
             sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}
           >
             <Typography sx={{ flex: 1 }}>{field}</Typography>
-
             <Select
               displayEmpty
               onChange={(event) => handleEmailFieldsChange(event, field)}
@@ -215,33 +196,21 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
               }}
             >
               {CSV_COLUMNS.map((column) => (
-              <MenuItem value={column.key}
-                  disabled={column.required && column.key === "ignore_field"}
-                sx={{ fontSize: "13px" }}>
-                  {column.label} {column.required ? "*" : ""}
+                <MenuItem value={column.key} sx={{ fontSize: "13px" }}>
+                  {column.label}
                 </MenuItem>
               ))}
             </Select>
           </Box>
         ))}
       </Box>
-
-      {isUplaodContacts && (
-        <Button2
-          onClick={handleUploadContacts}
-          color="white"
-          background="var(--theme-color)"
-        >
-          Save and Next
-        </Button2>
-      )}
-      {isCSVModalOpen && (
-        <CSVPreviewDialog
-          open={isCSVModalOpen}
-          onClose={() => setCSVModalOpen(false)}
-          csvData={csvData}
-        />
-      )}
+      {isUplaodContacts && <Button2
+            onClick={handleUploadContacts}
+            color="white"
+            background="var(--theme-color)"
+          >
+            Save and Next
+          </Button2>}
     </Box>
   );
 };

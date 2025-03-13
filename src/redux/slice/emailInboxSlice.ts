@@ -82,7 +82,7 @@ export const getAllAccountMailBox = createAsyncThunk(
       accountId,
       mailBoxId,
       page = 1,
-      limit = 989,
+      limit = 10,
     }: { accountId: string; mailBoxId: string; page?: number; limit?: number },
     { rejectWithValue }
   ) => {

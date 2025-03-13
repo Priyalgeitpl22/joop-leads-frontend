@@ -5,10 +5,7 @@ import { Search } from "lucide-react";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../redux/store/store";
-import {
-  fetchCampaignContacts,
-  fetchCampaignSequences,
-} from "../../../../redux/slice/emailCampaignSlice";
+import { getCampaignById } from "../../../../redux/slice/emailCampaignSlice";
 import { IContacts } from "../interfaces";
 import {
   Sequence,
@@ -21,13 +18,9 @@ import {
 } from "./finalReview.styled";
 import ReactQuill from "react-quill";
 import { modules } from "../SequenceCampaign/EmailTemplate/EmailTemplate";
-interface FinalReviewCampaignProps {
-  campaignId?: string;
-}
+interface FinalReviewCampaignProps {}
 
-const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
-  campaignId,
-}) => {
+const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({}) => {
   const [selectedContact, setSelectedContact] = useState<IContacts>();
   const [selectedVariant, setSelectedVariant] = React.useState(1);
   const [selectedTemplate, setSelectedTemplate] =
@@ -47,30 +40,29 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
   };
 
   useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const campaignId = params.get("id");
+
     if (campaignId) {
-      Promise.all([
-        dispatch(fetchCampaignContacts(campaignId)).unwrap(),
-        dispatch(fetchCampaignSequences(campaignId)).unwrap(),
-      ])
-        .then(([contactsData, sequencesData]) => {
-          console.log("Contacts:", contactsData.data);
-          console.log("Sequences:", sequencesData.data);
-
-          setContacts(contactsData.data);
-          setSequences(sequencesData.data);
-          setSelectedVariant(sequencesData.data[0].seq_number);
-          setSelectedTemplate(sequencesData.data[0].seq_variants[0]);
-
-          setSelectedContact(contactsData.data[0]);
-
-          // toast.success("Data fetched successfully");
-        })
-        .catch((error) => {
-          console.error("Failed to fetch data:", error);
-          // toast.error("Failed to fetch data");
-        });
+      fetchCampaignDetails(campaignId);
     }
   }, [dispatch]);
+
+  const fetchCampaignDetails = async (id: string) => {
+    try {
+      const response = await dispatch(getCampaignById(id)).unwrap();
+      const campaign = response.campaign;
+      setContacts(campaign.contacts);
+      setSequences(campaign.sequences);
+      setSelectedVariant(campaign.sequences[0].seq_number);
+      setSelectedTemplate(campaign.sequences[0].seq_variants[0]);
+      setSelectedContact(campaign.contacts[0]);
+      return response.campaign;
+    } catch (error) {
+      console.error("Error fetching campaign:", error);
+      return null;
+    }
+  };
 
   return (
     <FinalReviewContainer>
@@ -174,11 +166,27 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
           </TabsHeader>
 
           {selectedVariant && (
-            <Box sx={{ padding: "8px", width: "100%", height: "92%", border: "1px solid var(--border-grey)" }}>
-              <Typography sx={{ margin: "12px 5px 0px 16px"}} fontSize={14} color="gray">
+            <Box
+              sx={{
+                padding: "8px",
+                width: "100%",
+                height: "92%",
+                border: "1px solid var(--border-grey)",
+              }}
+            >
+              <Typography
+                sx={{ margin: "12px 5px 0px 16px" }}
+                fontSize={14}
+                color="gray"
+              >
                 <strong>Email: </strong> {selectedContact?.email}
               </Typography>
-              <Typography sx={{ margin: "12px 5px 0px 16px"}} variant="body2" fontSize={14} color="gray">
+              <Typography
+                sx={{ margin: "12px 5px 0px 16px" }}
+                variant="body2"
+                fontSize={14}
+                color="gray"
+              >
                 <strong>Subject: </strong>
                 {selectedTemplate?.subject}
               </Typography>

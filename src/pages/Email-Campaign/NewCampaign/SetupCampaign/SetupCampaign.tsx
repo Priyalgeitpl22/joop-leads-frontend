@@ -1,11 +1,15 @@
 import { Box, Typography, Radio, FormControlLabel } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SenderAccountDialog from "./SenderAccountDialog/SenderAccountDialog";
 import ScheduleCampaignDialog from "./ScheduleCampaignDialog/ScheduleCampaignDialog";
 import CampaignSettingDialog from "./CampaignSettingDialog/CampaignSettingDialog";
 import { SetupButton } from "../NewCampaign.styled";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
+import { useDispatch } from "react-redux";
+import { getCampaignById } from "../../../../redux/slice/emailCampaignSlice";
+import { AppDispatch } from "../../../../redux/store/store";
+import { useLocation } from "react-router-dom";
 
 interface SetupCampaignProps {
   campaignId?: string;
@@ -20,9 +24,43 @@ const SetupCampaign: React.FC<SetupCampaignProps> = ({
   handleScheduleCampaignUpdate,
   handleCampaignSettingsUpdate,
 }) => {
-  const [senderAccount, setSenderAccount] = useState(false);
-  const [scheduleCampaign, setScheduleCampaign] = useState(false);
-  const [settingCampaign, setSettingCampaign] = useState(false);
+  const [openSenderAccount, setOpenSenderAccount] = useState(false);
+  const [openCampaignSchedule, setOpenCampaignSchedule] = useState(false);
+  const [openCampaignSetting, setOpenCampaignSetting] = useState(false);
+
+  const [senderAccounts, setSenderAccounts] = useState();
+  const [campaignSchedule, setCampaignSchedule] = useState();
+  const [campaignSetting, setCampaignSetting] = useState();
+  const dispatch = useDispatch<AppDispatch>();
+  const location = useLocation();
+
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const campaignId = params.get("id");
+
+    if (campaignId) {
+      fetchCampaignDetails(campaignId);
+    }
+  }, [dispatch]);
+
+  const fetchCampaignDetails = async (id: string) => {
+    try {
+      const response = await dispatch(getCampaignById(id)).unwrap();
+      const campaign = response.campaign;
+      setSenderAccounts(campaign.sender_accounts);
+      setCampaignSchedule(campaign.campaign_schedule);
+      setCampaignSetting(campaign.campaign_settings);
+      return response.campaign;
+    } catch (error) {
+      console.error("Error fetching campaign:", error);
+      return null;
+    }
+  };
+
+  const senderAccountDialogOpen = (isOpen: boolean) => {
+    setOpenSenderAccount(isOpen);
+  };
 
   return (
     <Box
@@ -76,14 +114,15 @@ const SetupCampaign: React.FC<SetupCampaignProps> = ({
               </Box>
             }
           />
-          <SetupButton onClick={() => setSenderAccount(true)}>
+          <SetupButton onClick={() => senderAccountDialogOpen(true)}>
             Choose Sender Accounts
           </SetupButton>
 
           <SenderAccountDialog
             campaignId={campaignId}
-            open={senderAccount}
-            onClose={() => setSenderAccount(false)}
+            senderAccounts={senderAccounts}
+            open={openSenderAccount} // ✅ Correctly passing boolean
+            onClose={() => senderAccountDialogOpen(false)}
             handleSave={handleSenderAccountsUpdate}
           />
         </Box>
@@ -109,20 +148,22 @@ const SetupCampaign: React.FC<SetupCampaignProps> = ({
             label={
               <Box>
                 <Typography fontWeight="600">Schedule Campaign</Typography>
-                <Typography variant="body2" >
+                <Typography variant="body2">
                   Email will be triggered based on time chosen here
                 </Typography>
               </Box>
             }
           />
-          <SetupButton onClick={() => setScheduleCampaign(true)}>
+          <SetupButton onClick={() => setOpenCampaignSchedule(true)}>
             Schedule Campaign
           </SetupButton>
+
           <ScheduleCampaignDialog
+            campaignSchedule={campaignSchedule}
             handleSave={handleScheduleCampaignUpdate}
             campaignId={campaignId}
-            open={scheduleCampaign}
-            onClose={() => setScheduleCampaign(false)}
+            open={openCampaignSchedule}
+            onClose={() => setOpenCampaignSchedule(false)}
           />
         </Box>
 
@@ -152,14 +193,15 @@ const SetupCampaign: React.FC<SetupCampaignProps> = ({
               </Box>
             }
           />
-          <SetupButton onClick={() => setSettingCampaign(true)}>
+          <SetupButton onClick={() => setOpenCampaignSetting(true)}>
             Modify Settings
           </SetupButton>
           <CampaignSettingDialog
+            campaignSetting={campaignSetting}
             handleSave={handleCampaignSettingsUpdate}
             campaignId={campaignId}
-            open={settingCampaign}
-            onClose={() => setSettingCampaign(false)}
+            open={openCampaignSetting}
+            onClose={() => setOpenCampaignSetting(false)}
           />
         </Box>
 
