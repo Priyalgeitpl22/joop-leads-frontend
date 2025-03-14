@@ -4,20 +4,45 @@ import {
   DialogTitle,
   IconButton,
   Typography,
-  Button,
   Radio,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { Button } from "../../../../styles/global.styled";
 
 interface ExportCsvDialogProps {
+  fileUrl: string;
   open: boolean;
   onClose: () => void;
 }
 
 const DownloadCsvFileDialog: React.FC<ExportCsvDialogProps> = ({
+  fileUrl,
   open,
   onClose,
 }) => {
+
+  const handleDownload = async () => {
+    if (!fileUrl) return;
+  
+    try {
+      const response = await fetch(fileUrl);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+  
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.setAttribute("download", "leads.csv");
+      document.body.appendChild(link);
+      link.click();
+  
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+  
+    } catch (error) {
+      console.error("Download failed", error);
+    }
+  };
+  
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <Box sx={{ position: "relative" }}>
@@ -68,17 +93,7 @@ const DownloadCsvFileDialog: React.FC<ExportCsvDialogProps> = ({
 
           {/* Download Button */}
           <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3 }}>
-            <Button
-              variant="contained"
-              sx={{
-                bgcolor: "#6c4df8",
-                "&:hover": { bgcolor: "#5b3bd4" },
-                textTransform: "none",
-                fontSize: 14,
-                px: 3,
-                py: 1,
-                borderRadius: "6px",
-              }}
+            <Button onClick={handleDownload}
             >
               Download File
             </Button>

@@ -9,6 +9,9 @@ import {
   CustomDialogFooter,
   CustomDialogHeader,
 } from "../../../../../styles/global.styled";
+import { getCampaignById } from "../../../../../redux/slice/emailCampaignSlice";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../../../redux/store/store";
 
 interface SettingCampaignProps {
   open: boolean;
@@ -22,7 +25,6 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
   open,
   onClose,
   handleSave,
-  campaignSetting
 }) => {
   const [formData, setFormData] = useState({
     campaignName: "",
@@ -37,28 +39,50 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
     Unsubscribe: false,
   });
 
+  const dispatch = useDispatch<AppDispatch>();
+
   const handleChange = (field: keyof typeof formData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  
   useEffect(() => {
-    if (campaignSetting) {
-      setFormData((prev) => ({
-        ...prev,
-        campaignName: campaignSetting.campaignName || "",
-        stopSending: campaignSetting.stopSending || "replies",
-        emailDeliveryOptimization:
-          campaignSetting.emailDeliveryOptimization ?? false,
-        trackEmailOpens: campaignSetting.trackEmailOpens ?? false,
-        trackLinkClicks: campaignSetting.trackLinkClicks ?? false,
-        priority: campaignSetting.priority ?? 50,
-        companyAutoPause: campaignSetting.companyAutoPause ?? false,
-        EmailDelivery: campaignSetting.EmailDelivery ?? false,
-        BounceRate: campaignSetting.BounceRate ?? false,
-        Unsubscribe: campaignSetting.Unsubscribe ?? false,
-      }));
+    if (open) {
+      const params = new URLSearchParams(location.search);
+      const campaignId = params.get("id");
+  
+      if (campaignId) fetchCampaignDetails(campaignId);
     }
-  }, [open, campaignSetting]); 
+  }, [open]); 
+  
+
+  const fetchCampaignDetails = async (id: string) => {
+    try {
+      const response = await dispatch(getCampaignById(id)).unwrap();
+      const campaign = response.campaign;
+      const campaignSetting = campaign.campaign_settings;
+      if (campaignSetting) {
+        setFormData((prev) => ({
+          ...prev,
+          campaignName: campaignSetting.campaignName || "",
+          stopSending: campaignSetting.stopSending || "replies",
+          emailDeliveryOptimization:
+            campaignSetting.emailDeliveryOptimization ?? false,
+          trackEmailOpens: campaignSetting.trackEmailOpens ?? false,
+          trackLinkClicks: campaignSetting.trackLinkClicks ?? false,
+          priority: campaignSetting.priority ?? 50,
+          companyAutoPause: campaignSetting.companyAutoPause ?? false,
+          EmailDelivery: campaignSetting.EmailDelivery ?? false,
+          BounceRate: campaignSetting.BounceRate ?? false,
+          Unsubscribe: campaignSetting.Unsubscribe ?? false,
+        }));
+      }
+      return response.campaign;
+    } catch (error) {
+      console.error("Error fetching campaign:", error);
+      return null;
+    }
+  };
 
   return (
     <>

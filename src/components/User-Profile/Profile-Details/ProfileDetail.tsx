@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Dialog, TextField, Button, Box } from "@mui/material";
+import { Dialog, TextField, Box } from "@mui/material";
 import {
   DialogHeader,
   StyledTitle,
@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../redux/store/store";
 import toast, {Toaster} from 'react-hot-toast';
 import Loader from "../../Loader";
+import { Button, SecondaryButton } from "../../../styles/global.styled";
 
 interface ProfileDetailProps {
   open: boolean;
@@ -95,7 +96,7 @@ const ProfileDetail: React.FC<ProfileDetailProps> = ({ open, onClose }) => {
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <Box sx={{ width: "100%", height: "80px", backgroundColor: "#dddddd" }}></Box>
+      <Box sx={{ width: "100%", height: "80px", backgroundColor: "var(--background-color)" }}></Box>
       <DialogHeader>
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", width: "100%" }}>
           <Box sx={{ position: "relative", display: "inline-block" }}>
@@ -165,10 +166,10 @@ const ProfileDetail: React.FC<ProfileDetailProps> = ({ open, onClose }) => {
       </DialogBody>
 
       <DialogFooter>
-        <Button variant="outlined" onClick={handleCancel} sx={{ mr: 1 }}>
+        <SecondaryButton onClick={handleCancel}>
           Cancel
-        </Button>
-        <Button variant="contained" sx={{ backgroundColor: `var(--theme-color)`, fontWeight: 600 }} onClick={handleSave}>
+        </SecondaryButton>
+        <Button onClick={handleSave}>
           Save changes
         </Button>
       </DialogFooter>

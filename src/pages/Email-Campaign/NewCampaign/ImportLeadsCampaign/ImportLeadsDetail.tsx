@@ -25,7 +25,7 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
   onEmailFieldsChange,
   setIsNextDisabled,
   isUplaodContacts,
-  handleUploadContacts
+  handleUploadContacts,
 }) => {
   const [emailFieldMapping, setEmailFieldMapping] = useState<
     Record<string, string>
@@ -37,14 +37,14 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
 
   const handleEmailFieldsChange = (event: any, field: string) => {
     const value = event.target.value;
-    console.log("emailFieldMapping", emailFieldMapping)
+    console.log("emailFieldMapping", emailFieldMapping);
     setEmailFieldMapping((prev) => ({
       ...prev,
       [field]: value,
     }));
 
     const column = csv_columns.find((o) => o.key === value)?.key as string;
-    console.log("emailFieldAdded", emailFieldsAdded)
+    console.log("emailFieldAdded", emailFieldsAdded);
 
     setEmailFieldAdded((prev) => {
       const updatedFields = {
@@ -55,7 +55,7 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
       onEmailFieldsChange(updatedFields);
       const hasSelection = Object.values(updatedFields).some((v) => v);
 
-      if(hasSelection) {
+      if (hasSelection) {
         setIsNextDisabled(hasSelection);
       }
       return updatedFields;
@@ -74,14 +74,14 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
 
   const handleDeleteFile = () => {
     if (fileInputRef.current) {
-      fileInputRef.current.value = ""; // Reset file input
+      fileInputRef.current.value = "";
     }
     onFileChange({
       target: { files: null } as unknown as HTMLInputElement,
     } as React.ChangeEvent<HTMLInputElement>);
-    window.location.reload()
+    window.location.reload();
   };
-  
+
   return (
     <Box
       sx={{
@@ -93,7 +93,7 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
         height: "462px",
         display: "flex",
         flexDirection: "column",
-        gap: "10px"
+        gap: "10px",
       }}
     >
       <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 3 }}>
@@ -204,13 +204,15 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
           </Box>
         ))}
       </Box>
-      {isUplaodContacts && <Button2
-            onClick={handleUploadContacts}
-            color="white"
-            background="var(--theme-color)"
-          >
-            Save and Next
-          </Button2>}
+      {isUplaodContacts && (
+        <Button2
+          onClick={handleUploadContacts}
+          color="white"
+          background="var(--theme-color)"
+        >
+          Save and Next
+        </Button2>
+      )}
     </Box>
   );
 };

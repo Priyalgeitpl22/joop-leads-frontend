@@ -1,35 +1,64 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { ImportedLeadsData } from "../NewCampaign";
-import { Card, Container, FileLink, MenuItem, MoreButton, MoreOptionsContainer, PopupMenu, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Title } from "./importLeads.styled";
+import {
+  Card,
+  Container,
+  FileLink,
+  MenuItem,
+  MoreButton,
+  MoreOptionsContainer,
+  PopupMenu,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  Title,
+} from "./importLeads.styled";
 import { Info, MoreHorizontal, Upload } from "lucide-react";
 import DownloadCsvFileDialog from "./DownloadCsvfileDialog";
 import React from "react";
+import {
+  formatDate,
+  formatDateTime,
+  formatTimestamp,
+} from "../../../../utils/utils";
+import UploadLeadsDialog from "./UploadLeadsDialog";
 
 interface ViewImportedCsvFileProps {
-  handleLeadsData: (data: ImportedLeadsData) => void;
-  handleCSVUpload: (data: any) => void;
-  saveCSVSetting: (data: any) => void;
-  setIsNextDisabled: (status: boolean) => void;
+  csvFileDetails: any;
 }
 
-const ViewImportedCsvFile: React.FC<ViewImportedCsvFileProps> = () => {
+const ViewImportedCsvFile: React.FC<ViewImportedCsvFileProps> = ({
+  csvFileDetails,
+}) => {
   const [exportCsvDialog, setExportCsvDialog] = React.useState(false);
-  
+
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
-  const [uploadLeads, setUploadLeads] = useState(false);
+  const [showUploadedLeads, setShowUploadedLeads] = useState(false);
 
   const toggleMenu = () => setShowMenu(!showMenu);
 
-  const handleUploadedLeads = () => {
-    setUploadLeads(true);
-    setShowMenu(false);
+  // ✅ Ensure the modal opens immediately after state update
+  useEffect(() => {
+    if (showUploadedLeads) {
+      setShowUploadedLeads(true);
+    }
+  }, [showUploadedLeads]);
+
+  const showUploadLeads = () => {
+    setShowUploadedLeads(true);
   };
 
-  console.log("upload lead", uploadLeads)
   const handleExportCsv = () => {
-    setExportCsvDialog(true)
-  }
+    setExportCsvDialog(true);
+  };
+
+  const goToNextStep = () => {
+    debugger;
+  };
 
   return (
     <Container>
@@ -48,12 +77,12 @@ const ViewImportedCsvFile: React.FC<ViewImportedCsvFileProps> = () => {
           <TableBody>
             <TableRow>
               <TableCell>
-                <FileLink href="#">
-                  CSV file
-                </FileLink>
-                Dateee
+                <FileLink href="#">{csvFileDetails.fileName}</FileLink>
+                {formatDateTime(csvFileDetails?.uploadedAt)}
               </TableCell>
-              <TableCell style={{ textAlign: "right" }}>100</TableCell>
+              <TableCell style={{ textAlign: "right" }}>
+                {csvFileDetails?.uploadCounts?.uploadedCount}
+              </TableCell>
               <MoreOptionsContainer ref={menuRef}>
                 <MoreButton onClick={toggleMenu}>
                   <MoreHorizontal />
@@ -63,20 +92,21 @@ const ViewImportedCsvFile: React.FC<ViewImportedCsvFileProps> = () => {
                     <MenuItem onClick={handleExportCsv}>
                       <Upload size={14} /> Export CSV
                     </MenuItem>
-                    <MenuItem onClick={handleUploadedLeads}>
+                    <MenuItem onClick={showUploadLeads}>
                       <Info size={14} /> View Details
                     </MenuItem>
-                    {/* <UploadLeadsDialog
-                      // open={uploadleads}
-                      uploadCounts={uploadCounts}
+                    <UploadLeadsDialog
+                      open={showUploadedLeads}
+                      uploadCounts={csvFileDetails?.uploadCounts}
                       onClose={() => {
-                        setUploadLeads(false);
+                        setShowUploadedLeads(false);
                         goToNextStep();
                       }}
-                    /> */}
+                    />
                     <DownloadCsvFileDialog
                       open={exportCsvDialog}
                       onClose={() => setExportCsvDialog(false)}
+                      fileUrl={csvFileDetails.csv_file}
                     />
                   </PopupMenu>
                 )}

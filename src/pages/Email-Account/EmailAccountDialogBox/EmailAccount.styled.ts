@@ -9,7 +9,7 @@ export const DialogContainer = styled.div`
   background: #f7f9fc;
   border-radius: 16px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  padding: 24px;
+  padding: 12px;
 `;
 
 export const TabPanel = styled(motion.div)`

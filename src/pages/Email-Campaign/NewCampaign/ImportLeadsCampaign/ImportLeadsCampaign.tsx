@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Box, Typography, Dialog } from "@mui/material";
 import UploadFileOutlinedIcon from "@mui/icons-material/UploadFileOutlined";
 import ImportLeadsDetail from "./ImportLeadsDetail";
@@ -7,8 +7,13 @@ import Papa from "papaparse";
 import { ImportedLeadsData } from "../NewCampaign";
 import { CustomDialogFooter } from "../../../../styles/global.styled";
 import { FileUploadContainer } from "./importLeads.styled";
+import ViewImportedCsvFile from "./ViewImportedCsvFile";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../../redux/store/store";
+import { getCampaignById } from "../../../../redux/slice/emailCampaignSlice";
 
 interface ImportLeadsCampaignProps {
+  isEdit: boolean;
   handleLeadsData: (data: ImportedLeadsData) => void;
   handleCSVUpload: (data: any) => void;
   saveCSVSetting: (data: any) => void;
@@ -20,6 +25,7 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
   handleCSVUpload,
   saveCSVSetting,
   setIsNextDisabled,
+  isEdit
 }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [error, setError] = useState("");
@@ -28,29 +34,32 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [columns, setColumns] = useState<string[]>([]);
   const [csvData, setCSVData] = useState<any[]>([]);
-  // const dispatch = useDispatch<AppDispatch>();
+  const [csvFileDetails, setCsvFileDetails] = useState<any[]>([]);
 
-  // useEffect(() => {
-  //   debugger
-  //   const params = new URLSearchParams(location.search);
-  //   const campaignId = params.get("id");
+  const dispatch = useDispatch<AppDispatch>();
 
-  //   if (campaignId) {
-  //     fetchCampaignDetails(campaignId);
-  //   }
-  // }, [dispatch]);
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const campaignId = params.get("id");
 
-  // const fetchCampaignDetails = async (id: string) => {
-  //   try {
-  //     const response = await dispatch(getCampaignById(id)).unwrap();
-  //     const campaign = response.campaign;
-  //     return response.campaign;
+    if (campaignId) {
+      fetchCampaignDetails(campaignId);
+    }
+  }, [dispatch]);
 
-  //   } catch (error) {
-  //     console.error("Error fetching campaign:", error);
-  //     return null;
-  //   }
-  // };
+  const fetchCampaignDetails = async (id: string) => {
+    try {
+      debugger
+      const response = await dispatch(getCampaignById(id)).unwrap();
+      const campaign = response.campaign;
+      setCsvFileDetails(campaign?.csv_file);
+      return response.campaign;
+
+    } catch (error) {
+      console.error("Error fetching campaign:", error);
+      return null;
+    }
+  };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -155,15 +164,7 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
               Upload your CSV files to import leads.
             </CustomDialogFooter>
           </FileUploadContainer>
-          {/* <ViewImportedCsvFile handleLeadsData={function (data: ImportedLeadsData): void {
-              throw new Error("Function not implemented.");
-            } } handleCSVUpload={function (data: any): void {
-              throw new Error("Function not implemented.");
-            } } saveCSVSetting={function (data: any): void {
-              throw new Error("Function not implemented.");
-            } } setIsNextDisabled={function (status: boolean): void {
-              throw new Error("Function not implemented.");
-            } }/> */}
+          {isEdit && <ViewImportedCsvFile csvFileDetails={csvFileDetails}/>}
         </>
       )}
 

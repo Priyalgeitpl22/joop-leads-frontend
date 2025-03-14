@@ -29,6 +29,9 @@ import {
 } from "../../../../../styles/global.styled";
 import MultiSelectDropdown from "../../../../../assets/Custom/cutomSelectOption";
 import timeZones from "../../../../../constants";
+import { getCampaignById } from "../../../../../redux/slice/emailCampaignSlice";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../../../redux/store/store";
 
 interface ScheduleCampaignProps {
   open: boolean;
@@ -42,8 +45,10 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
   open,
   onClose,
   handleSave,
-  campaignSchedule
+  campaignSchedule,
 }) => {
+  const dispatch = useDispatch<AppDispatch>();
+
   const [formData, setFormData] = useState<{
     timeZone: [];
     selectedDays: number[];
@@ -65,21 +70,37 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
   });
 
   useEffect(() => {
-    if (campaignSchedule) {
-      setFormData((prev) => ({
-        ...prev,
-        timeZone: campaignSchedule.timeZone || [],
-        selectedDays: campaignSchedule.selectedDays || [],
-        startTime: dayjs(campaignSchedule.startTime),
-        endTime: dayjs(campaignSchedule.endTime),
-        emailInterval: campaignSchedule.emailInterval || 0,
-        startDate: campaignSchedule.startDate
-          ? dayjs(campaignSchedule.startDate)
-          : null,
-        maxLeads: campaignSchedule.maxLeads || 100,
-      }));
-    }
+    const params = new URLSearchParams(location.search);
+    const campaignId = params.get("id");
+
+    if (campaignId) fetchCampaignDetails(campaignId);
   }, [open, campaignSchedule]);
+
+  const fetchCampaignDetails = async (id: string) => {
+    try {
+      const response = await dispatch(getCampaignById(id)).unwrap();
+      const campaign = response.campaign;
+      const campaignSchedule = campaign.campaign_schedule;
+      if (campaignSchedule) {
+        setFormData((prev) => ({
+          ...prev,
+          timeZone: campaignSchedule.timeZone || [],
+          selectedDays: campaignSchedule.selectedDays || [],
+          startTime: dayjs(campaignSchedule.startTime),
+          endTime: dayjs(campaignSchedule.endTime),
+          emailInterval: campaignSchedule.emailInterval || 0,
+          startDate: campaignSchedule.startDate
+            ? dayjs(campaignSchedule.startDate)
+            : null,
+          maxLeads: campaignSchedule.maxLeads || 100,
+        }));
+      }
+      return response.campaign;
+    } catch (error) {
+      console.error("Error fetching campaign:", error);
+      return null;
+    }
+  };
 
   const handleChange = (field: keyof typeof formData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));

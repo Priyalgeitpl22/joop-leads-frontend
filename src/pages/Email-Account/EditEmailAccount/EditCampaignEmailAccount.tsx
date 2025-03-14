@@ -63,7 +63,7 @@ const EditCampaignEmailAccount = () => {
                 colSpan={4}
                 sx={{ textAlign: "center", color: "#888", padding: "20px" }}
               >
-                No Campaign found
+                No Campaigns found
               </TableCell>
             </TableRow>
           )}

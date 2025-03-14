@@ -21,6 +21,7 @@ import { GridColDef } from "@mui/x-data-grid";
 import { formatDate } from "../../../../../utils/utils";
 import { StyledWarmup } from "./SenderAccountDialog.styled";
 import { Account, EmailAccounts } from "../Interface";
+import { getCampaignById } from "../../../../../redux/slice/emailCampaignSlice";
 
 interface SenderAccountDialogProps {
   open: boolean;
@@ -35,7 +36,6 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
   onClose,
   campaignId,
   handleSave,
-  senderAccounts,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [emailAccounts, setEmailAccounts] = useState<EmailAccount[]>([]);
@@ -111,12 +111,11 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
   );
 
   useEffect(() => {
-    if (senderAccounts) {
-      const accountIds = senderAccounts.map((o: any) => o.account_id);
-      setSelectedEmailAccounts(accountIds);
-      setEmailAccounts(senderAccounts);
-    }
+    const params = new URLSearchParams(location.search);
+    const campaignId = params.get("id");
 
+    if (campaignId) fetchCampaignDetails(campaignId);
+    
     dispatch(fetchEmailAccount())
       .unwrap()
       .then((data) => {
@@ -124,6 +123,21 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
       })
       .catch(console.error)
   }, [open]);
+
+  const fetchCampaignDetails = async (id: string) => {
+    try {
+      const response = await dispatch(getCampaignById(id)).unwrap();
+      const campaign = response.campaign;
+      const senderAccounts = campaign.sender_accounts;
+      const accountIds = senderAccounts.map((o: any) => o.account_id);
+      setSelectedEmailAccounts(accountIds);
+      setEmailAccounts(senderAccounts);
+      return response.campaign;
+    } catch (error) {
+      console.error("Error fetching campaign:", error);
+      return null;
+    }
+  };
 
   const handleSelectedAccounts = (newSelection: any[]) => {
     console.log("selectedEmailAccounts", selectedEmailAccounts);

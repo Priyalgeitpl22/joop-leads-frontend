@@ -28,13 +28,6 @@ export const EmailCampaignHeader = styled.section`
   border-radius: 8px;
 `;
 
-export const SectionTitle = styled.h2`
-  font-size: 2rem;
-  font-weight: 600;
-  color: #35495c;
-  display: flex;
-`;
-
 // export const AccountButton = styled(motion.button)`
 //   background: var(--theme-color);
 //   border-radius: 3px;

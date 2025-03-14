@@ -8,8 +8,8 @@ import {
 import { motion } from "framer-motion";
 
 export const LeadssContainer = styled.div`
-  width: 98%;
-  height: 98%;
+  width: 100%;
+  height: 100%;
   display: flex;
   overflow: auto;
   background: white;
@@ -24,13 +24,6 @@ export const LeadsHeader = styled.section`
   align-items: center;
   justify-content: space-between;
   border-radius: 8px;
-`;
-
-export const SectionTitle = styled.h2`
-  font-size: 2rem;
-  font-weight: 600;
-  color: #35495c;
-  display: flex;
 `;
 
 // export const AccountButton = styled(motion.button)`

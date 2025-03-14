@@ -1,12 +1,12 @@
 import { createTheme } from "@mui/material/styles";
 
 const theme = createTheme({
-    breakpoints: {
+  breakpoints: {
     values: {
       xs: 0,
       sm: 600,
-      md: 850,
-      lg: 1200,
+      md: 800,
+      lg: 1400,
       xl: 1536,
     },
   },
@@ -264,7 +264,7 @@ const theme = createTheme({
         root: {
           backgroundColor: "var(--theme-color)",
           color: "#fff",
-          height: "80px",
+          height: "65px",
           boxShadow: "none",
           borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
           justifyContent: "center",
@@ -313,11 +313,11 @@ const theme = createTheme({
     MuiDrawer: {
       styleOverrides: {
         paper: {
-          width: "240px",
-          backgroundColor: "#fff",
-          color: "#FFFFFF",
-          padding: "10px",
-          justifyContent: "center",
+          width: "240px !important", // Custom width for sidebar
+          backgroundColor: "#fff",   // White background color
+          color: "#000",             // Black text color (changed from white)
+          padding: "10px",           // Padding inside the sidebar
+          justifyContent: "center",  // Centering the content horizontally (may need flex container)
         },
       },
     },
@@ -326,23 +326,23 @@ const theme = createTheme({
         root: {
           borderRadius: "8px",
           marginBottom: "8px",
-          padding: "10px !important", // Hover effect,
-          "& .MuiSvgIcon-root": {  // ✅ This correctly targets MUI icons inside buttons
+          padding: "10px !important",
+          "& .MuiSvgIcon-root": {
             color: "var(--theme-color) !important",
             fontSize: "30px !important"
           },
           "&:hover": {
             backgroundColor: "var(--background-secondary)",
-            padding: "10px !important" // Hover effect
+            padding: "10px !important"
           },
           "&:active": {
             backgroundColor: "var(--background-secondary)",
-            padding: "10px !important" // Hover effect
+            padding: "10px !important"
           },
           "&.Mui-selected": {
             backgroundColor: "var(--selected) !important",
             color: "white",
-            padding: "10px !important" // Hover effect
+            padding: "10px !important"
           },
           "& a": {
             textDecoration: "none !important",

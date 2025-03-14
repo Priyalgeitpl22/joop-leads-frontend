@@ -63,21 +63,20 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
     console.log(selectedVariant);
     if (campaignId) {
       fetchCampaignDetails(campaignId);
-    }
-    else {
-    if (sequences.length === 0) {
-      const newSequence: Sequence = {
-        seq_number: sequences.length + 1,
-        seq_type: SequenceType.EMAIL,
-        seq_delay_details: { delay_in_days: 1 },
-        sequence_schedular_type: SequenceSchedularType.AUTOMATIC,
-        seq_variants: [
-          { subject: "Subject 1", emailBody: "", variantLabel: "A" },
-        ],
-        variant_distribution_type: variantDistributionType.MANUAL_EQUAL,
-      };
-      setSelectedVariant(newSequence.seq_variants[0]);
-      addSequence(newSequence);
+    } else {
+      if (sequences.length === 0) {
+        const newSequence: Sequence = {
+          seq_number: sequences.length + 1,
+          seq_type: SequenceType.EMAIL,
+          seq_delay_details: { delay_in_days: 1 },
+          sequence_schedular_type: SequenceSchedularType.AUTOMATIC,
+          seq_variants: [
+            { subject: "Subject 1", emailBody: "", variantLabel: "A" },
+          ],
+          variant_distribution_type: variantDistributionType.MANUAL_EQUAL,
+        };
+        setSelectedVariant(newSequence.seq_variants[0]);
+        addSequence(newSequence);
       }
     }
   }, []);
@@ -86,7 +85,23 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
     try {
       const response = await dispatch(getCampaignById(id)).unwrap();
       const sequences = response.campaign.sequences;
-      updateSequences(sequences)
+      if (sequences.length === 0) {
+        const newSequence: Sequence = {
+          seq_number: sequences.length + 1,
+          seq_type: SequenceType.EMAIL,
+          seq_delay_details: { delay_in_days: 1 },
+          sequence_schedular_type: SequenceSchedularType.AUTOMATIC,
+          seq_variants: [
+            { subject: "Subject 1", emailBody: "", variantLabel: "A" },
+          ],
+          variant_distribution_type: variantDistributionType.MANUAL_EQUAL,
+        };
+
+        setSelectedVariant(newSequence.seq_variants[0]);
+        addSequence(newSequence);
+      } else {
+        updateSequences(sequences);
+      }
     } catch (error) {
       console.error("Error fetching campaign:", error);
       return null;

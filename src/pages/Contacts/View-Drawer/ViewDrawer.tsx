@@ -18,10 +18,10 @@ import {
   StyledDrawer,
   TitleContainer,
   Title,
-  SectionTitle,
   ContactCard,
   CampaignCard,
 } from "./ViewDrawer.styled";
+import { SectionTitle } from "../../../styles/layout.styled";
 
 interface ViewDrawerProps {
   open: boolean;

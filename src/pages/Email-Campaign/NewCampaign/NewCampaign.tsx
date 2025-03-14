@@ -19,6 +19,7 @@ import {
   addSequencesToCampaign,
   addEmailCampaignSettings,
   scheduleCampaign,
+  getCampaignById,
 } from "../../../redux/slice/emailCampaignSlice";
 import UploadLeadsDialog from "./ImportLeadsCampaign/UploadLeadsDialog";
 import { Sequence } from "./SequenceCampaign/Sequences/interfaces";
@@ -64,6 +65,7 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
     campaignSettings: {},
   });
   const [isNextDisabled, setIsNextDisabled] = React.useState(false);
+  const [isEdit, setIsEdit] = React.useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
   const location = useLocation();
@@ -76,11 +78,55 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
     const params = new URLSearchParams(location.search);
     const campaignId = params.get("campaignId");
 
+    const fetchDataAndProceed = async (id: string) => {
+      try {
+        debugger;
+        setIsLoading(true);
+        const campaign = await fetchCampaignDetails(id);
+
+        if (campaign) {
+          if (campaign.contacts.length === 0) {
+            setActiveStep(0);
+          } else if (campaign.sequences.length === 0) {
+            setActiveStep(1);
+          } else if (campaign.selectedAccounts === 0) {
+            setActiveStep(2);
+          } else {
+            setActiveStep(3);
+          }
+          setCampaignId(id);
+        }
+      } catch (error) {
+        console.error("Failed to fetch campaign details:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     if (campaignId) {
       setActiveStep(1);
       setCampaignId(campaignId);
+      setActiveStep(1);
+    } else {
+      const isEdit = params.has("edit");
+      const id = params.get("id");
+
+      if (isEdit && id) {
+        setIsEdit(true);
+        fetchDataAndProceed(id);
+      }
     }
-  }, [])
+  }, [location.search]);
+
+  const fetchCampaignDetails = async (id: string) => {
+    try {
+      const response = await dispatch(getCampaignById(id)).unwrap();
+      return response.campaign;
+    } catch (error) {
+      console.error("Error fetching campaign:", error);
+      return null;
+    }
+  };
 
   const handleLeadsData = (data: ImportedLeadsData) => {
     setEmailFieldsToBeAdded(data);
@@ -130,28 +176,6 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
       }
     }
     setIsLoading(false);
-  };
-
-  const handleSetup = async () => {
-    setIsLoading(true);
-    try {
-      const response = await dispatch(
-        addEmailCampaignSettings({
-          ...dialogData?.senderAccount,
-          ...dialogData?.scheduleCampaign,
-          ...dialogData?.campaignSettings,
-          campaign_id: campaignId,
-        })
-      );
-      if (response) {
-        setIsLoading(false);
-      }
-    } catch (error) {
-      setIsLoading(false);
-      console.error("Error setting up campaign:", error);
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   const goToNextStep = () => {
@@ -251,21 +275,87 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
     setTestEmailDialog(true);
   };
 
-  const handleSenderAccountsUpdate = (data: any) => {
+  const handleSenderAccountsUpdate = async (data: any) => {
     setDialogData((prev) => ({ ...prev, senderAccount: data }));
+
+    try {
+      setIsLoading(true);
+      const response = await dispatch(
+        addEmailCampaignSettings({
+          ...data,
+          campaign_id: campaignId,
+        })
+      );
+      if (response) {
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Error updating sender account:", error);
+      setIsLoading(false);
+    }
   };
 
-  const handleScheduleCampaignUpdate = (data: any) => {
+  const handleScheduleCampaignUpdate = async (data: any) => {
     setDialogData((prev) => ({ ...prev, scheduleCampaign: data }));
+
+    try {
+      setIsLoading(true);
+      const response = await dispatch(
+        addEmailCampaignSettings({
+          ...data,
+          campaign_id: campaignId,
+        })
+      );
+      if (response) {
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Error updating schedule campaign:", error);
+      setIsLoading(false);
+    }
   };
 
-  const handleCampaignSettingsUpdate = (data: any) => {
+  const handleCampaignSettingsUpdate = async (data: any) => {
     setDialogData((prev) => ({ ...prev, campaignSettings: data }));
+
+    try {
+      setIsLoading(true);
+      const response = await dispatch(
+        addEmailCampaignSettings({
+          ...data,
+          campaign_id: campaignId,
+        })
+      );
+      if (response) {
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Error updating campaign settings:", error);
+      setIsLoading(false);
+    }
   };
 
-  // if (isLoading) {
-  //   return <Loader />;
-  // }
+  const handleSetup = async () => {
+    setIsLoading(true);
+    try {
+      const response = await dispatch(
+        addEmailCampaignSettings({
+          ...dialogData?.senderAccount,
+          ...dialogData?.scheduleCampaign,
+          ...dialogData?.campaignSettings,
+          campaign_id: campaignId,
+        })
+      );
+      if (response) {
+        setIsLoading(false);
+      }
+    } catch (error) {
+      setIsLoading(false);
+      console.error("Error setting up campaign:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Container>
@@ -307,6 +397,7 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
       <MainContainer>
         {activeStep === 0 && (
           <ImportLeadsCampaign
+            isEdit={isEdit}
             handleLeadsData={handleLeadsData}
             handleCSVUpload={handleFileChange}
             saveCSVSetting={saveCSVSetting}
@@ -354,11 +445,11 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
         ) : (
           <Button2
             onClick={handleNext}
-            // disabled={isNextDisabled === false}
+            disabled={isNextDisabled === false}
             color={isNextDisabled ? "white" : "lightgray"}
             background={isNextDisabled ? "var(--theme-color)" : "#878484"}
             style={{
-              width: "10%",
+              // width: "150px"
               cursor: isNextDisabled ? "pointer" : "not-allowed",
             }}
           >

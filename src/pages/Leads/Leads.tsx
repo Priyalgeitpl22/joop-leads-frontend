@@ -10,7 +10,6 @@ import {
 import {
   LeadssContainer,
   LeadsHeader,
-  SectionTitle,
   StyledTableContainer,
   StyledTableHeadCell,
   LeadsTable,
@@ -28,6 +27,7 @@ import SortIcon from "@mui/icons-material/Sort";
 import { SearchBar } from "../../components/Header/header.styled";
 import MailOutlineSharpIcon from "@mui/icons-material/MailOutlineSharp";
 import { Search } from "lucide-react";
+import { SectionTitle } from "../../styles/layout.styled";
 
 const Leads: React.FC = () => {
   const label = { inputProps: { "aria-label": "Checkbox demo" } };

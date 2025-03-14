@@ -144,7 +144,7 @@ export const Button2 = styled("button", {
   shouldForwardProp: (prop) => prop !== "online",
 })<ButtonProps>(
   ({ color, background }) => `
-    width: 100%;
+    width: fit-content;
     height: 100%;
     border-radius: 5px;
     white-space: nowrap;  
@@ -188,3 +188,10 @@ export const TableIcons = styled(Box)(`
   justify-content: flex-start;
   gap: 5px;
 `)
+
+export const SectionTitle = styled.h2`
+  font-size: 18px;
+  font-weight: 600;
+  color: #35495c;
+  display: flex;
+`;

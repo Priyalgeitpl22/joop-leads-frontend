@@ -16,7 +16,6 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import {
   FilterIcon,
-  SectionTitle,
   ContactsHeader,
   ContactsContainer,
 } from "./ContactTable.styled";
@@ -52,6 +51,7 @@ import PersonOffIcon from "@mui/icons-material/PersonOff";
 import HowToRegIcon from '@mui/icons-material/HowToReg'
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import toast, { Toaster } from 'react-hot-toast';
+import { SectionTitle } from "../../styles/layout.styled";
 
 
 export interface ImportedLeadsData {
@@ -327,8 +327,6 @@ const ContactTable: React.FC = () => {
             display: "flex",
             gap: "15px",
             alignItems: "center",
-            marginLeft: "auto",
-            marginBottom: "10px",
           }}
         >
           <FilterIcon onClick={handleMenuOpen}>

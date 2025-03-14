@@ -19,9 +19,7 @@ import {
 } from "@mui/material";
 import {
   ContentContainer,
-  CustomTab,
   CustomTabs,
-  SectionTitle,
   EmailCampaignContainer,
   CustomTableRow,
   CustomTableCell,
@@ -46,9 +44,10 @@ import AdsClickOutlinedIcon from "@mui/icons-material/AdsClickOutlined";
 import ErrorOutlinedIcon from "@mui/icons-material/ErrorOutlined";
 import AttachMoneyOutlinedIcon from "@mui/icons-material/AttachMoneyOutlined";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
-import { TableIcons, TableItem } from "../../styles/layout.styled";
+import { SectionTitle, TableIcons, TableItem } from "../../styles/layout.styled";
 import { GridDeleteIcon } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
+import ProgressBar from "../../assets/Custom/linearProgress";
 interface EmailCampaignProps {
   router?: any;
 }
@@ -61,6 +60,7 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
   const [campaigns, setCampaigns] = useState<IEmailCampaign[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getEmailCampaigns = async () => {
@@ -71,8 +71,16 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
   }, []);
 
   const getAllEmailCampaigns = async () => {
-    const response = await dispatch(fetchEmailCampaigns());
-    setCampaigns(response.payload.data || []);
+    try {
+      setLoading(true);
+      const response = await dispatch(fetchEmailCampaigns()).unwrap();
+      setTimeout(() => {
+        setLoading(false);
+        setCampaigns(response.data || []);
+      }, 1000);
+    } catch (error) {
+      setLoading(false);
+    }
   };
 
   const handleTabChange = (_: any, newValue: SetStateAction<string>) => {
@@ -174,8 +182,8 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
   return (
     <ContentContainer>
       <CustomTabs
-        value={activeTab || "all_campaign"}
-        onChange={handleTabChange}
+        // value={activeTab || "all_campaign"}
+        // onChange={handleTabChange}
         sx={{
           display: "flex",
           alignItems: "center",
@@ -183,11 +191,12 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
           borderColor: "divider",
         }}
       >
-        <CustomTab
+        <SectionTitle>Email Campaigns</SectionTitle>
+        {/* <CustomTab
           label={`All Campaigns (${campaigns?.length})`}
           value="all_campaign"
-        />
-        <CustomTab label="Folders" value="folder" />
+        /> */}
+        {/* <CustomTab label="Folders" value="folder" /> */}
         {activeTab === "all_campaign" && (
           <Box
             sx={{
@@ -195,7 +204,6 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
               gap: "15px",
               alignItems: "center",
               marginLeft: "auto",
-              marginBottom: "10px",
             }}
           >
             <FilterIcon onClick={handleMenuOpen}>
@@ -213,7 +221,7 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
           </Box>
         )}
 
-        {activeTab === "folder" && (
+        {/* {activeTab === "folder" && (
           <Box
             sx={{
               display: "flex",
@@ -229,8 +237,9 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
             />
             <Button onClick={handleCreateFolder}>Create Folder</Button>
           </Box>
-        )}
+        )} */}
       </CustomTabs>
+      {loading && <ProgressBar />}
 
       <Menu
         anchorEl={anchorEl}
@@ -386,7 +395,7 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
                     color: "#888",
                   }}
                 >
-                  No Campaign found
+                  No Campaigns found
                 </div>
               </Paper>
             )}

@@ -8,9 +8,9 @@ import {
 import { motion } from "framer-motion";
 
 export const ContactsContainer = styled.div`
-  border:2px solid red
-  width: 98%;
-  // height: 98%;
+  border: 2px solid red
+  width: 100%;
+  height: 100%;
   display: flex;
   overflow: auto;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -28,13 +28,6 @@ export const ContactsHeader = styled.section`
   justify-content: space-between;
   padding: 12px;
   background: var(--background-secondary);
-`;
-
-export const SectionTitle = styled.h2`
-  font-size: 24px;
-  font-weight: 600;
-  color: #35495c;
-  display: flex;
 `;
 
 export const CreateContact = styled(motion.button)`

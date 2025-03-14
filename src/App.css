@@ -166,3 +166,19 @@ a:hover {
   padding: 20px;
   border-radius: 10px;
 }
+
+.MuiDrawer-root.MuiDrawer-anchorLeft.MuiDrawer-docked.css-16lpbd6-MuiDrawer-docked {
+  width: 230px;
+}
+
+.MuiBox-root.css-k0sogd {
+  margin: 0px !important;
+}
+
+nav.MuiBox-root.css-1oapqbb {
+  padding: 0px;
+}
+
+.MuiContainer-root.MuiContainer-maxWidthLg.css-j9ipaw-MuiContainer-root {
+  overflow: hidden;
+}

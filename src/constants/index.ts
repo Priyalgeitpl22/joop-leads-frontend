@@ -10,7 +10,6 @@ export const CSV_COLUMNS = [
   { key: "ignore_field", label: "Ignore Field" }
 ];
 
-
 export const timeZones = [
   { key: "UTC", value: "Coordinated Universal Time (UTC)" },
   { key: "PST", value: "Pacific Standard Time (PST, UTC-8)" },
@@ -37,5 +36,14 @@ export const timeZones = [
   { key: "NZST", value: "New Zealand Standard Time (NZST, UTC+12)" },
   { key: "NZDT", value: "New Zealand Daylight Time (NZDT, UTC+13)" }
 ];
+
+export const MAILBOXES = {
+  inbox: ["INBOX"],
+  sent: ["[Gmail]/Sent Mail", "Sent", "Sent Items"],
+  drafts: ["[Gmail]/Drafts", "Drafts"],
+  spam: ["[Gmail]/Spam", "Junk", "Spam"],
+  starred: ["[Gmail]/Starred", "Flagged", "Starred"],
+  allMail: ["[Gmail]/All Mail", "Archive", "All Mail"],
+};
 
 export default timeZones;

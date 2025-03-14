@@ -129,6 +129,7 @@ export default function DashboardLayoutBasic() {
           <PageContainer
             title=""
             sx={{
+              marginTop: "0 !important",
               "& .MuiTypography-root": { display: "none" },
               "& a": { display: "none" },
             }}
@@ -138,9 +139,6 @@ export default function DashboardLayoutBasic() {
               <EmailCampaign router={router} />
             )}
             {router.pathname === "/email-accounts" && <EmailAccount />}
-            {/* {router.pathname === "/email-account/edit-email-account/:id" && (
-              <EditEmailAccount />
-            )} */}
             {router.pathname.startsWith(
               "/email-account/edit-email-account/"
             ) && <EditEmailAccount id={router.pathname.split("/").pop()} />}

@@ -8,8 +8,8 @@ import {
 import { motion } from "framer-motion";
 
 export const EmailAccountsContainer = styled.div`
-  width: 98%;
-  height: 98%;
+  width: 100%;
+  height: 100%;
   display: flex;
   overflow: auto;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -27,13 +27,6 @@ export const EmailAccountHeader = styled.section`
   justify-content: space-between;
   padding: 12px;
   background: var(--background-secondary);
-`;
-
-export const SectionTitle = styled.h2`
-  font-size: 24px;
-  font-weight: 600;
-  color: #35495c;
-  display: flex;
 `;
 
 export const CreateEmailAccount = styled(motion.button)`

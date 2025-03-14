@@ -14,7 +14,6 @@ import {
   EmailAccountsContainer,
   EmailAccountHeader,
   EmailAccountTable,
-  SectionTitle,
 } from "./EmailAccount.styled";
 import EmailAccountDialog from "./EmailAccountDialogBox/EmailAccountDialog";
 import AdvancedSettingDialog from "./AdvancedSettingDialogBox/AdvancedSettingDialog";
@@ -36,6 +35,7 @@ import { Button, SecondaryButton } from "../../styles/global.styled";
 import { CustomTableCell } from "../Email-Campaign/EmailCampaign.styled";
 import { useNavigate } from "react-router-dom";
 import ProgressBar from "../../assets/Custom/linearProgress";
+import { SectionTitle } from "../../styles/layout.styled";
 // import ProgressBar from "../../assets/Custom/linearProgress";
 
 const EmailAccounts: React.FC = () => {
@@ -224,7 +224,7 @@ const EmailAccounts: React.FC = () => {
   );
 
   return (
-    <EmailAccountsContainer>
+    <EmailAccountsContainer >
       <EmailAccountHeader>
         <SectionTitle>Email Accounts</SectionTitle>
         <Box
@@ -232,8 +232,6 @@ const EmailAccounts: React.FC = () => {
             display: "flex",
             gap: "15px",
             alignItems: "center",
-            marginLeft: "auto",
-            marginBottom: "10px",
           }}
         >
           {/* <FilterIcon onClick={handleMenuOpen}>

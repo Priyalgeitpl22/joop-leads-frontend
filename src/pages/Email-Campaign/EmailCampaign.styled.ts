@@ -15,13 +15,6 @@ export const Section = styled.section`
   border: 1px solid var(--border);
 `;
 
-export const SectionTitle = styled.h2`
-  font-size: 18px;
-  font-weight: 600;
-  color: #35495c;
-  display: flex;
-`;
-
 export const ColorGrid = styled.div`
   display: flex;
   gap: 16px;
@@ -139,11 +132,11 @@ export const CopyButton = styled.button`
   }
 `;
 
-export const CustomTabs = styled(Tabs)`
+export const CustomTabs = styled(Box)`
   min-height: 40px;
-  padding: 12px 12px 0px 12px;
+  padding: 12px;
   background: var(--background-secondary);
-  
+
   .MuiTabs-indicator {
     background-color: #33475b;
     height: 4px;
@@ -181,7 +174,6 @@ export const ContentContainer = styled(Box)`
   background: white;
   position: relative;
   flex-direction: column;
-  // background: var(--white-fade-gradient);
 `;
 
 export const CustomTableBody = styled(TableBody)(({ }) => ({
