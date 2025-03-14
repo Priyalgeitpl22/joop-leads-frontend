@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import {api} from "../../services/api";
+import { api } from "../../services/api";
 import Cookies from "js-cookie";
 
 interface AuthState {
@@ -51,8 +51,9 @@ export const registerUser = createAsyncThunk(
   async (formData: FormData, { rejectWithValue }) => {
     try {
       const response = await api.post("/auth/register", formData, {
-        headers: { "Content-Type": "mutlipart/form-data",Authorization: `Bearer ${token}` }
+        headers: { "Content-Type": "mutlipart/form-data", Authorization: `Bearer ${token}` }
       });
+
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
@@ -122,7 +123,7 @@ export const loginUser = createAsyncThunk(
       const response = await api.post("/auth/login", loginData);
       const { token } = response.data;
       Cookies.set("access_token", token, { expires: 7, path: "" });
-       return response.data;
+      return response.data;
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message || "Network error"

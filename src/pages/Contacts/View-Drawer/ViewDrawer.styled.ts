@@ -5,7 +5,7 @@ import { Drawer, Box, Typography, Card } from "@mui/material";
 export const StyledDrawer = styled(Drawer)({
   "& .MuiDrawer-paper": {
     width: 450,
-    
+
     boxShadow: "0 4px 10px rgba(0,0,0,0.15)",
     overflowY: "auto",
   },
@@ -17,7 +17,7 @@ export const TitleContainer = styled(Box)({
   marginTop: "20px",
   display: "flex",
   alignItems: "center",
-  });
+});
 
 
 export const Title = styled(Typography)({
@@ -36,9 +36,9 @@ export const SectionTitle = styled(Typography)({
 
 
 export const ContactCard = styled(Card)({
-    
+
   padding: "16px",
-  paddingBottom:"20px",
+  paddingBottom: "20px",
   borderRadius: "10px",
   boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.1)",
   background: "#fff",

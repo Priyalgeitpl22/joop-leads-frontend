@@ -18,11 +18,19 @@ import Cookies from "js-cookie";
 import { getUserDetails } from "../../redux/slice/userSlice";
 import toast, { Toaster } from "react-hot-toast";
 import PasswordInput from "../../utils/PasswordInput";
+import { validateEmail } from "../../utils/Validation";
+
+
 
 function Login() {
   // Local state for controlled inputs.
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
+
 
   // A flag to trigger the login effect.
   const [loginSubmitted, setLoginSubmitted] = useState(false);
@@ -40,7 +48,9 @@ function Login() {
           const response = await dispatch(
             loginUser({ email, password })
           ).unwrap();
+
           if (response?.code === 200) {
+
             toast.success(response?.message);
 
             const token = Cookies.get("access_token");
@@ -59,17 +69,48 @@ function Login() {
         }
       })();
     }
+
   }, [loginSubmitted, dispatch, navigate]);
 
   const handleSignIn = () => {
+    let valid = true;
+
+    if (!email.trim()) {
+      setEmailError("Email is required.");
+      valid = false;
+    } else if (!validateEmail(email)) {
+      setEmailError("Enter a valid email address.");
+      valid = false;
+    } else {
+      setEmailError("");
+    }
+
+    if (!password.trim()) {
+      setPasswordError("Password is required.");
+      valid = false;
+    } else {
+      setPasswordError("");
+    }
+
+    if (!valid) return;
+
     setLoginSubmitted(true);
   };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+    if (emailError) setEmailError("");
+  };
+
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
+    if (passwordError) setPasswordError("");
   };
+
 
   return (
     <PageContainer>
+      <Toaster position="top-right" />
       <LoginCard>
         <IllustrationSection>
           <img
@@ -93,7 +134,9 @@ function Login() {
             variant="outlined"
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={handleEmailChange}
+            error={!!emailError}
+            helperText={emailError}
             required
           />
           <PasswordInput
@@ -101,7 +144,11 @@ function Login() {
             value={password}
             onChange={handlePasswordChange}
             autoComplete="new-password"
+            error={!!passwordError}
+            helperText={passwordError}
+            required
           />
+
           <NavigateLink
             style={{ alignSelf: "flex-end", marginBlock: 2 }}
             onClick={() => window.location.assign("/forgot-password")}
@@ -131,7 +178,6 @@ function Login() {
       </LoginCard>
 
       {loading && <Loader />}
-      <Toaster />
     </PageContainer>
   );
 }

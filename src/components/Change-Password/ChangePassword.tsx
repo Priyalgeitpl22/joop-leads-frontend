@@ -27,20 +27,20 @@ const ChangePassword: React.FC = () => {
     if (!existingPassword && !newPassword && !confirmPassword) {
       toast.error("All fields are required!");
       return;
-      }
+    }
 
-    const errorMessage = 
-    !existingPassword ? "Please enter existing password." :
-    !newPassword ? "Please enter new password." :
-    !confirmPassword ? "Please enter confirm password." :
-    newPassword !== confirmPassword ? "New password and confirm password do not match!" :
-    null;
+    const errorMessage =
+      !existingPassword ? "Please enter existing password." :
+        !newPassword ? "Please enter new password." :
+          !confirmPassword ? "Please enter confirm password." :
+            newPassword !== confirmPassword ? "New password and confirm password do not match!" :
+              null;
 
 
 
     if (errorMessage) {
       toast.error(errorMessage);
-      
+
       return;
     }
 

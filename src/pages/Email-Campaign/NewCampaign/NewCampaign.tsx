@@ -19,7 +19,6 @@ import {
   addSequencesToCampaign,
   addEmailCampaignSettings,
   scheduleCampaign,
-  getCampaignById,
 } from "../../../redux/slice/emailCampaignSlice";
 import UploadLeadsDialog from "./ImportLeadsCampaign/UploadLeadsDialog";
 import { Sequence } from "./SequenceCampaign/Sequences/interfaces";
@@ -77,44 +76,11 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
     const params = new URLSearchParams(location.search);
     const campaignId = params.get("campaignId");
 
-    const fetchDataAndProceed = async (id: string) => {
-      try {
-        setIsLoading(true);
-        const campaign = await fetchCampaignDetails(id);
-
-        if (campaign) {
-          setCampaignId(id);
-          setActiveStep(3);
-        }
-      } catch (error) {
-        console.error("Failed to fetch campaign details:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     if (campaignId) {
-      setCampaignId(campaignId);
       setActiveStep(1);
-    } else {
-      const isEdit = params.has("edit");
-      const id = params.get("id");
-
-      if (isEdit && id) {
-        fetchDataAndProceed(id);
-      }
+      setCampaignId(campaignId);
     }
-  }, [location.search]);
-
-  const fetchCampaignDetails = async (id: string) => {
-    try {
-      const response = await dispatch(getCampaignById(id)).unwrap();
-      return response.campaign;
-    } catch (error) {
-      console.error("Error fetching campaign:", error);
-      return null;
-    }
-  };
+  }, [])
 
   const handleLeadsData = (data: ImportedLeadsData) => {
     setEmailFieldsToBeAdded(data);

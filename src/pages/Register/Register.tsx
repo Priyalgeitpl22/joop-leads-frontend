@@ -1,9 +1,17 @@
 import { useRef, useState } from "react";
-import { FormControl, FormHelperText, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
+import {
+  FormControl,
+  FormHelperText,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  Typography,
+} from "@mui/material";
 import { useDispatch } from "react-redux";
 import { registerUser } from "../../redux/slice/authSlice";
-import { AppDispatch } from "../../redux/store/store"; 
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { AppDispatch } from "../../redux/store/store";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import industriesData from "../../components/Organization/Industry.json";
 import {
   PageContainer,
@@ -16,10 +24,10 @@ import {
   PreviewImage,
   NavigateLink,
 } from "./register.styled";
-import Loader from "../../components/Loader"; 
+import Loader from "../../components/Loader";
 import toast, { Toaster } from "react-hot-toast";
-import PasswordInput from "../../utils/PasswordInput";
 import { useNavigate } from "react-router-dom";
+import fieldValidation from "../../utils/Validation";
 
 interface RegisterFormData {
   profilePicture: File | null;
@@ -37,12 +45,12 @@ const formFields: {
   label: string;
   type: string;
 }[] = [
-  { name: "fullName", label: "Full Name", type: "text"},
-  { name: "email", label: "Email Address", type: "email" },
-  { name: "password", label: "Password", type: "text" },
-  { name: "orgName", label: "Company Name", type: "text" },
-  { name: "domain", label: "Domain", type: "text" },
-];
+    { name: "fullName", label: "Full Name", type: "text" },
+    { name: "email", label: "Email Address", type: "email" },
+    { name: "password", label: "Password", type: "text" },
+    { name: "orgName", label: "Company Name", type: "text" },
+    { name: "domain", label: "Domain", type: "text" },
+  ];
 
 const Register = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -67,23 +75,72 @@ const Register = () => {
   // State to control the full screen loader
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  // Handler for text input fields
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    if (name !== "profilePicture" && name !== "country") {
+      const error = getValidationError(
+        name as Exclude<keyof RegisterFormData, "profilePicture">,
+        value
+      );
+
+      setFormData((prev) => ({ ...prev, [name]: value }));
+      setErrors((prev) => ({ ...prev, [name]: error }));
+    }
   };
 
-  // Handler for file input (profile picture)
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setFormData({ ...formData, profilePicture: file });
-      // Create and set the preview URL for the selected file
       setPreviewImage(URL.createObjectURL(file));
     }
   };
 
+  const getValidationError = (
+    field: Exclude<keyof RegisterFormData, "profilePicture">,
+    value: string
+  ): string => {
+    const rules = fieldValidation[field];
+    if (!value.trim()) {
+      return rules?.required?.message || `${field} is required`;
+    }
+    if (rules?.minLength && value.length < rules.minLength.value) {
+      return rules.minLength.message;
+    }
+    if (rules?.pattern && !new RegExp(rules.pattern.value).test(value)) {
+      return rules.pattern.message;
+    }
+    return "";
+  };
+
+  const validateFormData = (): boolean => {
+    let isValid = true;
+    const newErrors: Partial<Record<keyof RegisterFormData, string>> = {};
+    (Object.keys(fieldValidation) as (keyof RegisterFormData)[]).forEach(
+      (field) => {
+        if (!(field in fieldValidation)) return;
+        if (field === "profilePicture") return;
+        const value = formData[field] as string;
+        const error = getValidationError(field, value);
+        if (error) {
+          newErrors[field] = error;
+          isValid = false;
+        }
+      }
+    );
+    setErrors(newErrors);
+    console.log("Validation Errors:", newErrors);
+    console.log("Is Form Valid:", isValid);
+
+    return isValid;
+  };
+
   // Handle submit by converting our state into FormData
   const handleSubmit = async () => {
+    if (!validateFormData()) return;
     setIsLoading(true);
     const payload = new FormData();
     payload.append("fullName", formData.fullName);
@@ -97,12 +154,18 @@ const Register = () => {
       payload.append("profilePicture", formData.profilePicture);
     }
     try {
-      await dispatch(registerUser(payload)).unwrap();
-      toast.success("Registration successful!");
-      navigate("/verify-otp", { state: { email: formData.email } });
-    } catch (err) {
+      const response = await dispatch(registerUser(payload)).unwrap();
+
+      if (response?.code === 201) {
+        toast.success("Registration successful!");
+        navigate("/verify-otp", { state: { email: formData.email } });
+      }
+    } catch (err: any) {
       console.error("Registration failed:", err);
-      toast.error("Registration failed. Please try again.");
+
+      const errorMessage = err || "Registration failed. Please try again.";
+
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -114,12 +177,21 @@ const Register = () => {
 
   const handleSelectChange = (event: SelectChangeEvent<string>) => {
     const { name, value } = event.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    setErrors((prev) => ({ ...prev, [name]: "" }));
+
+    if (name !== "profilePicture") {
+      const error = getValidationError(
+        name as Exclude<keyof RegisterFormData, "profilePicture">,
+        value
+      );
+
+      setFormData((prev) => ({ ...prev, [name]: value }));
+      setErrors((prev) => ({ ...prev, [name]: error }));
+    }
   };
 
   return (
     <PageContainer>
+      <Toaster position="top-right" />
       <RegisterCard>
         <IllustrationSection>
           <img
@@ -140,10 +212,20 @@ const Register = () => {
           {/* Profile picture upload input */}
           <PreviewContainer>
             {previewImage ? (
-              <PreviewImage src={previewImage} alt="Profile preview" onClick={handleIconClick} style={{ cursor: 'pointer' }} />
+              <PreviewImage
+                src={previewImage}
+                alt="Profile preview"
+                onClick={handleIconClick}
+                style={{ cursor: "pointer" }}
+              />
             ) : (
               <AccountCircleIcon
-                style={{ fontSize: "50px", color: "var(--theme-color-dark)", marginBottom: "8px", cursor: 'pointer' }}
+                style={{
+                  fontSize: "50px",
+                  color: "var(--theme-color-dark)",
+                  marginBottom: "8px",
+                  cursor: "pointer",
+                }}
                 onClick={handleIconClick}
               />
             )}
@@ -152,7 +234,7 @@ const Register = () => {
               accept="image/*"
               onChange={handleFileChange}
               ref={fileInputRef}
-              style={{ display: 'none' }}
+              style={{ display: "none" }}
             />
           </PreviewContainer>
 
@@ -198,18 +280,20 @@ const Register = () => {
                 </FormControl>
               );
             }
-            if (name === "password") {
-              return (
-                <PasswordInput
-                  key={name}
-                  name={name}
-                  label={label}
-                  value={formData[name]}
-                  onChange={handleChange}
-                  autoComplete="new-password"
-                />
-              );
-            }
+            // if (name === "password") {
+            //   return (
+            //     // <PasswordInput
+            //     //   key={name}
+            //     //   name={name}
+            //     //   label={label}
+            //     //   value={formData[name]}
+            //     //   onChange={handleChange}
+            //     //   error={!!errors.password}
+            //     //   helperText={errors.password}
+            //     // />
+
+            //   );
+            // }
             return (
               <StyledTextField
                 key={name}
@@ -218,19 +302,26 @@ const Register = () => {
                 type={type}
                 variant="outlined"
                 value={formData[name]}
+                error={!!errors[name]}
+                helperText={errors[name] || ""}
                 onChange={handleChange}
                 autoComplete="nope"
               />
             );
           })}
 
-
           <StyledButton variant="contained" fullWidth onClick={handleSubmit}>
             REGISTER
           </StyledButton>
 
-          <Typography variant="body2" color="black" align="center" sx={{ my: 1 }}>
-            Already have an account?{" "}<NavigateLink onClick={() => window.location.assign("/login")}>
+          <Typography
+            variant="body2"
+            color="black"
+            align="center"
+            sx={{ my: 1 }}
+          >
+            Already have an account?{" "}
+            <NavigateLink onClick={() => window.location.assign("/login")}>
               Login
             </NavigateLink>
           </Typography>
@@ -238,7 +329,6 @@ const Register = () => {
       </RegisterCard>
 
       {isLoading && <Loader />}
-      <Toaster />
     </PageContainer>
   );
 };
