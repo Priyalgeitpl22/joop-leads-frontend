@@ -88,6 +88,11 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
       }
     }
   };
+  const handleDeleteFile = () => {
+    setSelectedFile(null);
+    setShowDetail(false);
+    setOpenDialog(false);
+  };
 
   return (
     <Box
@@ -108,6 +113,7 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
           columns={columns}
           file={selectedFile}
           onFileChange={handleFileChange}
+          onDeleteFile={handleDeleteFile}
           setIsNextDisabled={setIsNextDisabled}
         />
       ) : (

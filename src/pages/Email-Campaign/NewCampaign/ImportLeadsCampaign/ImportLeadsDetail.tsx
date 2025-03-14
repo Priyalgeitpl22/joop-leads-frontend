@@ -16,6 +16,7 @@ interface ImportLeadsDetailProps {
   setIsNextDisabled: (status: boolean) => void;
   isUplaodContacts: boolean;
   handleUploadContacts?: (data: any) => void;
+  onDeleteFile?: () => void 
 }
 
 const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
@@ -26,6 +27,7 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
   setIsNextDisabled,
   isUplaodContacts,
   handleUploadContacts,
+  onDeleteFile,
 }) => {
   const [emailFieldMapping, setEmailFieldMapping] = useState<
     Record<string, string>
