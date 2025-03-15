@@ -18,8 +18,8 @@ import {
 import { Info, MoreHorizontal, Upload } from "lucide-react";
 import DownloadCsvFileDialog from "./DownloadCsvfileDialog";
 import React from "react";
-import { formatDateTime } from "../../../../utils/utils";
 import UploadLeadsDialog from "./UploadLeadsDialog";
+import { formatDateTime } from "../../../../utils/utils";
 
 interface ViewImportedCsvFileProps {
   csvFileDetails: any;
@@ -28,36 +28,51 @@ interface ViewImportedCsvFileProps {
 const ViewImportedCsvFile: React.FC<ViewImportedCsvFileProps> = ({
   csvFileDetails,
 }) => {
-  const [exportCsvDialog, setExportCsvDialog] = React.useState(false);
-
+  const [exportCsvDialog, setExportCsvDialog] = useState(false);
+  const [showUploadedLeads, setShowUploadedLeads] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
-  const [showUploadedLeads, setShowUploadedLeads] = useState(false);
+  const buttonRef = useRef<HTMLDivElement | null>(null);
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
 
-  const toggleMenu = () => setShowMenu(!showMenu);
-
-  // ✅ Ensure the modal opens immediately after state update
-  useEffect(() => {
-    if (showUploadedLeads) {
-      setShowUploadedLeads(true);
+  const toggleMenu = () => {
+    if (showMenu) {
+      setShowMenu(false);
+    } else {
+      if (buttonRef.current) {
+        const rect = buttonRef.current.getBoundingClientRect();
+        setMenuPosition({
+          top: rect.top,
+          left: rect.right + 15,
+        });
+      }
+      setShowMenu(true);
     }
-  }, [showUploadedLeads]);
-
-  const showUploadLeads = () => {
-    setShowUploadedLeads(true);
   };
 
-  const handleExportCsv = () => {
-    setExportCsvDialog(true);
-  };
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(event.target as Node) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target as Node)
+      ) {
+        setShowMenu(false);
+      }
+    };
 
-  const goToNextStep = () => {
-
-  };
+    if (showMenu) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showMenu]);
 
   return (
     <Container>
-      <Title>Previously Uploads Leads</Title>
+      <Title>Previously Uploaded Leads</Title>
       <Card>
         <Table>
           <TableHeader>
@@ -78,39 +93,41 @@ const ViewImportedCsvFile: React.FC<ViewImportedCsvFileProps> = ({
               <TableCell style={{ textAlign: "right" }}>
                 {csvFileDetails?.uploadCounts?.uploadedCount}
               </TableCell>
-              <MoreOptionsContainer ref={menuRef}>
-                <MoreButton onClick={toggleMenu}>
-                  <MoreHorizontal />
-                </MoreButton>
-                {showMenu && (
-                  <PopupMenu>
-                    <MenuItem onClick={handleExportCsv}>
-                      <Upload size={14} /> Export CSV
-                    </MenuItem>
-                    <MenuItem onClick={showUploadLeads}>
-                      <Info size={14} /> View Details
-                    </MenuItem>
-                    <UploadLeadsDialog
-                      open={showUploadedLeads}
-                      uploadCounts={csvFileDetails?.uploadCounts}
-                      onClose={() => {
-                        setShowUploadedLeads(false);
-                        goToNextStep();
-                      }}
-                    />
-                    <DownloadCsvFileDialog
-                      open={exportCsvDialog}
-                      onClose={() => setExportCsvDialog(false)}
-                      fileUrl={csvFileDetails.csv_file}
-                    />
-                  </PopupMenu>
-                )}
-              </MoreOptionsContainer>
+              <TableCell>
+                <MoreOptionsContainer>
+                  <MoreButton ref={buttonRef} onClick={toggleMenu}>
+                    <MoreHorizontal />
+                  </MoreButton>
+                  {showMenu && (
+                    <PopupMenu
+                      ref={menuRef}
+                      style={{ top: menuPosition.top, left: menuPosition.left }}
+                    >
+                      <MenuItem onClick={() => setExportCsvDialog(true)}>
+                        <Upload size={14} /> Export CSV
+                      </MenuItem>
+                      <MenuItem onClick={() => setShowUploadedLeads(true)}>
+                        <Info size={14} /> View Details
+                      </MenuItem>
+                    </PopupMenu>
+                  )}
+                </MoreOptionsContainer>
+              </TableCell>
             </TableRow>
-            {/* ))} */}
           </TableBody>
         </Table>
       </Card>
+
+      <UploadLeadsDialog
+        open={showUploadedLeads}
+        uploadCounts={csvFileDetails?.uploadCounts}
+        onClose={() => setShowUploadedLeads(false)}
+      />
+      <DownloadCsvFileDialog
+        open={exportCsvDialog}
+        onClose={() => setExportCsvDialog(false)}
+        fileUrl={csvFileDetails.csv_file}
+      />
     </Container>
   );
 };

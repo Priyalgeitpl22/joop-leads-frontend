@@ -206,7 +206,6 @@ const emailAccountSlice = createSlice({
 export const deleteEmailAccount = createAsyncThunk(
   "emailAccounts/deleteEmailAccount",
   async (id: string, { rejectWithValue }) => {
-    debugger
     try {
       await emailApi.delete(`/accounts/${id}`);
       return id; 

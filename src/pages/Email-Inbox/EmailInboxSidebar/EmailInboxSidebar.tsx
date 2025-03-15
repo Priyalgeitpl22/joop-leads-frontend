@@ -13,6 +13,7 @@ import {
   StyledList,
   StyledListItem,
   NoMailboxMessage,
+  EmailInboxListHeader
 } from "./EmailInboxSidebar.styled";
 
 const EmailInboxSideBar = () => {
@@ -73,7 +74,9 @@ const EmailInboxSideBar = () => {
 
   return (
     <SidebarContainer>
-      <SidebarHeader>For Me</SidebarHeader>
+      <EmailInboxListHeader>
+        <SidebarHeader>For Me</SidebarHeader>
+      </EmailInboxListHeader>
       <StyledDivider />
       <StyledList>
         {uniqueMailboxes.length > 0 ? (

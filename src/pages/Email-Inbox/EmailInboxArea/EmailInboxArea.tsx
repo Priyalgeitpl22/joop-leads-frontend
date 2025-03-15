@@ -6,6 +6,9 @@ import {
   EmailInboxMessagesContainer,
   EmailInboxMessagesHeading,
   EmailPagination,
+  TotalPageCount,
+  NoMailboxMessage,
+  InboxMessageBody,
 } from "./EmailInboxArea.styled";
 import { Avatar, CircularProgress } from "@mui/material";
 import { Reply, ReplyAll, Trash2 } from "lucide-react";
@@ -63,9 +66,7 @@ const EmailInboxArea: React.FC = () => {
   };
 
   return (
-    <EmailInboxMessagesContainer
-      style={{ display: "flex", flexDirection: "column", height: "100%" }}
-    >
+    <EmailInboxMessagesContainer>
       {loading ? (
         <EmailInboxMessagesBox>
           <CircularProgress />
@@ -83,10 +84,7 @@ const EmailInboxArea: React.FC = () => {
             {mailboxMessages.map((message: any) => {
               const isExpanded = expandedMessageId === message._id;
               return (
-                <EmailInboxMessagesHeading
-                  key={message._id}
-                  style={{ marginBottom: "10px" }}
-                >
+                <EmailInboxMessagesHeading key={message._id}>
                   <div
                     style={{
                       display: "flex",
@@ -150,64 +148,32 @@ const EmailInboxArea: React.FC = () => {
                     {message.to?.[0]?.address || "No Email"})
                   </div>
 
-                  <div
+                  <InboxMessageBody
+                    isExpanded={isExpanded}
                     onClick={() => toggleMessageBody(message._id)}
-                    style={{
-                      marginTop: "10px",
-                      cursor: "pointer",
-                      whiteSpace: isExpanded ? "normal" : "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      color: isExpanded ? "black" : "#444343",
-                      fontSize: "15px",
-                    }}
                   >
                     {isExpanded
                       ? message.body
-                    : message.body.split("\n").slice(0, 10).join("\n") + " ..."}
-                  </div>
+                      : message.body.split("\n").slice(0, 10).join("\n") +
+                        " ..."}
+                  </InboxMessageBody>
                 </EmailInboxMessagesHeading>
               );
             })}
           </div>
-
-          {totalMessages > messagesPerPage && (
-            <div
-              style={{
-                borderTop: "1px solid #ddd",
-                padding: "5px 0",
-                display: "flex",
-                justifyContent: "right",
-                backgroundColor: "#fff",
-                height: "8%",
-              }}
-            >
+          <TotalPageCount>
+            <div>Total Messages : {totalMessages}</div>
+            {totalMessages > messagesPerPage && (
               <EmailPagination
                 count={totalPages}
                 page={currentPage}
                 onChange={handlePageChange}
               />
-            </div>
-          )}
+            )}
+          </TotalPageCount>
         </div>
       ) : (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "20px",
-            borderRadius: "8px",
-            backgroundColor: "#f8f9fa",
-            color: "#555",
-            fontSize: "16px",
-            fontWeight: "bold",
-            marginTop: "20px",
-            height: "100%",
-            width: "100%",
-          }}
-        >
+        <NoMailboxMessage>
           <img
             src="https://cdn-icons-png.flaticon.com/512/2748/2748558.png"
             alt="No Messages"
@@ -219,7 +185,7 @@ const EmailInboxArea: React.FC = () => {
             }}
           />
           No mail found.
-        </div>
+        </NoMailboxMessage>
       )}
     </EmailInboxMessagesContainer>
   );

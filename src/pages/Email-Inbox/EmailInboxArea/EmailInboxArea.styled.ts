@@ -71,11 +71,12 @@ export const PlaceholderContainer = styled(Box)({
 });
 export const EmailInboxMessagesContainer = styled(Box)`
   flex: 1;
-  overflow-y: auto; /* Enables vertical scrolling */
-  // height: calc(100vh - 60px); /* Adjust height based on header/footer */
+  overflow-y: auto;
   height: "100%";
+  display: "flex";
+  flexDirection: "column";
   padding: 20px;
-  scrollbar-width: thin; /* Firefox */
+  scrollbar-width: thin;
   scrollbar-color: #c1c1c1 transparent;
 
   &::-webkit-scrollbar {
@@ -143,4 +144,40 @@ export const EmailPagination = styled(Pagination)({
   "& .MuiPaginationItem-root:hover": {
     backgroundColor: "rgba(0, 0, 0, 0.1)",
   },
+});
+
+export const InboxMessageBody = styled(Box)<{ isExpanded: boolean }>(
+  ({ isExpanded }) => ({
+    marginTop: "10px",
+    cursor: "pointer",
+    whiteSpace: isExpanded ? "normal" : "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    color: isExpanded ? "black" : "#444343",
+    fontSize: "15px",
+  })
+);
+
+export const TotalPageCount = styled(Box)({
+  borderTop: "1px solid #ddd",
+  padding: "5px 0",
+  display: "flex",
+  justifyContent: "space-between",
+  backgroundColor: "#fff",
+  height: "8%",
+})
+
+export const NoMailboxMessage = styled(Box)({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  padding: "20px",
+  borderRadius: "8px",
+  backgroundColor: "#f8f9fa",
+  color: "#555",
+  fontSize: "16px",
+  fontWeight: "bold",
+  height: "100%",
+  width: "100%",
 });

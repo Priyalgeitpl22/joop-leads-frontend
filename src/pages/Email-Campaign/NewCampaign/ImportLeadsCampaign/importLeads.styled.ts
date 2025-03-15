@@ -91,7 +91,7 @@ export const MoreButton = styled.div`
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  padding: 8px;
+  padding: 10px;
   border-radius: 50%;
   &:hover {
     background: rgba(0, 0, 0, 0.05);
@@ -100,8 +100,8 @@ export const MoreButton = styled.div`
 
 // export const PopupMenu = styled.div`
 // //   position: absolute;
-//   right: 20;
-//   top: 30px;
+//   left: 30px; /* Shift it to the right */
+//   top: 0;
 //   background: white;
 //   border-radius: 8px;
 //   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
@@ -111,9 +111,7 @@ export const MoreButton = styled.div`
 // `;
 
 export const PopupMenu = styled.div`
-//   position: absolute;
-  left: 30px; /* Shift it to the right */
-  top: 0;
+  position: absolute;
   background: white;
   border-radius: 8px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
