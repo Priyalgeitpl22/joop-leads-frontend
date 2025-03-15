@@ -5,7 +5,7 @@ const theme = createTheme({
     values: {
       xs: 0,
       sm: 600,
-      md: 800,
+      md: 850,
       lg: 1400,
       xl: 1536,
     },
@@ -313,11 +313,11 @@ const theme = createTheme({
     MuiDrawer: {
       styleOverrides: {
         paper: {
-          width: "240px !important", // Custom width for sidebar
-          backgroundColor: "#fff",   // White background color
-          color: "#000",             // Black text color (changed from white)
-          padding: "10px",           // Padding inside the sidebar
-          justifyContent: "center",  // Centering the content horizontally (may need flex container)
+          width: "240px",
+          backgroundColor: "#fff",
+          color: "#FFFFFF",
+          padding: "10px",
+          justifyContent: "center",
         },
       },
     },

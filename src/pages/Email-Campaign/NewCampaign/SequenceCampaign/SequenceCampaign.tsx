@@ -27,6 +27,7 @@ import { SequenceType, variantDistributionType } from "./Sequences/enums";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../redux/store/store";
 import { getCampaignById } from "../../../../redux/slice/emailCampaignSlice";
+import CircularLoader from "../../../../assets/Custom/circularProgress";
 
 interface ImportLeadsCampaignProps {
   handleEmailTemplateData: (data: any) => void;
@@ -36,6 +37,7 @@ interface ImportLeadsCampaignProps {
   updateSequenceData: (data: any) => void;
   sequences: Sequence[];
   selectedSequence?: Sequence;
+  setIsNextDisabled: (status: boolean) => void;
 }
 
 const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
@@ -44,6 +46,7 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
   addSequence,
   updateSequences,
   updateSequenceData,
+  setIsNextDisabled,
   selectedSequence,
   sequences,
 }) => {
@@ -51,6 +54,7 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedVariant, setSelectedVariant] = useState<SequenceVariant>();
   const dispatch = useDispatch<AppDispatch>();
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleAddStep = () => {
     setShowStepOptions(!showStepOptions);
@@ -60,7 +64,6 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
     const params = new URLSearchParams(location.search);
     const campaignId = params.get("id");
 
-    console.log(selectedVariant);
     if (campaignId) {
       fetchCampaignDetails(campaignId);
     } else {
@@ -77,6 +80,7 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
         };
         setSelectedVariant(newSequence.seq_variants[0]);
         addSequence(newSequence);
+        setIsLoading(false);
       }
     }
   }, []);
@@ -99,8 +103,10 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
 
         setSelectedVariant(newSequence.seq_variants[0]);
         addSequence(newSequence);
+        setIsLoading(false);
       } else {
         updateSequences(sequences);
+        setIsLoading(false);
       }
     } catch (error) {
       console.error("Error fetching campaign:", error);
@@ -155,6 +161,7 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
 
   return (
     <Box sx={{ height: "100%" }} display={"flex"}>
+      {isLoading && <CircularLoader />}
       <SequenceSidebarContainer>
         {sequences.map((sequence, index) =>
           sequence.seq_type === SequenceType.EMAIL ? (

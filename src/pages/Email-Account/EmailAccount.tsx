@@ -58,8 +58,10 @@ const EmailAccounts: React.FC = () => {
         headerName: "Type",
         width: 100,
         renderCell: (params: any) => {
+          let icon = null;
+
           if (params.value === "gmail") {
-            return (
+            icon = (
               <img
                 src="https://img.icons8.com/color/48/000000/gmail-new.png"
                 alt="Gmail Icon"
@@ -68,7 +70,7 @@ const EmailAccounts: React.FC = () => {
               />
             );
           } else if (params.value === "outlook") {
-            return (
+            icon = (
               <img
                 src="https://img.icons8.com/color/48/000000/microsoft-outlook-2019.png"
                 alt="Outlook Icon"
@@ -77,10 +79,10 @@ const EmailAccounts: React.FC = () => {
               />
             );
           } else if (params.value === "imap") {
-            return <CustomIcon />;
-          } else {
-            return null;
+            icon = <CustomIcon />;
           }
+
+          return <Box sx={{ marginTop: "8px" }}>{icon}</Box>;
         },
       },
       {
@@ -174,7 +176,7 @@ const EmailAccounts: React.FC = () => {
     setSearchQuery(query);
     handleSearch(query);
   };
-  
+
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
@@ -224,7 +226,7 @@ const EmailAccounts: React.FC = () => {
   );
 
   return (
-    <EmailAccountsContainer >
+    <EmailAccountsContainer>
       <EmailAccountHeader>
         <SectionTitle>Email Accounts</SectionTitle>
         <Box
@@ -312,7 +314,7 @@ const EmailAccounts: React.FC = () => {
           <Button>Apply</Button>
         </Box>
       </Menu>
-      <EmailAccountTable >
+      <EmailAccountTable>
         <CustomDataTable
           columns={columns}
           rows={rows}

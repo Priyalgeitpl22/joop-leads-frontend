@@ -27,7 +27,6 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
   setIsNextDisabled,
   isUplaodContacts,
   handleUploadContacts,
-  onDeleteFile,
 }) => {
   const [emailFieldMapping, setEmailFieldMapping] = useState<
     Record<string, string>

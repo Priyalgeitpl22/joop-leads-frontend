@@ -28,8 +28,8 @@ import { ILeadsCounts } from "./interfaces";
 import { CustomizedStepper } from "./stepper";
 import { Button, SecondaryButton } from "../../../styles/global.styled";
 import { Button2 } from "../../../styles/layout.styled";
-import ProgressBar from "../../../assets/Custom/linearProgress";
 import { useLocation } from "react-router-dom";
+import CircularLoader from "../../../assets/Custom/circularProgress";
 export interface ImportedLeadsData {
   campaignName?: string;
   clientId?: string;
@@ -80,7 +80,6 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
 
     const fetchDataAndProceed = async (id: string) => {
       try {
-        debugger;
         setIsLoading(true);
         const campaign = await fetchCampaignDetails(id);
 
@@ -393,7 +392,7 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
           />
         </Box>
       </HeaderContainer>
-      {isLoading && <ProgressBar />}
+      {isLoading && <CircularLoader />}
       <MainContainer>
         {activeStep === 0 && (
           <ImportLeadsCampaign
@@ -406,6 +405,7 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
         )}
         {activeStep === 1 && (
           <SequenceCampaign
+            setIsNextDisabled={setIsNextDisabled}
             onClickEmailFollowUp={onClickEmailFollowUp}
             handleEmailTemplateData={handleEmailTemplateData}
             addSequence={addSequence}
@@ -449,7 +449,6 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
             color={isNextDisabled ? "white" : "lightgray"}
             background={isNextDisabled ? "var(--theme-color)" : "#878484"}
             style={{
-              // width: "150px"
               cursor: isNextDisabled ? "pointer" : "not-allowed",
             }}
           >
