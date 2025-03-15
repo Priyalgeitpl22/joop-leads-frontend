@@ -18,6 +18,7 @@ import {
   AccountItem,
   AccountAvatar,
   AccountDetails,
+  EmailInboxHeading,
 } from "./EmailInboxList.styled";
 import { fetchEmailAccount } from "../../../redux/slice/emailAccountSlice";
 import { EmailAccount } from "../../Email-Campaign/NewCampaign/SetupCampaign/Interface";
@@ -102,9 +103,10 @@ const EmailInboxList: React.FC = () => {
 
   return (
     <EmailInboxListContainer>
-      <div
-        style={{ position: "sticky", top: 0, background: "#fff", zIndex: 10 }}
-      >
+      <EmailInboxHeading>
+        <EmailInboxListHeader>
+          <HeaderTitle>Inbox</HeaderTitle>
+        </EmailInboxListHeader>
         <SearchBar>
           <Search size={20} />
           <input
@@ -113,15 +115,9 @@ const EmailInboxList: React.FC = () => {
             onChange={handleSearchChange}
           />
         </SearchBar>
+      </EmailInboxHeading>
 
-        <EmailInboxListHeader>
-          <HeaderTitle>Inbox</HeaderTitle>
-        </EmailInboxListHeader>
-      </div>
-
-      <AccountList
-        style={{ overflowY: "auto", maxHeight: "calc(100vh - 120px)" }}
-      >
+      <AccountList>
         {rows.length > 0 ? (
           rows.map((account) => (
             <AccountItem

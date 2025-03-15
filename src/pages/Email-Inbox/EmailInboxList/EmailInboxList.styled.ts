@@ -5,7 +5,8 @@ export const EmailInboxListContainer = styled(Box)({
   width: "28%",
   minWidth: "250px",
   borderRight: "1px solid #ddd",
-  padding: "10px",
+  padding: "0px 10px 10px 10px",
+  marginTop: "5px",
   height: "100%",
   overflowY: "auto",
   backgroundColor: "var(--text-white)",
@@ -24,6 +25,17 @@ export const EmailInboxListContainer = styled(Box)({
   },
 });
 
+export const EmailInboxHeading = styled(Box)({
+  position: "sticky",
+  display: "flex",
+  top: 0,
+  background: "#fff",
+  zIndex: 10,
+  justifyContent: "space-between",
+  gap: "6%",
+  borderBottom: "1px solid #eee",
+})
+
 export const SearchContainer = styled(Box)({
   display: "flex",
   alignItems: "center",
@@ -32,7 +44,7 @@ export const SearchContainer = styled(Box)({
   borderRadius: "8px",
   border: "1px solid #ccc",
   backgroundColor: "#f8f9fa",
-  width: "100%",
+  width: "60%",
 });
 
 export const SearchInput = styled("input")({
@@ -49,13 +61,13 @@ export const SearchInput = styled("input")({
 });
 
 export const EmailInboxListHeader = styled(Box)({
-  display: "flex",
-  justifyContent: "space-between",
+  // display: "flex",
+  // justifyContent: "space-between",
   alignItems: "center",
   marginTop: "8px",
   marginBottom: "10px",
-  borderBottom: "1px solid #eee",
-  paddingBottom: "8px",
+  // borderBottom: "1px solid #eee",
+  paddingBottom: "5px",
 
   "@media (max-width: 600px)": {
     flexDirection: "column",
@@ -88,6 +100,9 @@ export const HeaderIcons = styled(Box)({
 
 export const AccountList = styled(List)({
   padding: 0,
+  overflowY: "auto",
+  maxHeight: "calc(100vh - 120px)",
+  marginTop: "5px",
 });
 
 export const AccountItem = styled(ListItem)({

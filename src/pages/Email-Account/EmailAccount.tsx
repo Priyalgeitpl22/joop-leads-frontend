@@ -38,6 +38,7 @@ import { CustomTableCell } from "../Email-Campaign/EmailCampaign.styled";
 import { useNavigate } from "react-router-dom";
 import ProgressBar from "../../assets/Custom/linearProgress";
 import { SectionTitle } from "../../styles/layout.styled";
+import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
 // import ProgressBar from "../../assets/Custom/linearProgress";
 
 const EmailAccounts: React.FC = () => {
@@ -51,11 +52,16 @@ const EmailAccounts: React.FC = () => {
   const [rows, setRows] = useState<any[]>([]);
   const navigate = useNavigate();
   const { user } = useSelector((state: RootState) => state.user);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [selectedEmailAccount, setSelectedEmailAccount] = useState<
+    string | null
+  >(null);
+
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: "name", headerName: "Name", width: 150 },
-      { field: "email", headerName: "Email", width: 250 },
+      { field: "name", headerName: "Name", width: 160 },
+      { field: "email", headerName: "Email", width: 260 },
       {
         field: "type",
         headerName: "Type",
@@ -91,7 +97,7 @@ const EmailAccounts: React.FC = () => {
       {
         field: "warm_up",
         headerName: "Warmup Enabled",
-        width: 120,
+        width: 150,
         renderCell: () => <Box>Yes</Box>,
       },
       {
@@ -103,19 +109,19 @@ const EmailAccounts: React.FC = () => {
       {
         field: "reputation",
         headerName: "Reputation",
-        width: 100,
+        width: 110,
         renderCell: () => <Box>100%</Box>,
       },
       {
         field: "createdAt",
         headerName: "Created At",
-        width: 150,
+        width: 160,
         valueGetter: (params: any) => (params ? formatDate(params) : null),
       },
       {
         field: "edit",
         headerName: "Action",
-        width: 80,
+        width: 100,
         sortable: false,
         renderCell: (params) => (
           <CustomTableCell>
@@ -128,8 +134,8 @@ const EmailAccounts: React.FC = () => {
               </Tooltip>
               <Tooltip title="Delete Email Account" arrow>
                 <GridDeleteIcon
-                  sx={{ cursor: "pointer"}}
-                  onClick={() => handleDelete(params.row.id)}
+                  sx={{ cursor: "pointer" }}
+                  onClick={() => handleOpenDeleteDialog(params.row.id)}
                 />
               </Tooltip>
             </Box>
@@ -213,15 +219,29 @@ const EmailAccounts: React.FC = () => {
     console.log("Navigating to:", `/email-account/edit-email-account/${id}`);
   };
 
-  const handleDelete = async (id: string) => {
+  const handleOpenDeleteDialog = (id: string) => {
+    setSelectedEmailAccount(id);
+    setOpenDeleteDialog(true);
+  };
+
+  const handleCloseDeleteDialog = () => {
+    setSelectedEmailAccount(null);
+    setOpenDeleteDialog(false);
+  };
+
+  const handleDeleteEmailAccount = async () => {
+    if (!selectedEmailAccount) return;
     try {
-      await dispatch(deleteEmailAccount(id)).unwrap();
-      setRows((prevRows) => prevRows.filter((row) => row.id !== id));
-      setEmailAccounts((prevAccounts) =>
-        prevAccounts.filter((account) => account._id !== id)
+      await dispatch(deleteEmailAccount(selectedEmailAccount)).unwrap();
+      setRows((prevRows) =>
+        prevRows.filter((row) => row.id !== selectedEmailAccount)
       );
+      setEmailAccounts((prevAccounts) =>
+        prevAccounts.filter((account) => account._id !== selectedEmailAccount)
+      );
+      handleCloseDeleteDialog();
     } catch (error) {
-      console.error("Error deleting email account:", error);
+      console.error("Failed to delete email account:", error);
     }
   };
 
@@ -347,6 +367,15 @@ const EmailAccounts: React.FC = () => {
           enableCheckboxSelection={false}
         />
       </EmailAccountTable>
+      <ConfirmDeleteDialog
+        open={openDeleteDialog}
+        onClose={handleCloseDeleteDialog}
+        onConfirm={handleDeleteEmailAccount}
+        title="Delete Email Account?"
+        message="Are you sure you want to delete this email account?"
+        confirmText="Delete"
+        cancelText="Cancel"
+      />
     </EmailAccountsContainer>
   );
 };
