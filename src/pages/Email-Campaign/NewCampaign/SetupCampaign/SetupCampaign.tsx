@@ -187,7 +187,7 @@ const SetupCampaign: React.FC<SetupCampaignProps> = ({
             label={
               <Box>
                 <Typography variant="h5">Campaign Settings</Typography>
-                <Typography variant="body2" color="gray">
+                <Typography variant="body2">
                   Configure the settings for this campaign
                 </Typography>
               </Box>

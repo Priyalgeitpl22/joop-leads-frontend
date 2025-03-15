@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   Button,
+  CircularProgress,
   DialogContent,
   IconButton,
   TextField,
@@ -13,10 +14,11 @@ import {
   DialogHeader,
 } from "./SequenceCampaign/sequenceCampaign.styled";
 import MultiSelectDropdown from "../../../assets/Custom/cutomSelectOption";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../redux/store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../redux/store/store";
 import { fetchEmailAccount } from "../../../redux/slice/emailAccountSlice";
 import { SendTestEmail } from "../../../redux/slice/emailCampaignSlice";
+import toast from "react-hot-toast";
 
 interface SendTestEmailDialogProps {
   open: boolean;
@@ -28,17 +30,21 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
   onClose,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const [rows, setRows] = useState<{_id: any; id: string; email: string }[]>([]);
+  const [rows, setRows] = useState<{ _id: any; id: string; email: string }[]>(
+    []
+  );
   const [selectedEmailAccount, setSelectedEmailAccount] = useState<
     string | string[]
   >("");
   const [toEmail, setToEmail] = useState<string>("");
   const [isLoading, setIsLoading] = React.useState(false);
+  const [loading, setLoading] = useState(false);
+  const { user } = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
     const getEmailAccounts = async () => {
       try {
-        const data = await dispatch(fetchEmailAccount()).unwrap();
+        const data = await dispatch(fetchEmailAccount({ orgId: user?.orgId || "" })).unwrap();
         setRows(data);
         if (data.length > 0) {
           setSelectedEmailAccount(data[0].id);
@@ -52,6 +58,7 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
   }, [dispatch]);
 
   const sendTestEmail = async () => {
+    setLoading(true);
     if (!selectedEmailAccount) {
       console.error("No email account selected.");
       return;
@@ -65,26 +72,25 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
       setIsLoading(true);
       console.log(isLoading);
       const response = await dispatch(SendTestEmail(payload)).unwrap();
-      console.log("Test email sent successfully:", response);
+      if (response) {
+        toast.success(response?.message);
+      } 
       onClose();
+      setLoading(false);
     } catch (error) {
-      console.error("Failed to send test email:", error);
-    } finally{
-      setIsLoading(false);
+      toast.error("Something went wrong");
+      setLoading(false);
+    } finally {
+      setLoading(false);
     }
   };
-
-  // if (isLoading){
-  //   return <Loader/>
-  // }
-
   return (
     <DialogBox open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogHeader>
         <Typography fontWeight="600">Send Test Email</Typography>
         <IconButton
           onClick={onClose}
-          sx={{ position: "absolute", right: 16, top: 12, padding: "0px"}}
+          sx={{ position: "absolute", right: 16, top: 12, padding: "0px" }}
         >
           <CloseIcon />
         </IconButton>
@@ -135,11 +141,15 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
             textTransform: "none",
             padding: "8px 24px",
             borderRadius: "6px",
-            "&:hover": { backgroundColor: "#5a46d1" },
+            "&:hover": { backgroundColor: "var(--hover-color)" },
           }}
           onClick={sendTestEmail}
         >
-          Send Test Email
+          {loading ? (
+            <CircularProgress size={24} sx={{ color: "white" }} />
+          ) : (
+            "Send Test Email"
+          )}
         </Button>
       </DialogFooter>
     </DialogBox>

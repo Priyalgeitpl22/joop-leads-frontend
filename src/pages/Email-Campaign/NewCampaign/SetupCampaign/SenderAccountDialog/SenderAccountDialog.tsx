@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Dialog, Typography, Box, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../../../redux/store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../../../redux/store/store";
 import { SearchBar } from "../../../../../components/Header/header.styled";
 import { Search } from "lucide-react";
 import {
@@ -43,6 +43,7 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
   const [selectedEmailAccounts, setSelectedEmailAccounts] = useState<string[]>(
     []
   );
+  const { user } = useSelector((state: RootState) => state.user);
 
   const [rows, setRows] = useState<any[]>([]);
   const [selectedAccounts, setSelectedAccounts] = React.useState<EmailAccounts>(
@@ -115,13 +116,13 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
     const campaignId = params.get("id");
 
     if (campaignId) fetchCampaignDetails(campaignId);
-    
-    dispatch(fetchEmailAccount())
+
+    dispatch(fetchEmailAccount({ orgId: user?.orgId || "" }))
       .unwrap()
       .then((data) => {
         setRows(data);
       })
-      .catch(console.error)
+      .catch(console.error);
   }, [open]);
 
   const fetchCampaignDetails = async (id: string) => {
@@ -174,7 +175,7 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
 
   const getAllEmailAccounts = async () => {
     try {
-      const data = await dispatch(fetchEmailAccount()).unwrap();
+      const data = await dispatch(fetchEmailAccount({ orgId: user?.orgId || "" })).unwrap();
       setEmailAccounts(data);
       setRows(data);
     } catch (error) {
@@ -214,7 +215,7 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
       sx={{ overflowX: "hidden" }}
     >
       <CustomDialogHeader>
-        <Typography variant="h5">Campaign Settings</Typography>
+        <Typography variant="h5">Choose Sender Accounts</Typography>
         {
           <IconButton>
             <CloseIcon onClick={onClose} />
@@ -253,13 +254,9 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
         <CustomDataTable
           columns={columns}
           rows={rows}
-          pageSizeOptions={[5, 10]}
+          pageSizeOptions={[15, 10, 5]}
           handleRowSelection={handleSelectedAccounts}
-          rowSelectionModel={selectedEmailAccounts} // Ensuring selected rows are preserved
-          // onRowSelectionModelChange={(newSelection: any) => {
-          //   console.log("Selected Rows:", newSelection);
-          //   handleSelectedAccounts(newSelection);
-          // }}
+          rowSelectionModel={selectedEmailAccounts}
         />
       </CustomDialogContainer>
 

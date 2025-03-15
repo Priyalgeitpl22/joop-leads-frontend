@@ -40,6 +40,7 @@ export interface CreateEmailAccountPayload {
   state: string;
   type: string;
   email: string;
+  orgId: string;
   imap: {
     auth: {
       user: string;
@@ -64,9 +65,11 @@ export interface CreateEmailAccountPayload {
 
 export const fetchEmailAccount = createAsyncThunk(
   "accounts",
-  async (_, { rejectWithValue }) => {
+  async ({ orgId }: { orgId: string }, { rejectWithValue }) => {
     try {
-      const response = await emailApi.get("/accounts");
+      const response = await emailApi.get("/accounts", {
+        params: { orgId }, // ✅ Pass orgId inside params
+      });
       return response.data;
     } catch (error: unknown) {
       let errorMessage = "Something went wrong";
@@ -80,10 +83,10 @@ export const fetchEmailAccount = createAsyncThunk(
 
 export const addOuthEmailAccount = createAsyncThunk(
   "oauth/auth-url",
-  async (_, { rejectWithValue }) => {
+  async ({ orgId }: { orgId: any }, { rejectWithValue }) => {
     try {
       const origin = encodeURIComponent(window.location.href);
-      const response = await emailApi.get(`/oauth/auth-url?origin=${origin}`);
+      const response = await emailApi.get(`/oauth/auth-url?origin=${origin}&orgId=${encodeURIComponent(orgId)}`);
       return response.data.url;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || "Network error");
@@ -93,10 +96,10 @@ export const addOuthEmailAccount = createAsyncThunk(
 
 export const addOutlookEmailAccount = createAsyncThunk(
   "outlook/auth-url",
-  async (__dirname, { rejectWithValue }) => {
+  async ({ orgId }: { orgId: any }, { rejectWithValue }) => {
     try {
       const origin = encodeURIComponent(window.location.href);
-      const response = await emailApi.get(`/outlook/auth-url?origin=${origin}`);
+      const response = await emailApi.get(`/outlook/auth-url?origin=${origin}&orgId=${encodeURIComponent(orgId)}`);
       return response.data.url;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || "Network error");

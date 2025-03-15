@@ -38,7 +38,7 @@ export const MainContainer = styled.div`
 
 export const SetupButton = styled.button`
   font-weight: semibold;
-  width: 320px;
+  width: 260px;
   padding: 12px 30px;
   border: none;
   border-radius: 6px;

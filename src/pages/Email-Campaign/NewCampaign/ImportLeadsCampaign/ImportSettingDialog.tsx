@@ -125,7 +125,7 @@ const ImportSettingDialog: React.FC<ImportSettingDialogProps> = ({
               textTransform: "none",
               padding: "8px 24px",
               borderRadius: "6px",
-              "&:hover": { backgroundColor: "#5a46d1" },
+              "&:hover": { backgroundColor: "var(--hover-color)" },
             }}
             onClick={handleSave}
           >

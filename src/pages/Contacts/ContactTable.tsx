@@ -444,7 +444,7 @@ const ContactTable: React.FC = () => {
       <CustomDataTable
         columns={columns}
         rows={rows}
-        pageSizeOptions={[10, 10]}
+        pageSizeOptions={[15, 10, 5]}
         rowSelectionModel={rowSelectionModel}
         handleRowSelection={handleSelectedRows}
       />

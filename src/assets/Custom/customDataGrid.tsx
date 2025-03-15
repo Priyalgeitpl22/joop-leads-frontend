@@ -10,6 +10,7 @@ interface CustomDataTableProps {
   pageSizeOptions?: number[];
   handleRowSelection?: (selection: any) => void;
   rowSelectionModel?: string[];
+  enableCheckboxSelection?: boolean;
 }
 
 export const CustomDataTable: React.FC<CustomDataTableProps> = ({
@@ -18,6 +19,7 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
   pageSizeOptions = [5, 10],
   handleRowSelection,
   rowSelectionModel,
+  enableCheckboxSelection = true,
 }) => {
   const [paginationModel, setPaginationModel] =
     React.useState<GridPaginationModel>({
@@ -28,17 +30,17 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
   return (
     <Box
       sx={{
-        height: "100%", // Ensure Box takes full height of its container
-        display: "flex", // Use flexbox layout
-        flexDirection: "column", // Stack children vertically
+        height: "100%", 
+        display: "flex",
+        flexDirection: "column",
       }}
     >
       <Paper
         className="data-grid-container"
         sx={{
-          flexGrow: 1, // Ensures Paper takes up remaining height
-          display: "flex", // Enables flex layout within Paper
-          minHeight: "480px", // Minimum height for Paper
+          flexGrow: 1,
+          display: "flex",
+          minHeight: "380px",
         }}
       >
         <DataGrid
@@ -47,9 +49,9 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
           pageSizeOptions={pageSizeOptions}
           paginationModel={paginationModel}
           onPaginationModelChange={setPaginationModel}
-          checkboxSelection
           onRowSelectionModelChange={handleRowSelection}
           rowSelectionModel={rowSelectionModel}
+          checkboxSelection={enableCheckboxSelection}
           getRowId={(row) => row._id || row.id}
           slots={{
             noRowsOverlay: () => (

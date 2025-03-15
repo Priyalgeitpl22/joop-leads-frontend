@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  RadioGroup,
-  Radio,
-  Checkbox,
-} from "@mui/material";
+import { RadioGroup, Radio, Checkbox } from "@mui/material";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import Grid2 from "@mui/material/Grid2";
 import { Button2, TextField, InputLabel } from "../../../styles/layout.styled";
@@ -25,6 +21,7 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
     id ? state.emailAccount?.accounts?.[id] : null
   );
 
+  const { user } = useSelector((state: RootState) => state.user);
 
   const [formData, setFormData] = useState({
     fromName: "",
@@ -138,7 +135,7 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
       smtpEhloName: "localhost",
     };
     setLoading(true);
-    console.log("Loader", loading)
+    console.log("Loader", loading);
     dispatch(verifyEmailAccount(payload))
       .unwrap()
       .then(() => {
@@ -196,24 +193,46 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
     dispatch(updateEmailAccountSmtpDetail({ id, data: payload }))
       .unwrap()
       .then(() => {
-        console.log("account updated successfully")
+        console.log("account updated successfully");
       })
       .catch((error) => {
         console.log("Failed to update email account: " + error);
       });
   };
+  const handleGoogleAccount = async () => {
+    if (user) {
+      try {
+        const response = await dispatch(
+          addOuthEmailAccount({ orgId: user?.orgId })
+        ).unwrap();
 
-  const handleGoogleAccount = async () =>{
-    const response = await dispatch(addOuthEmailAccount()).unwrap();
-    if(response){
-    window.location.href=response}
-  }
+        if (response) {
+          window.location.href = response;
+        }
+      } catch (error) {
+        console.error("Error fetching OAuth URL:", error);
+      }
+    }
+  };
 
-  const handleOutlookAccount = async () =>{
-    const response = await dispatch(addOutlookEmailAccount()).unwrap();
-    if(response){
-    window.location.href=response}
-  }
+  const handleOutlookAccount = async () => {
+    if (!user?.orgId) {
+      console.error("Organization ID is missing");
+      return;
+    }
+
+    try {
+      const response = await dispatch(
+        addOutlookEmailAccount({ orgId: user.orgId })
+      ).unwrap();
+
+      if (response) {
+        window.location.href = response;
+      }
+    } catch (error) {
+      console.error("Error fetching Outlook OAuth URL:", error);
+    }
+  };
 
   return (
     <div style={{ padding: "3%" }}>

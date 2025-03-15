@@ -9,8 +9,8 @@ import {
   IconButton,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { useDispatch} from "react-redux";
-import { AppDispatch } from "../../../redux/store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../redux/store/store";
 import { addOuthEmailAccount } from "../../../redux/slice/emailAccountSlice";
 import EmailAccountSmtpDialog from "./EmailAccountSmtpDialog";
 import EmailAccountOutlookDialog from "./EmailAccountOutlook";
@@ -27,20 +27,34 @@ const EmailCampaignDialog: React.FC<EmailCampaignDialogProps> = ({
   const dispatch = useDispatch<AppDispatch>();
   const [smtpDialogOpen, setSmtpDialogOpen] = useState<boolean>(false);
   const [outlookDialogOpen, setOutlookDialogOpen] = useState<boolean>(false);
+  const { user } = useSelector((state: RootState) => state.user);
 
-  const handleGoogleOuth = async () =>{
-    const response = await dispatch(addOuthEmailAccount()).unwrap();
-    if(response){
-    window.location.href=response}
-  }
+  const handleGoogleOuth = async () => {
+    if (!user?.orgId) {
+      console.error("Organization ID is missing");
+      return;
+    }
 
-  const handleSmtpDetail = async () =>{
+    try {
+      const response = await dispatch(
+        addOuthEmailAccount({ orgId: user.orgId }) // ✅ Pass the object correctly
+      ).unwrap();
+
+      if (response) {
+        window.location.href = response;
+      }
+    } catch (error) {
+      console.error("Error fetching Google OAuth URL:", error);
+    }
+  };
+
+  const handleSmtpDetail = async () => {
     setSmtpDialogOpen(true);
-  }
+  };
 
-  const handleOutlook = async () =>{
+  const handleOutlook = async () => {
     setOutlookDialogOpen(true);
-  }
+  };
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>

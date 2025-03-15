@@ -18,13 +18,13 @@ import {
 import EmailAccountDialog from "./EmailAccountDialogBox/EmailAccountDialog";
 import AdvancedSettingDialog from "./AdvancedSettingDialogBox/AdvancedSettingDialog";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   EmailAccount,
   fetchEmailAccount,
   SearchEmailAccount,
 } from "../../redux/slice/emailAccountSlice";
-import { AppDispatch } from "../../redux/store/store";
+import { AppDispatch, RootState } from "../../redux/store/store";
 import { SearchBar } from "../../components/Header/header.styled";
 import { Search } from "lucide-react";
 // import toast from "react-hot-toast";
@@ -48,6 +48,7 @@ const EmailAccounts: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [rows, setRows] = useState<any[]>([]);
   const navigate = useNavigate();
+  const { user } = useSelector((state: RootState) => state.user);
 
   const columns: GridColDef[] = useMemo(
     () => [
@@ -138,7 +139,7 @@ const EmailAccounts: React.FC = () => {
   const getAllEmailAccounts = async () => {
     try {
       setLoading(true);
-      const data = await dispatch(fetchEmailAccount()).unwrap();
+      const data = await dispatch(fetchEmailAccount({ orgId: user?.orgId || "" })).unwrap();
       setTimeout(() => {
         setLoading(false);
         const mappedRows = data.map((account: { _id: any }) => ({
@@ -318,7 +319,8 @@ const EmailAccounts: React.FC = () => {
         <CustomDataTable
           columns={columns}
           rows={rows}
-          pageSizeOptions={[10, 10]}
+          pageSizeOptions={[15, 10, 5]}
+          enableCheckboxSelection={false}
         />
       </EmailAccountTable>
     </EmailAccountsContainer>

@@ -32,7 +32,11 @@ import FolderOpenOutlinedIcon from "@mui/icons-material/FolderOpenOutlined";
 import EmailCampaignDialog from "./EmailCampaignDialog/AddEmailCampaignDialog";
 import { Search } from "lucide-react";
 import { useDispatch } from "react-redux";
-import { DeleteEmailCampaign, fetchEmailCampaigns, SearchEmailCampaign } from "../../redux/slice/emailCampaignSlice";
+import {
+  DeleteEmailCampaign,
+  fetchEmailCampaigns,
+  SearchEmailCampaign,
+} from "../../redux/slice/emailCampaignSlice";
 import { AppDispatch } from "../../redux/store/store";
 import { IEmailCampaign } from "./NewCampaign/interfaces";
 import { formatDate } from "../../utils/utils";
@@ -44,10 +48,15 @@ import AdsClickOutlinedIcon from "@mui/icons-material/AdsClickOutlined";
 import ErrorOutlinedIcon from "@mui/icons-material/ErrorOutlined";
 import AttachMoneyOutlinedIcon from "@mui/icons-material/AttachMoneyOutlined";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
-import { SectionTitle, TableIcons, TableItem } from "../../styles/layout.styled";
+import {
+  SectionTitle,
+  TableIcons,
+  TableItem,
+} from "../../styles/layout.styled";
 import { GridDeleteIcon } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import ProgressBar from "../../assets/Custom/linearProgress";
+import { CampaignStatus } from "../../enums";
 interface EmailCampaignProps {
   router?: any;
 }
@@ -61,6 +70,7 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [selectedStatus, setSelectedStatus] = useState("");
 
   useEffect(() => {
     const getEmailCampaigns = async () => {
@@ -83,13 +93,13 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
     }
   };
 
-  const handleTabChange = (_: any, newValue: SetStateAction<string>) => {
-    if (newValue === "all_campaign" || newValue === "folder") {
-      setActiveTab(newValue);
-    } else {
-      setActiveTab("all_campaign");
-    }
-  };
+  // const handleTabChange = (_: any, newValue: SetStateAction<string>) => {
+  //   if (newValue === "all_campaign" || newValue === "folder") {
+  //     setActiveTab(newValue);
+  //   } else {
+  //     setActiveTab("all_campaign");
+  //   }
+  // };
 
   const handleCreateCampaign = () => {
     window.location.assign("/email-campaign/new-campaign");
@@ -166,7 +176,7 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
 
   const handleEditCampaign = (id: string) => {
     navigate(`email-campaign/new-campaign?edit&id=${id}`);
-  }
+  };
 
   const handleCampaignDelete = async (campaignId: string) => {
     try {
@@ -271,16 +281,21 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
           </Link>
         </Box>
 
-        {["Campaign Status", "Tag Name", "Team Member", "Client Name"].map(
-          (label) => (
-            <FormControl fullWidth sx={{ mt: 2 }}>
-              <InputLabel shrink={false}>{label}</InputLabel>
-              <Select sx={{ background: "white!important" }}>
-                <MenuItem value="">Select {label}</MenuItem>
-              </Select>
-            </FormControl>
-          )
-        )}
+        <FormControl fullWidth sx={{ mt: 2 }}>
+          <InputLabel shrink={false}>Campaign Status</InputLabel>
+          <Select
+            value={selectedStatus}
+            onChange={(e) => setSelectedStatus(e.target.value)}
+            sx={{ background: "white!important" }}
+          >
+            <MenuItem value="">Select Campaign Status</MenuItem>
+            {Object.values(CampaignStatus).map((status) => (
+              <MenuItem key={status} value={status}>
+                {status}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
         <Box display="flex" justifyContent="space-between" mt={2}>
           <Button onClick={handleMenuClose}>Cancel</Button>

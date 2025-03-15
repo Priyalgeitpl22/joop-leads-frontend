@@ -58,7 +58,7 @@ const EmailCampaignDialog: React.FC<EmailCampaignDialogProps> = ({
               color: "white",
               textTransform: "none",
               borderRadius: "6px",
-              "&:hover": { backgroundColor: "#5a46d1" },
+              "&:hover": { backgroundColor: "var(--hover-color)" },
             }}
           >
             Save

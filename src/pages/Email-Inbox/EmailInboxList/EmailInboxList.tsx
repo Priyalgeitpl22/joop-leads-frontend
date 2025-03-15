@@ -28,6 +28,7 @@ const EmailInboxList: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [rows, setRows] = useState<any[]>([]);
   const [emailAccounts, setEmailAccounts] = useState<EmailAccount[]>([])
+  const { user } = useSelector((state: RootState) => state.user);
   const selectedAccountId = useSelector(
     (state: RootState) => state.emailInbox.selectedAccountId
   );
@@ -68,7 +69,7 @@ const EmailInboxList: React.FC = () => {
 
   const getAllEmailAccounts = async () => {
     try {
-      const data = await dispatch(fetchEmailAccount()).unwrap();
+      const data = await dispatch(fetchEmailAccount({ orgId: user?.orgId || "" })).unwrap();
       setEmailAccounts(data);
       setRows(data);
     } catch (error) {

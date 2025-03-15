@@ -8,24 +8,26 @@ import {
   IconButton,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { Button2 } from "../../../styles/layout.styled";
 import { StepText, LinkText } from "./EmailAccount.styled";
-import { AppDispatch } from "../../../redux/store/store";
-import { useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "../../../redux/store/store";
+import { useDispatch, useSelector } from "react-redux";
 import { addOutlookEmailAccount } from "../../../redux/slice/emailAccountSlice";
+import { Button } from "../../../styles/global.styled";
 
 const EmailAccountOutlookDialog: React.FC<{
   open: boolean;
   onClose: () => void;
 }> = ({ open, onClose }) => {
-
   const dispatch = useDispatch<AppDispatch>();
+  const { user } = useSelector((state: RootState) => state.user);
 
-  const handleOutlookAccount = async () =>{
-    const response = await dispatch(addOutlookEmailAccount()).unwrap();
-    if(response){
-    window.location.href=response}
-  }
+  const handleOutlookAccount = async () => {
+    debugger;
+    const response = await dispatch(addOutlookEmailAccount({ orgId: user?.orgId })).unwrap();
+    if (response) {
+      window.location.href = response;
+    }
+  };
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <Box
@@ -109,20 +111,7 @@ const EmailAccountOutlookDialog: React.FC<{
       </DialogContent>
 
       <Box sx={{ display: "flex", justifyContent: "flex-end", p: 3 }}>
-        <Button2
-          color={"white"}
-          background={"#6F4EF2"}
-          style={{
-            width: "200px",
-            fontSize: "16px",
-            padding: "10px",
-            borderRadius: "8px",
-            textTransform: "none",
-          }}
-          onClick={handleOutlookAccount}
-        >
-          Connect Account
-        </Button2>
+        <Button onClick={handleOutlookAccount}>Connect Account</Button>
       </Box>
     </Dialog>
   );

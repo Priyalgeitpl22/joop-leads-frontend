@@ -9,6 +9,7 @@ import {
   FormControlLabel,
   Radio,
   Checkbox,
+  CircularProgress,
 } from "@mui/material";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CloseIcon from "@mui/icons-material/Close";
@@ -21,8 +22,8 @@ import {
   verifyEmailAccount,
   VerifyEmailAccountPayload,
 } from "../../../redux/slice/emailAccountSlice";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../redux/store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../redux/store/store";
 
 interface EmailAccountSmtpDialogProps {
   open: boolean;
@@ -62,6 +63,10 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
 
   const [isSaveDisabled, setIsSaveDisabled] = useState(true);
   const [isVerified, setIsVerified] = useState(false);
+  const [verificationFailed, setVerificationFailed] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [verificationInProgress, setVerificationInProgress] = useState(false);
+  const { user } = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
     if (!formData.replyToAddressChecked) {
@@ -83,8 +88,8 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
         type === "checkbox"
           ? (e.target as HTMLInputElement).checked
           : name === "smtpPort" || name === "imapPort"
-          ? Number(value)
-          : value,
+            ? Number(value)
+            : value,
     }));
   };
 
@@ -97,6 +102,9 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
   };
 
   const handleVerifyAccount = () => {
+    setVerificationInProgress(true);
+    setVerificationFailed(false);
+
     const payload: VerifyEmailAccountPayload = {
       type: "smtp",
       imap: {
@@ -124,21 +132,26 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
     dispatch(verifyEmailAccount(payload))
       .unwrap()
       .then(() => {
+        setVerificationInProgress(false);
         setIsVerified(true);
         setIsSaveDisabled(false);
       })
       .catch(() => {
+        setVerificationInProgress(false);
         setIsVerified(false);
+        setVerificationFailed(true);
         setIsSaveDisabled(true);
       });
   };
 
   const handleCreateAccount = () => {
+    setLoading(true);
     const payload: CreateEmailAccountPayload = {
       account: "smtp",
       name: formData.fromName,
       state: "init",
       type: "imap",
+      orgId: user?.orgId as string,
       email: formData.fromEmail,
       imap: {
         host: formData.imapHost,
@@ -165,18 +178,16 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
     dispatch(CreateEmailAccount(payload))
       .unwrap()
       .then(() => {
+        setLoading(false);
         onClose();
       })
       .catch(() => {
+        setLoading(false);
       });
   };
 
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      maxWidth="md"
-    >
+    <Dialog open={open} onClose={onClose} maxWidth="md">
       <IconButton
         onClick={onClose}
         sx={{ position: "absolute", right: 16, top: 12 }}
@@ -203,7 +214,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
         <Typography fontWeight="bold" mt={2} mb={2}>
           SMTP Settings (sending emails)
         </Typography>
-        <Grid2 container spacing={2} sx={{justifyContent: "flex-end"}}>
+        <Grid2 container spacing={2} sx={{ justifyContent: "flex-end" }}>
           <Grid2 size={{ xs: 6, sm: 6 }}>
             <InputLabel>From Name</InputLabel>
             <TextField
@@ -380,9 +391,13 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
             onClick={handleVerifyAccount}
             color={"white"}
             background={"var(--theme-color)"}
-            style={{ cursor: "pointer" }}
+            style={{ width: "100%", cursor: "pointer" }}
           >
-            Verify Email Account
+            {verificationInProgress ? (
+              <CircularProgress size={24} sx={{ color: "white" }} />
+            ) : (
+              "Verify Email Account"
+            )}
           </Button2>
           {isVerified && (
             <Grid2
@@ -392,6 +407,17 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
               <CheckBoxIcon sx={{ color: "green" }} />
               <Typography color="success.main">
                 Email account verified successfully!
+              </Typography>
+            </Grid2>
+          )}
+          {verificationFailed && (
+            <Grid2
+              size={{ xs: 12, sm: 12 }}
+              sx={{ display: "flex", gap: "10px" }}
+            >
+              <Typography color="error.main">
+                Email account verification failed. Please check your credentials
+                and try again.
               </Typography>
             </Grid2>
           )}
@@ -421,7 +447,11 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
               cursor: isSaveDisabled ? "not-allowed" : "pointer",
             }}
           >
-            Save
+          {loading ? (
+              <CircularProgress size={24} sx={{ color: "white" }} />
+            ) : (
+              "Save"
+            )}
           </Button2>
         </Grid2>
       </DialogContent>

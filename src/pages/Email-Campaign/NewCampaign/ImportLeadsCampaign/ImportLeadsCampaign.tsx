@@ -49,7 +49,6 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
 
   const fetchCampaignDetails = async (id: string) => {
     try {
-      debugger
       const response = await dispatch(getCampaignById(id)).unwrap();
       const campaign = response.campaign;
       setCsvFileDetails(campaign?.csv_file);
