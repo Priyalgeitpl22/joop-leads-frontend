@@ -10,32 +10,50 @@ import {
   NavigateLink,
 } from "./forgot_password.styled";
 import { useDispatch } from "react-redux";
-import { forgetPassword } from "../../redux/slice/authSlice"; // Import Redux action
+import { forgetPassword } from "../../redux/slice/authSlice";
 import { AppDispatch } from "../../redux/store/store";
 import toast, { Toaster } from "react-hot-toast";
+import { validateEmail } from "../../utils/Validation";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const dispatch = useDispatch<AppDispatch>();
 
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setEmail(value);
+
+    if (!value.trim()) {
+      setError("Email is required");
+    } else if (!validateEmail(value)) {
+      setError("Please enter a valid email address");
+    } else {
+      setError("");
+    }
+  };
+
   const handleSubmitEmail = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     if (!email.trim()) {
       setError("Email is required");
-      toast.error("Email is required");
+      return;
+    }
+    if (!validateEmail(email)) {
+      setError("Please enter a valid email address");
       return;
     }
     setError("");
     try {
       const response = await dispatch(forgetPassword({ email })).unwrap();
-      if (response.code === 200) {
-        toast.success("Reset link sent successfully!");
-        window.location.assign('/confirmation');
+
+      if (response.code === 202) {
+        toast.success(response.message);
+        window.location.assign("/confirmation");
       }
     } catch (err) {
-      console.error("Error sending reset link:", err);
+      console.error("Error sending reset link", err);
       setError("Failed to send reset link. Please try again.");
       toast.error("Failed to send reset link. Please try again.");
     }
@@ -51,7 +69,12 @@ const ForgotPassword = () => {
           />
         </IllustrationSection>
         <FormSection>
-          <Typography onClick={() => window.location.assign('/forgot-password')} variant="h4" fontWeight="bold" mb={1}>
+          <Typography
+            onClick={() => window.location.assign("/forgot-password")}
+            variant="h4"
+            fontWeight="bold"
+            mb={1}
+          >
             Forgot Password?
           </Typography>
           <Typography variant="body1" color="black" mb={3}>
@@ -62,9 +85,9 @@ const ForgotPassword = () => {
             <StyledTextField
               label="Email Address"
               variant="outlined"
-              type="email"
+              // type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleEmailChange}
               error={!!error}
               helperText={error}
               fullWidth
@@ -83,7 +106,7 @@ const ForgotPassword = () => {
           </Typography>
         </FormSection>
       </AuthCard>
-      <Toaster/>
+      <Toaster />
     </PageContainer>
   );
 };

@@ -1,15 +1,9 @@
 import React from "react";
-import {
-  Stack,
-  Divider,
-  Typography,
-  IconButton,
-} from "@mui/material";
+import { Stack, Divider, Typography } from "@mui/material";
 import EmailIcon from "@mui/icons-material/Email";
 import CloseIcon from "@mui/icons-material/Close";
 import PhoneIcon from "@mui/icons-material/Phone";
 import BusinessIcon from "@mui/icons-material/Business";
-import PersonIcon from "@mui/icons-material/Person";
 import WorkIcon from "@mui/icons-material/Work";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import { RootState } from "../../../redux/store/store";
@@ -17,16 +11,21 @@ import { useSelector } from "react-redux";
 import {
   StyledDrawer,
   TitleContainer,
-  Title,
+  StyledTypography,
+  StyledCloseIconButton,
   ContactCard,
   CampaignCard,
+  IconStyle,
+  SectionTitle,
+  UploadedByContainer,
 } from "./ViewDrawer.styled";
-import { SectionTitle } from "../../../styles/layout.styled";
 
 interface ViewDrawerProps {
   open: boolean;
   onClose: () => void;
   selectedId: string | null;
+
+
 }
 
 const ViewDrawer: React.FC<ViewDrawerProps> = ({ open, onClose }) => {
@@ -34,48 +33,42 @@ const ViewDrawer: React.FC<ViewDrawerProps> = ({ open, onClose }) => {
 
   return (
     <StyledDrawer anchor="right" open={open} onClose={onClose}>
-      <ContactCard>
-        <TitleContainer>
-          <Title>Contact Details</Title>
-        </TitleContainer>
-        <IconButton onClick={onClose} sx={{ ml: "auto" }}>
+      <TitleContainer>
+        <StyledTypography variant="h6">Contact Details</StyledTypography>
+        <StyledCloseIconButton onClick={onClose}>
           <CloseIcon />
-        </IconButton>
-        <Stack spacing={1.5}>
+        </StyledCloseIconButton>
+      </TitleContainer>
+
+      <ContactCard>
+        <Stack spacing={2}>
           <Typography>
-            <PersonIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-            <strong>Name:</strong> {campaignList?.first_name} {campaignList?.last_name}
+            <EmailIcon sx={IconStyle("#1976D2")} />
+            <strong>Name:</strong> {campaignList?.first_name}
           </Typography>
           <Typography>
-            <EmailIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+            <EmailIcon sx={IconStyle("#1976D2")} />
             <strong>Email:</strong> {campaignList?.email}
           </Typography>
           <Typography>
-            <PhoneIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+            <PhoneIcon sx={IconStyle("#43A047")} />
             <strong>Phone:</strong> {campaignList?.phone_number || "N/A"}
           </Typography>
           <Typography>
-            <BusinessIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+            <BusinessIcon sx={IconStyle("#D84315")} />
             <strong>Company:</strong> {campaignList?.company_name || "N/A"}
           </Typography>
         </Stack>
       </ContactCard>
 
-      {/* Uploaded By Section */}
-      <SectionTitle>Uploaded By:</SectionTitle>
-      <Typography>
-        <WorkIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-        {campaignList?.uploadedUser?.fullName} ({campaignList?.uploadedUser?.email})
-      </Typography>
-
       {campaignList?.emailCampaigns?.length ? (
         <>
           <Divider sx={{ my: 2 }} />
-          <SectionTitle>Campaigns:</SectionTitle>
+          <SectionTitle variant="subtitle1">Campaigns:</SectionTitle>
           {campaignList.emailCampaigns.map((campaignItem, index) => (
             <CampaignCard key={index}>
               <Typography>
-                <CampaignIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                <CampaignIcon sx={IconStyle("#FF5722")} />
                 <strong>Name:</strong> {campaignItem?.campaign?.campaignName}
               </Typography>
               <Typography>
@@ -86,6 +79,12 @@ const ViewDrawer: React.FC<ViewDrawerProps> = ({ open, onClose }) => {
         </>
       ) : null}
 
+      <Divider sx={{ my: 2 }} />
+      <SectionTitle variant="subtitle1">Uploaded By:</SectionTitle>
+      <UploadedByContainer>
+        <WorkIcon sx={IconStyle("#673AB7")} />
+        {campaignList?.uploadedUser?.fullName} ({campaignList?.uploadedUser?.email})
+      </UploadedByContainer>
     </StyledDrawer>
   );
 };

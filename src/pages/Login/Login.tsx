@@ -20,25 +20,16 @@ import toast, { Toaster } from "react-hot-toast";
 import PasswordInput from "../../utils/PasswordInput";
 import { validateEmail } from "../../utils/Validation";
 
-
-
 function Login() {
-  // Local state for controlled inputs.
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-
-
-
-  // A flag to trigger the login effect.
   const [loginSubmitted, setLoginSubmitted] = useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  // Retrieve login-related state from Redux.
   const { loading } = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
@@ -50,7 +41,6 @@ function Login() {
           ).unwrap();
 
           if (response?.code === 200) {
-
             toast.success(response?.message);
 
             const token = Cookies.get("access_token");
@@ -69,7 +59,6 @@ function Login() {
         }
       })();
     }
-
   }, [loginSubmitted, dispatch, navigate]);
 
   const handleSignIn = () => {
@@ -106,7 +95,6 @@ function Login() {
     setPassword(e.target.value);
     if (passwordError) setPasswordError("");
   };
-
 
   return (
     <PageContainer>

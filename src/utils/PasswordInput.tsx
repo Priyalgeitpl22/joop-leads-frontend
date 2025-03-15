@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { IconButton, InputAdornment, styled, TextField } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { validatePassword } from "./Validation";
 
 interface PasswordInputProps {
   name?: string;
@@ -18,43 +17,33 @@ interface PasswordInputProps {
 }
 
 const StyledTextField = styled(TextField)`
-  margin-bottom: 10px;
+    margin-bottom: 10px;
 
-  .MuiOutlinedInput-root {
-    border-radius: 10px;
-    transition: 0.3s ease-in-out;
-  }
+    .MuiOutlinedInput-root {
+      border-radius: 10px;
+      transition: 0.3s ease-in-out;
+    }
 
-  .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
-    border: 1px solid #ddd;
-  }
+    .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+      border: 1px solid #ddd;
+    }
 
-  .MuiOutlinedInput-input {
-    padding: 12px 10px !important;
-  }
-`;
+    .MuiOutlinedInput-input {
+      padding: 12px 10px !important;
+    }
+  `;
 
 const PasswordInput: React.FC<PasswordInputProps> = ({
   name,
   label,
   value,
   onChange,
+  error,
+  helperText,
+  required = false,
   readOnly = false,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
-  const [passwordError, setPasswordError] = useState<string | null>(null);
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newPassword = e.target.value;
-    onChange(e);
-
-    if (!validatePassword(newPassword)) {
-      setPasswordError(
-        "Password must be at least 8 characters long, with 1 uppercase, 1 lowercase, 1 number, and 1 special character."
-      );
-    } else {
-      setPasswordError(null);
-    }
-  };
 
   const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
@@ -65,12 +54,13 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
       variant="outlined"
       type={showPassword ? "text" : "password"}
       value={value}
-      onChange={handleChange}
+      onChange={onChange}
       autoComplete="new-password"
-      error={!!passwordError}
-      helperText={passwordError}
-      required
+      error={error}
+      helperText={helperText}
+      required={required}
       fullWidth
+
       InputProps={{
         readOnly: readOnly,
         endAdornment: value && (
