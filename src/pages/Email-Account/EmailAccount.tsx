@@ -146,6 +146,7 @@ const EmailAccounts: React.FC = () => {
     };
 
     getEmailAccounts();
+    console.log(emailAccounts,"emailAccounts")
   }, []);
 
   const getAllEmailAccounts = async () => {
