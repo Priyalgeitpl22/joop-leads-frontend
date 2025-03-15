@@ -9,6 +9,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Tooltip,
 } from "@mui/material";
 import {
   EmailAccountsContainer,
@@ -20,6 +21,7 @@ import AdvancedSettingDialog from "./AdvancedSettingDialogBox/AdvancedSettingDia
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  deleteEmailAccount,
   EmailAccount,
   fetchEmailAccount,
   SearchEmailAccount,
@@ -29,7 +31,7 @@ import { SearchBar } from "../../components/Header/header.styled";
 import { Search } from "lucide-react";
 // import toast from "react-hot-toast";
 import { CustomDataTable } from "../../assets/Custom/customDataGrid";
-import { GridColDef } from "@mui/x-data-grid";
+import { GridColDef, GridDeleteIcon } from "@mui/x-data-grid";
 import { formatDate } from "../../utils/utils";
 import { Button, SecondaryButton } from "../../styles/global.styled";
 import { CustomTableCell } from "../Email-Campaign/EmailCampaign.styled";
@@ -117,10 +119,20 @@ const EmailAccounts: React.FC = () => {
         sortable: false,
         renderCell: (params) => (
           <CustomTableCell>
-            <ModeEditOutlineOutlinedIcon
-              onClick={() => handleEditEmailAccount(params.row.id)}
-              sx={{ cursor: "pointer" }}
-            />
+            <Box display="flex" alignItems="center" gap={1.5}>
+              <Tooltip title="Edit Email Account" arrow>
+                <ModeEditOutlineOutlinedIcon
+                  onClick={() => handleEditEmailAccount(params.row.id)}
+                  sx={{ cursor: "pointer" }}
+                />
+              </Tooltip>
+              <Tooltip title="Delete Email Account" arrow>
+                <GridDeleteIcon
+                  sx={{ cursor: "pointer"}}
+                  onClick={() => handleDelete(params.row.id)}
+                />
+              </Tooltip>
+            </Box>
           </CustomTableCell>
         ),
       },
@@ -199,6 +211,18 @@ const EmailAccounts: React.FC = () => {
     }
     navigate(`/email-account/edit-email-account/${id}`);
     console.log("Navigating to:", `/email-account/edit-email-account/${id}`);
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await dispatch(deleteEmailAccount(id)).unwrap();
+      setRows((prevRows) => prevRows.filter((row) => row.id !== id));
+      setEmailAccounts((prevAccounts) =>
+        prevAccounts.filter((account) => account._id !== id)
+      );
+    } catch (error) {
+      console.error("Error deleting email account:", error);
+    }
   };
 
   console.log("Loader", loading);
