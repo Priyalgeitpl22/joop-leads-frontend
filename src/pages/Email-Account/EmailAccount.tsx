@@ -146,6 +146,7 @@ const EmailAccounts: React.FC = () => {
     };
 
     getEmailAccounts();
+    console.log(emailAccounts,"emailAccounts")
   }, []);
 
   const getAllEmailAccounts = async () => {
@@ -167,22 +168,32 @@ const EmailAccounts: React.FC = () => {
     }
   };
 
-  const handleSearch = async (query: string) => {
-    try {
-      const trimmedQuery = query.trim();
-      if (trimmedQuery === "") {
-        setRows(emailAccounts);
-      } else {
-        const [email, name] = trimmedQuery.split(" ");
-        const filteredData = await dispatch(
-          SearchEmailAccount({ email, name })
-        ).unwrap();
-        setRows(filteredData);
-      }
-    } catch (error) {
-      console.error("Search failed:", error);
-    }
-  };
+ const handleSearch = async (query: string) => {
+   try {
+     const trimmedQuery = query.trim();
+     if (trimmedQuery === "") {
+       const freshData = await dispatch(
+         fetchEmailAccount({ orgId: user?.orgId || "" })
+       ).unwrap();
+       setRows(freshData);
+     } else {
+       let searchParams: { email?: string; name?: string } = {};
+
+       if (trimmedQuery.includes("@")) {
+         searchParams.email = trimmedQuery;
+       } else {
+         searchParams.name = trimmedQuery;
+       }
+
+       const filteredData = await dispatch(
+         SearchEmailAccount(searchParams)
+       ).unwrap();
+       setRows(filteredData);
+     }
+   } catch (error) {
+     console.error("Search failed:", error);
+   }
+ };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value;
@@ -344,7 +355,7 @@ const EmailAccounts: React.FC = () => {
           columns={columns}
           rows={rows}
           pageSizeOptions={[15, 10, 5]}
-          enableCheckboxSelection={false}
+          enableCheckboxSelection={true}
         />
       </EmailAccountTable>
     </EmailAccountsContainer>
