@@ -1,5 +1,5 @@
-import React, { useState, useRef } from "react";
-import { Box, Typography, Select, MenuItem, IconButton } from "@mui/material";
+import React, { useState, useRef, useEffect } from "react";
+import { Box, Typography, Select, MenuItem, IconButton, Tooltip } from "@mui/material";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RefreshIcon from "@mui/icons-material/Refresh";
@@ -7,6 +7,8 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import { CSV_COLUMNS, CSV_COLUMNS as csv_columns } from "../../../../constants";
 import { Button2 } from "../../../../styles/layout.styled";
+import Papa from "papaparse";
+import CSVPreviewDialog from "./CsvPreviewDialog";
 
 interface ImportLeadsDetailProps {
   file?: File | null;
@@ -83,6 +85,24 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
     window.location.reload();
   };
 
+  const [csvData, setCsvData] = useState<string[][]>([]);
+ 
+  const [isCSVModalOpen, setCSVModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (e.target?.result) {
+          Papa.parse(e.target.result as string, {
+            complete: (result) => setCsvData(result.data as string[][]),
+          });
+        }
+      };
+      reader.readAsText(file);
+    }
+  }, [file]);
+
   return (
     <Box
       sx={{
@@ -126,15 +146,28 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
           )}
         </Box>
         <Box sx={{ display: "flex", gap: 1 }}>
-          <IconButton>
-            <VisibilityIcon sx={{ color: "var(--theme-color)" }} />
-          </IconButton>
-          <IconButton onClick={handleReupload}>
-            <RefreshIcon sx={{ color: "var(--theme-color)" }} />
-          </IconButton>
-          <IconButton onClick={handleDeleteFile}>
-            <DeleteIcon sx={{ color: "var(--theme-color)" }} />
-          </IconButton>
+          <Tooltip title="View CSV">
+            <span>
+              <IconButton
+                onClick={() => setCSVModalOpen(true)}
+                disabled={!file}
+              >
+                <VisibilityIcon sx={{ color: "var(--theme-color)" }} />
+              </IconButton>
+            </span>
+          </Tooltip>
+
+          <Tooltip title="Reupload">
+            <IconButton onClick={handleReupload}>
+              <RefreshIcon sx={{ color: "var(--theme-color)" }} />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title="Delete File">
+            <IconButton onClick={handleDeleteFile}>
+              <DeleteIcon sx={{ color: "var(--theme-color)" }} />
+            </IconButton>
+          </Tooltip>
         </Box>
       </Box>
       <input
@@ -213,6 +246,13 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
         >
           Save and Next
         </Button2>
+      )}
+      {isCSVModalOpen && (
+        <CSVPreviewDialog
+          open={isCSVModalOpen}
+          onClose={() => setCSVModalOpen(false)}
+          csvData={csvData}
+        />
       )}
     </Box>
   );
