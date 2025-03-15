@@ -1,5 +1,4 @@
-import React, { SetStateAction, useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -19,8 +18,7 @@ import {
 } from "@mui/material";
 import {
   ContentContainer,
-  CustomTabs,
-  EmailCampaignContainer,
+  SectionHeader,
   CustomTableRow,
   CustomTableCell,
   CustomTableBody,
@@ -28,8 +26,6 @@ import {
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import { SearchBar } from "../../components/Header/header.styled";
 import { FilterIcon } from "../Email-Account/EmailAccount.styled";
-import FolderOpenOutlinedIcon from "@mui/icons-material/FolderOpenOutlined";
-import EmailCampaignDialog from "./EmailCampaignDialog/AddEmailCampaignDialog";
 import { Search } from "lucide-react";
 import { useDispatch } from "react-redux";
 import {
@@ -62,8 +58,6 @@ interface EmailCampaignProps {
 }
 
 const EmailCampaign: React.FC<EmailCampaignProps> = () => {
-  const [activeTab, setActiveTab] = useState("all_campaign");
-  const [createFolder, setCreateFolder] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const dispatch = useDispatch<AppDispatch>();
   const [campaigns, setCampaigns] = useState<IEmailCampaign[]>([]);
@@ -93,20 +87,8 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
     }
   };
 
-  // const handleTabChange = (_: any, newValue: SetStateAction<string>) => {
-  //   if (newValue === "all_campaign" || newValue === "folder") {
-  //     setActiveTab(newValue);
-  //   } else {
-  //     setActiveTab("all_campaign");
-  //   }
-  // };
-
   const handleCreateCampaign = () => {
     window.location.assign("/email-campaign/new-campaign");
-  };
-
-  const handleCreateFolder = () => {
-    setCreateFolder(true);
   };
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -191,9 +173,7 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
 
   return (
     <ContentContainer>
-      <CustomTabs
-        // value={activeTab || "all_campaign"}
-        // onChange={handleTabChange}
+      <SectionHeader
         sx={{
           display: "flex",
           alignItems: "center",
@@ -202,53 +182,28 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
         }}
       >
         <SectionTitle>Email Campaigns</SectionTitle>
-        {/* <CustomTab
-          label={`All Campaigns (${campaigns?.length})`}
-          value="all_campaign"
-        /> */}
-        {/* <CustomTab label="Folders" value="folder" /> */}
-        {activeTab === "all_campaign" && (
-          <Box
-            sx={{
-              display: "flex",
-              gap: "15px",
-              alignItems: "center",
-              marginLeft: "auto",
-            }}
-          >
-            <FilterIcon onClick={handleMenuOpen}>
-              <FilterAltOutlinedIcon sx={{ color: "var(--icon-color)" }} />
-            </FilterIcon>
-            <SearchBar>
-              <Search size={20} />
-              <input
-                placeholder="Search by Campaign Name"
-                value={searchQuery}
-                onChange={handleSearchChange}
-              />
-            </SearchBar>
-            <Button onClick={handleCreateCampaign}>Create Campaign</Button>
-          </Box>
-        )}
-
-        {/* {activeTab === "folder" && (
-          <Box
-            sx={{
-              display: "flex",
-              gap: "15px",
-              alignItems: "center",
-              marginLeft: "auto",
-              marginBottom: "10px",
-            }}
-          >
-            <EmailCampaignDialog
-              open={createFolder}
-              onClose={() => setCreateFolder(false)}
+        <Box
+          sx={{
+            display: "flex",
+            gap: "15px",
+            alignItems: "center",
+            marginLeft: "auto",
+          }}
+        >
+          <FilterIcon onClick={handleMenuOpen}>
+            <FilterAltOutlinedIcon sx={{ color: "var(--icon-color)" }} />
+          </FilterIcon>
+          <SearchBar>
+            <Search size={20} />
+            <input
+              placeholder="Search by Campaign Name"
+              value={searchQuery}
+              onChange={handleSearchChange}
             />
-            <Button onClick={handleCreateFolder}>Create Folder</Button>
-          </Box>
-        )} */}
-      </CustomTabs>
+          </SearchBar>
+          <Button onClick={handleCreateCampaign}>Create Campaign</Button>
+        </Box>
+      </SectionHeader>
       {loading && <ProgressBar />}
 
       <Menu
@@ -302,170 +257,116 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
           <Button>Apply</Button>
         </Box>
       </Menu>
+      <TableContainer
+        component={Paper}
+        sx={{ boxShadow: "none", borderRadius: "8px" }}
+      >
+        <Table>
+          <TableHead sx={{ backgroundColor: "#f8f9fc" }}>
+            <TableRow>
+              <TableCell
+                colSpan={1}
+                sx={{ fontWeight: "bold", color: "#35495c" }}
+              >
+                Campaign Details
+              </TableCell>
+              <TableCell
+                colSpan={11}
+                sx={{ fontWeight: "bold", color: "#35495c" }}
+              >
+                Report
+              </TableCell>
+            </TableRow>
+          </TableHead>
 
-      {activeTab === "all_campaign" && (
-        <TableContainer
-          component={Paper}
-          sx={{ boxShadow: "none", borderRadius: "8px" }}
-        >
-          <Table>
-            <TableHead sx={{ backgroundColor: "#f8f9fc" }}>
-              <TableRow>
-                <TableCell
-                  colSpan={1}
-                  sx={{ fontWeight: "bold", color: "#35495c" }}
-                >
-                  Campaign Details
-                </TableCell>
-                <TableCell
-                  colSpan={11}
-                  sx={{ fontWeight: "bold", color: "#35495c" }}
-                >
-                  Report
-                </TableCell>
-              </TableRow>
-            </TableHead>
+          {campaigns?.length > 0 ? (
+            campaigns.map((campaign) => (
+              <CustomTableBody key={campaign.id}>
+                <CustomTableRow>
+                  <CustomTableCell>
+                    <div>
+                      <h3
+                        style={{
+                          marginBottom: "8px",
+                          color: "var(--title-color)",
+                        }}
+                        onClick={handleDetailCampaign}
+                      >
+                        {campaign.campaignName}
+                      </h3>
+                      <p
+                        style={{
+                          fontWeight: "400",
+                          color: "var(--text-light)",
+                        }}
+                      >
+                        {`${campaign?.status} | ${formatDate(campaign.createdAt)} | ${campaign?.sequences?.length} Sequences`}
+                      </p>
+                    </div>
+                  </CustomTableCell>
 
-            {campaigns?.length > 0 ? (
-              campaigns.map((campaign) => (
-                <CustomTableBody key={campaign.id}>
-                  <CustomTableRow>
-                    <CustomTableCell>
-                      <div>
-                        <h3
-                          style={{
-                            marginBottom: "8px",
-                            color: "var(--title-color)",
-                          }}
-                          onClick={handleDetailCampaign}
-                        >
-                          {campaign.campaignName}
-                        </h3>
+                  {tableData.map((item, index) => (
+                    <CustomTableCell key={index}>
+                      <TableItem>
                         <p
                           style={{
-                            fontWeight: "400",
+                            fontWeight: "500",
                             color: "var(--text-light)",
+                            fontSize: "24px",
                           }}
                         >
-                          {`${campaign?.status} | ${formatDate(campaign.createdAt)} | ${campaign?.sequences?.length} Sequences`}
+                          {item.count}
                         </p>
-                      </div>
-                    </CustomTableCell>
-
-                    {tableData.map((item, index) => (
-                      <CustomTableCell key={index}>
-                        <TableItem>
+                        <TableIcons>
+                          <item.icon
+                            sx={{ fontSize: "20px", color: item.color }}
+                          />
                           <p
                             style={{
-                              fontWeight: "500",
+                              fontWeight: "400",
                               color: "var(--text-light)",
-                              fontSize: "24px",
+                              fontSize: "12px",
+                              whiteSpace: "nowrap",
                             }}
                           >
-                            {item.count}
+                            {item.label}
                           </p>
-                          <TableIcons>
-                            <item.icon
-                              sx={{ fontSize: "20px", color: item.color }}
-                            />
-                            <p
-                              style={{
-                                fontWeight: "400",
-                                color: "var(--text-light)",
-                                fontSize: "12px",
-                                whiteSpace: "nowrap",
-                              }}
-                            >
-                              {item.label}
-                            </p>
-                          </TableIcons>
-                        </TableItem>
-                      </CustomTableCell>
-                    ))}
-                    <CustomTableCell>
-                      <Box
-                        sx={{ display: "flex", gap: 3, alignItems: "center" }}
-                      >
-                        <Tooltip title="Edit">
-                          <ModeEditOutlineOutlinedIcon
-                            onClick={() => handleEditCampaign(campaign.id)}
-                          />
-                        </Tooltip>
-                        <Tooltip title="Delete">
-                          <GridDeleteIcon
-                            onClick={() => handleCampaignDelete(campaign.id)}
-                          />
-                        </Tooltip>
-                      </Box>
+                        </TableIcons>
+                      </TableItem>
                     </CustomTableCell>
-                  </CustomTableRow>
-                </CustomTableBody>
-              ))
-            ) : (
-              <Paper className="data-grid-container" sx={{ width: "150%" }}>
-                <div
-                  style={{
-                    padding: "20px",
-                    textAlign: "center",
-                    color: "#888",
-                  }}
-                >
-                  No Campaigns found
-                </div>
-              </Paper>
-            )}
-          </Table>
-        </TableContainer>
-      )}
-
-      {activeTab === "folder" && (
-        <EmailCampaignContainer>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            style={{ width: "100%" }}
-          >
-            <SectionTitle>All Folders</SectionTitle>
-            <Box
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                padding: "60px 0px",
-                width: "100%",
-              }}
-            >
-              <Box
+                  ))}
+                  <CustomTableCell>
+                    <Box sx={{ display: "flex", gap: 3, alignItems: "center" }}>
+                      <Tooltip title="Edit">
+                        <ModeEditOutlineOutlinedIcon
+                          onClick={() => handleEditCampaign(campaign.id)}
+                        />
+                      </Tooltip>
+                      <Tooltip title="Delete">
+                        <GridDeleteIcon
+                          onClick={() => handleCampaignDelete(campaign.id)}
+                        />
+                      </Tooltip>
+                    </Box>
+                  </CustomTableCell>
+                </CustomTableRow>
+              </CustomTableBody>
+            ))
+          ) : (
+            <Paper className="data-grid-container" sx={{ width: "150%" }}>
+              <div
                 style={{
-                  alignItems: "center",
-                  display: "flex",
-                  flexDirection: "column",
-                  maxWidth: "570px",
-                  width: "100%",
+                  padding: "20px",
+                  textAlign: "center",
+                  color: "#888",
                 }}
               >
-                <FolderOpenOutlinedIcon
-                  style={{ height: "20%", width: "20%" }}
-                />
-                <Typography style={{ textAlign: "center", fontWeight: "200" }}>
-                  Campaign Organization with Folders
-                </Typography>
-                Streamline Your Workflow by Grouping Campaigns into Folders 🚀.
-                <EmailCampaignDialog
-                  open={createFolder}
-                  onClose={() => setCreateFolder(false)}
-                />
-                <Button
-                  style={{ marginBottom: "10px !important" }}
-                  onClick={handleCreateFolder}
-                >
-                  Create Folder
-                </Button>
-              </Box>
-            </Box>
-          </motion.div>
-        </EmailCampaignContainer>
-      )}
+                No Campaigns found
+              </div>
+            </Paper>
+          )}
+        </Table>
+      </TableContainer>
     </ContentContainer>
   );
 };

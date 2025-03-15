@@ -132,7 +132,19 @@ export const CopyButton = styled.button`
   }
 `;
 
-export const CustomTabs = styled(Box)`
+export const CustomTabs = styled(Tabs)`
+  min-height: 40px;
+  padding: 5px 5px 0px 5px;
+  background: var(--background-secondary);
+
+  .MuiTabs-indicator {
+    background-color: #33475b;
+    height: 4px;
+    border-radius: 4px;
+  }
+`;
+
+export const SectionHeader = styled(Box)`
   min-height: 40px;
   padding: 12px;
   background: var(--background-secondary);

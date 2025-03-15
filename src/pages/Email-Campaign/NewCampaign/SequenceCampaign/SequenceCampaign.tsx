@@ -46,7 +46,6 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
   addSequence,
   updateSequences,
   updateSequenceData,
-  setIsNextDisabled,
   selectedSequence,
   sequences,
 }) => {
@@ -64,6 +63,7 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
     const params = new URLSearchParams(location.search);
     const campaignId = params.get("id");
 
+    console.log(selectedVariant);
     if (campaignId) {
       fetchCampaignDetails(campaignId);
     } else {

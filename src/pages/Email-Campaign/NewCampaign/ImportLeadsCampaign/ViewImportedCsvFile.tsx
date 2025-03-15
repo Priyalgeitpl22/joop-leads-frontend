@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from "react";
-import { ImportedLeadsData } from "../NewCampaign";
 import {
   Card,
   Container,
@@ -19,11 +18,7 @@ import {
 import { Info, MoreHorizontal, Upload } from "lucide-react";
 import DownloadCsvFileDialog from "./DownloadCsvfileDialog";
 import React from "react";
-import {
-  formatDate,
-  formatDateTime,
-  formatTimestamp,
-} from "../../../../utils/utils";
+import { formatDateTime } from "../../../../utils/utils";
 import UploadLeadsDialog from "./UploadLeadsDialog";
 
 interface ViewImportedCsvFileProps {
