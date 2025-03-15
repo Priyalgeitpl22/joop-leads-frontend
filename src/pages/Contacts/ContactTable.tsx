@@ -157,7 +157,7 @@ const ContactTable: React.FC = () => {
         renderCell: (params: any) => (
           <span
             style={{
-              color: params?.row?.active ? "green" : "red",
+              color: params?.row?.active ? "green" : "var(--error-color)",
               fontWeight: "500 ",
             }}
           >
@@ -329,9 +329,9 @@ const ContactTable: React.FC = () => {
             alignItems: "center",
           }}
         >
-          <FilterIcon onClick={handleMenuOpen}>
+          {/* <FilterIcon onClick={handleMenuOpen}>
             <FilterAltOutlinedIcon />
-          </FilterIcon>
+          </FilterIcon> */}
           <SearchBar>
             <Search size={20} />
             <input

@@ -14,7 +14,7 @@ export interface VerifyEmailAccountPayload {
   email?: string;
   imap: {
     host: string;
-    port: number;
+    port: any;
     secure: boolean;
     auth: {
       user: string;
@@ -23,7 +23,7 @@ export interface VerifyEmailAccountPayload {
   };
   smtp: {
     host: string;
-    port: number;
+    port: any;
     secure: boolean;
     auth: {
       user: string;
@@ -41,13 +41,15 @@ export interface CreateEmailAccountPayload {
   type: string;
   email: string;
   orgId: string;
+  msg_per_day: any, 
+  time_gap: any,
   imap: {
     auth: {
       user: string;
       pass: string;
     };
     host: string;
-    port: number;
+    port: any;
     secure: boolean;
   };
   smtp: {
@@ -56,7 +58,7 @@ export interface CreateEmailAccountPayload {
       pass: string;
     };
     host: string;
-    port: number;
+    port: any;
     secure: boolean;
   };
   proxy: null | string;

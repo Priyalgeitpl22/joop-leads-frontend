@@ -42,17 +42,17 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
     userName: "",
     password: "",
     smtpHost: "",
-    smtpPort: 0,
+    smtpPort: null,
     security: false,
-    messagePerDay: "",
-    timeGap: "",
+    msg_per_day: null,
+    time_gap: null,
     replyToAddressChecked: false,
     replyToAddress: "",
     imapChecked: false,
     imapUserName: "",
     imapPassword: "",
     imapHost: "",
-    imapPort: 0,
+    imapPort: null,
     imapSecurity: false,
     bccEmail: "",
     trackingDomainChecked: false,
@@ -153,6 +153,8 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
       type: "imap",
       orgId: user?.orgId as string,
       email: formData.fromEmail,
+      msg_per_day: Number(formData.msg_per_day),
+      time_gap: Number(formData.time_gap),
       imap: {
         host: formData.imapHost,
         port: formData.imapPort,
@@ -283,8 +285,8 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
             <InputLabel>Message Per Day (Warmups not included)</InputLabel>
             <TextField
               fullWidth
-              name="messagePerDay"
-              value={formData.messagePerDay}
+              name="msg_per_day"
+              value={formData.msg_per_day}
               onChange={handleChange}
             />
           </Grid2>
@@ -292,8 +294,8 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
             <InputLabel>Minimum time gap (min)</InputLabel>
             <TextField
               fullWidth
-              name="timeGap"
-              value={formData.timeGap}
+              name="time_gap"
+              value={formData.time_gap}
               onChange={handleChange}
             />
           </Grid2>

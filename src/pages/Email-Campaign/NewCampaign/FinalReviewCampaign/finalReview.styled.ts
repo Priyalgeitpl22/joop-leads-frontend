@@ -8,7 +8,7 @@ export const EmailPreviewContainer = styled(Box)(`
     height: 100%;
     max-width: 950px;
     background: white;
-    border: 1px solid red;
+    border: 1px solid var(--error-color);
     border: 1px solid #e1e2ef;
     border-radius: 4px;
     box-shadow: 0 2px 10px #1414140d;

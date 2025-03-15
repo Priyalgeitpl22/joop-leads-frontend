@@ -228,7 +228,7 @@ export const CustomTableRow = styled(TableRow)(({ }) => ({
 export const CustomTableCell = styled(TableCell)(({ }) => ({
   fontSize: "14px",
   fontWeight: "500",
-  color: "red",
+  color: "var(--error-color)",
   padding: "12px 16px",
   height: "80px",
   alignItems: "center",

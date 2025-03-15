@@ -190,9 +190,9 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
             marginLeft: "auto",
           }}
         >
-          <FilterIcon onClick={handleMenuOpen}>
+          {/* <FilterIcon onClick={handleMenuOpen}>
             <FilterAltOutlinedIcon sx={{ color: "var(--icon-color)" }} />
-          </FilterIcon>
+          </FilterIcon> */}
           <SearchBar>
             <Search size={20} />
             <input
