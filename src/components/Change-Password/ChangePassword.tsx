@@ -13,34 +13,69 @@ import { RootState, AppDispatch } from "../../redux/store/store";
 import { changePassword } from "../../redux/slice/authSlice";
 import toast, { Toaster } from "react-hot-toast";
 import PasswordInput from "../../utils/PasswordInput";
+import { validatePassword } from "../../utils/Validation";
 
 const ChangePassword: React.FC = () => {
   const navigate = useNavigate();
-  const [existingPassword, setExistingPassword] = useState<string>("");
-  const [newPassword, setNewPassword] = useState<string>("");
-  const [confirmPassword, setConfirmPassword] = useState<string>("");
-
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.user);
 
-  const handleChangePassword = async () => {
-    if (!existingPassword && !newPassword && !confirmPassword) {
-      toast.error("All fields are required!");
-      return;
+  const [formData, setFormData] = useState({
+    existingPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+
+  const [errors, setErrors] = useState({
+    existingPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+
+  const validateField = (name: string, value: string) => {
+    let error = "";
+
+    if (name === "existingPassword" && !value.trim()) {
+      error = "Current password is required.";
+    } else if (name === "newPassword") {
+      if (!value.trim()) {
+        error = "New password is required.";
+      } else if (!validatePassword(value)) {
+        error =
+          "Password must be at least 8 characters, contain 1 uppercase, 1 lowercase, 1 number, and 1 special character.";
+      }
+    } else if (name === "confirmPassword") {
+      if (!value.trim()) {
+        error = "Please confirm your new password.";
+      } else if (value !== formData.newPassword) {
+        error = "Passwords do not match.";
+      }
     }
 
-    const errorMessage =
-      !existingPassword ? "Please enter existing password." :
-        !newPassword ? "Please enter new password." :
-          !confirmPassword ? "Please enter confirm password." :
-            newPassword !== confirmPassword ? "New password and confirm password do not match!" :
-              null;
+    setErrors((prev) => ({ ...prev, [name]: error }));
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
 
 
+    if (isSubmitted) validateField(name, value);
+  };
 
-    if (errorMessage) {
-      toast.error(errorMessage);
+  const handleChangePassword = async () => {
+    setIsSubmitted(true);
 
+    Object.keys(formData).forEach((key) =>
+      validateField(key, formData[key as keyof typeof formData])
+    );
+
+
+    if (Object.values(errors).some((error) => error)) {
+      toast.error("Please fix all errors before submitting.");
       return;
     }
 
@@ -50,16 +85,19 @@ const ChangePassword: React.FC = () => {
     }
 
     try {
-      await dispatch(
+      const response = await dispatch(
         changePassword({
           email: user.email,
-          existingPassword,
-          newPassword,
+          existingPassword: formData.existingPassword,
+          newPassword: formData.newPassword,
         })
       ).unwrap();
-      toast.success("Password updated successfully!");
-      navigate("/");
-      window.location.reload();
+
+      if (response) {
+        toast.success("Password updated successfully!");
+        navigate("/");
+        window.location.reload();
+      }
     } catch (error) {
       toast.error(error as string);
     }
@@ -83,25 +121,34 @@ const ChangePassword: React.FC = () => {
           <Typography variant="body1" mb={3}>
             Please enter your current password and choose a new password.
           </Typography>
+
           <PasswordInput
             label="Existing Password"
             name="existingPassword"
-            value={existingPassword}
-            onChange={(e) => setExistingPassword(e.target.value)}
+            value={formData.existingPassword}
+            onChange={handleInputChange}
+            error={!!errors.existingPassword}
+            helperText={errors.existingPassword}
           />
 
           <PasswordInput
             label="New Password"
             name="newPassword"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
+            value={formData.newPassword}
+            onChange={handleInputChange}
+            error={!!errors.newPassword}
+            helperText={errors.newPassword}
           />
+
           <PasswordInput
             label="Confirm Password"
             name="confirmPassword"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
+            value={formData.confirmPassword}
+            onChange={handleInputChange}
+            error={!!errors.confirmPassword}
+            helperText={errors.confirmPassword}
           />
+
           <StyledButton variant="contained" onClick={handleChangePassword}>
             Change Password
           </StyledButton>

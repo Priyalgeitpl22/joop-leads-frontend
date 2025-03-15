@@ -28,6 +28,7 @@ import Loader from "../../components/Loader";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import fieldValidation from "../../utils/Validation";
+import PasswordInput from "../../utils/PasswordInput";
 
 interface RegisterFormData {
   profilePicture: File | null;
@@ -132,8 +133,7 @@ const Register = () => {
       }
     );
     setErrors(newErrors);
-    console.log("Validation Errors:", newErrors);
-    console.log("Is Form Valid:", isValid);
+
 
     return isValid;
   };
@@ -280,20 +280,20 @@ const Register = () => {
                 </FormControl>
               );
             }
-            // if (name === "password") {
-            //   return (
-            //     // <PasswordInput
-            //     //   key={name}
-            //     //   name={name}
-            //     //   label={label}
-            //     //   value={formData[name]}
-            //     //   onChange={handleChange}
-            //     //   error={!!errors.password}
-            //     //   helperText={errors.password}
-            //     // />
+            if (name === "password") {
+              return (
+                <PasswordInput
+                  key={name}
+                  name={name}
+                  label={label}
+                  value={formData[name]}
+                  onChange={handleChange}
+                  error={!!errors.password}
+                  helperText={errors.password}
+                />
 
-            //   );
-            // }
+              );
+            }
             return (
               <StyledTextField
                 key={name}

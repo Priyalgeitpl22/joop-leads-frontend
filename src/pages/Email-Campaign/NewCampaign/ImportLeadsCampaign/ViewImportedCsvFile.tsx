@@ -52,7 +52,7 @@ const ViewImportedCsvFile: React.FC<ViewImportedCsvFileProps> = ({
   };
 
   const goToNextStep = () => {
-    debugger;
+
   };
 
   return (

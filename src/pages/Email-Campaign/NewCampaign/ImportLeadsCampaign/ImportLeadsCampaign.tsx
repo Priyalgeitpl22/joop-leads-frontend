@@ -169,7 +169,7 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
               Upload your CSV files to import leads.
             </CustomDialogFooter>
           </FileUploadContainer>
-          {isEdit && <ViewImportedCsvFile csvFileDetails={csvFileDetails}/>}
+          {isEdit && <ViewImportedCsvFile csvFileDetails={csvFileDetails} />}
         </>
       )}
 
