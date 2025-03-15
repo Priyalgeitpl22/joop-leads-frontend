@@ -19,7 +19,6 @@ import {
 } from "../../../redux/slice/emailAccountSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../redux/store/store";
-import toast, { Toaster } from "react-hot-toast";
 
 const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
   const dispatch = useDispatch<AppDispatch>();

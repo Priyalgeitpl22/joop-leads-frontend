@@ -23,9 +23,7 @@ import {
   CustomTableCell,
   CustomTableBody,
 } from "./EmailCampaign.styled";
-import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import { SearchBar } from "../../components/Header/header.styled";
-import { FilterIcon } from "../Email-Account/EmailAccount.styled";
 import { Search } from "lucide-react";
 import { useDispatch } from "react-redux";
 import {
@@ -90,11 +88,7 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
   const handleCreateCampaign = () => {
     window.location.assign("/email-campaign/new-campaign");
   };
-
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
+  
   const handleMenuClose = () => {
     setAnchorEl(null);
   };

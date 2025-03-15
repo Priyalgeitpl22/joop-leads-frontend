@@ -15,11 +15,9 @@ import {
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import {
-  FilterIcon,
   ContactsHeader,
   ContactsContainer,
 } from "./ContactTable.styled";
-import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import { useDispatch } from "react-redux";
 import {
   ContactsAccount,
@@ -224,10 +222,6 @@ const ContactTable: React.FC = () => {
     const query = event.target.value;
     setSearchQuery(query);
     handleSearch(query);
-  };
-
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
   };
 
   const handleMenuClose = () => {
