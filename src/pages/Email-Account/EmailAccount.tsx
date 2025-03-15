@@ -366,7 +366,7 @@ const EmailAccounts: React.FC = () => {
           columns={columns}
           rows={rows}
           pageSizeOptions={[15, 10, 5]}
-          enableCheckboxSelection={false}
+          enableCheckboxSelection={true}
         />
       </EmailAccountTable>
       <ConfirmDeleteDialog
