@@ -149,6 +149,7 @@ export const SearchEmailAccount = createAsyncThunk(
     try {
       const response = await emailApi.get(`/accounts/search`, {
         params: { email, name },
+        headers: { "Cache-Control": "no-cache" }, 
       });
       return response.data;
     } catch (error: any) {
