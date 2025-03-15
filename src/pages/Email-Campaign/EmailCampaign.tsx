@@ -88,7 +88,7 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
   const handleCreateCampaign = () => {
     window.location.assign("/email-campaign/new-campaign");
   };
-  
+
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
@@ -180,8 +180,10 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
           sx={{
             display: "flex",
             gap: "15px",
+            width: "100%",
             alignItems: "center",
-            marginLeft: "auto",
+            // marginLeft: "auto",
+            justifyContent: "flex-end"
           }}
         >
           {/* <FilterIcon onClick={handleMenuOpen}>

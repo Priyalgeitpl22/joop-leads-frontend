@@ -47,7 +47,6 @@ interface NewCampaignProps {
 
 const NewCampaign: React.FC<NewCampaignProps> = () => {
   const [activeStep, setActiveStep] = React.useState(0);
-  const [uploadCsv, setUploadCsv] = React.useState<boolean>(false);
   const [emailFieldsToBeAdded, setEmailFieldsToBeAdded] =
     React.useState<ImportedLeadsData>();
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
@@ -64,7 +63,7 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
     scheduleCampaign: {},
     campaignSettings: {},
   });
-  const [isNextDisabled, setIsNextDisabled] = React.useState(false);
+  const [isNextDisabled, setIsNextDisabled] = React.useState(true);
   const [isEdit, setIsEdit] = React.useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
@@ -141,9 +140,8 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
 
   const handleImportLeads = async () => {
     setIsLoading(true);
-    setUploadCsv(true);
-    console.log(uploadCsv);
     const payload = {
+      campaignId,
       CSVsettings,
       csvFile: selectedFile,
       emailFieldsToBeAdded,
@@ -155,7 +153,6 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
       setIsLoading(false);
       setUploadCounts(response.payload.counts);
       setCampaignId(response.payload.campaignId);
-      setUploadCsv(false);
       setUploadLeads(true);
     }
   };
@@ -384,10 +381,17 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
           />
           <UploadLeadsDialog
             open={uploadleads}
+            setIsNextDisabled={setIsNextDisabled}
             uploadCounts={uploadCounts}
             onClose={() => {
               setUploadLeads(false);
-              goToNextStep();
+              setIsNextDisabled(false);
+
+              if (
+                uploadCounts?.uploadedCount &&
+                uploadCounts?.uploadedCount > 0
+              )
+                goToNextStep();
             }}
           />
         </Box>
@@ -405,6 +409,7 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
         )}
         {activeStep === 1 && (
           <SequenceCampaign
+            campaign_id={campaignId}
             setIsNextDisabled={setIsNextDisabled}
             onClickEmailFollowUp={onClickEmailFollowUp}
             handleEmailTemplateData={handleEmailTemplateData}
@@ -417,13 +422,13 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
         )}
         {activeStep === 2 && (
           <SetupCampaign
-            campaignId={campaignId}
+            campaign_id={campaignId}
             handleSenderAccountsUpdate={handleSenderAccountsUpdate}
             handleScheduleCampaignUpdate={handleScheduleCampaignUpdate}
             handleCampaignSettingsUpdate={handleCampaignSettingsUpdate}
           />
         )}
-        {activeStep === 3 && <FinalReviewCampaign />}
+        {activeStep === 3 && <FinalReviewCampaign campaign_id={campaignId}/>}
       </MainContainer>
       <FooterContainer>
         {activeStep !== 0 && (
@@ -445,11 +450,11 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
         ) : (
           <Button2
             onClick={handleNext}
-            disabled={isNextDisabled === false}
-            color={isNextDisabled ? "white" : "lightgray"}
-            background={isNextDisabled ? "var(--theme-color)" : "#878484"}
+            disabled={isNextDisabled}
+            color={isNextDisabled ? "lightgray" : "white"}
+            background={isNextDisabled ? "#878484" : "var(--theme-color)"}
             style={{
-              cursor: isNextDisabled ? "pointer" : "not-allowed",
+              cursor: isNextDisabled ? "not-allowed" : "pointer",
             }}
           >
             Save and Next

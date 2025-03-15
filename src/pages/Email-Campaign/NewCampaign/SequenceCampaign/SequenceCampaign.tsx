@@ -30,6 +30,7 @@ import { getCampaignById } from "../../../../redux/slice/emailCampaignSlice";
 import CircularLoader from "../../../../assets/Custom/circularProgress";
 
 interface ImportLeadsCampaignProps {
+  campaign_id: string,
   handleEmailTemplateData: (data: any) => void;
   onClickEmailFollowUp: (data: any) => void;
   addSequence: (data: any) => void;
@@ -41,6 +42,7 @@ interface ImportLeadsCampaignProps {
 }
 
 const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
+  campaign_id,
   handleEmailTemplateData,
   onClickEmailFollowUp,
   addSequence,
@@ -62,10 +64,10 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const campaignId = params.get("id");
-
     console.log(selectedVariant);
-    if (campaignId) {
-      fetchCampaignDetails(campaignId);
+    
+    if (campaignId || campaign_id) {
+      fetchCampaignDetails(campaignId || campaign_id);
     } else {
       if (sequences.length === 0) {
         const newSequence: Sequence = {

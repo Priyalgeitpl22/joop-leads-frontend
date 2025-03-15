@@ -5,7 +5,11 @@ import { Search } from "lucide-react";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../redux/store/store";
-import { getCampaignById } from "../../../../redux/slice/emailCampaignSlice";
+import {
+  fetchCampaignContacts,
+  fetchCampaignSequences,
+  getCampaignById,
+} from "../../../../redux/slice/emailCampaignSlice";
 import { IContacts } from "../interfaces";
 import {
   Sequence,
@@ -18,9 +22,13 @@ import {
 } from "./finalReview.styled";
 import ReactQuill from "react-quill";
 import { modules } from "../SequenceCampaign/EmailTemplate/EmailTemplate";
-interface FinalReviewCampaignProps {}
+interface FinalReviewCampaignProps {
+  campaign_id: string;
+}
 
-const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({}) => {
+const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
+  campaign_id,
+}) => {
   const [selectedContact, setSelectedContact] = useState<IContacts>();
   const [selectedVariant, setSelectedVariant] = React.useState(1);
   const [selectedTemplate, setSelectedTemplate] =
@@ -45,8 +53,26 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({}) => {
 
     if (campaignId) {
       fetchCampaignDetails(campaignId);
+    } else {
+      fetchContactsAndSequences();
     }
   }, [dispatch]);
+
+  const fetchContactsAndSequences = async () => {
+    try {
+      const contacts = await dispatch(
+        fetchCampaignContacts(campaign_id)
+      ).unwrap();
+      const sequences = await dispatch(
+        fetchCampaignSequences(campaign_id)
+      ).unwrap();
+
+      setContacts(contacts.data);
+      setSequences(sequences.data);
+    } catch (error) {
+      console.error("Error fetching contacts or sequences:", error);
+    }
+  };
 
   const fetchCampaignDetails = async (id: string) => {
     try {

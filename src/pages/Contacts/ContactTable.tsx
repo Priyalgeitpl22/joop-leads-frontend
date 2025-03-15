@@ -320,7 +320,9 @@ const ContactTable: React.FC = () => {
           sx={{
             display: "flex",
             gap: "15px",
+            width: "100%",
             alignItems: "center",
+            justifyContent: 'right'
           }}
         >
           {/* <FilterIcon onClick={handleMenuOpen}>

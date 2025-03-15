@@ -1,5 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Box, Typography, Select, MenuItem, IconButton, Tooltip } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Select,
+  MenuItem,
+  IconButton,
+  Tooltip,
+} from "@mui/material";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RefreshIcon from "@mui/icons-material/Refresh";
@@ -18,7 +25,7 @@ interface ImportLeadsDetailProps {
   setIsNextDisabled: (status: boolean) => void;
   isUplaodContacts: boolean;
   handleUploadContacts?: (data: any) => void;
-  onDeleteFile?: () => void 
+  onDeleteFile?: () => void;
 }
 
 const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
@@ -50,17 +57,19 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
     console.log("emailFieldAdded", emailFieldsAdded);
 
     setEmailFieldAdded((prev) => {
+      debugger;
       const updatedFields = {
         ...prev,
         [field]: column,
       };
 
       onEmailFieldsChange(updatedFields);
-      const hasSelection = Object.values(updatedFields).some((v) => v);
-
-      if (hasSelection) {
-        setIsNextDisabled(hasSelection);
-      }
+      const hasSelection =
+      Boolean(updatedFields["Email"] && updatedFields["First Name"]) &&
+      Object.values(updatedFields).some((v) => Boolean(v));
+    
+      setIsNextDisabled(!hasSelection);
+          
       return updatedFields;
     });
   };
@@ -86,7 +95,7 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
   };
 
   const [csvData, setCsvData] = useState<string[][]>([]);
- 
+
   const [isCSVModalOpen, setCSVModalOpen] = useState(false);
 
   useEffect(() => {

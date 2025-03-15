@@ -39,16 +39,17 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [emailAccounts, setEmailAccounts] = useState<EmailAccount[]>([]);
+  const [senderAccounts, setSenderAccounts] = useState<EmailAccount[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedEmailAccounts, setSelectedEmailAccounts] = useState<string[]>(
     []
   );
-  const { user } = useSelector((state: RootState) => state.user);
-
   const [rows, setRows] = useState<any[]>([]);
   const [selectedAccounts, setSelectedAccounts] = React.useState<EmailAccounts>(
     []
   );
+  const { user } = useSelector((state: RootState) => state.user);
+
   const columns: GridColDef[] = useMemo(
     () => [
       { field: "name", headerName: "Name", width: 150 },
@@ -112,6 +113,7 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
   );
 
   useEffect(() => {
+    console.log(emailAccounts);
     const params = new URLSearchParams(location.search);
     const campaignId = params.get("id");
 
@@ -121,6 +123,7 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
       .unwrap()
       .then((data) => {
         setRows(data);
+        setSenderAccounts(data);
       })
       .catch(console.error);
   }, [open]);
@@ -175,9 +178,17 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
 
   const getAllEmailAccounts = async () => {
     try {
-      const data = await dispatch(fetchEmailAccount({ orgId: user?.orgId || "" })).unwrap();
-      setEmailAccounts(data);
-      setRows(data);
+      const data = await dispatch(
+        fetchEmailAccount({ orgId: user?.orgId || "" })
+      ).unwrap();
+
+      const formattedData = data.map((item: any) => ({
+        ...item,
+        id: item._id,
+      }));
+
+      setEmailAccounts(formattedData);
+      setRows(formattedData);
     } catch (error) {
       console.error("Failed to fetch Account:", error);
     }
@@ -185,16 +196,32 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
 
   const handleSearch = async (query: string) => {
     try {
+      debugger;
       const trimmedQuery = query.trim();
       if (trimmedQuery === "") {
-        setRows(emailAccounts);
-      } else {
-        const [email, name] = trimmedQuery.split(" ");
-        const filteredData = await dispatch(
-          SearchEmailAccount({ email, name })
-        ).unwrap();
-        setRows(filteredData);
+        setRows(senderAccounts);
+        return;
       }
+
+      let email = "";
+      let name = "";
+
+      if (trimmedQuery.includes("@")) {
+        email = trimmedQuery;
+      } else {
+        name = trimmedQuery;
+      }
+
+      const filteredData = await dispatch(
+        SearchEmailAccount({ email, name, orgId: user?.orgId || "" })
+      ).unwrap();
+
+      const formattedData = filteredData.map((item: any) => ({
+        ...item,
+        id: item._id,
+      }));
+
+      setRows(formattedData);
     } catch (error) {
       console.error("Search failed:", error);
     }
@@ -240,7 +267,7 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
           >
             Email Accounts
           </Typography>
-          <Box sx={{ display: "flex" }}>
+          <Box sx={{ display: "flex", width: "100%" }}>
             <SearchBar>
               <Search size={20} />
               <input

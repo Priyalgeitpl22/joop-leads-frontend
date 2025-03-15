@@ -175,7 +175,7 @@ const EmailAccounts: React.FC = () => {
       } else {
         const [email, name] = trimmedQuery.split(" ");
         const filteredData = await dispatch(
-          SearchEmailAccount({ email, name })
+          SearchEmailAccount({ email, name, orgId: user?.orgId || "" })
         ).unwrap();
         setRows(filteredData);
       }
@@ -258,7 +258,9 @@ const EmailAccounts: React.FC = () => {
           sx={{
             display: "flex",
             gap: "15px",
+            width: "100%",
             alignItems: "center",
+            justifyContent: "flex-end"
           }}
         >
           {/* <FilterIcon onClick={handleMenuOpen}>

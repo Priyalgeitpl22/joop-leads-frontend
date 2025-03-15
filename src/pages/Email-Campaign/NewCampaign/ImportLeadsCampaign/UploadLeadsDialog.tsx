@@ -10,18 +10,28 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import Grid2 from "@mui/material/Grid2";
 import { ILeadsCounts } from "../interfaces";
+import { useEffect } from "react";
 
 interface UploadCsvDialogProps {
   open: boolean;
   uploadCounts?: ILeadsCounts;
   onClose: () => void;
+  setIsNextDisabled?: (status: boolean) => void;
 }
 
 const UploadLeadsDialog: React.FC<UploadCsvDialogProps> = ({
   open,
   uploadCounts,
   onClose,
+  setIsNextDisabled,
 }) => {
+
+  useEffect(() => {
+    if (setIsNextDisabled && uploadCounts?.uploadedCount === 0) {
+      setIsNextDisabled(true);
+    }
+  }, [open, uploadCounts, setIsNextDisabled]);  
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <Box style={{ position: "relative" }}>
@@ -42,7 +52,9 @@ const UploadLeadsDialog: React.FC<UploadCsvDialogProps> = ({
             alignItems: "center",
           }}
         >
-          {uploadCounts?.uploadedCount === 0 ? 'No Leads Imported' : 'Leads Imported'}
+          {uploadCounts?.uploadedCount === 0
+            ? "No Leads Imported"
+            : "Leads Imported"}
         </DialogTitle>
       </Box>
 

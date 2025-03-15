@@ -143,13 +143,14 @@ export const CreateEmailAccount = createAsyncThunk<
 export const SearchEmailAccount = createAsyncThunk(
   "accounts/search",
   async (
-    { email, name }: { email?: string; name?: string },
+    { email, name, orgId }: { email?: string; name?: string; orgId: string },
     { rejectWithValue }
   ) => {
     try {
       const response = await emailApi.get(`/accounts/search`, {
-        params: { email, name },
+        params: { email, name, orgId},
       });
+
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || "Network error");

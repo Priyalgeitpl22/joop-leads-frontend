@@ -32,7 +32,7 @@ import { SectionTitle } from "../../styles/layout.styled";
 const Leads: React.FC = () => {
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  
+
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -47,7 +47,7 @@ const Leads: React.FC = () => {
     <LeadssContainer>
       <LeadsHeader>
         <SectionTitle>All Leads</SectionTitle>
-        <Box sx={{ display: "flex", gap: "20px" }}>
+        <Box sx={{ display: "flex", gap: "20px", width: "100%" }}>
           <SearchBar>
             <Search size={20} />
             <input placeholder="Search input..." />
@@ -85,7 +85,6 @@ const Leads: React.FC = () => {
         >
           <Typography fontWeight="bold">Sort By</Typography>
         </Box>
-
       </Menu>
       <LeadsTable>
         <StyledTableContainer>

@@ -1,8 +1,17 @@
 import { useEffect, useState } from "react";
-import { Box, Checkbox, Dialog, FormControlLabel, IconButton, Radio, RadioGroup, Slider, TextField, Typography } from "@mui/material";
 import {
-  ContentContainer
-} from "../../../EmailCampaign.styled";
+  Box,
+  Checkbox,
+  Dialog,
+  FormControlLabel,
+  IconButton,
+  Radio,
+  RadioGroup,
+  Slider,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { ContentContainer } from "../../../EmailCampaign.styled";
 import CloseIcon from "@mui/icons-material/Close";
 import {
   Button,
@@ -12,12 +21,13 @@ import {
 import { getCampaignById } from "../../../../../redux/slice/emailCampaignSlice";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../../redux/store/store";
+import ProgressBar from "../../../../../assets/Custom/linearProgress";
 
 interface SettingCampaignProps {
   open: boolean;
   onClose: () => void;
   campaignId?: string;
-  handleSave: (data: any) => void
+  handleSave: (data: any) => void;
   campaignSetting?: any;
 }
 
@@ -40,21 +50,24 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
   });
 
   const dispatch = useDispatch<AppDispatch>();
+  const [loading, setLoading] = useState(true);
 
   const handleChange = (field: keyof typeof formData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  
   useEffect(() => {
     if (open) {
       const params = new URLSearchParams(location.search);
       const campaignId = params.get("id");
-  
-      if (campaignId) fetchCampaignDetails(campaignId);
+
+      if (campaignId) {
+        fetchCampaignDetails(campaignId);
+      } else {
+        setLoading(false);
+      }
     }
-  }, [open]); 
-  
+  }, [open]);
 
   const fetchCampaignDetails = async (id: string) => {
     try {
@@ -76,9 +89,11 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
           BounceRate: campaignSetting.BounceRate ?? false,
           Unsubscribe: campaignSetting.Unsubscribe ?? false,
         }));
+        setLoading(false);
       }
       return response.campaign;
     } catch (error) {
+      setLoading(false);
       console.error("Error fetching campaign:", error);
       return null;
     }
@@ -102,6 +117,7 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
           </IconButton>
           <Typography variant="h5">General Campaign Settings</Typography>
         </CustomDialogHeader>
+        {loading && <ProgressBar />}
 
         <ContentContainer>
           <Box sx={{ padding: 3, margin: "auto" }}>
@@ -183,7 +199,9 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
             </Typography>
             <Slider
               value={formData.priority}
-              onChange={(_event, newValue) => handleChange("priority", newValue)}
+              onChange={(_event, newValue) =>
+                handleChange("priority", newValue)
+              }
               step={10}
               marks
               min={0}
