@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { RadioGroup, Radio, Checkbox } from "@mui/material";
+import {
+  RadioGroup,
+  Radio,
+  Checkbox,
+  CircularProgress,
+} from "@mui/material";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import Grid2 from "@mui/material/Grid2";
 import { Button2, TextField, InputLabel } from "../../../styles/layout.styled";
@@ -14,6 +19,7 @@ import {
 } from "../../../redux/slice/emailAccountSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../redux/store/store";
+import { validateEmail } from "../../../utils/Validation";
 
 const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -43,14 +49,16 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
     tags: "",
     clients: "",
     signature: "",
-    messagePerDay: "",
-    timeGap: "",
+    msg_per_day: "",
+    time_gap: "",
     type: "",
   });
 
   const [isSaveDisabled, setIsSaveDisabled] = useState(true);
   const [isVerified, setIsVerified] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [verificationInProgress, setVerificationInProgress] = useState(false);
+  const [verificationFailed, setVerificationFailed] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -80,8 +88,8 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
         tags: emailAccount?.tags || "",
         clients: emailAccount?.clients || "",
         signature: emailAccount?.signature || "",
-        messagePerDay: emailAccount?.messagePerDay || "",
-        timeGap: emailAccount?.timeGap || "",
+        msg_per_day: emailAccount?.msg_per_day || "",
+        time_gap: emailAccount?.time_gap || "",
         type: emailAccount?.type || "",
       });
     }
@@ -111,6 +119,8 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
   };
 
   const handleVerifyAccount = () => {
+    setVerificationFailed(false);
+    setVerificationInProgress(true);
     const payload: VerifyEmailAccountPayload = {
       type: "smtp",
       imap: {
@@ -134,26 +144,28 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
       proxy: null,
       smtpEhloName: "localhost",
     };
-    setLoading(true);
-    console.log("Loader", loading);
     dispatch(verifyEmailAccount(payload))
       .unwrap()
       .then(() => {
+        setVerificationInProgress(false);
         setIsVerified(true);
         setIsSaveDisabled(false);
       })
       .catch(() => {
+        setVerificationFailed(true);
+        setVerificationInProgress(false);
         setIsVerified(false);
         setIsSaveDisabled(true);
       })
       .finally(() => {
-        setLoading(false);
+        setVerificationInProgress(false);
       });
   };
 
   const handleUpdatAccount = () => {
     if (!id) return;
 
+    setLoading(true);
     const payload = {
       name: formData.fromName,
       email: formData.fromEmail,
@@ -185,19 +197,24 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
       tags: formData.tags,
       clients: formData.clients,
       signature: formData.signature,
-      messagePerDay: formData.messagePerDay,
-      timeGap: formData.timeGap,
+      msg_per_day: formData.msg_per_day,
+      time_gap: formData.time_gap,
       type: formData.type,
     };
 
     dispatch(updateEmailAccountSmtpDetail({ id, data: payload }))
       .unwrap()
       .then(() => {
+        setLoading(false);
         console.log("account updated successfully");
       })
       .catch((error) => {
+        setLoading(false);
         console.log("Failed to update email account: " + error);
-      });
+      })
+      .finally(() => {
+        setLoading(false);
+      })
   };
   const handleGoogleAccount = async () => {
     if (user) {
@@ -312,8 +329,8 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
               <InputLabel>Message Per Day (Warmups not included)</InputLabel>
               <TextField
                 fullWidth
-                name="messagePerDay"
-                value={formData.messagePerDay}
+                name="msg_per_day"
+                value={formData.msg_per_day}
                 onChange={handleChange}
               />
             </Grid2>
@@ -322,7 +339,7 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
               <TextField
                 fullWidth
                 name="timeGap"
-                value={formData.timeGap}
+                value={formData.time_gap}
                 onChange={handleChange}
               />
             </Grid2>
@@ -423,10 +440,15 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
               <Button2
                 onClick={handleVerifyAccount}
                 color={"white"}
+                disabled={verificationInProgress}
                 background={"var(--theme-color)"}
-                style={{ cursor: "pointer" }}
+                style={{ width: "100%", cursor: "pointer" }}
               >
-                Verify Email Account
+                {verificationInProgress ? (
+                  <CircularProgress size={24} sx={{ color: "white" }} />
+                ) : (
+                  "Verify Email Account"
+                )}
               </Button2>
             </Grid2>
             {isVerified && (
@@ -435,7 +457,20 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
                 sx={{ display: "flex", gap: "10px" }}
               >
                 <CheckBoxIcon sx={{ color: "green" }} />
-                <div>Email account verified successfully!</div>
+                <div style={{ color: "green" }}>
+                  Email account verified successfully!
+                </div>
+              </Grid2>
+            )}
+            {verificationFailed && (
+              <Grid2
+                size={{ xs: 12, sm: 12 }}
+                sx={{ display: "flex", gap: "10px" }}
+              >
+                <div style={{ color: "var(--error-color)" }}>
+                  Email account verification failed. Please check your
+                  credentials and try again.
+                </div>
               </Grid2>
             )}
             <Grid2 size={{ xs: 10, sm: 10 }}>
@@ -462,11 +497,14 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
                 color={isSaveDisabled ? "black" : "white"}
                 background={isSaveDisabled ? "#d3d3d3" : "var(--theme-color)"}
                 style={{
-                  width: "40%",
                   cursor: isSaveDisabled ? "not-allowed" : "pointer",
                 }}
               >
-                Save
+                {loading ? (
+                  <CircularProgress size={24} sx={{ color: "white" }} />
+                ) : (
+                  "Update Details"
+                )}{" "}
               </Button2>
             </Grid2>
           </Grid2>
@@ -481,28 +519,42 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
           <Grid2 container spacing={2} sx={{ justifyContent: "left" }}>
             <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel>From Name</InputLabel>
+
               <TextField
                 fullWidth
                 name="fromName"
                 value={formData.fromName}
                 onChange={handleChange}
+                error={!formData.fromName}
+                helperText={!formData.fromName ? "From Name is required" : ""}
               />
             </Grid2>
             <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel>From Email</InputLabel>
+
               <TextField
                 fullWidth
                 name="fromEmail"
                 value={formData.fromEmail}
                 onChange={handleChange}
+                error={!formData.fromEmail || !validateEmail(formData.fromEmail)}
+                helperText={
+                  !formData.fromEmail
+                    ? "From Email is required"
+                    : !validateEmail(formData.fromEmail)
+                      ? "Enter a valid email address"
+                      : ""
+                }
               />
+
+
             </Grid2>
             <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel>Message Per Day (Warmups not included)</InputLabel>
               <TextField
                 fullWidth
-                name="messagePerDay"
-                value={formData.messagePerDay}
+                name="msg_per_day"
+                value={formData.msg_per_day}
                 onChange={handleChange}
               />
             </Grid2>
@@ -511,7 +563,7 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
               <TextField
                 fullWidth
                 name="timeGap"
-                value={formData.timeGap}
+                value={formData.time_gap}
                 onChange={handleChange}
               />
             </Grid2>
@@ -533,7 +585,11 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
                   onClick={handleGoogleAccount}
                   color={"white"}
                   background={"var(--theme-color)"}
-                  style={{ cursor: "pointer", width: "20%" }}
+                  style={{
+                    cursor: !formData.fromName || !formData.fromEmail ? "not-allowed" : "pointer",
+                    width: "20%",
+                  }}
+                  disabled={!formData.fromName || !formData.fromEmail}
                 >
                   Reconnect
                 </Button2>
@@ -542,12 +598,17 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
                   onClick={handleOutlookAccount}
                   color={"white"}
                   background={"var(--theme-color)"}
-                  style={{ cursor: "pointer", width: "20%" }}
+                  style={{
+                    cursor: !formData.fromName || !formData.fromEmail ? "not-allowed" : "pointer",
+                    width: "20%",
+                  }}
+                  disabled={!formData.fromName || !formData.fromEmail}
                 >
                   Reconnect
                 </Button2>
               )}
             </Grid2>
+
           </Grid2>
         </div>
       )}

@@ -9,6 +9,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Tooltip,
 } from "@mui/material";
 import {
   EmailAccountsContainer,
@@ -20,6 +21,7 @@ import AdvancedSettingDialog from "./AdvancedSettingDialogBox/AdvancedSettingDia
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  deleteEmailAccount,
   EmailAccount,
   fetchEmailAccount,
   SearchEmailAccount,
@@ -29,13 +31,14 @@ import { SearchBar } from "../../components/Header/header.styled";
 import { Search } from "lucide-react";
 // import toast from "react-hot-toast";
 import { CustomDataTable } from "../../assets/Custom/customDataGrid";
-import { GridColDef } from "@mui/x-data-grid";
+import { GridColDef, GridDeleteIcon } from "@mui/x-data-grid";
 import { formatDate } from "../../utils/utils";
 import { Button, SecondaryButton } from "../../styles/global.styled";
 import { CustomTableCell } from "../Email-Campaign/EmailCampaign.styled";
 import { useNavigate } from "react-router-dom";
 import ProgressBar from "../../assets/Custom/linearProgress";
 import { SectionTitle } from "../../styles/layout.styled";
+import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
 // import ProgressBar from "../../assets/Custom/linearProgress";
 
 const EmailAccounts: React.FC = () => {
@@ -49,11 +52,16 @@ const EmailAccounts: React.FC = () => {
   const [rows, setRows] = useState<any[]>([]);
   const navigate = useNavigate();
   const { user } = useSelector((state: RootState) => state.user);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [selectedEmailAccount, setSelectedEmailAccount] = useState<
+    string | null
+  >(null);
+
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: "name", headerName: "Name", width: 150 },
-      { field: "email", headerName: "Email", width: 250 },
+      { field: "name", headerName: "Name", width: 160 },
+      { field: "email", headerName: "Email", width: 260 },
       {
         field: "type",
         headerName: "Type",
@@ -89,7 +97,7 @@ const EmailAccounts: React.FC = () => {
       {
         field: "warm_up",
         headerName: "Warmup Enabled",
-        width: 120,
+        width: 150,
         renderCell: () => <Box>Yes</Box>,
       },
       {
@@ -101,26 +109,36 @@ const EmailAccounts: React.FC = () => {
       {
         field: "reputation",
         headerName: "Reputation",
-        width: 100,
+        width: 110,
         renderCell: () => <Box>100%</Box>,
       },
       {
         field: "createdAt",
         headerName: "Created At",
-        width: 150,
+        width: 160,
         valueGetter: (params: any) => (params ? formatDate(params) : null),
       },
       {
         field: "edit",
         headerName: "Action",
-        width: 80,
+        width: 100,
         sortable: false,
         renderCell: (params) => (
           <CustomTableCell>
-            <ModeEditOutlineOutlinedIcon
-              onClick={() => handleEditEmailAccount(params.row.id)}
-              sx={{ cursor: "pointer" }}
-            />
+            <Box display="flex" alignItems="center" gap={1.5}>
+              <Tooltip title="Edit Email Account" arrow>
+                <ModeEditOutlineOutlinedIcon
+                  onClick={() => handleEditEmailAccount(params.row.id)}
+                  sx={{ cursor: "pointer" }}
+                />
+              </Tooltip>
+              <Tooltip title="Delete Email Account" arrow>
+                <GridDeleteIcon
+                  sx={{ cursor: "pointer" }}
+                  onClick={() => handleOpenDeleteDialog(params.row.id)}
+                />
+              </Tooltip>
+            </Box>
           </CustomTableCell>
         ),
       },
@@ -163,7 +181,7 @@ const EmailAccounts: React.FC = () => {
       } else {
         const [email, name] = trimmedQuery.split(" ");
         const filteredData = await dispatch(
-          SearchEmailAccount({ email, name })
+          SearchEmailAccount({ email, name, orgId: user?.orgId || "" })
         ).unwrap();
         setRows(filteredData);
       }
@@ -201,6 +219,32 @@ const EmailAccounts: React.FC = () => {
     console.log("Navigating to:", `/email-account/edit-email-account/${id}`);
   };
 
+  const handleOpenDeleteDialog = (id: string) => {
+    setSelectedEmailAccount(id);
+    setOpenDeleteDialog(true);
+  };
+
+  const handleCloseDeleteDialog = () => {
+    setSelectedEmailAccount(null);
+    setOpenDeleteDialog(false);
+  };
+
+  const handleDeleteEmailAccount = async () => {
+    if (!selectedEmailAccount) return;
+    try {
+      await dispatch(deleteEmailAccount(selectedEmailAccount)).unwrap();
+      setRows((prevRows) =>
+        prevRows.filter((row) => row.id !== selectedEmailAccount)
+      );
+      setEmailAccounts((prevAccounts) =>
+        prevAccounts.filter((account) => account._id !== selectedEmailAccount)
+      );
+      handleCloseDeleteDialog();
+    } catch (error) {
+      console.error("Failed to delete email account:", error);
+    }
+  };
+
   console.log("Loader", loading);
 
   const CustomIcon = () => (
@@ -234,7 +278,9 @@ const EmailAccounts: React.FC = () => {
           sx={{
             display: "flex",
             gap: "15px",
+            width: "100%",
             alignItems: "center",
+            justifyContent: "flex-end"
           }}
         >
           {/* <FilterIcon onClick={handleMenuOpen}>
@@ -320,9 +366,18 @@ const EmailAccounts: React.FC = () => {
           columns={columns}
           rows={rows}
           pageSizeOptions={[15, 10, 5]}
-          enableCheckboxSelection={false}
+          enableCheckboxSelection={true}
         />
       </EmailAccountTable>
+      <ConfirmDeleteDialog
+        open={openDeleteDialog}
+        onClose={handleCloseDeleteDialog}
+        onConfirm={handleDeleteEmailAccount}
+        title="Delete Email Account?"
+        message="Are you sure you want to delete this email account?"
+        confirmText="Delete"
+        cancelText="Cancel"
+      />
     </EmailAccountsContainer>
   );
 };

@@ -16,9 +16,8 @@ export const SidebarContainer = styled(Box)`
 
 export const EmailInboxContainer = styled(Box)`
   width: 100%;
-  height: 83vh;
+  height: 77vh;
   display: flex;
-  border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   background: var(--icon-light);
   position: relative;
@@ -28,10 +27,22 @@ export const EmailInboxContainer = styled(Box)`
 ;
 
 export const SidebarHeader = styled(Box)`
-  font-size: 16px;
+  font-size: 18px;
   font-weight: bold;
-  margin-bottom: 8px;
+  // margin-bottom: 8px;
 `;
+
+export const EmailInboxListHeader = styled(Box)({
+  alignItems: "center",
+  marginTop: "5px",
+  marginBottom: "8px",
+  paddingBottom: "5px",
+
+  "@media (max-width: 600px)": {
+    flexDirection: "column",
+    alignItems: "flex-start",
+  },
+});
 
 export const StyledDivider = styled(Divider)`
   margin-bottom: 10px;
@@ -70,4 +81,22 @@ export const NoMailboxMessage = styled(Box)`
   margin-top: 20px;
   height: 100%;
   width: 100%;
+`;
+
+export const EmailInbox = styled(Box)`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  overflow: auto;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background: white;
+  position: relative;
+  flex-direction: column;
+  background: var(--white-fade-gradient);
+  border-radius: 8px;
+`;
+
+export const EmailInboxHeader = styled(Box)`
+  background: var(--background-secondary);
+  padding: 16px;
 `;

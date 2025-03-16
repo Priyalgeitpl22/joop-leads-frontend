@@ -12,14 +12,14 @@ import { AppDispatch } from "../../../../redux/store/store";
 import { useLocation } from "react-router-dom";
 
 interface SetupCampaignProps {
-  campaignId?: string;
+  campaign_id?: string;
   handleSenderAccountsUpdate: (data: any) => void;
   handleScheduleCampaignUpdate: (data: any) => any;
   handleCampaignSettingsUpdate: (data: any) => any;
 }
 
 const SetupCampaign: React.FC<SetupCampaignProps> = ({
-  campaignId,
+  campaign_id,
   handleSenderAccountsUpdate,
   handleScheduleCampaignUpdate,
   handleCampaignSettingsUpdate,
@@ -119,7 +119,7 @@ const SetupCampaign: React.FC<SetupCampaignProps> = ({
           </SetupButton>
 
           <SenderAccountDialog
-            campaignId={campaignId}
+            campaignId={campaign_id}
             senderAccounts={senderAccounts}
             open={openSenderAccount} // ✅ Correctly passing boolean
             onClose={() => senderAccountDialogOpen(false)}
@@ -161,7 +161,7 @@ const SetupCampaign: React.FC<SetupCampaignProps> = ({
           <ScheduleCampaignDialog
             campaignSchedule={campaignSchedule}
             handleSave={handleScheduleCampaignUpdate}
-            campaignId={campaignId}
+            campaignId={campaign_id}
             open={openCampaignSchedule}
             onClose={() => setOpenCampaignSchedule(false)}
           />
@@ -199,7 +199,7 @@ const SetupCampaign: React.FC<SetupCampaignProps> = ({
           <CampaignSettingDialog
             campaignSetting={campaignSetting}
             handleSave={handleCampaignSettingsUpdate}
-            campaignId={campaignId}
+            campaignId={campaign_id}
             open={openCampaignSetting}
             onClose={() => setOpenCampaignSetting(false)}
           />

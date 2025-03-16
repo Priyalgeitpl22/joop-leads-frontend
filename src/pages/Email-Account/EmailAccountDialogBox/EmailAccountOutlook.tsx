@@ -22,7 +22,6 @@ const EmailAccountOutlookDialog: React.FC<{
   const { user } = useSelector((state: RootState) => state.user);
 
   const handleOutlookAccount = async () => {
-    debugger;
     const response = await dispatch(addOutlookEmailAccount({ orgId: user?.orgId })).unwrap();
     if (response) {
       window.location.href = response;

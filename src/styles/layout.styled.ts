@@ -194,4 +194,5 @@ export const SectionTitle = styled.h2`
   font-weight: 600;
   color: #35495c;
   display: flex;
+  white-space: nowrap;
 `;

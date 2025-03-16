@@ -1,31 +1,37 @@
 import styled from '@emotion/styled';
 
 export const SearchBar = styled.div`
-    display: flex;
-    flex-direction: row;
-    padding: 12px;
-    border: 1px solid var(--border-color);
-    background-color: white;
-    border-radius: 5px;
-    flex-grow: 1;
-    width: 100%;
-    max-width: 350px;
-    min-width: 20%;
-    gap: 10px;
-    height: 42px;
-
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  background-color: white;
+  border-radius: 5px;
+  flex-grow: 1;
+  max-width: 250px;
+  width: 100%;
+  gap: 10px;
+  height: 42px;
+  
   input {
     background: none;
     border: none;
     outline: none;
     color: var(--theme-color);
-    width: 100%;
+    flex-grow: 1;
+    font-size: 14px;
 
     &::placeholder {
       color: #94a3b8;
     }
   }
+
+  svg {
+    color: var(--border-color);
+  }
 `;
+
+
 export const NotificationBell = styled.button`
   background: none;
   border: none;

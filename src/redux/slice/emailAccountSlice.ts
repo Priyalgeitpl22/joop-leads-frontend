@@ -14,7 +14,7 @@ export interface VerifyEmailAccountPayload {
   email?: string;
   imap: {
     host: string;
-    port: number;
+    port: any;
     secure: boolean;
     auth: {
       user: string;
@@ -23,7 +23,7 @@ export interface VerifyEmailAccountPayload {
   };
   smtp: {
     host: string;
-    port: number;
+    port: any;
     secure: boolean;
     auth: {
       user: string;
@@ -41,13 +41,15 @@ export interface CreateEmailAccountPayload {
   type: string;
   email: string;
   orgId: string;
+  msg_per_day: any, 
+  time_gap: any,
   imap: {
     auth: {
       user: string;
       pass: string;
     };
     host: string;
-    port: number;
+    port: any;
     secure: boolean;
   };
   smtp: {
@@ -56,7 +58,7 @@ export interface CreateEmailAccountPayload {
       pass: string;
     };
     host: string;
-    port: number;
+    port: any;
     secure: boolean;
   };
   proxy: null | string;
@@ -141,13 +143,15 @@ export const CreateEmailAccount = createAsyncThunk<
 export const SearchEmailAccount = createAsyncThunk(
   "accounts/search",
   async (
-    { email, name }: { email?: string; name?: string },
+    { email, name, orgId }: { email?: string; name?: string; orgId: string },
     { rejectWithValue }
   ) => {
     try {
       const response = await emailApi.get(`/accounts/search`, {
-        params: { email, name },
+        params: { email, name, orgId},
+        headers: { "Cache-Control": "no-cache" }, 
       });
+
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || "Network error");
@@ -199,6 +203,20 @@ const emailAccountSlice = createSlice({
   },
   
 });
+
+export const deleteEmailAccount = createAsyncThunk(
+  "emailAccounts/deleteEmailAccount",
+  async (id: string, { rejectWithValue }) => {
+    try {
+      await emailApi.delete(`/accounts/${id}`);
+      return id; 
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to delete email account"
+      );
+    }
+  }
+);
 
 
 export default emailAccountSlice.reducer;

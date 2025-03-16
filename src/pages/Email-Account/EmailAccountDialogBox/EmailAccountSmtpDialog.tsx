@@ -42,17 +42,17 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
     userName: "",
     password: "",
     smtpHost: "",
-    smtpPort: 0,
+    smtpPort: null,
     security: false,
-    messagePerDay: "",
-    timeGap: "",
+    msg_per_day: null,
+    time_gap: null,
     replyToAddressChecked: false,
     replyToAddress: "",
     imapChecked: false,
     imapUserName: "",
     imapPassword: "",
     imapHost: "",
-    imapPort: 0,
+    imapPort: null,
     imapSecurity: false,
     bccEmail: "",
     trackingDomainChecked: false,
@@ -67,6 +67,18 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
   const [loading, setLoading] = useState(false);
   const [verificationInProgress, setVerificationInProgress] = useState(false);
   const { user } = useSelector((state: RootState) => state.user);
+  const [errors, setErrors] = useState({
+    fromName: "",
+    fromEmail: "",
+    userName: "",
+    password: "",
+    smtpHost: "",
+    smtpPort: "",
+    msg_per_day: "",
+    time_gap: "",
+    imapHost: "",
+    imapPort: "",
+  });
 
   useEffect(() => {
     if (!formData.replyToAddressChecked) {
@@ -78,20 +90,32 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
     }
   }, [formData.replyToAddressChecked, formData.userName, formData.password]);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  // const handleChange = (
+  //   e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  // ) => {
+  //   const { name, value, type } = e.target;
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     [name]:
+  //       type === "checkbox"
+  //         ? (e.target as HTMLInputElement).checked
+  //         : name === "smtpPort" || name === "imapPort"
+  //           ? Number(value)
+  //           : value,
+  //   }));
+  // };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
+
     setFormData((prev) => ({
       ...prev,
-      [name]:
-        type === "checkbox"
-          ? (e.target as HTMLInputElement).checked
-          : name === "smtpPort" || name === "imapPort"
-            ? Number(value)
-            : value,
+      [name]: type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
     }));
+
+    // Validate the changed field immediately
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
   };
+
 
   const handleSelectChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -102,6 +126,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
   };
 
   const handleVerifyAccount = () => {
+    if (!validateFields()) return;
     setVerificationInProgress(true);
     setVerificationFailed(false);
 
@@ -153,6 +178,8 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
       type: "imap",
       orgId: user?.orgId as string,
       email: formData.fromEmail,
+      msg_per_day: Number(formData.msg_per_day),
+      time_gap: Number(formData.time_gap),
       imap: {
         host: formData.imapHost,
         port: formData.imapPort,
@@ -185,6 +212,37 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
         setLoading(false);
       });
   };
+  const validateFields = () => {
+    let newErrors: any = {};
+
+    if (!formData.fromName.trim()) newErrors.fromName = "From Name is required";
+    if (!formData.fromEmail.trim()) {
+      newErrors.fromEmail = "From Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.fromEmail)) {
+      newErrors.fromEmail = "Enter a valid email address";
+    }
+    if (!formData.userName.trim()) newErrors.userName = "User Name is required";
+    if (!formData.password.trim()) newErrors.password = "Password is required";
+    if (!formData.smtpHost.trim()) newErrors.smtpHost = "SMTP Host is required";
+    if (!formData.smtpPort || isNaN(Number(formData.smtpPort))) {
+      newErrors.smtpPort = "Valid SMTP Port is required";
+    }
+    if (!formData.msg_per_day || isNaN(Number(formData.msg_per_day))) {
+      newErrors.msg_per_day = "Message per day must be a number";
+    }
+    if (!formData.time_gap || isNaN(Number(formData.time_gap))) {
+      newErrors.time_gap = "Time gap must be a number";
+    }
+    if (!formData.imapHost.trim()) newErrors.imapHost = "IMAP Host is required";
+    if (!formData.imapPort || isNaN(Number(formData.imapPort))) {
+      newErrors.imapPort = "Valid IMAP Port is required";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0; // Return true if no errors
+  };
+
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md">
@@ -222,6 +280,8 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
               name="fromName"
               value={formData.fromName}
               onChange={handleChange}
+              error={!!errors.fromName}
+              helperText={errors.fromName}
             />
           </Grid2>
           <Grid2 size={{ xs: 6, sm: 6 }}>
@@ -231,6 +291,8 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
               name="fromEmail"
               value={formData.fromEmail}
               onChange={handleChange}
+              error={!!errors.fromEmail}
+              helperText={errors.fromEmail}
             />
           </Grid2>
           <Grid2 size={{ xs: 6, sm: 6 }}>
@@ -240,6 +302,9 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
               name="userName"
               value={formData.userName}
               onChange={handleChange}
+              error={!!errors.userName}
+              helperText={errors.userName}
+
             />
           </Grid2>
           <Grid2 size={{ xs: 6, sm: 6 }}>
@@ -249,6 +314,8 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
               name="password"
               value={formData.password}
               onChange={handleChange}
+              error={!!errors.password}
+              helperText={errors.password}
             />
           </Grid2>
           <Grid2 size={{ xs: 6, sm: 6 }}>
@@ -258,6 +325,9 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
               name="smtpHost"
               value={formData.smtpHost}
               onChange={handleChange}
+              error={!!errors.smtpPort}
+              helperText={errors.smtpPort}
+
             />
           </Grid2>
           <Grid2 size={{ xs: 3, sm: 3 }}>
@@ -283,8 +353,8 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
             <InputLabel>Message Per Day (Warmups not included)</InputLabel>
             <TextField
               fullWidth
-              name="messagePerDay"
-              value={formData.messagePerDay}
+              name="msg_per_day"
+              value={formData.msg_per_day}
               onChange={handleChange}
             />
           </Grid2>
@@ -292,8 +362,8 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
             <InputLabel>Minimum time gap (min)</InputLabel>
             <TextField
               fullWidth
-              name="timeGap"
-              value={formData.timeGap}
+              name="time_gap"
+              value={formData.time_gap}
               onChange={handleChange}
             />
           </Grid2>
@@ -447,7 +517,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
               cursor: isSaveDisabled ? "not-allowed" : "pointer",
             }}
           >
-          {loading ? (
+            {loading ? (
               <CircularProgress size={24} sx={{ color: "white" }} />
             ) : (
               "Save"

@@ -135,9 +135,7 @@ export default function DashboardLayoutBasic() {
             }}
           >
             {router.pathname === "/" && <Home />}
-            {router.pathname === "/email-campaign" && (
-              <EmailCampaign router={router} />
-            )}
+            {router.pathname === "/email-campaign" && <EmailCampaign />}
             {router.pathname === "/email-accounts" && <EmailAccount />}
             {router.pathname.startsWith(
               "/email-account/edit-email-account/"

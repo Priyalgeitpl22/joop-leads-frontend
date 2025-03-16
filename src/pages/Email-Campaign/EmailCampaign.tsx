@@ -1,19 +1,12 @@
 import React, { useEffect, useState } from "react";
 import {
   Box,
-  Typography,
   Table,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
   Paper,
-  Link,
-  Menu,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Select,
   Tooltip,
 } from "@mui/material";
 import {
@@ -23,9 +16,7 @@ import {
   CustomTableCell,
   CustomTableBody,
 } from "./EmailCampaign.styled";
-import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import { SearchBar } from "../../components/Header/header.styled";
-import { FilterIcon } from "../Email-Account/EmailAccount.styled";
 import { Search } from "lucide-react";
 import { useDispatch } from "react-redux";
 import {
@@ -46,25 +37,21 @@ import AttachMoneyOutlinedIcon from "@mui/icons-material/AttachMoneyOutlined";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
 import {
   SectionTitle,
-  TableIcons,
   TableItem,
 } from "../../styles/layout.styled";
 import { GridDeleteIcon } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import ProgressBar from "../../assets/Custom/linearProgress";
-import { CampaignStatus } from "../../enums";
-interface EmailCampaignProps {
-  router?: any;
-}
+import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
 
-const EmailCampaign: React.FC<EmailCampaignProps> = () => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+const EmailCampaign: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [campaigns, setCampaigns] = useState<IEmailCampaign[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [selectedStatus, setSelectedStatus] = useState("");
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [selectedCampaign, setSelectedCampaign] = useState<string | null>(null);
 
   useEffect(() => {
     const getEmailCampaigns = async () => {
@@ -88,15 +75,7 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
   };
 
   const handleCreateCampaign = () => {
-    window.location.assign("/email-campaign/new-campaign");
-  };
-
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
+    navigate("/email-campaign/new-campaign");
   };
 
   const handleSearch = async (query: string) => {
@@ -154,18 +133,28 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
     { count: 1, icon: ErrorOutlinedIcon, label: "Bounced", color: "#e01010" },
   ];
 
-  const isMenuOpen = Boolean(anchorEl);
-
   const handleEditCampaign = (id: string) => {
-    navigate(`email-campaign/new-campaign?edit&id=${id}`);
+    navigate(`/email-campaign/new-campaign?edit&id=${id}`);
   };
 
-  const handleCampaignDelete = async (campaignId: string) => {
-    try {
-      const response = await dispatch(DeleteEmailCampaign(campaignId)).unwrap();
-      console.log("Campaign deleted successfully:", response);
+  const handleOpenDeleteDialog = (campaignId: string) => {
+    setSelectedCampaign(campaignId);
+    setOpenDeleteDialog(true);
+  };
 
-      await getAllEmailCampaigns();
+  const handleCloseDeleteDialog = () => {
+    setSelectedCampaign(null);
+    setOpenDeleteDialog(false);
+  };
+
+  const handleCampaignDelete = async () => {
+    if (!selectedCampaign) return;
+    try {
+      await dispatch(DeleteEmailCampaign(selectedCampaign)).unwrap();
+      console.log("Campaign deleted successfully");
+
+      handleCloseDeleteDialog();
+      getAllEmailCampaigns();
     } catch (error) {
       console.error("Failed to delete campaign:", error);
     }
@@ -186,13 +175,12 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
           sx={{
             display: "flex",
             gap: "15px",
+            width: "100%",
             alignItems: "center",
-            marginLeft: "auto",
+            // marginLeft: "auto",
+            justifyContent: "flex-end"
           }}
         >
-          <FilterIcon onClick={handleMenuOpen}>
-            <FilterAltOutlinedIcon sx={{ color: "var(--icon-color)" }} />
-          </FilterIcon>
           <SearchBar>
             <Search size={20} />
             <input
@@ -204,59 +192,9 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
           <Button onClick={handleCreateCampaign}>Create Campaign</Button>
         </Box>
       </SectionHeader>
+
       {loading && <ProgressBar />}
 
-      <Menu
-        anchorEl={anchorEl}
-        open={isMenuOpen}
-        onClose={handleMenuClose}
-        MenuListProps={{ "aria-labelledby": "profile-menu-button" }}
-        sx={{
-          "& .MuiMenu-paper": {
-            minWidth: "320px",
-            padding: "10px",
-            boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
-            borderRadius: "8px",
-          },
-        }}
-      >
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          mb={1}
-        >
-          <Typography fontWeight="bold">Filter</Typography>
-          <Link
-            href="#"
-            underline="hover"
-            sx={{ color: "var(--theme-color)", fontSize: "14px" }}
-          >
-            Clear all
-          </Link>
-        </Box>
-
-        <FormControl fullWidth sx={{ mt: 2 }}>
-          <InputLabel shrink={false}>Campaign Status</InputLabel>
-          <Select
-            value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value)}
-            sx={{ background: "white!important" }}
-          >
-            <MenuItem value="">Select Campaign Status</MenuItem>
-            {Object.values(CampaignStatus).map((status) => (
-              <MenuItem key={status} value={status}>
-                {status}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-
-        <Box display="flex" justifyContent="space-between" mt={2}>
-          <Button onClick={handleMenuClose}>Cancel</Button>
-          <Button>Apply</Button>
-        </Box>
-      </Menu>
       <TableContainer
         component={Paper}
         sx={{ boxShadow: "none", borderRadius: "8px" }}
@@ -264,109 +202,69 @@ const EmailCampaign: React.FC<EmailCampaignProps> = () => {
         <Table>
           <TableHead sx={{ backgroundColor: "#f8f9fc" }}>
             <TableRow>
-              <TableCell
-                colSpan={1}
-                sx={{ fontWeight: "bold", color: "#35495c" }}
-              >
+              <TableCell sx={{ fontWeight: "bold", color: "#35495c" }}>
                 Campaign Details
               </TableCell>
               <TableCell
-                colSpan={11}
+                colSpan={6}
                 sx={{ fontWeight: "bold", color: "#35495c" }}
               >
                 Report
               </TableCell>
+              <TableCell sx={{ fontWeight: "bold", color: "#35495c" }}>
+                Actions
+              </TableCell>
             </TableRow>
           </TableHead>
 
-          {campaigns?.length > 0 ? (
-            campaigns.map((campaign) => (
-              <CustomTableBody key={campaign.id}>
-                <CustomTableRow>
-                  <CustomTableCell>
-                    <div>
-                      <h3
-                        style={{
-                          marginBottom: "8px",
-                          color: "var(--title-color)",
-                        }}
-                        onClick={handleDetailCampaign}
-                      >
-                        {campaign.campaignName}
-                      </h3>
-                      <p
-                        style={{
-                          fontWeight: "400",
-                          color: "var(--text-light)",
-                        }}
-                      >
-                        {`${campaign?.status} | ${formatDate(campaign.createdAt)} | ${campaign?.sequences?.length} Sequences`}
-                      </p>
-                    </div>
-                  </CustomTableCell>
+          {campaigns.map((campaign) => (
+            <CustomTableBody key={campaign.id}>
+              <CustomTableRow>
+                <CustomTableCell>
+                  <h3 onClick={handleDetailCampaign}>
+                    {campaign.campaignName}
+                  </h3>
+                  <p>{`${campaign?.status} | ${formatDate(campaign.createdAt)} | ${campaign?.sequences?.length} Sequences`}</p>
+                </CustomTableCell>
 
-                  {tableData.map((item, index) => (
-                    <CustomTableCell key={index}>
-                      <TableItem>
-                        <p
-                          style={{
-                            fontWeight: "500",
-                            color: "var(--text-light)",
-                            fontSize: "24px",
-                          }}
-                        >
-                          {item.count}
-                        </p>
-                        <TableIcons>
-                          <item.icon
-                            sx={{ fontSize: "20px", color: item.color }}
-                          />
-                          <p
-                            style={{
-                              fontWeight: "400",
-                              color: "var(--text-light)",
-                              fontSize: "12px",
-                              whiteSpace: "nowrap",
-                            }}
-                          >
-                            {item.label}
-                          </p>
-                        </TableIcons>
-                      </TableItem>
-                    </CustomTableCell>
-                  ))}
-                  <CustomTableCell>
-                    <Box sx={{ display: "flex", gap: 3, alignItems: "center" }}>
-                      <Tooltip title="Edit">
-                        <ModeEditOutlineOutlinedIcon
-                          onClick={() => handleEditCampaign(campaign.id)}
-                        />
-                      </Tooltip>
-                      <Tooltip title="Delete">
-                        <GridDeleteIcon
-                          onClick={() => handleCampaignDelete(campaign.id)}
-                        />
-                      </Tooltip>
-                    </Box>
+                {tableData.map((item, index) => (
+                  <CustomTableCell key={index}>
+                    <TableItem>
+                      <item.icon sx={{ fontSize: "20px", color: item.color }} />
+                      <p>
+                        {item.label}: {item.count}
+                      </p>
+                    </TableItem>
                   </CustomTableCell>
-                </CustomTableRow>
-              </CustomTableBody>
-            ))
-          ) : (
-            <Paper className="data-grid-container" sx={{ width: "150%" }}>
-              <div
-                style={{
-                  padding: "20px",
-                  textAlign: "center",
-                  color: "#888",
-                }}
-              >
-                No Campaigns found
-              </div>
-            </Paper>
-          )}
+                ))}
+
+                <CustomTableCell>
+                  <Tooltip title="Edit">
+                    <ModeEditOutlineOutlinedIcon
+                      onClick={() => handleEditCampaign(campaign.id)}
+                    />
+                  </Tooltip>
+                  <Tooltip title="Delete">
+                    <GridDeleteIcon
+                      onClick={() => handleOpenDeleteDialog(campaign.id)}
+                    />
+                  </Tooltip>
+                </CustomTableCell>
+              </CustomTableRow>
+            </CustomTableBody>
+          ))}
         </Table>
       </TableContainer>
+
+      <ConfirmDeleteDialog
+        open={openDeleteDialog}
+        onClose={handleCloseDeleteDialog}
+        onConfirm={handleCampaignDelete}
+        title="Delete Campaign?"
+        message="Are you sure you want to delete this campaign?"
+        confirmText="Delete"
+        cancelText="Cancel"
+      />
     </ContentContainer>
   );
 };

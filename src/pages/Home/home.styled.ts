@@ -6,7 +6,7 @@ export const ContentContainer = styled("div")({
   // justifyContent: "center",
   // alignItems: "center",
   // minHeight: "100%",
-  // backgroundColor: "red",
+  // backgroundColor: "var(--error-color)",
 });
 
 export const HeaderOptions = styled(Box)`

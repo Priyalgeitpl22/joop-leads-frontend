@@ -15,11 +15,9 @@ import {
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import {
-  FilterIcon,
   ContactsHeader,
   ContactsContainer,
 } from "./ContactTable.styled";
-import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import { useDispatch } from "react-redux";
 import {
   ContactsAccount,
@@ -157,7 +155,7 @@ const ContactTable: React.FC = () => {
         renderCell: (params: any) => (
           <span
             style={{
-              color: params?.row?.active ? "green" : "red",
+              color: params?.row?.active ? "green" : "var(--error-color)",
               fontWeight: "500 ",
             }}
           >
@@ -224,10 +222,6 @@ const ContactTable: React.FC = () => {
     const query = event.target.value;
     setSearchQuery(query);
     handleSearch(query);
-  };
-
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
   };
 
   const handleMenuClose = () => {
@@ -326,12 +320,14 @@ const ContactTable: React.FC = () => {
           sx={{
             display: "flex",
             gap: "15px",
+            width: "100%",
             alignItems: "center",
+            justifyContent: 'right'
           }}
         >
-          <FilterIcon onClick={handleMenuOpen}>
+          {/* <FilterIcon onClick={handleMenuOpen}>
             <FilterAltOutlinedIcon />
-          </FilterIcon>
+          </FilterIcon> */}
           <SearchBar>
             <Search size={20} />
             <input
