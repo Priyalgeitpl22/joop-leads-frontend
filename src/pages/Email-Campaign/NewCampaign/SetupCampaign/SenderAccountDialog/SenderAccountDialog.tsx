@@ -196,7 +196,6 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
 
   const handleSearch = async (query: string) => {
     try {
-      debugger;
       const trimmedQuery = query.trim();
       if (trimmedQuery === "") {
         setRows(senderAccounts);

@@ -57,7 +57,6 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
     console.log("emailFieldAdded", emailFieldsAdded);
 
     setEmailFieldAdded((prev) => {
-      debugger;
       const updatedFields = {
         ...prev,
         [field]: column,

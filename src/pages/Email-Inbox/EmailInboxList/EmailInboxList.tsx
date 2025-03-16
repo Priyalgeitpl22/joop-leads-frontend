@@ -9,7 +9,6 @@ import {
   getAllAccountMailBox,
 } from "../../../redux/slice/emailInboxSlice";
 import { Search } from "lucide-react";
-import { SearchBar } from "../../../components/Header/header.styled";
 import {
   EmailInboxListContainer,
   EmailInboxListHeader,
@@ -19,6 +18,7 @@ import {
   AccountAvatar,
   AccountDetails,
   EmailInboxHeading,
+  SearchBar,
 } from "./EmailInboxList.styled";
 import { fetchEmailAccount } from "../../../redux/slice/emailAccountSlice";
 import { EmailAccount } from "../../Email-Campaign/NewCampaign/SetupCampaign/Interface";
@@ -108,9 +108,9 @@ const EmailInboxList: React.FC = () => {
           <HeaderTitle>Inbox</HeaderTitle>
         </EmailInboxListHeader>
         <SearchBar>
-          <Search size={20} />
+          <Search size={25} />
           <input
-            placeholder="Search by Email or Name"
+            placeholder="Search Account"
             value={searchQuery}
             onChange={handleSearchChange}
           />
