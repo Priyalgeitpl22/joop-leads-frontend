@@ -35,7 +35,7 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
   const [columns, setColumns] = useState<string[]>([]);
   const [csvData, setCSVData] = useState<any[]>([]);
   const [csvFileDetails, setCsvFileDetails] = useState<any[]>([]);
-
+  
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
@@ -60,37 +60,41 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
     }
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      if (file.type === "text/csv") {
-        setSelectedFile(file);
-        setError("");
-        handleCSVUpload(file);
+  const processFile = (file: File) => {
+    if (file.type === "text/csv") {
+      setSelectedFile(file);
+      setError("");
+      handleCSVUpload(file);
+      console.log("csvData", csvData);
+      Papa.parse(file, {
+        complete: (result) => {
+          const firstRow = result.data[0] as string[];
+          const data = result.data as any[];
+          setColumns(firstRow);
+          setCSVData(data);
+        },
+        skipEmptyLines: true,
+      });
 
-        Papa.parse(file, {
-          complete: (result) => {
-            const firstRow = result.data[0] as string[];
-            const data = result.data as any[];
-            setColumns(firstRow);
-            setCSVData(data);
-            console.log(csvData);
-          },
-          skipEmptyLines: true,
-        });
-
-        setShowDetail(true);
-        setOpenDialog(true);
-      } else {
-        setError("Please upload a valid CSV file.");
-        setSelectedFile(null);
-      }
+      setShowDetail(true);
+      setOpenDialog(true);
+    } else {
+      setError("Please upload a valid CSV file.");
+      setSelectedFile(null);
     }
   };
-  const handleDeleteFile = () => {
-    setSelectedFile(null);
-    setShowDetail(false);
-    setOpenDialog(false);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) processFile(file);
+  };
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const file = event.dataTransfer.files[0];
+    if (file) processFile(file);
   };
 
   return (
@@ -112,7 +116,7 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
           columns={columns}
           file={selectedFile}
           onFileChange={handleFileChange}
-          onDeleteFile={handleDeleteFile}
+          onDeleteFile={() => setSelectedFile(null)}
           setIsNextDisabled={setIsNextDisabled}
         />
       ) : (
@@ -124,7 +128,11 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
             How would you like to get contacts into your list?
           </Typography>
 
-          <FileUploadContainer onClick={() => fileInputRef.current?.click()}>
+          <FileUploadContainer
+            onClick={() => fileInputRef.current?.click()}
+            onDragOver={(event) => event.preventDefault()}
+            onDrop={handleDrop}
+          >
             <Typography variant="h6" fontWeight="600" mt={2}>
               Upload CSV File
             </Typography>
