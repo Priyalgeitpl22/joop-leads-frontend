@@ -284,6 +284,18 @@ const contactsSlice = createSlice({
   },
 });
 
+export const deleteContact = createAsyncThunk(
+  "contact/delete",
+  async (contactId: string, { rejectWithValue }) => {
+    try {
+      const response = await api.delete(`/contact/${contactId}`);
+      return { contactId, message: response.data.message };
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Network error");
+    }
+  }
+);
+
 
 
 

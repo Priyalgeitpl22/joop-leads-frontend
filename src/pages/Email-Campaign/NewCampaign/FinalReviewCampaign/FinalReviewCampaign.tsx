@@ -6,9 +6,9 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../redux/store/store";
 import {
-  fetchCampaignContacts,
   fetchCampaignSequences,
   getCampaignById,
+  searchContactsByCampaign,
 } from "../../../../redux/slice/emailCampaignSlice";
 import { IContacts } from "../interfaces";
 import {
@@ -22,6 +22,7 @@ import {
 } from "./finalReview.styled";
 import ReactQuill from "react-quill";
 import { modules } from "../SequenceCampaign/EmailTemplate/EmailTemplate";
+
 interface FinalReviewCampaignProps {
   campaign_id: string;
 }
@@ -35,12 +36,13 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
     React.useState<SequenceVariant | null>();
   const [contacts, setContacts] = React.useState<IContacts[]>([]);
   const [sequences, setSequences] = React.useState<Sequence[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
   const dispatch = useDispatch<AppDispatch>();
   const quillRef = useRef<typeof ReactQuill | null>(null);
 
   const handleChange = (event: any, newValue: number) => {
     setSelectedVariant(newValue);
-    console.log(event);
     setSelectedTemplate(
       sequences.find((seq) => seq.seq_number === Number(newValue))
         ?.seq_variants[0] || null
@@ -61,7 +63,7 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
   const fetchContactsAndSequences = async () => {
     try {
       const contacts = await dispatch(
-        fetchCampaignContacts(campaign_id)
+        searchContactsByCampaign({ campaign_id })
       ).unwrap();
       const sequences = await dispatch(
         fetchCampaignSequences(campaign_id)
@@ -87,6 +89,21 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
     } catch (error) {
       console.error("Error fetching campaign:", error);
       return null;
+    }
+  };
+
+  // Handle search input and call API
+  const handleSearchChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+
+    try {
+      const response = await dispatch(
+        searchContactsByCampaign({ campaign_id, email: value })
+      ).unwrap();
+      setContacts(response.data);
+    } catch (error) {
+      console.error("Error searching contacts:", error);
     }
   };
 
@@ -117,7 +134,9 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
         >
           <Search size={20} />
           <input
-            placeholder="Search by name, email id..."
+            placeholder="Search by email..."
+            value={searchQuery}
+            onChange={handleSearchChange}
             style={{
               border: "none",
               outline: "none",
@@ -128,37 +147,39 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
         </Box>
 
         <Box mt={2}>
-          {contacts.map((contact, index) => (
-            <Box
-              key={index}
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                padding: "12px 16px",
-                borderBottom: "1px solid #eee",
-                cursor: "pointer",
-                position: "relative",
-                borderRadius: "5px",
-                "&:hover": { backgroundColor: "var(--background-light)" },
-                backgroundColor:
-                  selectedContact?.email === contact.email
-                    ? "var(--background-light)"
-                    : "white",
-                border:
-                  selectedContact?.email == contact.email
-                    ? "var(--background-light)"
-                    : "",
-              }}
-              onClick={() => setSelectedContact(contact)}
-            >
-              <Typography fontSize={14} fontWeight="bold" color="#333">
-                {contact.first_name} {contact?.last_name}
-              </Typography>
-              <Typography fontSize={13} color="gray">
-                {contact.email}
-              </Typography>
-            </Box>
-          ))}
+          {contacts.length > 0 ? (
+            contacts.map((contact, index) => (
+              <Box
+                key={index}
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  padding: "12px 16px",
+                  borderBottom: "1px solid #eee",
+                  cursor: "pointer",
+                  position: "relative",
+                  borderRadius: "5px",
+                  "&:hover": { backgroundColor: "var(--background-light)" },
+                  backgroundColor:
+                    selectedContact?.email === contact.email
+                      ? "var(--background-light)"
+                      : "white",
+                }}
+                onClick={() => setSelectedContact(contact)}
+              >
+                <Typography fontSize={14} fontWeight="bold" color="#333">
+                  {contact.first_name} {contact?.last_name}
+                </Typography>
+                <Typography fontSize={13} color="gray">
+                  {contact.email}
+                </Typography>
+              </Box>
+            ))
+          ) : (
+            <Typography mt={2} color="gray" textAlign="center">
+              No contacts found
+            </Typography>
+          )}
         </Box>
       </SidebarContainer>
 
