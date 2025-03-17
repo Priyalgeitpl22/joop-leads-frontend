@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { api, emailApi } from "../../services/api";
+import { api, baseURL, emailApi } from "../../services/api";
 import { AxiosError } from "axios";
 import { CampaignSettingsPayload } from "../../pages/Email-Campaign/NewCampaign/SetupCampaign/Interface";
 import Cookies from "js-cookie";
@@ -211,8 +211,7 @@ export const SearchEmailCampaign = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await api.get("/email-campaign/email-campaigns-search", {
-        params: { campaign_name },
+      const response = await api.get(`${BASE_URL}/search/campaign?query=${campaign_name}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }

@@ -16,6 +16,7 @@ export const AuthCard = styled(Box)`
   max-width: 900px;
   display: flex;
   overflow: auto;
+  margin-top: 100px;
 `;
 
 export const IllustrationSection = styled(Box)`
@@ -75,6 +76,28 @@ export const StyledButton = styled(Button)`
     background: var(--theme-color);
     opacity: 0.9;
   }
+`;
+
+export const CancelButton = styled(Button)`
+  height: 40px;
+  border-radius: 8px;
+  font-weight: bold;
+  text-transform: none;
+  transition: 0.3s ease-in-out;
+  background:  red;
+  color: white;
+
+  &:hover {
+    background: var(--theme-color);
+    opacity: 0.9;
+  }
+`;
+
+export const ButtonWrapper = styled(Box)`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
 `;
 
 export const NavigateLink = styled.span`

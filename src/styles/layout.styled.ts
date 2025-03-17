@@ -177,8 +177,9 @@ export const InputLabel = styled(MuiInputLabel)`
 
 export const TableItem = styled(Box)(`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: flex-start;
+  gap: 5px;
 `)
 
 export const TableIcons = styled(Box)(`

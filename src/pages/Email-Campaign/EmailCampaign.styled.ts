@@ -145,7 +145,8 @@ export const CustomTabs = styled(Tab)`
 `;
 
 export const SectionHeader = styled(Box)`
-  min-height: 40px;
+  min-height: 60px;
+  // height: 250px;
   padding: 12px;
   background: var(--background-secondary);
 
@@ -178,7 +179,7 @@ export const CustomTab = styled(Tab)`
 
 export const ContentContainer = styled(Box)`
   width: 100%;
-  height: 100%;
+  height: 620px;
   display: flex;
   border-radius: 8px;
   overflow: auto;
@@ -190,17 +191,9 @@ export const ContentContainer = styled(Box)`
 
 export const CustomTableBody = styled(TableBody)(({ }) => ({
   backgroundColor: "var(--background-primary)",
-  // "& .MuiTableRow-root": {
-  //   "&:nth-of-type(even)": {
-  //     backgroundColor: "var(--background-secondary)",
-  //   },
-  //   "&:hover": {
-  //     backgroundColor: "var(--hover-color)",
-  //   },
-  // },
   "& .MuiTableCell-root": {
     padding: "12px",
-    borderBottom: "1px solid var(--border-color)",
+    borderBottom: "1px solid var(--border-color-sec)",
     color: "var(--text-primary)",
   },
 }));
@@ -217,6 +210,22 @@ export const CustomTableRow = styled(TableRow)(({ }) => ({
   "&:hover": {
     // backgroundColor: "var(--hover-color)", // Hover effect
     cursor: "pointer",
+  },
+
+  // Example of styling a paragraph inside TableRow
+  "& p": {
+    fontSize: "14px",
+    color: "var(--disable-color)",
+    fontWeight: 400,
+    margin: 0,
+    whiteSpace: "nowrap"
+  },
+
+  "& h6": {
+    fontSize: "16px",
+    fontWeight: 600,
+    color: "var(--title-color-secondary)",
+    margin: 0,
   },
 
   // "&.Mui-selected, &.Mui-selected:hover": {
@@ -243,6 +252,6 @@ export const CustomTableCell = styled(TableCell)(({ }) => ({
   },
 
   "&.MuiTableCell-root": {
-    borderBottom: "1px solid var(--border-color)",
+    borderBottom: "1px solid var(--border-color-sec)",
   },
 }));

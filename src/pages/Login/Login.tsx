@@ -109,7 +109,7 @@ function Login() {
         </IllustrationSection>
 
         <FormSection>
-          <Typography variant="h4" fontWeight="bold" mb={1}>
+          <Typography variant="h4" fontWeight="bold" mb={1} color="var(--border-color)">
             Welcome!
           </Typography>
           <Typography variant="body1" color="black" mb={4}>
@@ -138,7 +138,7 @@ function Login() {
           />
 
           <NavigateLink
-            style={{ alignSelf: "flex-end", marginBlock: 2 }}
+            style={{ alignSelf: "flex-end", marginBlock: 2, fontWeight: 500 }}
             onClick={() => window.location.assign("/forgot-password")}
           >
             Forgot Password?

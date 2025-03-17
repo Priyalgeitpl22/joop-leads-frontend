@@ -7,13 +7,13 @@ import {
   FormSection,
   StyledTextField,
   StyledButton,
-  NavigateLink,
 } from "./forgot_password.styled";
 import { useDispatch } from "react-redux";
 import { forgetPassword } from "../../redux/slice/authSlice";
 import { AppDispatch } from "../../redux/store/store";
 import toast, { Toaster } from "react-hot-toast";
 import { validateEmail } from "../../utils/Validation";
+import { NavigateLink } from "../Login/login.styled";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -72,7 +72,8 @@ const ForgotPassword = () => {
           <Typography
             onClick={() => window.location.assign("/forgot-password")}
             variant="h4"
-            fontWeight="bold"
+            color="var(--border-color)"
+            fontWeight="600"
             mb={1}
           >
             Forgot Password?
@@ -96,6 +97,7 @@ const ForgotPassword = () => {
             <StyledButton fullWidth type="submit">
               RESET PASSWORD
             </StyledButton>
+          
           </form>
 
           <Typography variant="body2" align="center" sx={{ my: 2 }}>

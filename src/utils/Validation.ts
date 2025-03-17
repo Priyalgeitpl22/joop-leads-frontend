@@ -20,7 +20,7 @@ export interface FieldValidationRule {
 }
 
 export type FieldValidationConfig = {
-  [key in "fullName" | "email" | "orgName" | "domain" | "password"]?: FieldValidationRule;
+  [key in "fullName" | "email" | "orgName" | "Industry" | "password"]?: FieldValidationRule;
 } & {
   [key: string]: FieldValidationRule | undefined;
 };
@@ -38,7 +38,7 @@ const fieldValidation: FieldValidationConfig = {
     required: { message: "Company Name is required" }
   },
   domain: {
-    required: { message: "domain Number is required" },
+    required: { message: "Industry is required" },
   },
   password: {
     required: { message: "Password is required" },

@@ -26,15 +26,48 @@ export const EmailInboxListContainer = styled(Box)({
 });
 
 export const EmailInboxHeading = styled(Box)({
-  position: "sticky",
   display: "flex",
+  position: "sticky",
   top: 0,
-  background: "#fff",
+  paddingTop: "5px",
+  background: "var(--icon-light)",
   zIndex: 10,
   justifyContent: "space-between",
-  gap: "6%",
+  gap: "2%",
   borderBottom: "1px solid #eee",
-})
+});
+
+export const SearchBar = styled(Box)`
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  background-color: white;
+  border-radius: 5px;
+  flex-grow: 1;
+  max-width: 230px;
+  margin-bottom: 10px;
+  width: 80%;
+  gap: 10px;
+  height: 35px;
+
+  input {
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--theme-color);
+    flex-grow: 1;
+    font-size: 14px;
+
+    &::placeholder {
+      color: #94a3b8;
+    }
+  }
+
+  svg {
+    color: var(--border-color);
+  }
+`;
 
 export const SearchContainer = styled(Box)({
   display: "flex",
@@ -42,7 +75,7 @@ export const SearchContainer = styled(Box)({
   marginBottom: "15px",
   padding: "8px",
   borderRadius: "8px",
-  border: "1px solid #ccc",
+  border: "1px solid var(--input-border)",
   backgroundColor: "#f8f9fa",
   width: "60%",
 });
@@ -61,13 +94,7 @@ export const SearchInput = styled("input")({
 });
 
 export const EmailInboxListHeader = styled(Box)({
-  // display: "flex",
-  // justifyContent: "space-between",
   alignItems: "center",
-  marginTop: "8px",
-  marginBottom: "10px",
-  // borderBottom: "1px solid #eee",
-  paddingBottom: "5px",
 
   "@media (max-width: 600px)": {
     flexDirection: "column",

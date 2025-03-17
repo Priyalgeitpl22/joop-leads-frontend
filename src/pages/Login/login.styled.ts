@@ -17,6 +17,7 @@ export const LoginCard = styled(Box)`
   max-width: 900px;
   display: flex;
   overflow: auto;
+  margin-top: 100px;
 `;
 
 export const IllustrationSection = styled(Box)`
@@ -62,6 +63,7 @@ export const StyledButton = styled(Button)`
   height: 40px;
   border-radius: 8px;
   font-weight: bold;
+  margin-top: 5px;
   text-transform: none;
   transition: all 0.3s ease-in-out;
   background:  var(--theme-color);
@@ -125,7 +127,7 @@ export const SignupLink = styled.a`
 
 export const NavigateLink = styled.span`
 color: #0066cc;
-font-weight: bold;
+font-weight: 500;
 cursor: pointer;
 text-decoration: none;
 `;

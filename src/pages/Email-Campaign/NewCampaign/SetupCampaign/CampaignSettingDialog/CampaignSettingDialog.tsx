@@ -51,10 +51,23 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
 
   const dispatch = useDispatch<AppDispatch>();
   const [loading, setLoading] = useState(true);
+  const [errors, setErrors] = useState({ campaignName: "" });
+
 
   const handleChange = (field: keyof typeof formData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    if (field === "campaignName") {
+      if (!value.trim()) {
+        setErrors((prev) => ({ ...prev, campaignName: "Campaign Name is required" }));
+      } else if (value.length < 3) {
+        setErrors((prev) => ({ ...prev, campaignName: "Must be at least 3 characters" }));
+      } else {
+        setErrors((prev) => ({ ...prev, campaignName: "" }));
+      }
+    }
   };
+
+  const isFormValid = Object.values(errors).every((error) => error === "") && formData.campaignName.trim() !== "";
 
   useEffect(() => {
     if (open) {
@@ -127,6 +140,9 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
                 fullWidth
                 value={formData.campaignName}
                 onChange={(e) => handleChange("campaignName", e.target.value)}
+                error={!!errors.campaignName}
+                helperText={errors.campaignName}
+
               />
             </Box>
             <Typography variant="h6" mt={2}>
@@ -286,6 +302,11 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
             onClick={() => {
               handleSave({ campaign_settings: formData });
               onClose();
+            }}
+            disabled={!isFormValid}
+            style={{
+              cursor: !isFormValid ? "not-allowed" : "pointer",
+              opacity: !isFormValid ? 0.6 : 1,
             }}
           >
             Save General Settings

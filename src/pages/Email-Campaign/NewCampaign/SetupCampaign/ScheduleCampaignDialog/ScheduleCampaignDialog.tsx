@@ -10,6 +10,7 @@ import {
   Box,
   IconButton,
   Grid,
+  FormHelperText,
 } from "@mui/material";
 import {
   LocalizationProvider,
@@ -32,6 +33,7 @@ import timeZones from "../../../../../constants";
 import { getCampaignById } from "../../../../../redux/slice/emailCampaignSlice";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../../redux/store/store";
+
 
 interface ScheduleCampaignProps {
   open: boolean;
@@ -69,9 +71,13 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
     selectedEmailAccounts: [],
   });
 
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const campaignId = params.get("id");
+
 
     if (campaignId) fetchCampaignDetails(campaignId);
   }, [open, campaignSchedule]);
@@ -104,6 +110,8 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
 
   const handleChange = (field: keyof typeof formData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    validateField(field, value); // Validate the field on change
+
   };
 
   const handleTimeZoneChange = (value: string | string[]) => {
@@ -123,6 +131,89 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
     }));
   };
 
+
+  const validateForm = () => {
+    let newErrors: { [key: string]: string } = {};
+    console.log("newError", newErrors)
+
+    if (!formData.timeZone.length) {
+      newErrors.timeZone = "Time zone is required.";
+    }
+    if (!formData.selectedDays.length) {
+      newErrors.selectedDays = "Select at least one day.";
+    }
+    if (!formData.startTime || !formData.endTime) {
+      newErrors.startTime = "Start and end time are required.";
+    } else if (formData.startTime.isAfter(formData.endTime)) {
+      newErrors.startTime = "Start time must be before end time.";
+    }
+    if (!formData.startDate) {
+      newErrors.startDate = "Start date is required.";
+    } else if (formData.startDate.isBefore(dayjs(), "day")) {
+      newErrors.startDate = "Start date cannot be in the past.";
+    }
+    if (formData.maxLeads <= 0) {
+      newErrors.maxLeads = "Max leads must be greater than 0.";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+  const validateField = (field: keyof typeof formData, value: any) => {
+    let newErrors = { ...errors };
+
+    switch (field) {
+      case "timeZone":
+        newErrors.timeZone = value.length ? "" : "Time zone is required.";
+        break;
+
+      case "selectedDays":
+        newErrors.selectedDays = value.length ? "" : "Select at least one day.";
+        break;
+
+      case "startTime":
+      case "endTime":
+        if (!formData.startTime || !formData.endTime) {
+          newErrors.startTime = "Start and end time are required.";
+        } else if (formData.startTime.isAfter(formData.endTime)) {
+          newErrors.startTime = "Start time must be before end time.";
+          newErrors.endTime = "";
+        } else {
+          newErrors.startTime = "";
+          newErrors.endTime = "";
+        }
+        break;
+
+      case "startDate":
+        if (!value) {
+          newErrors.startDate = "Start date is required.";
+        } else if (dayjs(value).isBefore(dayjs(), "day")) {
+          newErrors.startDate = "Start date cannot be in the past.";
+        } else {
+          newErrors.startDate = "";
+        }
+        break;
+
+      case "maxLeads":
+        newErrors.maxLeads = value > 0 ? "" : "Max leads must be greater than 0.";
+        break;
+
+      default:
+        break;
+    }
+
+    setErrors(newErrors);
+  };
+
+
+  const handleSaveClick = () => {
+    console.log("Vlaidate form of  ...........", validateForm);
+    validateForm
+    if (validateForm()) {
+      handleSave({ schedule_settings: formData });
+      onClose();
+    }
+  };
   return (
     <Dialog
       open={open}
@@ -147,7 +238,8 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
           alignItems="flex-start"
           gap={2}
         >
-          <FormControl fullWidth sx={{ textAlign: "left" }}>
+
+          <FormControl fullWidth sx={{ textAlign: "left" }} error={!!errors.timeZone}>
             <MultiSelectDropdown
               width="100%"
               label="Select Time Zone"
@@ -156,88 +248,111 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
               onChange={handleTimeZoneChange}
               multiple={false}
             />
+            {errors.timeZone && <FormHelperText>{errors.timeZone}</FormHelperText>}
           </FormControl>
 
           <Typography>Send these days</Typography>
-          <FormGroup row>
-            {daysOfWeek.map((day) => (
-              <FormControlLabel
-                key={day}
-                control={
-                  <Checkbox
-                    checked={formData.selectedDays.includes(day)}
-                    onChange={() => handleDayChange(day)}
-                  />
-                }
-                label={DaysOfWeek[day]}
-              />
-            ))}
-          </FormGroup>
+          <FormControl error={!!errors.selectedDays} component="fieldset">
 
+            <FormGroup row >
+              {daysOfWeek.map((day) => (
+                <FormControlLabel
+                  key={day}
+                  control={
+                    <Checkbox
+                      checked={formData.selectedDays.includes(day)}
+                      onChange={() => handleDayChange(day)} />
+                  }
+                  label={DaysOfWeek[day]}
+                />
+              ))}
+            </FormGroup>
+            {errors.selectedDays && <FormHelperText>{errors.selectedDays}</FormHelperText>}
+          </FormControl>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
+
             <Grid container spacing={2} sx={{ minWidth: "710px" }}>
               <Grid item xs={4}>
-                <MobileTimePicker
-                  label="From"
-                  value={formData.startTime}
-                  onChange={(value) => handleChange("startTime", value)}
-                />
+                <FormControl fullWidth error={!!errors.startTime}>
+                  <MobileTimePicker
+                    label="From"
+                    value={formData.startTime}
+                    onChange={(value) => handleChange("startTime", value)}
+                  />
+                  {errors.startTime && <FormHelperText>{errors.startTime}</FormHelperText>}
+                </FormControl>
               </Grid>
+
               <Grid item xs={4}>
-                <MobileTimePicker
-                  label="To"
-                  value={formData.endTime}
-                  onChange={(value) => handleChange("endTime", value)}
-                />
+                <FormControl fullWidth error={!!errors.endTime}>
+                  <MobileTimePicker
+                    label="To"
+                    value={formData.endTime}
+                    onChange={(value) => handleChange("endTime", value)}
+                  />
+                  {errors.endTime && <FormHelperText>{errors.endTime}</FormHelperText>}
+                </FormControl>
               </Grid>
+
               <Grid item xs={4}>
-                <TextField
-                  label="Minutes"
-                  type="number"
-                  value={formData.emailInterval}
-                  onChange={(e) =>
-                    handleChange("emailInterval", Number(e.target.value) || 0)
-                  }
-                  fullWidth
-                />
+                <FormControl fullWidth error={!!errors.emailInterval}>
+                  <TextField
+                    label="Minutes"
+                    type="number"
+                    value={formData.emailInterval}
+                    onChange={(e) =>
+                      handleChange("emailInterval", Number(e.target.value) || 0)
+                    }
+                    fullWidth
+                    error={!!errors.emailInterval}
+                  />
+                  {errors.emailInterval && <FormHelperText>{errors.emailInterval}</FormHelperText>}
+                </FormControl>
               </Grid>
             </Grid>
+
           </LocalizationProvider>
 
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <Grid container spacing={2} sx={{ width: "100%" }}>
               <Grid item xs={6}>
-                <Typography>Set Campaign Start Date</Typography>
-                <DesktopDatePicker
-                  value={formData.startDate}
-                  onChange={(value) => handleChange("startDate", value)}
-                />
+                <FormControl fullWidth error={!!errors.startDate}>
+                  <Typography>Set Campaign Start Date</Typography>
+                  <DesktopDatePicker
+                    value={formData.startDate}
+                    onChange={(value) => handleChange("startDate", value)}
+                    slotProps={{
+                      textField: { error: !!errors.startDate },
+                    }}
+                  />
+                  {errors.startDate && <FormHelperText>{errors.startDate}</FormHelperText>}
+                </FormControl>
               </Grid>
+
+
               <Grid item xs={6}>
-                <Typography>Max Number Of New Leads Per Day</Typography>
-                <TextField
-                  type="number"
-                  value={formData.maxLeads}
-                  onChange={(e) =>
-                    handleChange("maxLeads", Number(e.target.value) || 0)
-                  }
-                  fullWidth
-                />
+                <FormControl fullWidth error={!!errors.maxLeads}>
+                  <Typography>Max Number Of New Leads Per Day</Typography>
+                  <TextField
+                    type="number"
+                    value={formData.maxLeads}
+                    onChange={(e) =>
+                      handleChange("maxLeads", Number(e.target.value) || 0)
+                    }
+                    fullWidth
+                    error={!!errors.maxLeads}
+                  />
+                  {errors.maxLeads && <FormHelperText>{errors.maxLeads}</FormHelperText>}
+                </FormControl>
               </Grid>
             </Grid>
           </LocalizationProvider>
+
         </Box>
       </CustomDialogContainer>
 
       <CustomDialogFooter justifyContent="flex-end">
-        <Button
-          onClick={() => {
-            handleSave({ schedule_settings: formData });
-            onClose();
-          }}
-        >
-          Save
-        </Button>
+        <Button onClick={handleSaveClick}>Save</Button>
       </CustomDialogFooter>
     </Dialog>
   );
