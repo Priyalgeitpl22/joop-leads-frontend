@@ -207,7 +207,6 @@ const EmailAccounts: React.FC = () => {
   };
 
   const handleOpenDialog = () => {
-    debugger
     setIsDialogOpen(true);
   };
 
@@ -381,7 +380,7 @@ const EmailAccounts: React.FC = () => {
           columns={columns}
           rows={rows}
           pageSizeOptions={[15, 10, 5]}
-          enableCheckboxSelection={true}
+          enableCheckboxSelection={false}
         />
       </EmailAccountTable>
       <ConfirmDeleteDialog

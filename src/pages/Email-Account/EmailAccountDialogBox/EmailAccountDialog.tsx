@@ -49,9 +49,9 @@ const EmailCampaignDialog: React.FC<EmailCampaignDialogProps> = ({
   };
 
 
-  const handleOutlook = async () => {
-    setOutlookDialogOpen(true);
-  };
+  // const handleOutlook = async () => {
+  //   setOutlookDialogOpen(true);
+  // };
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -144,7 +144,7 @@ const EmailCampaignDialog: React.FC<EmailCampaignDialogProps> = ({
             open={outlookDialogOpen}
             onClose={() => setOutlookDialogOpen(false)}
           />
-          <Button
+          {/* <Button
             variant="contained"
             sx={{
               flex: 1,
@@ -167,7 +167,11 @@ const EmailCampaignDialog: React.FC<EmailCampaignDialogProps> = ({
             <Typography mt={1} fontWeight="bold">
               Outlook
             </Typography>
-          </Button>
+          </Button> */}
+          {/* <EmailAccountSmtpDialog
+            open={smtpDialogOpen}
+            onClose={() => setSmtpDialogOpen(false)}
+          /> */}
           <Button
             variant="contained"
             sx={{

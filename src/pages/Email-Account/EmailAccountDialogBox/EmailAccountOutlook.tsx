@@ -80,19 +80,10 @@ const EmailAccountOutlookDialog: React.FC<{
         </Typography>
 
         <StepText>
-          1. Login to your{" "}
-          <LinkText href="https://admin.microsoft.com" target="_blank">
-            Microsoft 365 Admin Center
-          </LinkText>
+          1. Login to your <b>Microsoft 365 Admin Center</b>
         </StepText>
         <StepText>
-          2. Click on your{" "}
-          <LinkText
-            href="https://admin.microsoft.com/AdminPortal/Home"
-            target="_blank"
-          >
-            Active Users
-          </LinkText>
+          2. Click on your <b>Active Users</b>
         </StepText>
         <StepText>3. Click onto the user you want to connect</StepText>
         <StepText>

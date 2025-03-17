@@ -1,13 +1,11 @@
 import styled from "@emotion/styled";
-import { Box, Button, Card, IconButton, TextField, Typography } from "@mui/material";
+import { Box, Button, TextField, Typography } from "@mui/material";
 
 export const PageContainer = styled(Box)`
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100vh;
-  position:relative;
-   backgroundColor: "#f4f6f8",
 `;
 
 export const VerifyCard = styled(Box)`
@@ -23,18 +21,10 @@ export const VerifyCard = styled(Box)`
 export const EmailSection = styled(Box)`
   display: flex;
   align-items: center;
-  justify-content:center  ;
+  justify-content: space-between;
   width: 100%;
   margin-bottom: 20px;
-  textAlign: "center",
-  fontSize: "20px",
-  borderRadius: "8px",
-  border: "1px solid #ccc",
-  outline: "none",
-  "&:focus": {
-    borderColor: "#1976d2",
-    boxShadow: "0px 0px 5px rgba(25, 118, 210, 0.5)",
-  },
+
   .MuiTypography-root {
     flex: 1;
     text-align: left;
@@ -49,16 +39,14 @@ export const OtpFieldsContainer = styled(Box)`
   display: flex;
   gap: 10px;
   margin-bottom: 20px;
-  margin-left:-1px;
 `;
 
 export const OtpField = styled(TextField)`
   width: 40px;
   height: 40px;
   text-align: center;
-  font-size: 25px;
+  font-size: 18px;
   border-radius: 8px;
-   margin: 0 8px,
 
   .MuiOutlinedInput-root {
     border-radius: 8px;
@@ -77,19 +65,22 @@ export const StyledButton = styled(Button)`
   font-weight: bold;
   text-transform: none;
   transition: all 0.3s ease-in-out;
-  background:  var(--theme-color);
+  background: var(--theme-color);
   color: white;
-  width: 8px
-  max-width: 30px;
-  padding10px;
+  width: 100%;
+  max-width: 300px;
+
   &:hover {
     background: var(--theme-color);
     opacity: 0.9;
   }
+  .MuiOutlinedInput-input {
+    padding: 12px 10px !important;
+  }
 `;
 
 export const TimerText = styled(Typography)`
-  color: grey;
+  color: var(--error-color);
   font-weight: bold;
   text-align: center;
   margin-top: 10px;
@@ -109,24 +100,8 @@ export const IllustrationSection = styled(Box)`
 `;
 export const FormSection = styled(Box)`
   flex: 1;
-  padding: 23px;
+  padding: 20px;
   display: flex;
-  align-items:center;
   flex-direction: column;
   justify-content: center;
-`;  
-
-export const CloseButton = styled(IconButton)({
-  position: "absolute",
-  top: 10,
-  right: 10,
-});
-
-export const StyledCard = styled(Card)({
-  padding: "2rem",
-  boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-  borderRadius: "12px",
-  maxWidth: "400px",
-  textAlign: "center",
-  position: "relative",
-});
+`;

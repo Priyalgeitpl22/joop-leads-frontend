@@ -74,7 +74,7 @@ export const NoMailboxMessage = styled(Box)`
   justify-content: center;
   padding: 20px;
   border-radius: 8px;
-  background-color: #f8f9fa;
+  background-color: var(--icon-light);
   color: #555;
   font-size: 16px;
   font-weight: bold;

@@ -51,4 +51,6 @@ export const SideCard = styled(Card)({
   display: "flex",
   flexDirection: "column",
   gap: "12px",
+  height: "100%",
+  justifyContent: "space-between",
 });

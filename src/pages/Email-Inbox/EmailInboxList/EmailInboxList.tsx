@@ -19,6 +19,7 @@ import {
   AccountDetails,
   EmailInboxHeading,
   SearchBar,
+  NoAccount,
 } from "./EmailInboxList.styled";
 import { fetchEmailAccount } from "../../../redux/slice/emailAccountSlice";
 import { EmailAccount } from "../../Email-Campaign/NewCampaign/SetupCampaign/Interface";
@@ -108,7 +109,7 @@ const EmailInboxList: React.FC = () => {
           <HeaderTitle>Inbox</HeaderTitle>
         </EmailInboxListHeader>
         <SearchBar>
-          <Search size={25} />
+          <Search/>
           <input
             placeholder="Search Account"
             value={searchQuery}
@@ -133,7 +134,7 @@ const EmailInboxList: React.FC = () => {
             </AccountItem>
           ))
         ) : (
-          <div>No accounts found</div>
+          <NoAccount>No accounts found</NoAccount>
         )}
       </AccountList>
     </EmailInboxListContainer>

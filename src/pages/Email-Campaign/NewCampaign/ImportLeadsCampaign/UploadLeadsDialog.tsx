@@ -11,6 +11,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import Grid2 from "@mui/material/Grid2";
 import { ILeadsCounts } from "../interfaces";
 import { useEffect } from "react";
+import toast, { Toaster } from "react-hot-toast";
 
 interface UploadCsvDialogProps {
   open: boolean;
@@ -25,15 +26,22 @@ const UploadLeadsDialog: React.FC<UploadCsvDialogProps> = ({
   onClose,
   setIsNextDisabled,
 }) => {
-
   useEffect(() => {
-    if (setIsNextDisabled && uploadCounts?.uploadedCount === 0) {
-      setIsNextDisabled(true);
+    if (open && uploadCounts?.uploadedCount === 0) {
+      toast.error("No leads were uploaded. Please try again.");
+      if (setIsNextDisabled) {
+        setIsNextDisabled(true);
+      }
     }
-  }, [open, uploadCounts, setIsNextDisabled]);  
+  }, [open, uploadCounts, setIsNextDisabled]);
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+      <Toaster
+        position="top-right"
+        reverseOrder={false}
+      />
+
       <Box style={{ position: "relative" }}>
         <IconButton
           onClick={onClose}

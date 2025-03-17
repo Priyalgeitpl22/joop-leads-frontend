@@ -157,7 +157,6 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
   };
 
   const handleUpdatAccount = () => {
-    debugger;
     if (!id) return;
 
     let payload;
