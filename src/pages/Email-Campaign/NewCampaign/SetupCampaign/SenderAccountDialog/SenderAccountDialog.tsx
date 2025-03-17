@@ -96,7 +96,7 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
         field: "daily_limit",
         headerName: "Daily Limit",
         width: 120,
-        valueGetter: () => "0 / 100",
+        valueGetter: (params: any) => (params ?? "N/A"),
       },
       {
         field: "reputation",

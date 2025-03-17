@@ -30,6 +30,7 @@ import UserProfileMenu from "./assets/Custom/customUserProfile";
 import ContactTable from "./pages/Contacts/ContactTable";
 import EditEmailAccount from "./pages/Email-Account/EditEmailAccount/EditEmailAccount";
 import ViewEmailCampaign from "./pages/Email-Campaign/ViewEmailCampaign/ViewEmailCampaign";
+import { Toaster } from "react-hot-toast";
 
 const UNPROTECTED_ROUTES = [
   "/login",
@@ -109,6 +110,7 @@ export default function DashboardLayoutBasic() {
 
   return (
     <AppProvider navigation={NAVIGATION} router={router} theme={theme}>
+      <Toaster position="top-right" reverseOrder={false} />{" "}
       {isNewCampaignPage ? (
         <NewCampaign router={router} />
       ) : (
@@ -123,7 +125,6 @@ export default function DashboardLayoutBasic() {
                 <UserProfileMenu />
               </>
             ),
-            
           }}
         >
           <PageContainer
@@ -140,7 +141,9 @@ export default function DashboardLayoutBasic() {
             {router.pathname.startsWith(
               "/email-account/edit-email-account/"
             ) && <EditEmailAccount id={router.pathname.split("/").pop()} />}
-            {router.pathname.startsWith("/email-campaign/view-email-campaign") && <ViewEmailCampaign/>}
+            {router.pathname.startsWith(
+              "/email-campaign/view-email-campaign"
+            ) && <ViewEmailCampaign />}
             {router.pathname === "/inbox" && <EmailInboxs />}
             {router.pathname === "/leads" && <Leads />}
             {router.pathname === "/chats" && <Chats />}

@@ -14,14 +14,14 @@ import EditIcon from "@mui/icons-material/Edit";
 import { updateUserDetails } from "../../../redux/slice/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../redux/store/store";
-import toast, {Toaster} from 'react-hot-toast';
+import toast, { Toaster } from "react-hot-toast";
 import Loader from "../../Loader";
 import { Button, SecondaryButton } from "../../../styles/global.styled";
 
 interface ProfileDetailProps {
   open: boolean;
   onClose: () => void;
-  userData?: any
+  userData?: any;
 }
 
 const ProfileDetail: React.FC<ProfileDetailProps> = ({ open, onClose }) => {
@@ -34,7 +34,9 @@ const ProfileDetail: React.FC<ProfileDetailProps> = ({ open, onClose }) => {
   });
 
   const [newProfilePicture, setNewProfilePicture] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(userData?.profilePicture || null);
+  const [preview, setPreview] = useState<string | null>(
+    userData?.profilePicture || null
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
 
@@ -67,7 +69,7 @@ const ProfileDetail: React.FC<ProfileDetailProps> = ({ open, onClose }) => {
     formDataToSend.append("name", formData.name);
     formDataToSend.append("email", formData.email);
     formDataToSend.append("role", formData.role);
-    
+
     if (newProfilePicture) {
       formDataToSend.append("profilePicture", newProfilePicture);
     }
@@ -75,7 +77,7 @@ const ProfileDetail: React.FC<ProfileDetailProps> = ({ open, onClose }) => {
     try {
       await dispatch(updateUserDetails({ userData: formDataToSend })).unwrap();
       toast.success("User details updated successfully!");
-      onClose(); 
+      onClose();
       window.location.reload();
       // setLoading(false);
     } catch (error) {
@@ -96,9 +98,23 @@ const ProfileDetail: React.FC<ProfileDetailProps> = ({ open, onClose }) => {
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <Box sx={{ width: "100%", height: "80px", backgroundColor: "var(--background-color)" }}></Box>
+      <Box
+        sx={{
+          width: "100%",
+          height: "80px",
+          backgroundColor: "var(--background-color)",
+        }}
+      ></Box>
       <DialogHeader>
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", width: "100%" }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            width: "100%",
+          }}
+        >
           <Box sx={{ position: "relative", display: "inline-block" }}>
             {preview ? (
               <ProfileImage src={preview} alt="User profile" />
@@ -166,12 +182,8 @@ const ProfileDetail: React.FC<ProfileDetailProps> = ({ open, onClose }) => {
       </DialogBody>
 
       <DialogFooter>
-        <SecondaryButton onClick={handleCancel}>
-          Cancel
-        </SecondaryButton>
-        <Button onClick={handleSave}>
-          Save changes
-        </Button>
+        <SecondaryButton onClick={handleCancel}>Cancel</SecondaryButton>
+        <Button onClick={handleSave}>Save changes</Button>
       </DialogFooter>
       {loading && <Loader />}
       <Toaster />

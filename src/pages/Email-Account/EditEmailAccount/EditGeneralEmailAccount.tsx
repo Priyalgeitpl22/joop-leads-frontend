@@ -1,17 +1,10 @@
 import React, { useEffect, useState } from "react";
-import {
-  RadioGroup,
-  Radio,
-  Checkbox,
-  CircularProgress,
-} from "@mui/material";
+import { RadioGroup, Radio, Checkbox, CircularProgress } from "@mui/material";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import Grid2 from "@mui/material/Grid2";
 import { Button2, TextField, InputLabel } from "../../../styles/layout.styled";
 import ReactQuill from "react-quill";
 import {
-  addOuthEmailAccount,
-  addOutlookEmailAccount,
   getEmailAccountSmtpDetail,
   updateEmailAccountSmtpDetail,
   verifyEmailAccount,
@@ -20,14 +13,14 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../redux/store/store";
 import { validateEmail } from "../../../utils/Validation";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
   const dispatch = useDispatch<AppDispatch>();
   const emailAccount = useSelector((state: RootState) =>
     id ? state.emailAccount?.accounts?.[id] : null
   );
-
-  const { user } = useSelector((state: RootState) => state.user);
 
   const [formData, setFormData] = useState({
     fromName: "",
@@ -59,6 +52,7 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
   const [loading, setLoading] = useState(false);
   const [verificationInProgress, setVerificationInProgress] = useState(false);
   const [verificationFailed, setVerificationFailed] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (id) {
@@ -163,49 +157,64 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
   };
 
   const handleUpdatAccount = () => {
+    debugger;
     if (!id) return;
 
+    let payload;
     setLoading(true);
-    const payload = {
-      name: formData.fromName,
-      email: formData.fromEmail,
-      smtp: {
-        host: formData.smtpHost,
-        port: formData.smtpPort,
-        secure: formData.security,
-        auth: {
-          user: formData.userName,
-          pass: formData.password,
+    if (formData.type === "gmail") {
+      payload = {
+        name: formData.fromName,
+        email: formData.fromEmail,
+        msg_per_day: formData.msg_per_day,
+        time_gap: formData.time_gap,
+        type: formData.type,
+      };
+    } else {
+      payload = {
+        name: formData.fromName,
+        email: formData.fromEmail,
+        smtp: {
+          host: formData.smtpHost,
+          port: formData.smtpPort,
+          secure: formData.security,
+          auth: {
+            user: formData.userName,
+            pass: formData.password,
+          },
         },
-      },
-      imap: {
-        host: formData.imapHost,
-        port: formData.imapPort,
-        secure: formData.imapSecurity,
-        auth: {
-          user: formData.imapUserName,
-          pass: formData.imapPassword,
+        imap: {
+          host: formData.imapHost,
+          port: formData.imapPort,
+          secure: formData.imapSecurity,
+          auth: {
+            user: formData.imapUserName,
+            pass: formData.imapPassword,
+          },
         },
-      },
-      replyToAddress: formData.replyToAddressChecked
-        ? formData.replyToAddress
-        : "",
-      bccEmail: formData.bccEmail,
-      trackingDomain: formData.trackingDomainChecked
-        ? formData.trackingDomainChecked
-        : false,
-      tags: formData.tags,
-      clients: formData.clients,
-      signature: formData.signature,
-      msg_per_day: formData.msg_per_day,
-      time_gap: formData.time_gap,
-      type: formData.type,
-    };
+        replyToAddress: formData.replyToAddressChecked
+          ? formData.replyToAddress
+          : "",
+        bccEmail: formData.bccEmail,
+        trackingDomain: formData.trackingDomainChecked
+          ? formData.trackingDomainChecked
+          : false,
+        tags: formData.tags,
+        clients: formData.clients,
+        signature: formData.signature,
+        msg_per_day: formData.msg_per_day,
+        time_gap: formData.time_gap,
+        type: formData.type,
+      };
+    }
 
     dispatch(updateEmailAccountSmtpDetail({ id, data: payload }))
       .unwrap()
-      .then(() => {
+      .then((res) => {
         setLoading(false);
+        console.log(res)
+        navigate(`/email-accounts`);
+        toast.success(res?.message)
         console.log("account updated successfully");
       })
       .catch((error) => {
@@ -214,42 +223,43 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
       })
       .finally(() => {
         setLoading(false);
-      })
-  };
-  const handleGoogleAccount = async () => {
-    if (user) {
-      try {
-        const response = await dispatch(
-          addOuthEmailAccount({ orgId: user?.orgId })
-        ).unwrap();
-
-        if (response) {
-          window.location.href = response;
-        }
-      } catch (error) {
-        console.error("Error fetching OAuth URL:", error);
-      }
-    }
+      });
   };
 
-  const handleOutlookAccount = async () => {
-    if (!user?.orgId) {
-      console.error("Organization ID is missing");
-      return;
-    }
+  // const handleUpdateAccount = async () => {
+  //   if (user) {
+  //     try {
+  //       const response = await dispatch(
+  //         updateEmailAccountSmtpDetail({ orgId: user?.orgId })
+  //       ).unwrap();
 
-    try {
-      const response = await dispatch(
-        addOutlookEmailAccount({ orgId: user.orgId })
-      ).unwrap();
+  //       if (response) {
+  //         window.location.href = response;
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching OAuth URL:", error);
+  //     }
+  //   }
+  // };
 
-      if (response) {
-        window.location.href = response;
-      }
-    } catch (error) {
-      console.error("Error fetching Outlook OAuth URL:", error);
-    }
-  };
+  // const handleOutlookAccount = async () => {
+  //   if (!user?.orgId) {
+  //     console.error("Organization ID is missing");
+  //     return;
+  //   }
+
+  //   try {
+  //     const response = await dispatch(
+  //       addOutlookEmailAccount({ orgId: user.orgId })
+  //     ).unwrap();
+
+  //     if (response) {
+  //       window.location.href = response;
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching Outlook OAuth URL:", error);
+  //   }
+  // };
 
   return (
     <div style={{ padding: "3%" }}>
@@ -338,7 +348,7 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
               <InputLabel>Minimum time gap (min)</InputLabel>
               <TextField
                 fullWidth
-                name="timeGap"
+                name="time_gap"
                 value={formData.time_gap}
                 onChange={handleChange}
               />
@@ -514,7 +524,7 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
       {(formData.type === "gmail" || formData.type === "outlook") && (
         <div>
           <b>
-            <div>SMTP Settings (sending emails)</div>
+            <div>SMTP Settings (sending emassils)</div>
           </b>
           <Grid2 container spacing={2} sx={{ justifyContent: "left" }}>
             <Grid2 size={{ xs: 5, sm: 5 }}>
@@ -537,7 +547,9 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
                 name="fromEmail"
                 value={formData.fromEmail}
                 onChange={handleChange}
-                error={!formData.fromEmail || !validateEmail(formData.fromEmail)}
+                error={
+                  !formData.fromEmail || !validateEmail(formData.fromEmail)
+                }
                 helperText={
                   !formData.fromEmail
                     ? "From Email is required"
@@ -546,8 +558,6 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
                       : ""
                 }
               />
-
-
             </Grid2>
             <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel>Message Per Day (Warmups not included)</InputLabel>
@@ -562,7 +572,7 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
               <InputLabel>Minimum time gap (min)</InputLabel>
               <TextField
                 fullWidth
-                name="timeGap"
+                name="time_gap"
                 value={formData.time_gap}
                 onChange={handleChange}
               />
@@ -582,33 +592,38 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
             <Grid2 size={{ xs: 10, sm: 10 }}>
               {formData.type === "gmail" ? (
                 <Button2
-                  onClick={handleGoogleAccount}
+                  onClick={handleUpdatAccount}
                   color={"white"}
                   background={"var(--theme-color)"}
                   style={{
-                    cursor: !formData.fromName || !formData.fromEmail ? "not-allowed" : "pointer",
+                    cursor:
+                      !formData.fromName || !formData.fromEmail
+                        ? "not-allowed"
+                        : "pointer",
                     width: "20%",
                   }}
                   disabled={!formData.fromName || !formData.fromEmail}
                 >
-                  Reconnect
+                  Update Details
                 </Button2>
               ) : (
                 <Button2
-                  onClick={handleOutlookAccount}
+                  onClick={handleUpdatAccount}
                   color={"white"}
                   background={"var(--theme-color)"}
                   style={{
-                    cursor: !formData.fromName || !formData.fromEmail ? "not-allowed" : "pointer",
+                    cursor:
+                      !formData.fromName || !formData.fromEmail
+                        ? "not-allowed"
+                        : "pointer",
                     width: "20%",
                   }}
                   disabled={!formData.fromName || !formData.fromEmail}
                 >
-                  Reconnect
+                  Update Details
                 </Button2>
               )}
             </Grid2>
-
           </Grid2>
         </div>
       )}
