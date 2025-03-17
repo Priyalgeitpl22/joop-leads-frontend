@@ -5,10 +5,11 @@ export const StyledDrawer = styled(Drawer)(({ theme }) => ({
   "& .MuiDrawer-paper": {
     width: "100%",
     maxWidth: "420px",
-    maxHeight: "90vh",
+    height: "90vh",
     top: "10vh",
+    display: "flex",
+    flexDirection: "column",
     boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
-    overflowY: "auto",
     background: "#F9FAFB",
 
     [theme.breakpoints.down("sm")]: {
@@ -21,8 +22,18 @@ export const StyledDrawer = styled(Drawer)(({ theme }) => ({
 }));
 
 export const StyleBox = styled(Box)({
+  display: "flex",
+  flexDirection: "column",
   boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
   borderRadius: "12px",
+  flex: 1,
+  overflow: "hidden",
+});
+
+export const ScrollableContent = styled(Box)({
+  flex: 1,
+  overflowY: "auto",
+  padding: "16px",
 });
 
 export const TitleContainer = styled(Box)(({ theme }) => ({
@@ -33,9 +44,6 @@ export const TitleContainer = styled(Box)(({ theme }) => ({
   color: "var(--icon-light)",
   padding: "16px",
   borderRadius: "12px 12px 0 0",
-  position: "sticky",
-  top: 0,
-  zIndex: 2,
 
   [theme.breakpoints.down("sm")]: {
     padding: "12px",
