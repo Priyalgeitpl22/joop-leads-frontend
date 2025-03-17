@@ -64,7 +64,7 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
           }}
           sx={{
             cursor: "pointer",
-            "& .MuiDataGrid-cell:focus, & .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-columnHeader:focus-within":
+            "& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within":
               {
                 outline: "none",
               },

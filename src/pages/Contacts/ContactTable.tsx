@@ -50,6 +50,7 @@ import HowToRegIcon from '@mui/icons-material/HowToReg'
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import toast, { Toaster } from 'react-hot-toast';
 import { SectionTitle } from "../../styles/layout.styled";
+import { DeleteIcon } from "./ContactTable.styled";
 
 
 export interface ImportedLeadsData {
@@ -173,6 +174,17 @@ const ContactTable: React.FC = () => {
           >
             <VisibilityIcon />
           </IconButton>
+        ),
+      },
+      {
+        field: "delete",
+        headerName: "Delete",
+        renderCell: (_params) => (
+            <IconButton
+              color="error"
+            >
+              <DeleteIcon />
+            </IconButton>
         ),
       },
     ],

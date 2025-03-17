@@ -66,6 +66,37 @@ export const SearchBar = styled(Box)`
 
   svg {
     color: var(--border-color);
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    display: block;
+
+    @media (max-width: 768px) {
+      width: 16px;
+      height: 16px;
+    }
+    @media (max-width: 480px) {
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    max-width: 270px;
+    height: 38px;
+  }
+
+  @media (max-width: 768px) {
+    max-width: 250px;
+    height: 35px;
+    padding: 8px 10px;
+  }
+
+  @media (max-width: 480px) {
+    max-width: 200px;
+    height: 32px;
+    padding: 6px 8px;
+    gap: 6px;
   }
 `;
 
@@ -212,3 +243,19 @@ export const AccountDetails = styled(Box)({
     },
   },
 });
+
+export const NoAccount = styled(Box)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: var(--icon-light);
+  color: #555;
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 20px;
+  height: 100%;
+  width: 100%;
+`;

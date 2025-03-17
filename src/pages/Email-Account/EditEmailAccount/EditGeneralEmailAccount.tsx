@@ -157,7 +157,6 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
   };
 
   const handleUpdatAccount = () => {
-    debugger;
     if (!id) return;
 
     let payload;
@@ -576,18 +575,6 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
                 value={formData.time_gap}
                 onChange={handleChange}
               />
-            </Grid2>
-            <Grid2 size={{ xs: 10, sm: 10 }}>
-              <label
-                style={{ display: "flex", alignItems: "center", gap: "8px" }}
-              >
-                <Checkbox
-                  checked={formData.replyToAddressChecked}
-                  onChange={handleChange}
-                  name="replyToAddressChecked"
-                />
-                Set a different reply-to address
-              </label>
             </Grid2>
             <Grid2 size={{ xs: 10, sm: 10 }}>
               {formData.type === "gmail" ? (

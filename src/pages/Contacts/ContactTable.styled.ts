@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { Delete } from "@mui/icons-material";
 import {
   IconButton,
   TableCell,
@@ -165,3 +166,10 @@ export const CustomDeleteIconButton = styled(IconButton)`
     color: #3e5164;
   }
 `;
+
+export const DeleteIcon = styled(Delete)`
+  background: "none";
+  &:hover {
+    background: "none"
+  }
+`

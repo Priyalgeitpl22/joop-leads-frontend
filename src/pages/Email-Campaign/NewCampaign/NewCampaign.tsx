@@ -450,11 +450,11 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
         ) : (
           <Button2
             onClick={handleNext}
-            disabled={isNextDisabled}
-            color={isNextDisabled ? "lightgray" : "white"}
-            background={isNextDisabled ? "#878484" : "var(--theme-color)"}
+            disabled={!isEdit && isNextDisabled}
+            color={!isEdit && isNextDisabled ? "lightgray" : "white"}
+            background={!isEdit && isNextDisabled ? "#878484" : "var(--theme-color)"}
             style={{
-              cursor: isNextDisabled ? "not-allowed" : "pointer",
+              cursor: !isEdit && isNextDisabled ? "not-allowed" : "pointer",
             }}
           >
             Save and Next
