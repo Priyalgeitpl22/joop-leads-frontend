@@ -43,6 +43,7 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
 
   const handleChange = (event: any, newValue: number) => {
     setSelectedVariant(newValue);
+    console.log("event",event)
     setSelectedTemplate(
       sequences.find((seq) => seq.seq_number === Number(newValue))
         ?.seq_variants[0] || null
