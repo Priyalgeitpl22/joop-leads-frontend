@@ -12,20 +12,20 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../redux/store/store";
 import { addOuthEmailAccount } from "../../../redux/slice/emailAccountSlice";
-import EmailAccountSmtpDialog from "./EmailAccountSmtpDialog";
 import EmailAccountOutlookDialog from "./EmailAccountOutlook";
 
 interface EmailCampaignDialogProps {
   open: boolean;
   onClose: () => void;
+  handleSmtpDetail: () => void;
 }
 
 const EmailCampaignDialog: React.FC<EmailCampaignDialogProps> = ({
   open,
   onClose,
+  handleSmtpDetail
 }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const [smtpDialogOpen, setSmtpDialogOpen] = useState<boolean>(false);
   const [outlookDialogOpen, setOutlookDialogOpen] = useState<boolean>(false);
   const { user } = useSelector((state: RootState) => state.user);
 
@@ -37,7 +37,7 @@ const EmailCampaignDialog: React.FC<EmailCampaignDialogProps> = ({
 
     try {
       const response = await dispatch(
-        addOuthEmailAccount({ orgId: user.orgId }) // ✅ Pass the object correctly
+        addOuthEmailAccount({ orgId: user.orgId })
       ).unwrap();
 
       if (response) {
@@ -48,9 +48,6 @@ const EmailCampaignDialog: React.FC<EmailCampaignDialogProps> = ({
     }
   };
 
-  const handleSmtpDetail = async () => {
-    setSmtpDialogOpen(true);
-  };
 
   const handleOutlook = async () => {
     setOutlookDialogOpen(true);
@@ -171,10 +168,6 @@ const EmailCampaignDialog: React.FC<EmailCampaignDialogProps> = ({
               Outlook
             </Typography>
           </Button>
-          <EmailAccountSmtpDialog
-            open={smtpDialogOpen}
-            onClose={() => setSmtpDialogOpen(false)}
-          />
           <Button
             variant="contained"
             sx={{

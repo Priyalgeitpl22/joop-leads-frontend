@@ -39,6 +39,7 @@ import { useNavigate } from "react-router-dom";
 import ProgressBar from "../../assets/Custom/linearProgress";
 import { SectionTitle } from "../../styles/layout.styled";
 import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
+import EmailAccountSmtpDialog from "./EmailAccountDialogBox/EmailAccountSmtpDialog";
 // import ProgressBar from "../../assets/Custom/linearProgress";
 
 const EmailAccounts: React.FC = () => {
@@ -57,6 +58,7 @@ const EmailAccounts: React.FC = () => {
     string | null
   >(null);
 
+  const [smtpDialogOpen, setSmtpDialogOpen] = useState<boolean>(false);
 
   const columns: GridColDef[] = useMemo(
     () => [
@@ -154,6 +156,10 @@ const EmailAccounts: React.FC = () => {
     getEmailAccounts();
   }, []);
 
+  useEffect(()=> {
+    getAllEmailAccounts();
+  },[smtpDialogOpen])
+
   const getAllEmailAccounts = async () => {
     try {
       setLoading(true);
@@ -201,6 +207,7 @@ const EmailAccounts: React.FC = () => {
   };
 
   const handleOpenDialog = () => {
+    debugger
     setIsDialogOpen(true);
   };
 
@@ -245,8 +252,6 @@ const EmailAccounts: React.FC = () => {
     }
   };
 
-  console.log("Loader", loading);
-
   const CustomIcon = () => (
     <svg
       fill="none"
@@ -269,6 +274,11 @@ const EmailAccounts: React.FC = () => {
       ></path>
     </svg>
   );
+
+  const handleSmtpDetail = async () => {
+    setIsDialogOpen(false);
+    setSmtpDialogOpen(true);
+  };
 
   return (
     <EmailAccountsContainer>
@@ -294,7 +304,12 @@ const EmailAccounts: React.FC = () => {
               onChange={handleSearchChange}
             />
           </SearchBar>
+          <EmailAccountSmtpDialog
+            open={smtpDialogOpen}
+            onClose={() => setSmtpDialogOpen(false)}
+          />
           <EmailAccountDialog
+            handleSmtpDetail={handleSmtpDetail}
             open={isDialogOpen}
             onClose={() => setIsDialogOpen(false)}
           />

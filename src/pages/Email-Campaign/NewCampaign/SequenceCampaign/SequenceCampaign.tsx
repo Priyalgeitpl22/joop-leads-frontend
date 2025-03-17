@@ -50,6 +50,7 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
   updateSequenceData,
   selectedSequence,
   sequences,
+  setIsNextDisabled
 }) => {
   const [showStepOptions, setShowStepOptions] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -62,6 +63,7 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
   };
 
   useEffect(() => {
+    setIsNextDisabled(false);
     const params = new URLSearchParams(location.search);
     const campaignId = params.get("id");
     console.log(selectedVariant);
