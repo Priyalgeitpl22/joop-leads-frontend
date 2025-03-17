@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { api, baseURL, emailApi } from "../../services/api";
+import { api, emailApi } from "../../services/api";
 import { AxiosError } from "axios";
 import { CampaignSettingsPayload } from "../../pages/Email-Campaign/NewCampaign/SetupCampaign/Interface";
 import Cookies from "js-cookie";

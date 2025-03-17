@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import {
   Card,
   Container,
@@ -65,16 +65,16 @@ const ViewImportedCsvFile: React.FC<ViewImportedCsvFileProps> = ({
     }
   };
 
-  const showUploadLeads = () => {
-    setShowUploadedLeads(true);
-  };
+  // const showUploadLeads = () => {
+  //   setShowUploadedLeads(true);
+  // };
 
-  const handleExportCsv = () => {
-    setExportCsvDialog(true);
-  };
+  // const handleExportCsv = () => {
+  //   setExportCsvDialog(true);
+  // };
 
-  const goToNextStep = () => {
-  };
+  // const goToNextStep = () => {
+  // };
 
   return (
     <Container>
