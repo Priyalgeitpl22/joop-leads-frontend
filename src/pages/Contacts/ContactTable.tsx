@@ -18,7 +18,7 @@ import {
   ContactsHeader,
   ContactsContainer,
 } from "./ContactTable.styled";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   ContactsAccount,
   CreateCampaignWithContacts,
@@ -27,7 +27,7 @@ import {
   SearchContacts,
   VerifyViewContactPayload,
 } from "../../redux/slice/contactSlice";
-import { AppDispatch } from "../../redux/store/store";
+import { AppDispatch, RootState } from "../../redux/store/store";
 import { SearchBar } from "../../components/Header/header.styled";
 import { Search } from "lucide-react";
 import { CustomDataTable } from "../../assets/Custom/customDataGrid";
@@ -76,8 +76,8 @@ const ContactTable: React.FC = () => {
   const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
-
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const { user } = useSelector((state: RootState) => state.user);
+  const [selectedIds, setSelectedIds] = useState<any>([]);
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -207,9 +207,16 @@ const ContactTable: React.FC = () => {
       if (trimmedQuery === "") {
         setRows(contactAccount);
       } else {
-        const [first_name, email] = trimmedQuery.split(" ");
+        let first_name = "";
+        let email = "";
+        if (trimmedQuery) {
+          email = trimmedQuery;
+        } else {
+          first_name = trimmedQuery;
+        }
+
         const filteredData = await dispatch(
-          SearchContacts({ first_name, email })
+          SearchContacts({ email, first_name, orgId: user?.orgId || "" })
         ).unwrap();
         setRows(filteredData);
       }
@@ -341,19 +348,20 @@ const ContactTable: React.FC = () => {
             onClose={handleAccountCloseDialog}
           />
 
+          {selectedIds.length == 0 && (
           <Tooltip title="Upload Bulk Contacts" arrow>
             <IconsButton onClick={handleOpenDialog}>
               <CloudUploadIcon />
             </IconsButton>
           </Tooltip>
-
-
+           )}
+          {selectedIds.length == 0 && (
           <Tooltip title="Add Contact" arrow>
             <IconsButton onClick={handleAccountOpenDialog}>
               <PersonAddIcon />
             </IconsButton>
           </Tooltip>
-
+          )}
 
           {selectedIds.length > 0 && allActive && (
             <Tooltip title="Deactivate User" arrow>
