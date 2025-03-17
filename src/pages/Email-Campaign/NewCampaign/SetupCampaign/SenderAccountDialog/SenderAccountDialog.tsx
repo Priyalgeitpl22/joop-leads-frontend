@@ -296,11 +296,14 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
             });
             onClose();
           }}
+
           disabled={isSaveDisabled}
           style={{
-            cursor: isSaveDisabled ? "not-allowed" : "pointer",
+            color: isSaveDisabled ? "lightgray" : "white",
+            background: isSaveDisabled ? "#878484" : "var(--theme-color)",
             opacity: isSaveDisabled ? 0.6 : 1,
           }}
+
         >
 
           Save Email Accounts
