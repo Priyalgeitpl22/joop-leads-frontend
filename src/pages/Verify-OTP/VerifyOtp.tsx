@@ -1,25 +1,18 @@
 import { useState, useEffect, useRef } from "react";
-import { Typography, Box } from "@mui/material";
-import {
-  PageContainer,
-  VerifyCard,
-  OtpFieldsContainer,
-  OtpField,
-  StyledButton,
-  TimerText,
-  IllustrationSection,
-  FormSection
-} from "./VerifyOtp.styled";
+import { Typography, Box, Stack,CircularProgress } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { verifyOtp, resendOtp } from "../../redux/slice/authSlice"; // Import resendOtp action
+import { verifyOtp, resendOtp } from "../../redux/slice/authSlice";
 import { AppDispatch } from "../../redux/store/store";
-import Loader from "../../components/Loader";
 import toast, { Toaster } from "react-hot-toast";
+import CloseIcon from "@mui/icons-material/Close";
+import LockIcon from "@mui/icons-material/Lock";
+import { CloseButton, OtpField, PageContainer, StyledButton, StyledCard, TimerText } from "./VerifyOtp.styled";
+import Loader from "../../components/Loader";
 
 const VerifyOtp = () => {
   const { state } = useLocation();
-  const email = state?.email;  
+  const email = state?.email;
 
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [timer, setTimer] = useState(60);
@@ -101,7 +94,7 @@ const VerifyOtp = () => {
   const handleResendOtp = () => {
     if (!email) return;
     setIsLoading(true);
-    dispatch(resendOtp(email))
+    dispatch(resendOtp(email!)) 
       .unwrap()
       .then(() => {
         toast.success("New OTP sent successfully!");
@@ -149,66 +142,57 @@ const VerifyOtp = () => {
       localStorage.removeItem("otpTimer");
     }
   }, [isTimerRunning, timer]);
-  
+
   return (
-    <>
-    <Toaster/>
+    <PageContainer>
+      <Toaster />
+      <StyledCard>
+        <CloseButton onClick={() => navigate(-1)}>
+          <CloseIcon />
+        </CloseButton>
 
-      <PageContainer>
-        <VerifyCard>
-          <IllustrationSection>
-            <img
-              src="https://cdn.dribbble.com/users/2058540/screenshots/8225403/media/bc617eec455a72c77feab587e09daa96.gif"
-              alt="Auth illustration"
-              style={{ maxWidth: "100%", height: "auto" }}
-            />
-          </IllustrationSection>
-          <FormSection>
-            <Typography variant="h4" fontWeight="bold" mb={1}>
-              Verify OTP
-            </Typography>
-            <Typography variant="h6" sx={{ marginBottom: 2 }}>
-              Enter the OTP sent to your email
-            </Typography>
+        <LockIcon color="primary" sx={{ fontSize: 50, mb: 1 }} />
+        <Typography variant="h4" fontWeight="bold" mb={1} color="">
+        Verify OTP
+        </Typography>
 
-            <OtpFieldsContainer>
-              {otp.map((digit, index) => (
-                <OtpField
-                  key={index}
-                  value={digit}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    handleOtpChange(e, index)
-                  }
-                  onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) =>
-                    handleKeyDown(e, index)
-                  }
-                  inputProps={{
-                    maxLength: 1,
-                    ref: (el: HTMLInputElement | null) => (otpRefs.current[index] = el),
-                  }}
-                />
-              ))}
-            </OtpFieldsContainer>
-
-            <StyledButton variant="contained" onClick={handleVerifyOtp}>
-              VERIFY OTP
-            </StyledButton>
+        <Typography variant="body2" sx={{ marginBottom: 2, color: "gray" }}>
+          Enter the 6-digit OTP sent to <br /><strong>{email}</strong> 
+        </Typography>
+        <Stack direction="row" justifyContent="center" mb={2} gap={1}>
+          {otp.map((digit, index) => (
+            <OtpField
+            key={index}
+            value={digit}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              handleOtpChange(e, index)
+            }
+            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) =>
+              handleKeyDown(e, index)
+            }
+            inputProps={{
+              maxLength: 1,
+              ref: (el: HTMLInputElement | null) => (otpRefs.current[index] = el),
+            }}
+          />
+        ))}
+        </Stack>
+        <StyledButton variant="contained" onClick={handleVerifyOtp} disabled={isLoading}>
+          {isLoading ? <CircularProgress size={24} color="inherit" /> : "VERIFY OTP"}
+        </StyledButton>
 
             <Box sx={{ marginTop: 2 }}>
-              {isTimerRunning ? (
+          {isTimerRunning ? (
                 <TimerText>Time remaining: {timer}s</TimerText>
-              ) : (
-                <StyledButton variant="outlined" onClick={handleResendOtp}>
-                  RESEND OTP
-                </StyledButton>
-              )}
-            </Box>
-          </FormSection>
-        </VerifyCard>
-
-        {isLoading && <Loader />}
-      </PageContainer>
-    </>
+          ) : (
+            <StyledButton variant="outlined" onClick={handleResendOtp} disabled={isLoading}>
+              {isLoading ? <CircularProgress size={24} color="inherit" /> : "RESEND OTP"}
+            </StyledButton>
+          )}
+        </Box>
+      </StyledCard>
+      {isLoading && <Loader />}
+    </PageContainer>
   );
 };
 

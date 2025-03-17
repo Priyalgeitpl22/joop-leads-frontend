@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
-import { Box, Typography, Dialog } from "@mui/material";
+import { Box, Typography, Dialog, IconButton } from "@mui/material";
 import UploadFileOutlinedIcon from "@mui/icons-material/UploadFileOutlined";
+import CloseIcon from "@mui/icons-material/Close";
 import ImportLeadsDetail from "../../Email-Campaign/NewCampaign/ImportLeadsCampaign/ImportLeadsDetail";
 import ImportSettingDialog from "../../Email-Campaign/NewCampaign/ImportLeadsCampaign/ImportSettingDialog";
 import Papa from "papaparse";
@@ -37,22 +38,20 @@ const UploadContactCsvDialog: React.FC<UploadContactCsvDialog> = ({
   const [csvData, setCSVData] = useState<any[]>([]);
   const [isNextDisabled, setIsNextDisabled] = useState(false);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(isNextDisabled);
-    const file = event.target.files?.[0];
+  const handleFileChange = (file: File | null) => {
     if (file) {
       if (file.type === "text/csv") {
         setSelectedFile(file);
         setError("");
         handleCSVUpload(file);
-
+        console.log("csvData", csvData);
+        console.log("isnextdisabled", isNextDisabled);
         Papa.parse(file, {
           complete: (result) => {
             const firstRow = result.data[0] as string[];
             const data = result.data as any[];
             setColumns(firstRow);
             setCSVData(data);
-            console.log(csvData);
           },
           skipEmptyLines: true,
         });
@@ -68,101 +67,131 @@ const UploadContactCsvDialog: React.FC<UploadContactCsvDialog> = ({
     }
   };
 
+  const onFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    handleFileChange(event.target.files?.[0] || null);
+  };
+
+  const onDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+  };
+
+  const onDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const file = event.dataTransfer.files[0];
+    handleFileChange(file);
+  };
+
   return (
-     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "column",
-        width: "100%",
-        padding: "2px 0",
-        paddingTop: "50px"
-      }}
-    >
-      {showDetail ? (
-        <ImportLeadsDetail
-          isUplaodContacts={true}
-          handleUploadContacts={handleUploadContacts}
-          setIsNextDisabled={setIsNextDisabled}
-          onEmailFieldsChange={handleLeadsData}
-          columns={columns}
-          file={selectedFile}
-          onFileChange={handleFileChange}
-        />
-      ) : (
-        <>
-          <Typography variant="h6" fontWeight="600" textAlign="center">
-            Easily add or update Leads / Contacts
-          </Typography>
-          <Typography variant="body2" textAlign="center" color="gray" mb={3}>
-            How would you like to get contacts into your list?
-          </Typography>
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+          width: "100%",
+          padding: "2px 0",
+          paddingTop: "50px",
+        }}
+      >
+        {/* Close Button */}
+        <IconButton
+          sx={{
+            position: "absolute",
+            top: 10,
+            right: 10,
+          }}
+          onClick={onClose}
+        >
+          <CloseIcon />
+        </IconButton>
 
-          <FileUploadContainer onClick={() => fileInputRef.current?.click()}>
-            <Typography variant="h6" fontWeight="600" mt={2}>
-              Upload CSV File
+        {showDetail ? (
+          <ImportLeadsDetail
+            isUplaodContacts={true}
+            handleUploadContacts={handleUploadContacts}
+            setIsNextDisabled={setIsNextDisabled}
+            onEmailFieldsChange={handleLeadsData}
+            columns={columns}
+            file={selectedFile}
+            onFileChange={(e) => onFileSelect(e)}
+          />
+        ) : (
+          <>
+            <Typography variant="h6" fontWeight="600" textAlign="center">
+              Easily add or update Leads / Contacts
             </Typography>
-            <UploadFileOutlinedIcon
-              sx={{
-                fontSize: 80,
-                color: "var(--icon-color)",
-                marginBottom: "10px",
-              }}
-            />
-            <Typography
-              variant="body2"
-              color="gray"
-              sx={{ textAlign: "center" }}
+            <Typography variant="body2" textAlign="center" color="gray" mb={3}>
+              How would you like to get contacts into your list?
+            </Typography>
+
+            <FileUploadContainer
+              onClick={() => fileInputRef.current?.click()}
+              onDragOver={onDragOver}
+              onDrop={onDrop}
             >
-              Select a CSV file to import <br /> or <br /> Drag & Drop CSV file
-              here
-            </Typography>
-
-            <input
-              type="file"
-              accept=".csv"
-              style={{ display: "none" }}
-              ref={fileInputRef}
-              onChange={handleFileChange}
-            />
-            {selectedFile && (
-              <Typography variant="body2" color="green" mt={1}>
-                {selectedFile.name}
+              <Typography variant="h6" fontWeight="600" mt={2}>
+                Upload CSV File
               </Typography>
-            )}
-            {error && (
+              <UploadFileOutlinedIcon
+                sx={{
+                  fontSize: 80,
+                  color: "var(--icon-color)",
+                  marginBottom: "10px",
+                }}
+              />
               <Typography
                 variant="body2"
-                color="var(--background-light)"
-                mt={1}
+                color="gray"
+                sx={{ textAlign: "center" }}
               >
-                {error}
+                Select a CSV file to import <br /> or <br /> Drag & Drop CSV
+                file here
               </Typography>
-            )}
-            <CustomDialogFooter>
-              Upload your CSV files to import leads.
-            </CustomDialogFooter>
-          </FileUploadContainer>
-        </>
-      )}
 
-      <Dialog
-        open={openDialog}
-        onClose={() => setOpenDialog(false)}
-        fullWidth
-        maxWidth="sm"
-      >
-        <ImportSettingDialog
+              <input
+                type="file"
+                accept=".csv"
+                style={{ display: "none" }}
+                ref={fileInputRef}
+                onChange={onFileSelect}
+              />
+              {selectedFile && (
+                <Typography variant="body2" color="green" mt={1}>
+                  {selectedFile.name}
+                </Typography>
+              )}
+              {error && (
+                <Typography
+                  variant="body2"
+                  color="var(--background-light)"
+                  mt={1}
+                >
+                  {error}
+                </Typography>
+              )}
+              <CustomDialogFooter>
+                Upload your CSV files to import leads.
+              </CustomDialogFooter>
+            </FileUploadContainer>
+          </>
+        )}
+
+        <Dialog
           open={openDialog}
           onClose={() => setOpenDialog(false)}
-          onSave={saveCSVSetting}
-        />
+          fullWidth
+          maxWidth="sm"
+        >
+          <ImportSettingDialog
+            open={openDialog}
+            onClose={() => setOpenDialog(false)}
+            onSave={saveCSVSetting}
+          />
    
-      </Dialog>
+        </Dialog>
 
-    </Box>
+      </Box>
     </Dialog>
 
   );
