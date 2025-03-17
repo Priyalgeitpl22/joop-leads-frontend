@@ -57,6 +57,12 @@ const EmailInboxSideBar = () => {
       index === self.findIndex((m) => m.name === mailbox.name)
   );
 
+  const truncateText = (text: string, maxLength: number) => {
+    return text.length > maxLength
+      ? `${text.substring(0, maxLength)}...`
+      : text;
+  };
+
   useEffect(() => {
     if (uniqueMailboxes.length > 0 && selectedAccountId && !selectedMailboxId) {
       const firstMailbox = uniqueMailboxes[0];
@@ -86,7 +92,7 @@ const EmailInboxSideBar = () => {
               onClick={() => handleMailboxClick(mailbox)}
               active={selectedMailboxId === mailbox._id}
             >
-              {mailbox.name}
+              {truncateText(mailbox.name, 8)}
             </StyledListItem>
           ))
         ) : (

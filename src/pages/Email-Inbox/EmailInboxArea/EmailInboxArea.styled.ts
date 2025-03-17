@@ -71,21 +71,28 @@ export const PlaceholderContainer = styled(Box)({
 });
 export const EmailInboxMessagesContainer = styled(Box)`
   flex: 1;
-  overflow-y: auto;
-  height: "100%";
-  display: "flex";
-  flexDirection: "column";
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative; /* Ensure child elements are positioned relative to this */
   padding: 20px;
-  scrollbar-width: thin;
-  scrollbar-color: #c1c1c1 transparent;
+  overflow: hidden; /* Prevents scrollbars from affecting layout */
 
-  &::-webkit-scrollbar {
-    width: 8px;
-  }
+  > div {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 10px; /* Ensures spacing from scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: #c1c1c1 transparent;
 
-  &::-webkit-scrollbar-thumb {
-    background-color: #c1c1c1;
-    border-radius: 8px;
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: #c1c1c1;
+      border-radius: 8px;
+    }
   }
 `;
 export const BotMessage = styled(Box)({
@@ -158,14 +165,16 @@ export const InboxMessageBody = styled(Box)<{ isExpanded: boolean }>(
   })
 );
 
-export const TotalPageCount = styled(Box)({
-  borderTop: "1px solid #ddd",
-  padding: "5px 0",
-  display: "flex",
-  justifyContent: "space-between",
-  backgroundColor: "#fff",
-  height: "8%",
-})
+export const TotalPageCount = styled(Box)`
+  border-top: 1px solid #ddd;
+  padding: 5px 0;
+  display: flex;
+  justify-content: space-between;
+  background-color: #fff;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+`;
 
 export const NoMailboxMessage = styled(Box)({
   display: "flex",
