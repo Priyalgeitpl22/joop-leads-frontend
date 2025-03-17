@@ -28,7 +28,7 @@ export const MetricCard = styled(Card)(({ borderColor }: { borderColor: string }
   boxShadow: "0px 4px 12px var(--shadow-color)",
   borderLeft: `5px solid ${borderColor}`,
   backgroundColor: "var(--icon-light)",
-  minHeight: "90px",
+  minHeight: "110px",
   transition: "0.3s",
   "&:hover": {
     transform: "scale(1.05)",

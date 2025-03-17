@@ -35,10 +35,7 @@ import AdsClickOutlinedIcon from "@mui/icons-material/AdsClickOutlined";
 import ErrorOutlinedIcon from "@mui/icons-material/ErrorOutlined";
 import AttachMoneyOutlinedIcon from "@mui/icons-material/AttachMoneyOutlined";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
-import {
-  SectionTitle,
-  TableItem,
-} from "../../styles/layout.styled";
+import { SectionTitle, TableItem } from "../../styles/layout.styled";
 import { GridDeleteIcon } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import ProgressBar from "../../assets/Custom/linearProgress";
@@ -130,7 +127,12 @@ const EmailCampaign: React.FC = () => {
       label: "Positive Reply",
       color: "#23b820",
     },
-    { count: 1, icon: ErrorOutlinedIcon, label: "Bounced", color: "#e01010" },
+    {
+      count: 1,
+      icon: ErrorOutlinedIcon,
+      label: "Bounced",
+      color: "var(--error-color)",
+    },
   ];
 
   const handleEditCampaign = (id: string) => {
@@ -177,8 +179,7 @@ const EmailCampaign: React.FC = () => {
             gap: "15px",
             width: "100%",
             alignItems: "center",
-            // marginLeft: "auto",
-            justifyContent: "flex-end"
+            justifyContent: "flex-end",
           }}
         >
           <SearchBar>
@@ -197,9 +198,9 @@ const EmailCampaign: React.FC = () => {
 
       <TableContainer
         component={Paper}
-        sx={{ boxShadow: "none", borderRadius: "8px" }}
+        sx={{ boxShadow: "none", borderRadius: "8px", overflowY: "auto" }}
       >
-        <Table>
+        <Table stickyHeader>
           <TableHead sx={{ backgroundColor: "#f8f9fc" }}>
             <TableRow>
               <TableCell sx={{ fontWeight: "bold", color: "#35495c" }}>
@@ -216,14 +217,13 @@ const EmailCampaign: React.FC = () => {
               </TableCell>
             </TableRow>
           </TableHead>
-
           {campaigns.map((campaign) => (
             <CustomTableBody key={campaign.id}>
               <CustomTableRow>
                 <CustomTableCell>
-                  <h3 onClick={handleDetailCampaign}>
+                  <h6 onClick={handleDetailCampaign}>
                     {campaign.campaignName}
-                  </h3>
+                  </h6>
                   <p>{`${campaign?.status} | ${formatDate(campaign.createdAt)} | ${campaign?.sequences?.length} Sequences`}</p>
                 </CustomTableCell>
 
@@ -254,6 +254,11 @@ const EmailCampaign: React.FC = () => {
             </CustomTableBody>
           ))}
         </Table>
+        {campaigns.length === 0 && (
+          <div style={{ padding: "20px", textAlign: "center", color: "#888" }}>
+            No campaigns found
+          </div>
+        )}
       </TableContainer>
 
       <ConfirmDeleteDialog

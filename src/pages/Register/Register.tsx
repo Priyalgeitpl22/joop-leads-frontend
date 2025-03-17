@@ -22,13 +22,13 @@ import {
   StyledButton,
   PreviewContainer,
   PreviewImage,
-  NavigateLink,
 } from "./register.styled";
 import Loader from "../../components/Loader";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import fieldValidation from "../../utils/Validation";
 import PasswordInput from "../../utils/PasswordInput";
+import { NavigateLink } from "../Login/login.styled";
 
 interface RegisterFormData {
   profilePicture: File | null;
@@ -50,7 +50,7 @@ const formFields: {
     { name: "email", label: "Email Address", type: "email" },
     { name: "password", label: "Password", type: "text" },
     { name: "orgName", label: "Company Name", type: "text" },
-    { name: "domain", label: "Domain", type: "text" },
+    { name: "domain", label: "Industry", type: "text" },
   ];
 
 const Register = () => {
@@ -202,7 +202,7 @@ const Register = () => {
         </IllustrationSection>
 
         <FormSection>
-          <Typography variant="h4" fontWeight="bold" mb={1}>
+          <Typography variant="h4" fontWeight="bold" mb={1} color="var(--border-color)">
             Create an Account
           </Typography>
           <Typography variant="body1" color="black" mb={2}>

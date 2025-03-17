@@ -15,6 +15,7 @@ export const RegisterCard = styled(Box)`
   max-width: 900px;
   display: flex;
   overflow: auto;
+  margin-top: 50px;
 `;
 
 export const IllustrationSection = styled(Box)`
@@ -128,11 +129,4 @@ export const SignupLink = styled.a`
     color: #004a99;
     text-decoration: underline;
   }
-`;
-
-export const NavigateLink = styled.span`
-color: #0066cc;
-font-weight: bold;
-cursor: pointer;
-text-decoration: none;
 `;

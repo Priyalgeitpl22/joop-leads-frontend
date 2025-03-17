@@ -51,12 +51,15 @@ body {
   --info-color: #a1a1a1;
   --text-disabled: #adb5bd;
   --title-color: #7057c1;
+  --title-color-secondary: #8b7af2;
+
   /* 🖍️ Borders & Shadows */
   --border-color: #4D3687; /* Border Default */
   --border-dark: #291D48; /* Darker Border */
   --border-light: "1px solid #6e58f1";
   --border-grey: #e8e8e8;
-  
+  --border-color-sec: #e9e1ff;
+
   --shadow-color: rgba(64, 45, 112, 0.2); /* Default Shadow */
   --shadow-dark: rgba(19, 8, 48, 0.3); /* Darker Shadow */
   
@@ -177,4 +180,9 @@ a:hover {
 
 nav.MuiBox-root.css-1oapqbb {
   padding: 0px;
+}
+
+input:-webkit-autofill {
+  background-color: transparent !important;
+  transition: background-color 5000s ease-in-out 0s;
 }

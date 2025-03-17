@@ -14,6 +14,7 @@ export const ChangePasswordCard = styled(Card)`
   border: 1px solid var(--border-dark);
   width: 80%;
   max-width: 800px;
+  margin-top: 60px;
   padding: 16px;
   @media (max-width: 960px) {
     flex-direction: column;

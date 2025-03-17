@@ -147,23 +147,20 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
     console.log("selectedEmailAccounts", selectedEmailAccounts);
     setSelectedEmailAccounts(newSelection);
 
-    const filteredAccount = rows.filter((o) => {
-      return o._id === newSelection[newSelection.length - 1];
-    })[0] as Account;
+    // Ensure we get correct details for each selected account
+    const formattedSelection: EmailAccounts = newSelection.map((id) => {
+      const account = rows.find((o) => o._id === id) as Account; // Find correct account for each ID
 
-    const formattedSelection: EmailAccounts = newSelection?.map((id) => ({
-      account_id: id,
-      user:
-        filteredAccount.type === "imap"
-          ? filteredAccount.smtp.auth.user
-          : undefined,
-      pass:
-        filteredAccount.type === "imap"
-          ? filteredAccount.smtp.auth.pass
-          : undefined,
-      oauth2:
-        filteredAccount.type !== "imap" ? filteredAccount.oauth2 : undefined,
-    }));
+      return {
+        account_id: id,
+        type: account.type,
+        email: account.email,
+        smtp: account.smtp,
+        user: account.type === "imap" ? account.smtp.auth.user : undefined,
+        pass: account.type === "imap" ? account.smtp.auth.pass : undefined,
+        oauth2: account.type !== "imap" ? account.oauth2 : undefined,
+      };
+    });
 
     setSelectedAccounts(formattedSelection);
   };

@@ -75,7 +75,7 @@ const ChangePassword: React.FC = () => {
 
 
     if (Object.values(errors).some((error) => error)) {
-      toast.error("Please fix all errors before submitting.");
+      toast.error("Missing Required fields.");
       return;
     }
 
@@ -115,7 +115,7 @@ const ChangePassword: React.FC = () => {
           />
         </IllustrationSection>
         <FormSection>
-          <Typography variant="h4" fontWeight="bold" mb={1}>
+          <Typography variant="h4" fontWeight="bold" mb={1} color="var(--border-color)">
             Change Password
           </Typography>
           <Typography variant="body1" mb={3}>
