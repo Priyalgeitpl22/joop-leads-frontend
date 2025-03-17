@@ -38,6 +38,20 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
     location: "",
     orgId: "",
   });
+  const [formErrors, setFormErrors] = useState({
+    first_name: "",
+    email: "",
+  });
+
+  const validateField = (name: string, value: string) => {
+    let error = "";
+    if (!value.trim()) {
+      error = `${name.replace("_", " ")} is required`;
+    } else if (name === "email" && !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(value)) {
+      error = "Invalid email format";
+    }
+    return error;
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -45,10 +59,26 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
+
+    setFormErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: validateField(name, value),
+    }));
   };
 
+  const isFormValid = () => {
+    const errors: any = {};
+    Object.keys(formErrors).forEach((field) => {
+      errors[field] = validateField(field, formData[field as keyof typeof formData]);
+    });
+    setFormErrors(errors);
+    return Object.values(errors).every((error) => error === "");
+  };
 
-  const handleSubmit = () => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isFormValid()) return;
+
     const payload: CreateContactsAccountPayload = {
       first_name: formData.first_name,
       last_name: formData.last_name,
@@ -101,7 +131,9 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
                 value={formData.first_name}
                 onChange={handleChange}
                 fullWidth
-                required
+                error={!!formErrors.first_name}
+                helperText={formErrors.first_name}
+
               />
               <TextField
                 label="Last Name"
@@ -109,7 +141,8 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
                 value={formData.last_name}
                 onChange={handleChange}
                 fullWidth
-                required
+
+
               />
               <TextField
                 label="Email"
@@ -118,7 +151,10 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
                 onChange={handleChange}
                 fullWidth
                 type="email"
-                required
+                error={!!formErrors.email}
+                helperText={formErrors.email}
+
+
               />
               <TextField
                 label="Phone Number"
@@ -126,7 +162,7 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
                 value={formData.phone_number}
                 onChange={handleChange}
                 fullWidth
-                required
+
               />
               <TextField
                 label="Company Name"
@@ -161,7 +197,9 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
             </Box>
           </DialogContent>
           <DialogActions>
-            <Button type="submit" variant="contained" sx={{ backgroundColor: "var(--theme-color)" }}>
+            <Button type="submit" variant="contained" sx={{ backgroundColor: "var(--theme-color)", cursor: !isFormValid ? "not-allowed" : "pointer" }} disabled={!isFormValid
+
+            }>
               Submit
             </Button>
           </DialogActions>
