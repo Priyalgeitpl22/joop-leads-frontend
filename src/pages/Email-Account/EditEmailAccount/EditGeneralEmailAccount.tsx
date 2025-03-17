@@ -577,18 +577,6 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
               />
             </Grid2>
             <Grid2 size={{ xs: 10, sm: 10 }}>
-              <label
-                style={{ display: "flex", alignItems: "center", gap: "8px" }}
-              >
-                <Checkbox
-                  checked={formData.replyToAddressChecked}
-                  onChange={handleChange}
-                  name="replyToAddressChecked"
-                />
-                Set a different reply-to address
-              </label>
-            </Grid2>
-            <Grid2 size={{ xs: 10, sm: 10 }}>
               {formData.type === "gmail" ? (
                 <Button2
                   onClick={handleUpdatAccount}

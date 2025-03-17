@@ -8,7 +8,7 @@ import {
   IconButton,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { StepText, LinkText } from "./EmailAccount.styled";
+import { StepText } from "./EmailAccount.styled";
 import { AppDispatch, RootState } from "../../../redux/store/store";
 import { useDispatch, useSelector } from "react-redux";
 import { addOutlookEmailAccount } from "../../../redux/slice/emailAccountSlice";
