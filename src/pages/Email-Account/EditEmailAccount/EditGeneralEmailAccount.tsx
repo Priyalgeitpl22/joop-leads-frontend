@@ -19,6 +19,7 @@ import {
 } from "../../../redux/slice/emailAccountSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../redux/store/store";
+import { validateEmail } from "../../../utils/Validation";
 
 const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -211,7 +212,7 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
         setLoading(false);
         console.log("Failed to update email account: " + error);
       })
-      .finally(() =>{
+      .finally(() => {
         setLoading(false);
       })
   };
@@ -518,21 +519,35 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
           <Grid2 container spacing={2} sx={{ justifyContent: "left" }}>
             <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel>From Name</InputLabel>
+
               <TextField
                 fullWidth
                 name="fromName"
                 value={formData.fromName}
                 onChange={handleChange}
+                error={!formData.fromName}
+                helperText={!formData.fromName ? "From Name is required" : ""}
               />
             </Grid2>
             <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel>From Email</InputLabel>
+
               <TextField
                 fullWidth
                 name="fromEmail"
                 value={formData.fromEmail}
                 onChange={handleChange}
+                error={!formData.fromEmail || !validateEmail(formData.fromEmail)}
+                helperText={
+                  !formData.fromEmail
+                    ? "From Email is required"
+                    : !validateEmail(formData.fromEmail)
+                      ? "Enter a valid email address"
+                      : ""
+                }
               />
+
+
             </Grid2>
             <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel>Message Per Day (Warmups not included)</InputLabel>
@@ -570,7 +585,11 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
                   onClick={handleGoogleAccount}
                   color={"white"}
                   background={"var(--theme-color)"}
-                  style={{ cursor: "pointer", width: "20%" }}
+                  style={{
+                    cursor: !formData.fromName || !formData.fromEmail ? "not-allowed" : "pointer",
+                    width: "20%",
+                  }}
+                  disabled={!formData.fromName || !formData.fromEmail}
                 >
                   Reconnect
                 </Button2>
@@ -579,12 +598,17 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
                   onClick={handleOutlookAccount}
                   color={"white"}
                   background={"var(--theme-color)"}
-                  style={{ cursor: "pointer", width: "20%" }}
+                  style={{
+                    cursor: !formData.fromName || !formData.fromEmail ? "not-allowed" : "pointer",
+                    width: "20%",
+                  }}
+                  disabled={!formData.fromName || !formData.fromEmail}
                 >
                   Reconnect
                 </Button2>
               )}
             </Grid2>
+
           </Grid2>
         </div>
       )}

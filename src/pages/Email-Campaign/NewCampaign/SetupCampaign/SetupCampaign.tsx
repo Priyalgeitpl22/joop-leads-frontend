@@ -121,7 +121,7 @@ const SetupCampaign: React.FC<SetupCampaignProps> = ({
           <SenderAccountDialog
             campaignId={campaign_id}
             senderAccounts={senderAccounts}
-            open={openSenderAccount} // ✅ Correctly passing boolean
+            open={openSenderAccount}
             onClose={() => senderAccountDialogOpen(false)}
             handleSave={handleSenderAccountsUpdate}
           />
@@ -205,7 +205,7 @@ const SetupCampaign: React.FC<SetupCampaignProps> = ({
           />
         </Box>
 
-        {/* Follow-up Leads */}
+
         <Box sx={{ display: "flex", alignItems: "center", marginTop: "10px" }}>
           <CheckCircleIcon
             sx={{ color: "var(--success-color)", marginRight: "5px" }}

@@ -49,6 +49,8 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
     []
   );
   const { user } = useSelector((state: RootState) => state.user);
+  const isSaveDisabled = selectedEmailAccounts.length === 0;
+
 
   const columns: GridColDef[] = useMemo(
     () => [
@@ -135,6 +137,7 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
       const senderAccounts = campaign.sender_accounts;
       const accountIds = senderAccounts.map((o: any) => o.account_id);
       setSelectedEmailAccounts(accountIds);
+      console.log("SetSelectedAEmailAccount", selectedEmailAccounts);
       setEmailAccounts(senderAccounts);
       return response.campaign;
     } catch (error) {
@@ -193,6 +196,7 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
 
   const handleSearch = async (query: string) => {
     try {
+
       const trimmedQuery = query.trim();
       if (trimmedQuery === "") {
         setRows(senderAccounts);
@@ -259,7 +263,7 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
             variant="h6"
             sx={{ fontWeight: 600, fontSize: "18px" }}
             mt={1}
-            // ml={1}
+          // ml={1}
           >
             Email Accounts
           </Typography>
@@ -292,7 +296,13 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
             });
             onClose();
           }}
+          disabled={isSaveDisabled}
+          style={{
+            cursor: isSaveDisabled ? "not-allowed" : "pointer",
+            opacity: isSaveDisabled ? 0.6 : 1,
+          }}
         >
+
           Save Email Accounts
         </Button>
       </CustomDialogFooter>

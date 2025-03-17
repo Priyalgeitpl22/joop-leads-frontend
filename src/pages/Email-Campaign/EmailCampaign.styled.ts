@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Box, Tab, TableBody, TableCell, TableRow, Tabs } from "@mui/material";
+import { Box, Tab, TableBody, TableCell, TableRow } from "@mui/material";
 import { MuiColorInput } from "mui-color-input";
 
 export const EmailCampaignContainer = styled.div`
@@ -132,7 +132,7 @@ export const CopyButton = styled.button`
   }
 `;
 
-export const CustomTabs = styled(Tabs)`
+export const CustomTabs = styled(Tab)`
   min-height: 40px;
   padding: 5px 5px 0px 5px;
   background: var(--background-secondary);

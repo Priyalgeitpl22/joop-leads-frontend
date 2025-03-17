@@ -57,6 +57,7 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
     console.log("emailFieldAdded", emailFieldsAdded);
 
     setEmailFieldAdded((prev) => {
+
       const updatedFields = {
         ...prev,
         [field]: column,
@@ -64,11 +65,11 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
 
       onEmailFieldsChange(updatedFields);
       const hasSelection =
-      Boolean(updatedFields["Email"] && updatedFields["First Name"]) &&
-      Object.values(updatedFields).some((v) => Boolean(v));
-    
+        Boolean(updatedFields["Email"] && updatedFields["First Name"]) &&
+        Object.values(updatedFields).some((v) => Boolean(v));
+
       setIsNextDisabled(!hasSelection);
-          
+
       return updatedFields;
     });
   };

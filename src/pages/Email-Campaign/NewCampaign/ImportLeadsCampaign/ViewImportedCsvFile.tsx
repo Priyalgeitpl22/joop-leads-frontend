@@ -35,6 +35,21 @@ const ViewImportedCsvFile: React.FC<ViewImportedCsvFileProps> = ({
   const buttonRef = useRef<HTMLDivElement | null>(null);
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
 
+  // const toggleMenu = () => {
+  //   if (showMenu) {
+  //     setShowMenu(false);
+  //   } else {
+  //     if (buttonRef.current) {
+  //       const rect = buttonRef.current.getBoundingClientRect();
+  //       setMenuPosition({
+  //         top: rect.top,
+  //         left: rect.right + 15,
+  //       });
+  //     }
+  //     setShowMenu(true);
+  //   }
+  // }, [showUploadedLeads]);
+
   const toggleMenu = () => {
     if (showMenu) {
       setShowMenu(false);
@@ -50,25 +65,16 @@ const ViewImportedCsvFile: React.FC<ViewImportedCsvFileProps> = ({
     }
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        menuRef.current &&
-        !menuRef.current.contains(event.target as Node) &&
-        buttonRef.current &&
-        !buttonRef.current.contains(event.target as Node)
-      ) {
-        setShowMenu(false);
-      }
-    };
+  const showUploadLeads = () => {
+    setShowUploadedLeads(true);
+  };
 
-    if (showMenu) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [showMenu]);
+  const handleExportCsv = () => {
+    setExportCsvDialog(true);
+  };
+
+  const goToNextStep = () => {
+  };
 
   return (
     <Container>
