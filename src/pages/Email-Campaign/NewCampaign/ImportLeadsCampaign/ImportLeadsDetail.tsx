@@ -221,7 +221,7 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
             mb: 3,
           }}
         />
-        {columns.map((field, index) => (
+        {columns?.map((field, index) => (
           <Box
             key={index}
             sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}

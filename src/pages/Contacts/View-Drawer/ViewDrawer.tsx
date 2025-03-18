@@ -37,7 +37,7 @@ const ViewDrawer: React.FC<ViewDrawerProps> = ({ open, onClose }) => {
     <StyledDrawer anchor="right" open={open} onClose={onClose}>
       <StyleBox>
         <TitleContainer>
-          <StyledTypography variant="h6">📌 Contact Details</StyledTypography>
+          <StyledTypography variant="h6">📌 Lead Details</StyledTypography>
           <StyledCloseIconButton onClick={onClose}>
             <CloseIcon />
           </StyledCloseIconButton>

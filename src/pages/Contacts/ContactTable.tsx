@@ -112,10 +112,10 @@ const ContactTable: React.FC = () => {
         const campaignId = response.campaignId;
         navigate(`/email-campaign/new-campaign?campaignId=${campaignId}`);
       } catch (error) {
-        toast.error("Something went wrong with create contacts.");
+        toast.error("Something went wrong with create leads.");
       }
     } else {
-      toast.error("No contacts selected for create contacts");
+      toast.error("No leads selected for create leads");
     }
   };
 
@@ -123,13 +123,13 @@ const ContactTable: React.FC = () => {
     if (!window.confirm("Are you sure you want to delete this contact?")) {
       return;
     }
-  
+
     try {
       debugger
-      const response = await dispatch(deleteContact(contactId)).unwrap(); 
+      const response = await dispatch(deleteContact(contactId)).unwrap();
       if (response) {
         toast.success(response?.message || "Contact deleted successfully.");
-        await getFetchAllContacts(); // Refresh contact list
+        await getFetchAllContacts();
       } else {
         toast.error("Failed to delete contact.");
       }
@@ -137,8 +137,8 @@ const ContactTable: React.FC = () => {
       toast.error("Something went wrong while deleting the contact.");
     }
   };
-  
-  
+
+
 
   const columns: GridColDef[] = useMemo(
     () => [
@@ -202,12 +202,12 @@ const ContactTable: React.FC = () => {
         field: "delete",
         headerName: "Delete",
         renderCell: (_params) => (
-            <IconButton
-              color="error"
-              onClick={() => handleDeleteContact(_params.row.id)}
-            >
-              <DeleteIcon />
-            </IconButton>
+          <IconButton
+            color="error"
+            onClick={() => handleDeleteContact(_params.row.id)}
+          >
+            <DeleteIcon />
+          </IconButton>
         ),
       },
     ],
@@ -294,19 +294,19 @@ const ContactTable: React.FC = () => {
       try {
         const response = await dispatch(DeactivateContacts(selectedIds)).unwrap();
         if (response?.code === 200) {
-          toast.success(response?.message || "Contacts have been deactivated successfully.");
+          toast.success(response?.message || "Leads have been deactivated successfully.");
         } else {
-          toast.error("Failed to deactivate contacts.");
+          toast.error("Failed to deactivate Leads.");
         }
         setSelectedIds([]);
         setRowSelectionModel([])
 
         await getFetchAllContacts();
       } catch (error) {
-        toast.error("Something went wrong while deactivating contacts.");
+        toast.error("Something went wrong while deactivating leads.");
       }
     } else {
-      toast.error("No contacts selected for deactivation.");
+      toast.error("No leads selected for deactivation.");
     }
   };
 
@@ -357,7 +357,7 @@ const ContactTable: React.FC = () => {
     <ContactsContainer>
       <Toaster position="top-right" />
       <ContactsHeader>
-        <SectionTitle>Contacts</SectionTitle>
+        <SectionTitle>All Leads</SectionTitle>
         <Box
           sx={{
             display: "flex",
@@ -373,7 +373,7 @@ const ContactTable: React.FC = () => {
           <SearchBar>
             <Search size={20} />
             <input
-              placeholder="Search by Contact or Name"
+              placeholder="Search by Leads or Name"
               value={searchQuery}
               onChange={handleSearchChange}
             />
@@ -384,18 +384,18 @@ const ContactTable: React.FC = () => {
           />
 
           {selectedIds.length == 0 && (
-          <Tooltip title="Upload Bulk Contacts" arrow>
-            <IconsButton onClick={handleOpenDialog}>
-              <CloudUploadIcon />
-            </IconsButton>
-          </Tooltip>
-           )}
+            <Tooltip title="Upload Bulk leads" arrow>
+              <IconsButton onClick={handleOpenDialog}>
+                <CloudUploadIcon />
+              </IconsButton>
+            </Tooltip>
+          )}
           {selectedIds.length == 0 && (
-          <Tooltip title="Add Contact" arrow>
-            <IconsButton onClick={handleAccountOpenDialog}>
-              <PersonAddIcon />
-            </IconsButton>
-          </Tooltip>
+            <Tooltip title="Add Leads" arrow>
+              <IconsButton onClick={handleAccountOpenDialog}>
+                <PersonAddIcon />
+              </IconsButton>
+            </Tooltip>
           )}
 
           {selectedIds.length > 0 && allActive && (
