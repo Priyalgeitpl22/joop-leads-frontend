@@ -1,15 +1,32 @@
-import { SetStateAction, useState } from "react";
-import { ContentContainer, CustomTab, CustomTabs } from "../EmailCampaign.styled";
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import {
+  ContentContainer,
+  CustomTab,
+  CustomTabs,
+} from "../EmailCampaign.styled";
 import ViewPerformanceEmailCampaign from "./ViewPerformanceEmailCampaign";
 import ViewLeadListEmailCampaign from "./ViewLeadListEmailCampaign";
 import ViewSequencesEmailCampaign from "./ViewSequencesEmailCampaign";
 
 const ViewEmailCampaign = () => {
   const [activeTab, setActiveTab] = useState<string>("performance");
+  const [campaignId, setCampaignId] = useState<string>("");
 
-  const handleTabChange = (_: any, newValue: SetStateAction<string>) => {
+  const location = useLocation();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const id = params.get("id");
+
+    if (id) {
+      setCampaignId(id);
+    }
+  }, [location.search]);
+
+  const handleTabChange = (_: any, newValue: string) => {
     const validTabs = ["performance", "lead_list", "sequences"];
-    setActiveTab(validTabs.includes(newValue as string) ? newValue : "performance");
+    setActiveTab(validTabs.includes(newValue) ? newValue : "performance");
   };
 
   return (
@@ -29,11 +46,13 @@ const ViewEmailCampaign = () => {
         <CustomTab label="Sequences" value="sequences" />
       </CustomTabs>
 
-      {activeTab === "performance" && <ViewPerformanceEmailCampaign/>}
-      {activeTab === "lead_list" && <ViewLeadListEmailCampaign />}
+      {activeTab === "performance" && <ViewPerformanceEmailCampaign />}
+      {activeTab === "lead_list" && (
+        <ViewLeadListEmailCampaign campaignId={campaignId} />
+      )}
       {activeTab === "sequences" && <ViewSequencesEmailCampaign />}
     </ContentContainer>
   );
-}
+};
 
 export default ViewEmailCampaign;
