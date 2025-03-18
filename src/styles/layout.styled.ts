@@ -1,8 +1,11 @@
+
 import styled from "@emotion/styled";
 import { motion } from "framer-motion";
 import { NavLink } from "react-router-dom";
 import { Box, TextField as MuiTextField } from "@mui/material";
 import { InputLabel as MuiInputLabel } from "@mui/material";
+
+
 
 interface ButtonProps {
   color: string
@@ -70,12 +73,12 @@ export const NavItem = styled(NavLink)`
 export const SettingsWrapper = styled.div`
   position: absolute;
   bottom: 20px;
-  width: auto;  
+  width: auto;
 `;
 
 export const SubmenuWrapper = styled(motion.div)`
   position: absolute;
-  bottom: 75px; 
+  bottom: 75px;
   left: 0;
   display: flex;
   flex-direction: column;
@@ -147,7 +150,7 @@ export const Button2 = styled("button", {
     width: fit-content;
     height: 100%;
     border-radius: 5px;
-    white-space: nowrap;  
+    white-space: nowrap;
     padding: 12px;
     color: ${color};
     background-color: ${background};
@@ -196,4 +199,11 @@ export const SectionTitle = styled.h2`
   color: #35495c;
   display: flex;
   white-space: nowrap;
+`;
+
+export const SmtpUpdateTextField = styled(MuiTextField)`
+  box-shadow: none !important;
+  & .MuiOutlinedInput-root {
+    box-shadow: none !important;
+  }
 `;
