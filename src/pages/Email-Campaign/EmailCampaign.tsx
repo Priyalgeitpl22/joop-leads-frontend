@@ -40,6 +40,7 @@ import { GridDeleteIcon } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import ProgressBar from "../../assets/Custom/linearProgress";
 import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
+import toast from "react-hot-toast";
 
 const EmailCampaign: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -152,9 +153,12 @@ const EmailCampaign: React.FC = () => {
   const handleCampaignDelete = async () => {
     if (!selectedCampaign) return;
     try {
-      await dispatch(DeleteEmailCampaign(selectedCampaign)).unwrap();
-      console.log("Campaign deleted successfully");
-
+     const response= await dispatch(DeleteEmailCampaign(selectedCampaign)).unwrap()
+     if (response?.code === 200) {
+      toast.success(response?.message || "Contacts have been deactivated successfully.");
+    } else {
+      toast.error("Failed to deactivate contacts.");
+    }
       handleCloseDeleteDialog();
       getAllEmailCampaigns();
     } catch (error) {

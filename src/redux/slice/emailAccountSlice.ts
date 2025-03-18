@@ -143,12 +143,12 @@ export const CreateEmailAccount = createAsyncThunk<
 export const SearchEmailAccount = createAsyncThunk(
   "accounts/search",
   async (
-    { email, name, orgId }: { email?: string; name?: string; orgId: string },
+    {query, orgId }: { query:string, orgId: string },
     { rejectWithValue }
   ) => {
     try {
       const response = await emailApi.get(`/accounts/search`, {
-        params: { email, name, orgId},
+        params: { query, orgId},
         headers: { "Cache-Control": "no-cache" }, 
       });
 

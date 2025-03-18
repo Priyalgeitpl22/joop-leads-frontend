@@ -203,17 +203,8 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
         return;
       }
 
-      let email = "";
-      let name = "";
-
-      if (trimmedQuery.includes("@")) {
-        email = trimmedQuery;
-      } else {
-        name = trimmedQuery;
-      }
-
       const filteredData = await dispatch(
-        SearchEmailAccount({ email, name, orgId: user?.orgId || "" })
+        SearchEmailAccount({ query:trimmedQuery, orgId: user?.orgId || "" })
       ).unwrap();
 
       const formattedData = filteredData.map((item: any) => ({
