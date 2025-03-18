@@ -14,11 +14,13 @@ import { changePassword } from "../../redux/slice/authSlice";
 import toast, { Toaster } from "react-hot-toast";
 import PasswordInput from "../../utils/PasswordInput";
 import { validatePassword } from "../../utils/Validation";
+import Loader from "../Loader";
 
 const ChangePassword: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.user);
+  const { loading } = useSelector((state: RootState) => state.auth); // Get loading state from Redux
 
   const [formData, setFormData] = useState({
     existingPassword: "",
@@ -93,10 +95,12 @@ const ChangePassword: React.FC = () => {
         })
       ).unwrap();
 
-      if (response) {
-        toast.success("Password updated successfully!");
-        navigate("/");
-        window.location.reload();
+      if (response?.code === 200) {
+        toast.success(response?.message || "Password updated successfully!", {
+          duration: 3000,
+          position: "top-right",
+        });
+        navigate("/"); 
       }
     } catch (error) {
       toast.error(error as string);
@@ -149,8 +153,12 @@ const ChangePassword: React.FC = () => {
             helperText={errors.confirmPassword}
           />
 
-          <StyledButton variant="contained" onClick={handleChangePassword}>
-            Change Password
+          <StyledButton
+            variant="contained"
+            onClick={handleChangePassword}
+            disabled={loading} 
+          >
+            {loading ? <Loader /> : "Change Password"}
           </StyledButton>
         </FormSection>
       </ChangePasswordCard>
