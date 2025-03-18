@@ -50,7 +50,9 @@ const ViewEmailCampaign = () => {
       {activeTab === "lead_list" && (
         <ViewLeadListEmailCampaign campaignId={campaignId} />
       )}
-      {activeTab === "sequences" && <ViewSequencesEmailCampaign />}
+      {activeTab === "sequences" && (
+        <ViewSequencesEmailCampaign campaignId={campaignId} />
+      )}
     </ContentContainer>
   );
 };

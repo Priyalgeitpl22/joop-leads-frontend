@@ -206,7 +206,7 @@ const EmailCampaign: React.FC = () => {
                 Campaign Details
               </TableCell>
               <TableCell
-                colSpan={6}
+                colSpan={4}
                 sx={{ fontWeight: "bold", color: "#35495c" }}
               >
                 Report
@@ -242,7 +242,7 @@ const EmailCampaign: React.FC = () => {
                   </CustomTableCell>
                 ))}
 
-                <CustomTableCell>
+                <CustomTableCell sx={{ display: "flex" }}>
                   <Tooltip title="Edit">
                     <ModeEditOutlineOutlinedIcon
                       onClick={() => handleEditCampaign(campaign.id)}

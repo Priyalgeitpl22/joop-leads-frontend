@@ -258,7 +258,7 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
           >
             Email Accounts
           </Typography>
-          <Box sx={{ display: "flex", width: "100%" }}>
+          <Box>
             <SearchBar>
               <Search size={20} />
               <input
