@@ -29,11 +29,9 @@ import { IEmailCampaign } from "./NewCampaign/interfaces";
 import { formatDate } from "../../utils/utils";
 import { Button } from "../../styles/global.styled";
 import ForwardToInboxOutlinedIcon from "@mui/icons-material/ForwardToInboxOutlined";
-// import MarkEmailReadOutlinedIcon from "@mui/icons-material/MarkEmailReadOutlined";
 import DraftsOutlinedIcon from "@mui/icons-material/DraftsOutlined";
 import AdsClickOutlinedIcon from "@mui/icons-material/AdsClickOutlined";
 import ErrorOutlinedIcon from "@mui/icons-material/ErrorOutlined";
-// import AttachMoneyOutlinedIcon from "@mui/icons-material/AttachMoneyOutlined";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
 import { SectionTitle, TableItem } from "../../styles/layout.styled";
 import { GridDeleteIcon } from "@mui/x-data-grid";
@@ -235,7 +233,7 @@ const EmailCampaign: React.FC = () => {
                       <p>
                         {item.label}:{" "}
                         {
-                          campaign.analytics_count[
+                          campaign?.analytics_count[
                             item.count_label as keyof typeof campaign.analytics_count
                           ]
                         }
