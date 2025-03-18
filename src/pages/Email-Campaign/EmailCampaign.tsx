@@ -107,30 +107,27 @@ const EmailCampaign: React.FC = () => {
       count: 0,
       icon: ForwardToInboxOutlinedIcon,
       label: "Sent",
+      count_label: "sent_count",
       color: "#6e58f1",
     },
-    { count: 2, icon: DraftsOutlinedIcon, label: "Opened", color: "#bf51c1" },
+    {
+      count: 2,
+      icon: DraftsOutlinedIcon,
+      label: "Opened",
+      color: "#bf51c1",
+      count_label: "opened_count",
+    },
     {
       count: 4,
       icon: AdsClickOutlinedIcon,
+      count_label: "clicked_count",
       label: "Clicked",
       color: "#efba2f",
     },
     {
-      count: 7,
-      icon: MarkEmailReadOutlinedIcon,
-      label: "Replied",
-      color: "#51c1c1",
-    },
-    {
-      count: 10,
-      icon: AttachMoneyOutlinedIcon,
-      label: "Positive Reply",
-      color: "#23b820",
-    },
-    {
       count: 1,
       icon: ErrorOutlinedIcon,
+      count_label: "bounced_count",
       label: "Bounced",
       color: "var(--error-color)",
     },
@@ -236,7 +233,12 @@ const EmailCampaign: React.FC = () => {
                     <TableItem>
                       <item.icon sx={{ fontSize: "20px", color: item.color }} />
                       <p>
-                        {item.label}: {item.count}
+                        {item.label}:{" "}
+                        {
+                          campaign.analytics_count[
+                            item.count_label as keyof typeof campaign.analytics_count
+                          ]
+                        }
                       </p>
                     </TableItem>
                   </CustomTableCell>
