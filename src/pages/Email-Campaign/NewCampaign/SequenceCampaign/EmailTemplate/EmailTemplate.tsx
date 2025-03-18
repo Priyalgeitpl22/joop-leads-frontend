@@ -77,6 +77,7 @@ const EmailTemplate: React.FC<EmailTemplateProps> = ({
 
   const handleOpenMenu = (target: "subject" | "emailBody", event?: any) => {
     setVariableTarget(target);
+    console.log(event);
     if (target === "subject" && subjectRef.current) {
       setAnchorEl(subjectRef.current);
     } else if (target === "emailBody" && quillRef.current) {

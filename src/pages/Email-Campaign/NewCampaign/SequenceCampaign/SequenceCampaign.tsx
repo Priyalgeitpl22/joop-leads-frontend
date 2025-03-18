@@ -58,9 +58,9 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
   const dispatch = useDispatch<AppDispatch>();
   const [isLoading, setIsLoading] = useState(true);
 
-  const handleAddStep = () => {
-    setShowStepOptions(!showStepOptions);
-  };
+  // const handleAddStep = () => {
+  //   setShowStepOptions(!showStepOptions);
+  // };
 
   useEffect(() => {
     setIsNextDisabled(false);

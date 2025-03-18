@@ -33,7 +33,7 @@ import { Search } from "lucide-react";
 import { CustomDataTable } from "../../assets/Custom/customDataGrid";
 import { GridColDef, GridDeleteIcon } from "@mui/x-data-grid";
 import { formatDate } from "../../utils/utils";
-import { Button, SecondaryButton } from "../../styles/global.styled";
+import { Button } from "../../styles/global.styled";
 import { CustomTableCell } from "../Email-Campaign/EmailCampaign.styled";
 import { useNavigate } from "react-router-dom";
 import ProgressBar from "../../assets/Custom/linearProgress";
@@ -210,9 +210,9 @@ const EmailAccounts: React.FC = () => {
     setIsDialogOpen(true);
   };
 
-  const handleSettingDialog = () => {
-    setIsSettingOpen(true);
-  };
+  // const handleSettingDialog = () => {
+  //   setIsSettingOpen(true);
+  // };
 
   const isMenuOpen = Boolean(anchorEl);
 
