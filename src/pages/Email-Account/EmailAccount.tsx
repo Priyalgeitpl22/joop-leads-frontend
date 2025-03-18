@@ -188,7 +188,9 @@ const EmailAccounts: React.FC = () => {
         const filteredData = await dispatch(
           SearchEmailAccount({ query: trimmedQuery, orgId: user?.orgId || "" })
         ).unwrap();
-        setRows(filteredData);
+
+        setRows(filteredData.data);
+        console.log("filter", filteredData.data);
       }
     } catch (error) {
       console.error("Search failed:", error);
