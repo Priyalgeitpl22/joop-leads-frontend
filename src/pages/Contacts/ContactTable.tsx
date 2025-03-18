@@ -23,6 +23,7 @@ import {
   ContactsAccount,
   CreateCampaignWithContacts,
   DeactivateContacts,
+  deleteContact,
   getCampaignListById,
   SearchContacts,
   VerifyViewContactPayload,
@@ -118,6 +119,27 @@ const ContactTable: React.FC = () => {
     }
   };
 
+  const handleDeleteContact = async (contactId: string) => {
+    if (!window.confirm("Are you sure you want to delete this contact?")) {
+      return;
+    }
+  
+    try {
+      debugger
+      const response = await dispatch(deleteContact(contactId)).unwrap(); 
+      if (response) {
+        toast.success(response?.message || "Contact deleted successfully.");
+        await getFetchAllContacts(); // Refresh contact list
+      } else {
+        toast.error("Failed to delete contact.");
+      }
+    } catch (error) {
+      toast.error("Something went wrong while deleting the contact.");
+    }
+  };
+  
+  
+
   const columns: GridColDef[] = useMemo(
     () => [
       {
@@ -182,6 +204,7 @@ const ContactTable: React.FC = () => {
         renderCell: (_params) => (
             <IconButton
               color="error"
+              onClick={() => handleDeleteContact(_params.row.id)}
             >
               <DeleteIcon />
             </IconButton>

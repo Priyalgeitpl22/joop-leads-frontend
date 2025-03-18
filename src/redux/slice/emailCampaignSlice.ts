@@ -224,6 +224,25 @@ export const SearchEmailCampaign = createAsyncThunk(
   }
 );
 
+export const searchContactsByCampaign = createAsyncThunk(
+  "contacts/searchByCampaign",
+  async (
+    { campaign_id, email }: { campaign_id: string; email?: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await api.get(
+        `${BASE_URL}/search-contact?campaign_id=${campaign_id}${
+          email ? `&email=${email}` : ""
+        }`
+      );
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Network error");
+    }
+  }
+);
+
 export const DeleteEmailCampaign = createAsyncThunk<
   string,
   string,
