@@ -61,9 +61,19 @@ const ChangePassword: React.FC = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    validateField(name, value);
 
 
     if (isSubmitted) validateField(name, value);
+  };
+
+  const isFormValid = () => {
+    return (
+      formData.existingPassword.trim() !== "" &&
+      formData.newPassword.trim() !== "" &&
+      formData.confirmPassword.trim() !== "" &&
+      !Object.values(errors).some((error) => error) // Ensures no errors exist
+    );
   };
 
   const handleChangePassword = async () => {
@@ -75,7 +85,7 @@ const ChangePassword: React.FC = () => {
 
 
     if (Object.values(errors).some((error) => error)) {
-      toast.error("Missing Required fields.");
+      toast.error("Please fix errors before proceeding.");
       return;
     }
 
@@ -123,7 +133,7 @@ const ChangePassword: React.FC = () => {
           </Typography>
 
           <PasswordInput
-            label="Existing Password"
+            label="Existing Password *"
             name="existingPassword"
             value={formData.existingPassword}
             onChange={handleInputChange}
@@ -132,7 +142,7 @@ const ChangePassword: React.FC = () => {
           />
 
           <PasswordInput
-            label="New Password"
+            label="New Password *"
             name="newPassword"
             value={formData.newPassword}
             onChange={handleInputChange}
@@ -141,7 +151,7 @@ const ChangePassword: React.FC = () => {
           />
 
           <PasswordInput
-            label="Confirm Password"
+            label="Confirm Password *"
             name="confirmPassword"
             value={formData.confirmPassword}
             onChange={handleInputChange}
@@ -149,7 +159,8 @@ const ChangePassword: React.FC = () => {
             helperText={errors.confirmPassword}
           />
 
-          <StyledButton variant="contained" onClick={handleChangePassword}>
+          <StyledButton variant="contained" onClick={handleChangePassword} disabled={!isFormValid()}
+          >
             Change Password
           </StyledButton>
         </FormSection>

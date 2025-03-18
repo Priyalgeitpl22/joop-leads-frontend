@@ -84,7 +84,7 @@ const ForgotPassword = () => {
 
           <form onSubmit={handleSubmitEmail}>
             <StyledTextField
-              label="Email Address"
+              label="Email Address *"
               variant="outlined"
               // type="email"
               value={email}
@@ -97,7 +97,7 @@ const ForgotPassword = () => {
             <StyledButton fullWidth type="submit">
               RESET PASSWORD
             </StyledButton>
-          
+
           </form>
 
           <Typography variant="body2" align="center" sx={{ my: 2 }}>

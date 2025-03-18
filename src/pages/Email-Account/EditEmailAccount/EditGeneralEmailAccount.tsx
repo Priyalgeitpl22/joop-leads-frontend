@@ -232,7 +232,7 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
   };
 
   const handleUpdatAccount = () => {
-    if (!validateFields()) return;
+
     if (!id) return;
 
     let payload;
@@ -636,9 +636,9 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
                 error={!formData.msg_per_day || formData.msg_per_day <= 0}
                 inputProps={{ min: 1 }}
                 helperText={
-                  !formData.time_gap
+                  !formData.msg_per_day
                     ? "Time gap is required"
-                    : formData.time_gap <= 0
+                    : formData.msg_per_day <= 0
                       ? "Enter a valid positive number"
                       : ""
                 }
@@ -654,9 +654,9 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
                 onChange={handleChange}
                 error={!formData.time_gap || formData.time_gap <= 0}
                 helperText={
-                  !formData.msg_per_day
+                  !formData.time_gap
                     ? "Message Per Day is required"
-                    : formData.msg_per_day <= 0
+                    : formData.time_gap <= 0
                       ? "Enter a valid positive number"
                       : ""
                 }
