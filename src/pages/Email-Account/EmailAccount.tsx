@@ -185,9 +185,8 @@ const EmailAccounts: React.FC = () => {
       if (trimmedQuery === "") {
         setRows(emailAccounts);
       } else {
-        const [email, name] = trimmedQuery.split(" ");
         const filteredData = await dispatch(
-          SearchEmailAccount({ email, name, orgId: user?.orgId || "" })
+          SearchEmailAccount({ query: trimmedQuery, orgId: user?.orgId || "" })
         ).unwrap();
         setRows(filteredData);
       }

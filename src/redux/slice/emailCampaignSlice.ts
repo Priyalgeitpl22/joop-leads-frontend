@@ -244,7 +244,7 @@ export const searchContactsByCampaign = createAsyncThunk(
 );
 
 export const DeleteEmailCampaign = createAsyncThunk<
-  string,
+  any,
   string,
   { rejectValue: string }
 >("emailCampaigns/deleteEmailCampaign", async (id, { rejectWithValue }) => {
@@ -254,13 +254,9 @@ export const DeleteEmailCampaign = createAsyncThunk<
       throw new Error("Failed to delete campaign");
     }
 
-    return id;
-  } catch (error: unknown) {
-    let errorMessage = "Failed to delete campaign";
-    if (error instanceof AxiosError) {
-      errorMessage = error.response?.data?.message || errorMessage;
-    }
-    return rejectWithValue(errorMessage);
+    return response.data;
+  } catch (error: any) {
+    return rejectWithValue(error.response?.data?.message || "Network error");
   }
 });
 
