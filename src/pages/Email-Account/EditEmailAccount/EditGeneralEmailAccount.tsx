@@ -1,8 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { RadioGroup, Radio, Checkbox, CircularProgress, Typography } from "@mui/material";
+import {
+  RadioGroup,
+  Radio,
+  Checkbox,
+  CircularProgress,
+
+} from "@mui/material";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import Grid2 from "@mui/material/Grid2";
 import { Button2, TextField, InputLabel } from "../../../styles/layout.styled";
+import { SmtpUpdateTextField } from "../../../styles/layout.styled";
+
 import ReactQuill from "react-quill";
 import {
   getEmailAccountSmtpDetail,
@@ -28,10 +36,10 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
     userName: "",
     password: "",
     smtpHost: "",
-    smtpPort: 0,
+    smtpPort: null,
     security: false,
     imapHost: "",
-    imapPort: 0,
+    imapPort: null,
     imapUserName: "",
     imapPassword: "",
     imapSecurity: false,
@@ -43,7 +51,7 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
     clients: "",
     signature: "",
     msg_per_day: 0,
-    time_gap: 0,
+    time_gap: null,
     type: "",
   });
 
@@ -65,6 +73,15 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
     imapHost: "",
     imapPort: "",
   });
+
+  const isUpdateDisabled =
+    !formData.fromName ||
+    !formData.fromEmail ||
+    !validateEmail(formData.fromEmail) ||
+    !formData.msg_per_day ||
+    formData.msg_per_day <= 0 ||
+    !formData.time_gap ||
+    formData.time_gap <= 0;
 
   useEffect(() => {
     if (id) {
@@ -182,7 +199,7 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
     if (!formData.password.trim()) newErrors.password = "Password is required";
     if (!formData.smtpHost.trim()) newErrors.smtpHost = "SMTP Host is required";
 
-    if (formData.smtpPort === null || formData.smtpPort === 0) {
+    if (formData.smtpPort === null || formData.smtpPort === "") {
       newErrors.smtpPort = "SMTP Port is required";
     }
 
@@ -203,16 +220,19 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
 
     if (!formData.imapHost.trim()) newErrors.imapHost = "IMAP Host is required";
 
-    if (formData.imapPort === null || formData.imapPort == 0) {
+    if (formData.imapPort === null || formData.imapPort === "") {
       newErrors.imapPort = "Imap port is required";
     }
 
     setErrors(newErrors);
 
+    console.log("Validation Errors:", newErrors);
+
     return Object.keys(newErrors).length === 0;
   };
 
   const handleUpdatAccount = () => {
+    if (!validateFields()) return;
     if (!id) return;
 
     let payload;
@@ -281,7 +301,6 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
       });
   };
 
-
   return (
     <div style={{ padding: "3%" }}>
       {formData.type === "imap" && (
@@ -292,77 +311,69 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
           <Grid2 container spacing={2} sx={{ justifyContent: "left" }}>
             <Grid2 size={{ xs: 6, sm: 6 }}>
               <InputLabel>From Name</InputLabel>
-              <TextField
+              <SmtpUpdateTextField
                 fullWidth
                 name="fromName"
                 value={formData.fromName}
                 onChange={handleChange}
                 error={!!errors.fromName}
+                helperText={errors.fromName}
               />
-              {errors.fromName && <Typography color="red" variant="caption">
-                {errors.fromName}
-              </Typography>
-              }
             </Grid2>
             <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel>From Email</InputLabel>
-              <TextField
+              <SmtpUpdateTextField
                 fullWidth
                 name="fromEmail"
                 value={formData.fromEmail}
                 onChange={handleChange}
                 error={!!errors.fromEmail}
+                helperText={errors.fromEmail}
               />
-              {errors.fromEmail && <Typography color="red" variant="caption">
-                {errors.fromEmail}
-              </Typography>
-              }
             </Grid2>
             <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel>User Name</InputLabel>
-              <TextField
+              <SmtpUpdateTextField
                 fullWidth
                 name="userName"
                 value={formData.userName}
                 onChange={handleChange}
                 error={!!errors.userName}
+                helperText={errors.userName}
               />
-              {errors.userName && <Typography color="red" variant="caption">{errors.userName}</Typography>}
             </Grid2>
             <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel>Password</InputLabel>
-              <TextField
+              <SmtpUpdateTextField
                 fullWidth
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
                 error={!!errors.password}
+                helperText={errors.password}
               />
-              {errors.password && <Typography color="red" variant="caption">{errors.password}</Typography>}
             </Grid2>
             <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel>SMTP host</InputLabel>
-              <TextField
+              <SmtpUpdateTextField
                 fullWidth
                 name="smtpHost"
                 value={formData.smtpHost}
                 onChange={handleChange}
-                error={!!errors.smtpPort}
+                error={!!errors.smtpHost}
+                helperText={errors.smtpHost}
               />
-              {errors.smtpHost && <Typography color="red" variant="caption">{errors.smtpHost}</Typography>}
-
             </Grid2>
             <Grid2 size={{ xs: 2, sm: 2 }}>
               <InputLabel>SMTP Port</InputLabel>
-              <TextField
+              <SmtpUpdateTextField
                 fullWidth
                 name="smtpPort"
                 value={formData.smtpPort}
                 onChange={handleChange}
                 error={!!errors.smtpPort}
+                helperText={errors.smtpPort}
               />
-              {errors.smtpPort && <Typography color="red" variant="caption">{errors.smtpPort}</Typography>}
-
             </Grid2>
             <Grid2 size={{ xs: 2, sm: 2 }}>
               <RadioGroup
@@ -378,27 +389,25 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
             </Grid2>
             <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel>Message Per Day (Warmups not included)</InputLabel>
-              <TextField
+              <SmtpUpdateTextField
                 fullWidth
                 name="msg_per_day"
                 value={formData.msg_per_day}
                 onChange={handleChange}
                 error={!!errors.msg_per_day}
+                helperText={errors.msg_per_day}
               />
-              {errors.msg_per_day && <Typography color="red" variant="caption">{errors.msg_per_day}</Typography>}
-
             </Grid2>
             <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel>Minimum time gap (min)</InputLabel>
-              <TextField
+              <SmtpUpdateTextField
                 fullWidth
                 name="time_gap"
                 value={formData.time_gap}
                 onChange={handleChange}
                 error={!!errors.time_gap}
+                helperText={errors.time_gap}
               />
-              {errors.time_gap && <Typography color="red" variant="caption">{errors.time_gap}</Typography>}
-
             </Grid2>
             <Grid2 size={{ xs: 10, sm: 10 }}>
               <label
@@ -443,7 +452,7 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
               <>
                 <Grid2 size={{ xs: 5, sm: 5 }}>
                   <InputLabel>IMAP User Name</InputLabel>
-                  <TextField
+                  <SmtpUpdateTextField
                     fullWidth
                     name="imapUserName"
                     value={formData.imapUserName}
@@ -452,7 +461,7 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
                 </Grid2>
                 <Grid2 size={{ xs: 5, sm: 5 }}>
                   <InputLabel>IMAP Password</InputLabel>
-                  <TextField
+                  <SmtpUpdateTextField
                     fullWidth
                     name="imapPassword"
                     value={formData.imapPassword}
@@ -464,28 +473,25 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
 
             <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel>IMAP Host</InputLabel>
-              <TextField
+              <SmtpUpdateTextField
                 fullWidth
                 name="imapHost"
                 value={formData.imapHost}
                 onChange={handleChange}
                 error={!!errors.imapHost}
+                helperText={errors.imapHost}
               />
-              {errors.imapHost && <Typography color="red" variant="caption">{errors.imapHost}</Typography>}
-
             </Grid2>
             <Grid2 size={{ xs: 2, sm: 2 }}>
               <InputLabel>IMAP Port</InputLabel>
-              <TextField
+              <SmtpUpdateTextField
                 fullWidth
                 name="imapPort"
                 value={formData.imapPort}
                 onChange={handleChange}
                 error={!!errors.imapPort}
-
+                helperText={errors.imapPort}
               />
-              {errors.imapPort && <Typography color="red" variant="caption">{errors.imapPort}</Typography>}
-
             </Grid2>
             <Grid2 size={{ xs: 2, sm: 2 }}>
               <RadioGroup
@@ -621,36 +627,14 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
             </Grid2>
             <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel>Message Per Day (Warmups not included)</InputLabel>
-              <TextField
+              <SmtpUpdateTextField
                 fullWidth
                 type="number"
                 name="msg_per_day"
                 value={formData.msg_per_day}
                 onChange={handleChange}
                 error={!formData.msg_per_day || formData.msg_per_day <= 0}
-                helperText={
-                  !formData.msg_per_day
-                    ? "Message Per Day is required"
-                    : formData.msg_per_day <= 0
-                      ? "Enter a valid positive number"
-                      : ""
-                }
-                inputProps={{
-                  min: 1,
-                }}
-              />
-
-            </Grid2>
-
-            <Grid2 size={{ xs: 5, sm: 5 }}>
-              <InputLabel>Minimum time gap (min)</InputLabel>
-              <TextField
-                fullWidth
-                type="number"
-                name="time_gap"
-                value={formData.time_gap}
-                onChange={handleChange}
-                error={!formData.time_gap || formData.time_gap <= 0}
+                inputProps={{ min: 1 }}
                 helperText={
                   !formData.time_gap
                     ? "Time gap is required"
@@ -658,25 +642,38 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
                       ? "Enter a valid positive number"
                       : ""
                 }
-                inputProps={{
-                  min: 1,
-                }}
+              />
+            </Grid2>
+            <Grid2 size={{ xs: 5, sm: 5 }}>
+              <InputLabel>Minimum time gap (min)</InputLabel>
+              <SmtpUpdateTextField
+                fullWidth
+                type="number"
+                name="time_gap"
+                value={formData.time_gap}
+                onChange={handleChange}
+                error={!formData.time_gap || formData.time_gap <= 0}
+                helperText={
+                  !formData.msg_per_day
+                    ? "Message Per Day is required"
+                    : formData.msg_per_day <= 0
+                      ? "Enter a valid positive number"
+                      : ""
+                }
+                inputProps={{ min: 1 }}
               />
             </Grid2>
             <Grid2 size={{ xs: 10, sm: 10 }}>
               {formData.type === "gmail" ? (
                 <Button2
+                  disabled={isUpdateDisabled}
                   onClick={handleUpdatAccount}
                   color={"white"}
                   background={"var(--theme-color)"}
                   style={{
-                    cursor:
-                      !formData.fromName || !formData.fromEmail
-                        ? "not-allowed"
-                        : "pointer",
+                    cursor: isUpdateDisabled ? "not-allowed" : "pointer",
                     width: "20%",
                   }}
-                  disabled={!formData.fromName || !formData.fromEmail}
                 >
                   Update Details
                 </Button2>
@@ -690,7 +687,6 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
                     width: "10%",
                     cursor: isSaveDisabled ? "not-allowed" : "pointer",
                   }}
-
                 >
                   Update Details
                 </Button2>
