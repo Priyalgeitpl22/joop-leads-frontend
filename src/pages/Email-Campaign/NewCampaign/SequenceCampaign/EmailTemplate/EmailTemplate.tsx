@@ -24,7 +24,6 @@ export const modules = {
     ["blockquote", "code-block"],
     ["link", "image"],
     ["clean"],
-    ["variables"],
   ],
 };
 
@@ -67,45 +66,24 @@ const EmailTemplate: React.FC<EmailTemplateProps> = ({
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
-  const addCustomButton = () => {
-    const toolbar = document.querySelector(".ql-toolbar");
-    if (!toolbar) return;
-  
-    const existingButton = document.querySelector(".ql-variables");
-    if (existingButton) existingButton.remove();
-  
-    const button = document.createElement("button");
-    button.classList.add("ql-variables");
-  
-    button.innerHTML = `
-    <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
-      <text x="3" y="14" font-size="14" font-weight="bold" fill="var(--border-color)">{ } Variables</text>
-    </svg>
-  `;
-    button.onclick = () => handleOpenMenu("subject");
-    const formatGroup = toolbar.querySelector(".ql-formats:last-child");
-    if (formatGroup) {
-      formatGroup.appendChild(button);
-    } else {
-      toolbar.appendChild(button);
-    }
-  };
-  
-  useEffect(() => {
-    setTimeout(addCustomButton, 500);
-  }, []);
-
   useEffect(() => {
     setEmailBody(selectedSequence?.seq_variants[0]?.emailBody || "");
     setSubject(selectedSequence?.seq_variants[0]?.subject || "");
   }, [selectedSequence]);
 
-  const handleOpenMenu = (target: "subject" | "emailBody") => {
+  useEffect(() => {
+    setTimeout(addCustomButton, 500);
+  }, []);
+
+  const handleOpenMenu = (target: "subject" | "emailBody", event?: any) => {
     setVariableTarget(target);
     if (target === "subject" && subjectRef.current) {
       setAnchorEl(subjectRef.current);
     } else if (target === "emailBody" && quillRef.current) {
-      setAnchorEl(quillRef.current.getEditor().container);
+      const editor = quillRef.current.getEditor();
+      if (editor) {
+        setAnchorEl(editor.container);
+      }
     }
   };
 
@@ -119,8 +97,12 @@ const EmailTemplate: React.FC<EmailTemplateProps> = ({
     } else if (variableTarget === "emailBody" && quillRef.current) {
       const quill = quillRef.current.getEditor();
       const range = quill.getSelection();
+  
       if (range) {
-        quill.insertText(range.index, ` {{${variable}}}`);
+        quill.insertText(range.index, ` {{${variable}}} `, "user");
+        quill.setSelection(range.index + ` {{${variable}}} `.length);
+      } else {
+        quill.insertText(quill.getLength(), ` {{${variable}}} `, "user");
       }
     }
     handleCloseMenu();
@@ -147,6 +129,30 @@ const EmailTemplate: React.FC<EmailTemplateProps> = ({
       updateSequenceData(updatedSequence);
     }
   };
+
+  const addCustomButton = () => {
+    const toolbar = document.querySelector(".ql-toolbar");
+    if (!toolbar) return;
+  
+    const existingButton = document.querySelector(".ql-variables");
+    if (existingButton) return;
+  
+    const button = document.createElement("button");
+    button.classList.add("ql-variables");
+    button.innerHTML = `{ }`;
+    
+    button.addEventListener("click", (event) => {
+      handleOpenMenu("emailBody", event);
+    });
+  
+    const formatGroup = toolbar.querySelector(".ql-formats:last-child");
+    if (formatGroup) {
+      formatGroup.appendChild(button);
+    } else {
+      toolbar.appendChild(button);
+    }
+  };
+  
 
   return (
     <EmailTemplateWrapper>
@@ -177,12 +183,12 @@ const EmailTemplate: React.FC<EmailTemplateProps> = ({
           open={open}
           onClose={handleCloseMenu}
           anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "left",
+            vertical: "top",
+            horizontal: "right",
           }}
           transformOrigin={{
             vertical: "top",
-            horizontal: "left",
+            horizontal: "right",
           }}
         >
           {variableOptions.map((variable) => (
