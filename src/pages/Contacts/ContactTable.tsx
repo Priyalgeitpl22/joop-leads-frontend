@@ -52,6 +52,7 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import toast, { Toaster } from 'react-hot-toast';
 import { SectionTitle } from "../../styles/layout.styled";
 import { DeleteIcon } from "./ContactTable.styled";
+import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
 
 
 export interface ImportedLeadsData {
@@ -87,6 +88,7 @@ const ContactTable: React.FC = () => {
   const [uploadleads, setUploadLeads] = React.useState<boolean>(false);
   const [uploadCounts, setUploadCounts] = React.useState<ILeadsCounts>();
   const [campaignId, setCampaignId] = React.useState("");
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
   const saveCSVSetting = (settings: any) => {
     setCSVsettings(settings);
@@ -119,23 +121,35 @@ const ContactTable: React.FC = () => {
     }
   };
 
-  const handleDeleteContact = async (contactId: string) => {
-    if (!window.confirm("Are you sure you want to delete this contact?")) {
-      return;
-    }
-  
-    try {
-      debugger
-      const response = await dispatch(deleteContact(contactId)).unwrap(); 
-      if (response) {
-        toast.success(response?.message || "Contact deleted successfully.");
-        await getFetchAllContacts(); // Refresh contact list
-      } else {
-        toast.error("Failed to delete contact.");
+ 
+  const handleOpenDeleteDialog = (selectedIds: string[]) => {
+    setSelectedIds(selectedIds);
+    setOpenDeleteDialog(true);
+  };
+
+  const handleCloseDeleteDialog = () => {
+    setOpenDeleteDialog(false);
+  };
+
+  const handleDeleteContact = async () => {
+    if (selectedIds.length > 0) {
+      try {
+      
+        const response = await dispatch(deleteContact(selectedIds)).unwrap();
+        if (response?.message) {
+          toast.success(response.message);
+        
+          setRows((prevRows) =>
+            prevRows.filter((contact) => !selectedIds.includes(contact.id))
+          );
+        } else {
+          toast.error("Failed to delete contacts.");
+        }
+      } catch (error) {
+        toast.error("Something went wrong while deleting the contacts.");
       }
-    } catch (error) {
-      toast.error("Something went wrong while deleting the contact.");
     }
+    handleCloseDeleteDialog();
   };
   
   
@@ -191,23 +205,27 @@ const ContactTable: React.FC = () => {
         field: "view",
         headerName: "View",
         renderCell: (params) => (
+          <Tooltip title="View Contact Details" arrow>
           <IconButton
             onClick={(event) => handleViewClick(event, params.row.id)}
           >
             <VisibilityIcon />
           </IconButton>
+          </Tooltip>
         ),
       },
       {
         field: "delete",
         headerName: "Delete",
         renderCell: (_params) => (
+          <Tooltip title="Delete Contact" arrow>
             <IconButton
               color="error"
-              onClick={() => handleDeleteContact(_params.row.id)}
+              onClick={() => handleOpenDeleteDialog(_params.row.id)}
             >
               <DeleteIcon />
             </IconButton>
+            </Tooltip>
         ),
       },
     ],
@@ -242,16 +260,8 @@ const ContactTable: React.FC = () => {
       if (trimmedQuery === "") {
         setRows(contactAccount);
       } else {
-        let first_name = "";
-        let email = "";
-        if (trimmedQuery) {
-          email = trimmedQuery;
-        } else {
-          first_name = trimmedQuery;
-        }
-
         const filteredData = await dispatch(
-          SearchContacts({ email, first_name, orgId: user?.orgId || "" })
+          SearchContacts({ query: trimmedQuery, orgId: user?.orgId || "" })
         ).unwrap();
         setRows(filteredData);
       }
@@ -274,7 +284,7 @@ const ContactTable: React.FC = () => {
     setSelectedIds(selectedIds);
     setRowSelectionModel(selectedIds);
   };
-
+  
   const selectedRowsData = rows.filter((row) => selectedIds.includes(row.id));
 
   const allActive =
@@ -324,7 +334,7 @@ const ContactTable: React.FC = () => {
 
   const handleAccountOpenDialog = () => setIsAddAccountDialogOPen(true);
   const handleAccountCloseDialog = () => setIsAddAccountDialogOPen(false);
-
+  
   const handleUploadContacts = async (data: any) => {
     console.log(emailFieldsToBeAdded);
     console.log(CSVsettings);
@@ -384,18 +394,18 @@ const ContactTable: React.FC = () => {
           />
 
           {selectedIds.length == 0 && (
-          <Tooltip title="Upload Bulk Contacts" arrow>
-            <IconsButton onClick={handleOpenDialog}>
-              <CloudUploadIcon />
-            </IconsButton>
-          </Tooltip>
-           )}
+            <Tooltip title="Upload Bulk Contacts" arrow>
+              <IconsButton onClick={handleOpenDialog}>
+                <CloudUploadIcon />
+              </IconsButton>
+            </Tooltip>
+          )}
           {selectedIds.length == 0 && (
-          <Tooltip title="Add Contact" arrow>
-            <IconsButton onClick={handleAccountOpenDialog}>
-              <PersonAddIcon />
-            </IconsButton>
-          </Tooltip>
+            <Tooltip title="Add Contact" arrow>
+              <IconsButton onClick={handleAccountOpenDialog}>
+                <PersonAddIcon />
+              </IconsButton>
+            </Tooltip>
           )}
 
           {selectedIds.length > 0 && allActive && (
@@ -422,9 +432,15 @@ const ContactTable: React.FC = () => {
                 <AddCircleIcon />
               </IconsButton>
             </Tooltip>
-
           )}
 
+          {selectedIds.length > 0 && (
+            <Tooltip title="Delete Contacts" arrow>
+              <IconsButton onClick={() => handleOpenDeleteDialog(selectedIds)}>
+                <DeleteIcon />
+              </IconsButton>
+            </Tooltip>
+          )}
         </Box>
       </ContactsHeader>
       {loading && <ProgressBar />}
@@ -486,6 +502,15 @@ const ContactTable: React.FC = () => {
         pageSizeOptions={[15, 10, 5]}
         rowSelectionModel={rowSelectionModel}
         handleRowSelection={handleSelectedRows}
+      />
+      <ConfirmDeleteDialog
+        open={openDeleteDialog}
+        onClose={handleCloseDeleteDialog}
+        onConfirm={handleDeleteContact}
+        title="Delete Contact?"
+        message="Are you sure you want to delete this contact?"
+        confirmText="Delete"
+        cancelText="Cancel"
       />
 
       <UploadContactCsvDialog
