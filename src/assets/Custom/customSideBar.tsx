@@ -1,15 +1,22 @@
-import DashboardIcon from "@mui/icons-material/Dashboard";
+// import DashboardIcon from "@mui/icons-material/Dashboard";
 import { Navigation } from "@toolpad/core/AppProvider";
-import CampaignIcon from "@mui/icons-material/Campaign";
-import ContactMailIcon from "@mui/icons-material/ContactMail";
-import ArchiveIcon from "@mui/icons-material/Archive";
-import ContactPhoneIcon from "@mui/icons-material/ContactPhone";
+// import CampaignIcon from "@mui/icons-material/Campaign";
+// import ContactMailIcon from "@mui/icons-material/ContactMail";
+// import ArchiveIcon from "@mui/icons-material/Archive";
+// import ContactPhoneIcon from "@mui/icons-material/ContactPhone";
 
 export const NAVIGATION: Navigation = [
   {
     segment: "",
     title: "Dashboard",
-    icon: <DashboardIcon style={{ color: "var(--icon-hover)" }} />,
+    icon: (
+      <img
+        height="40px"
+        width="40px"
+        src="/Images/dashboard-monitor.png"
+        alt=""
+      />
+    ),
   },
   {
     kind: "divider",
@@ -17,7 +24,14 @@ export const NAVIGATION: Navigation = [
   {
     segment: "email-campaign",
     title: "Email Campaigns",
-    icon: <CampaignIcon style={{ color: "var(--icon-hover)" }}/>,
+    icon: (
+      <img
+        height="40px"
+        width="40px"
+        src="/Images/audience-megaphone.png"
+        alt=""
+      />
+    ),
   },
   {
     kind: "divider",
@@ -25,7 +39,7 @@ export const NAVIGATION: Navigation = [
   {
     segment: "email-accounts",
     title: "Email Accounts",
-    icon: <ContactMailIcon style={{ color: "var(--icon-hover)" }}/>,
+    icon: <img height="40px" width="40px" src="/Images/envelopes.png" alt="" />,
   },
   {
     kind: "divider",
@@ -33,7 +47,9 @@ export const NAVIGATION: Navigation = [
   {
     segment: "contacts",
     title: "Contacts",
-    icon: <ContactPhoneIcon style={{ color: "var(--icon-hover)" }} />,
+    icon: (
+      <img height="40px" width="40px" src="/Images/address-book.png" alt="" />
+    ),
   },
   {
     kind: "divider",
@@ -41,7 +57,14 @@ export const NAVIGATION: Navigation = [
   {
     segment: "inbox",
     title: "Master Inbox",
-    icon: <ArchiveIcon style={{ color: "var(--icon-hover)" }}/>,
+    icon: (
+      <img
+        height="40px"
+        width="40px"
+        src="/Images/mailbox-envelope.png"
+        alt=""
+      />
+    ),
   },
   // {
   //   segment: "leads",
