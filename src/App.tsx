@@ -147,7 +147,7 @@ export default function DashboardLayoutBasic() {
             {router.pathname === "/inbox" && <EmailInboxs />}
             {router.pathname === "/leads" && <Leads />}
             {router.pathname === "/chats" && <Chats />}
-            {router.pathname === "/contacts" && <ContactTable />}
+            {router.pathname === "/all-leads" && <ContactTable />}
             {router.pathname === "/organization" && <Organization />}
           </PageContainer>
         </DashboardLayout>

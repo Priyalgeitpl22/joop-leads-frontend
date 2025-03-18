@@ -17,7 +17,7 @@ export const NAVIGATION: Navigation = [
   {
     segment: "email-campaign",
     title: "Email Campaigns",
-    icon: <CampaignIcon style={{ color: "var(--icon-hover)" }}/>,
+    icon: <CampaignIcon style={{ color: "var(--icon-hover)" }} />,
   },
   {
     kind: "divider",
@@ -25,14 +25,14 @@ export const NAVIGATION: Navigation = [
   {
     segment: "email-accounts",
     title: "Email Accounts",
-    icon: <ContactMailIcon style={{ color: "var(--icon-hover)" }}/>,
+    icon: <ContactMailIcon style={{ color: "var(--icon-hover)" }} />,
   },
   {
     kind: "divider",
   },
   {
-    segment: "contacts",
-    title: "Contacts",
+    segment: "all-leads",
+    title: "All Leads",
     icon: <ContactPhoneIcon style={{ color: "var(--icon-hover)" }} />,
   },
   {
@@ -41,7 +41,7 @@ export const NAVIGATION: Navigation = [
   {
     segment: "inbox",
     title: "Master Inbox",
-    icon: <ArchiveIcon style={{ color: "var(--icon-hover)" }}/>,
+    icon: <ArchiveIcon style={{ color: "var(--icon-hover)" }} />,
   },
   // {
   //   segment: "leads",

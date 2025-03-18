@@ -9,6 +9,7 @@ import { ImportedLeadsData } from "../../Email-Campaign/NewCampaign/NewCampaign"
 import { CustomDialogFooter } from "../../../styles/global.styled";
 
 import { FileUploadContainer } from "../../Email-Campaign/NewCampaign/ImportLeadsCampaign/importLeads.styled";
+import toast from "react-hot-toast";
 
 interface UploadContactCsvDialog {
   handleLeadsData: (data: ImportedLeadsData) => void;
@@ -41,6 +42,7 @@ const UploadContactCsvDialog: React.FC<UploadContactCsvDialog> = ({
   const handleFileChange = (file: File | null) => {
     if (file) {
       if (file.type === "text/csv") {
+
         setSelectedFile(file);
         setError("");
         handleCSVUpload(file);
@@ -50,15 +52,25 @@ const UploadContactCsvDialog: React.FC<UploadContactCsvDialog> = ({
           complete: (result) => {
             const firstRow = result.data[0] as string[];
             const data = result.data as any[];
+
+            if (!data.length || data.every(row => row.every((cell: String) => cell === ""))) {
+              setError("Cannot upload an empty CSV file.");
+              toast.error("Cannot upload an empty CSV file.");
+              setSelectedFile(null);
+              setShowDetail(false);
+              setIsCsvUploaded(false);
+              setOpenDialog(false);
+              return;
+            }
             setColumns(firstRow);
             setCSVData(data);
+            setShowDetail(true);
+            setOpenDialog(true);
+            setIsCsvUploaded(true);
           },
           skipEmptyLines: true,
         });
 
-        setShowDetail(true);
-        setOpenDialog(true);
-        setIsCsvUploaded(true);
       } else {
         setError("Please upload a valid CSV file.");
         setSelectedFile(null);
@@ -80,6 +92,18 @@ const UploadContactCsvDialog: React.FC<UploadContactCsvDialog> = ({
     const file = event.dataTransfer.files[0];
     handleFileChange(file);
   };
+  const handleClose = () => {
+    setSelectedFile(null);
+    setError("");
+    setShowDetail(false);
+    setOpenDialog(false);
+    setColumns([]);
+    setCSVData([]);
+    setIsCsvUploaded(false);
+    onClose();
+
+
+  }
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
@@ -92,6 +116,8 @@ const UploadContactCsvDialog: React.FC<UploadContactCsvDialog> = ({
           width: "100%",
           padding: "2px 0",
           paddingTop: "50px",
+          marginBottom: "20px",
+
         }}
       >
         {/* Close Button */}
@@ -101,7 +127,7 @@ const UploadContactCsvDialog: React.FC<UploadContactCsvDialog> = ({
             top: 10,
             right: 10,
           }}
-          onClick={onClose}
+          onClick={handleClose}
         >
           <CloseIcon />
         </IconButton>
@@ -119,10 +145,10 @@ const UploadContactCsvDialog: React.FC<UploadContactCsvDialog> = ({
         ) : (
           <>
             <Typography variant="h6" fontWeight="600" textAlign="center">
-              Easily add or update Leads / Contacts
+              Easily add or update Leads
             </Typography>
             <Typography variant="body2" textAlign="center" color="gray" mb={3}>
-              How would you like to get contacts into your list?
+              How would you like to get leads into your list?
             </Typography>
 
             <FileUploadContainer
@@ -188,11 +214,11 @@ const UploadContactCsvDialog: React.FC<UploadContactCsvDialog> = ({
             onClose={() => setOpenDialog(false)}
             onSave={saveCSVSetting}
           />
-   
+
         </Dialog>
 
       </Box>
-    </Dialog>
+    </Dialog >
 
   );
 };

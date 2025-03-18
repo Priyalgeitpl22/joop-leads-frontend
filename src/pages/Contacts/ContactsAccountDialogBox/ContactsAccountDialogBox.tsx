@@ -118,7 +118,7 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
           padding: "12px 24px",
         }}
       >
-        Add Contact Account
+        Add Lead Account
       </DialogTitle>
       <DialogContent>
         <form onSubmit={handleSubmit}>
@@ -126,7 +126,7 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
             <Box display="flex" flexDirection="column" gap={2}>
 
               <TextField
-                label="First Name"
+                label="First Name *"
                 name="first_name"
                 value={formData.first_name}
                 onChange={handleChange}
@@ -145,7 +145,7 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
 
               />
               <TextField
-                label="Email"
+                label="Email *"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}

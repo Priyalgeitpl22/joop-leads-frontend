@@ -52,7 +52,6 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import toast, { Toaster } from 'react-hot-toast';
 import { SectionTitle } from "../../styles/layout.styled";
 import { DeleteIcon } from "./ContactTable.styled";
-import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
 
 
 export interface ImportedLeadsData {
@@ -88,7 +87,6 @@ const ContactTable: React.FC = () => {
   const [uploadleads, setUploadLeads] = React.useState<boolean>(false);
   const [uploadCounts, setUploadCounts] = React.useState<ILeadsCounts>();
   const [campaignId, setCampaignId] = React.useState("");
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
   const saveCSVSetting = (settings: any) => {
     setCSVsettings(settings);
@@ -114,45 +112,33 @@ const ContactTable: React.FC = () => {
         const campaignId = response.campaignId;
         navigate(`/email-campaign/new-campaign?campaignId=${campaignId}`);
       } catch (error) {
-        toast.error("Something went wrong with create contacts.");
+        toast.error("Something went wrong with create leads.");
       }
     } else {
-      toast.error("No contacts selected for create contacts");
+      toast.error("No leads selected for create leads");
     }
   };
 
- 
-  const handleOpenDeleteDialog = (selectedIds: string[]) => {
-    setSelectedIds(selectedIds);
-    setOpenDeleteDialog(true);
-  };
+  const handleDeleteContact = async (contactId: string) => {
+    if (!window.confirm("Are you sure you want to delete this contact?")) {
+      return;
+    }
 
-  const handleCloseDeleteDialog = () => {
-    setOpenDeleteDialog(false);
-  };
-
-  const handleDeleteContact = async () => {
-    if (selectedIds.length > 0) {
-      try {
-      
-        const response = await dispatch(deleteContact(selectedIds)).unwrap();
-        if (response?.message) {
-          toast.success(response.message);
-        
-          setRows((prevRows) =>
-            prevRows.filter((contact) => !selectedIds.includes(contact.id))
-          );
-        } else {
-          toast.error("Failed to delete contacts.");
-        }
-      } catch (error) {
-        toast.error("Something went wrong while deleting the contacts.");
+    try {
+      debugger
+      const response = await dispatch(deleteContact(contactId)).unwrap();
+      if (response) {
+        toast.success(response?.message || "Contact deleted successfully.");
+        await getFetchAllContacts();
+      } else {
+        toast.error("Failed to delete contact.");
       }
+    } catch (error) {
+      toast.error("Something went wrong while deleting the contact.");
     }
-    handleCloseDeleteDialog();
   };
-  
-  
+
+
 
   const columns: GridColDef[] = useMemo(
     () => [
@@ -218,27 +204,23 @@ const ContactTable: React.FC = () => {
         field: "view",
         headerName: "View",
         renderCell: (params) => (
-          <Tooltip title="View Contact Details" arrow>
           <IconButton
             onClick={(event) => handleViewClick(event, params.row.id)}
           >
             <VisibilityIcon />
           </IconButton>
-          </Tooltip>
         ),
       },
       {
         field: "delete",
         headerName: "Delete",
         renderCell: (_params) => (
-          <Tooltip title="Delete Contact" arrow>
-            <IconButton
-              color="error"
-              onClick={() => handleOpenDeleteDialog(_params.row.id)}
-            >
-              <DeleteIcon />
-            </IconButton>
-            </Tooltip>
+          <IconButton
+            color="error"
+            onClick={() => handleDeleteContact(_params.row.id)}
+          >
+            <DeleteIcon />
+          </IconButton>
         ),
       },
     ],
@@ -273,8 +255,16 @@ const ContactTable: React.FC = () => {
       if (trimmedQuery === "") {
         setRows(contactAccount);
       } else {
+        let first_name = "";
+        let email = "";
+        if (trimmedQuery) {
+          email = trimmedQuery;
+        } else {
+          first_name = trimmedQuery;
+        }
+
         const filteredData = await dispatch(
-          SearchContacts({ query: trimmedQuery, orgId: user?.orgId || "" })
+          SearchContacts({ email, first_name, orgId: user?.orgId || "" })
         ).unwrap();
         setRows(filteredData);
       }
@@ -297,7 +287,7 @@ const ContactTable: React.FC = () => {
     setSelectedIds(selectedIds);
     setRowSelectionModel(selectedIds);
   };
-  
+
   const selectedRowsData = rows.filter((row) => selectedIds.includes(row.id));
 
   const allActive =
@@ -317,19 +307,19 @@ const ContactTable: React.FC = () => {
       try {
         const response = await dispatch(DeactivateContacts(selectedIds)).unwrap();
         if (response?.code === 200) {
-          toast.success(response?.message || "Contacts have been deactivated successfully.");
+          toast.success(response?.message || "Leads have been deactivated successfully.");
         } else {
-          toast.error("Failed to deactivate contacts.");
+          toast.error("Failed to deactivate Leads.");
         }
         setSelectedIds([]);
         setRowSelectionModel([])
 
         await getFetchAllContacts();
       } catch (error) {
-        toast.error("Something went wrong while deactivating contacts.");
+        toast.error("Something went wrong while deactivating leads.");
       }
     } else {
-      toast.error("No contacts selected for deactivation.");
+      toast.error("No leads selected for deactivation.");
     }
   };
 
@@ -347,7 +337,7 @@ const ContactTable: React.FC = () => {
 
   const handleAccountOpenDialog = () => setIsAddAccountDialogOPen(true);
   const handleAccountCloseDialog = () => setIsAddAccountDialogOPen(false);
-  
+
   const handleUploadContacts = async (data: any) => {
     console.log(emailFieldsToBeAdded);
     console.log(CSVsettings);
@@ -380,7 +370,7 @@ const ContactTable: React.FC = () => {
     <ContactsContainer>
       <Toaster position="top-right" />
       <ContactsHeader>
-        <SectionTitle>Contacts</SectionTitle>
+        <SectionTitle>All Leads</SectionTitle>
         <Box
           sx={{
             display: "flex",
@@ -396,7 +386,7 @@ const ContactTable: React.FC = () => {
           <SearchBar>
             <Search size={20} />
             <input
-              placeholder="Search by Contact or Name"
+              placeholder="Search by Leads or Name"
               value={searchQuery}
               onChange={handleSearchChange}
             />
@@ -407,14 +397,14 @@ const ContactTable: React.FC = () => {
           />
 
           {selectedIds.length == 0 && (
-            <Tooltip title="Upload Bulk Contacts" arrow>
+            <Tooltip title="Upload Bulk leads" arrow>
               <IconsButton onClick={handleOpenDialog}>
                 <CloudUploadIcon />
               </IconsButton>
             </Tooltip>
           )}
           {selectedIds.length == 0 && (
-            <Tooltip title="Add Contact" arrow>
+            <Tooltip title="Add Leads" arrow>
               <IconsButton onClick={handleAccountOpenDialog}>
                 <PersonAddIcon />
               </IconsButton>
@@ -445,15 +435,9 @@ const ContactTable: React.FC = () => {
                 <AddCircleIcon />
               </IconsButton>
             </Tooltip>
+
           )}
 
-          {selectedIds.length > 0 && (
-            <Tooltip title="Delete Contacts" arrow>
-              <IconsButton onClick={() => handleOpenDeleteDialog(selectedIds)}>
-                <DeleteIcon />
-              </IconsButton>
-            </Tooltip>
-          )}
         </Box>
       </ContactsHeader>
       {loading && <ProgressBar />}
@@ -515,15 +499,6 @@ const ContactTable: React.FC = () => {
         pageSizeOptions={[15, 10, 5]}
         rowSelectionModel={rowSelectionModel}
         handleRowSelection={handleSelectedRows}
-      />
-      <ConfirmDeleteDialog
-        open={openDeleteDialog}
-        onClose={handleCloseDeleteDialog}
-        onConfirm={handleDeleteContact}
-        title="Delete Contact?"
-        message="Are you sure you want to delete this contact?"
-        confirmText="Delete"
-        cancelText="Cancel"
       />
 
       <UploadContactCsvDialog

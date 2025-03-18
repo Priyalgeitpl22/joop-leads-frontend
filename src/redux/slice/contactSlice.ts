@@ -169,16 +169,16 @@ export const CreateContactsAccount = createAsyncThunk<
     }
   }
 );
-export const SearchContacts = createAsyncThunk(
+
+export const SearchContacts = createAsyncThunk( 
   "contact/search-contacts",
   async (
-    { query, orgId }: { query: string; orgId: string },
+    { email, first_name, orgId }: { email?: string; first_name?: string; orgId: string },
     { rejectWithValue }
   ) => {
     try {
-      
       const response = await api.get("/contact/search-contacts", {
-        params: { query, orgId },
+        params: { email, first_name, orgId},
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -190,6 +190,7 @@ export const SearchContacts = createAsyncThunk(
     }
   }
 );
+
 export const DeactivateContacts = createAsyncThunk(
   "contact/deactivate",
   async (contactIds: string[], { rejectWithValue }) => {
@@ -284,14 +285,11 @@ const contactsSlice = createSlice({
 });
 
 export const deleteContact = createAsyncThunk(
-  "contact/delete-contact",
-  async (contactIds: string[], { rejectWithValue }) => {
+  "contact/delete",
+  async (contactId: string, { rejectWithValue }) => {
     try {
-      const response = await api.delete("/contact/delete-contact", {
-        data: { contactIds },
-      });
-
-      return { contactIds, message: response.data.message };
+      const response = await api.delete(`/contact/${contactId}`);
+      return { contactId, message: response.data.message };
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || "Network error");
     }
