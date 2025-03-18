@@ -279,9 +279,6 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
               {errors.fromName}
             </Typography>
             }
-
-
-
           </Grid2>
           <Grid2 size={{ xs: 6, sm: 6 }}>
             <InputLabel>From Email</InputLabel>

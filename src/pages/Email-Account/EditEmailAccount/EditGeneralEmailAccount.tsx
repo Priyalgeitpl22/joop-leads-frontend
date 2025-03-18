@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { RadioGroup, Radio, Checkbox, CircularProgress } from "@mui/material";
+import { RadioGroup, Radio, Checkbox, CircularProgress, Typography } from "@mui/material";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import Grid2 from "@mui/material/Grid2";
 import { Button2, TextField, InputLabel } from "../../../styles/layout.styled";
@@ -42,8 +42,8 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
     tags: "",
     clients: "",
     signature: "",
-    msg_per_day: "",
-    time_gap: "",
+    msg_per_day: 0,
+    time_gap: 0,
     type: "",
   });
 
@@ -53,6 +53,18 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
   const [verificationInProgress, setVerificationInProgress] = useState(false);
   const [verificationFailed, setVerificationFailed] = useState(false);
   const navigate = useNavigate();
+  const [errors, setErrors] = useState({
+    fromName: "",
+    fromEmail: "",
+    userName: "",
+    password: "",
+    smtpHost: "",
+    smtpPort: "",
+    msg_per_day: "",
+    time_gap: "",
+    imapHost: "",
+    imapPort: "",
+  });
 
   useEffect(() => {
     if (id) {
@@ -102,6 +114,7 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
             ? Number(value)
             : value,
     }));
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
   };
 
   const handleSelectChange = (
@@ -113,6 +126,7 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
   };
 
   const handleVerifyAccount = () => {
+    if (!validateFields()) return;
     setVerificationFailed(false);
     setVerificationInProgress(true);
     const payload: VerifyEmailAccountPayload = {
@@ -154,6 +168,48 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
       .finally(() => {
         setVerificationInProgress(false);
       });
+  };
+  const validateFields = () => {
+    let newErrors: any = {};
+
+    if (!formData.fromName.trim()) newErrors.fromName = "From Name is required";
+    if (!formData.fromEmail.trim()) {
+      newErrors.fromEmail = "From Email is required";
+    } else if (!validateEmail(formData.fromEmail)) {
+      newErrors.fromEmail = "Enter a valid email address";
+    }
+    if (!formData.userName.trim()) newErrors.userName = "User Name is required";
+    if (!formData.password.trim()) newErrors.password = "Password is required";
+    if (!formData.smtpHost.trim()) newErrors.smtpHost = "SMTP Host is required";
+
+    if (formData.smtpPort === null || formData.smtpPort === 0) {
+      newErrors.smtpPort = "SMTP Port is required";
+    }
+
+    if (
+      !formData.msg_per_day ||
+      isNaN(Number(formData.msg_per_day)) ||
+      Number(formData.msg_per_day) <= 0
+    ) {
+      newErrors.msg_per_day = "Message per day must be a positive number";
+    }
+    if (
+      !formData.time_gap ||
+      isNaN(Number(formData.time_gap)) ||
+      Number(formData.time_gap) <= 0
+    ) {
+      newErrors.time_gap = "Minimum time gap must be a positive number";
+    }
+
+    if (!formData.imapHost.trim()) newErrors.imapHost = "IMAP Host is required";
+
+    if (formData.imapPort === null || formData.imapPort == 0) {
+      newErrors.imapPort = "Imap port is required";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleUpdatAccount = () => {
@@ -211,9 +267,9 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
       .unwrap()
       .then((res) => {
         setLoading(false);
-        console.log(res)
+        console.log(res);
         navigate(`/email-accounts`);
-        toast.success(res?.message)
+        toast.success(res?.message);
         console.log("account updated successfully");
       })
       .catch((error) => {
@@ -225,40 +281,6 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
       });
   };
 
-  // const handleUpdateAccount = async () => {
-  //   if (user) {
-  //     try {
-  //       const response = await dispatch(
-  //         updateEmailAccountSmtpDetail({ orgId: user?.orgId })
-  //       ).unwrap();
-
-  //       if (response) {
-  //         window.location.href = response;
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching OAuth URL:", error);
-  //     }
-  //   }
-  // };
-
-  // const handleOutlookAccount = async () => {
-  //   if (!user?.orgId) {
-  //     console.error("Organization ID is missing");
-  //     return;
-  //   }
-
-  //   try {
-  //     const response = await dispatch(
-  //       addOutlookEmailAccount({ orgId: user.orgId })
-  //     ).unwrap();
-
-  //     if (response) {
-  //       window.location.href = response;
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching Outlook OAuth URL:", error);
-  //   }
-  // };
 
   return (
     <div style={{ padding: "3%" }}>
@@ -268,14 +290,19 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
             <div>SMTP Settings (sending emails)</div>
           </b>
           <Grid2 container spacing={2} sx={{ justifyContent: "left" }}>
-            <Grid2 size={{ xs: 5, sm: 5 }}>
+            <Grid2 size={{ xs: 6, sm: 6 }}>
               <InputLabel>From Name</InputLabel>
               <TextField
                 fullWidth
                 name="fromName"
                 value={formData.fromName}
                 onChange={handleChange}
+                error={!!errors.fromName}
               />
+              {errors.fromName && <Typography color="red" variant="caption">
+                {errors.fromName}
+              </Typography>
+              }
             </Grid2>
             <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel>From Email</InputLabel>
@@ -284,7 +311,12 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
                 name="fromEmail"
                 value={formData.fromEmail}
                 onChange={handleChange}
+                error={!!errors.fromEmail}
               />
+              {errors.fromEmail && <Typography color="red" variant="caption">
+                {errors.fromEmail}
+              </Typography>
+              }
             </Grid2>
             <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel>User Name</InputLabel>
@@ -293,7 +325,9 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
                 name="userName"
                 value={formData.userName}
                 onChange={handleChange}
+                error={!!errors.userName}
               />
+              {errors.userName && <Typography color="red" variant="caption">{errors.userName}</Typography>}
             </Grid2>
             <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel>Password</InputLabel>
@@ -302,7 +336,9 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
+                error={!!errors.password}
               />
+              {errors.password && <Typography color="red" variant="caption">{errors.password}</Typography>}
             </Grid2>
             <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel>SMTP host</InputLabel>
@@ -311,7 +347,10 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
                 name="smtpHost"
                 value={formData.smtpHost}
                 onChange={handleChange}
+                error={!!errors.smtpPort}
               />
+              {errors.smtpHost && <Typography color="red" variant="caption">{errors.smtpHost}</Typography>}
+
             </Grid2>
             <Grid2 size={{ xs: 2, sm: 2 }}>
               <InputLabel>SMTP Port</InputLabel>
@@ -320,7 +359,10 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
                 name="smtpPort"
                 value={formData.smtpPort}
                 onChange={handleChange}
+                error={!!errors.smtpPort}
               />
+              {errors.smtpPort && <Typography color="red" variant="caption">{errors.smtpPort}</Typography>}
+
             </Grid2>
             <Grid2 size={{ xs: 2, sm: 2 }}>
               <RadioGroup
@@ -341,7 +383,10 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
                 name="msg_per_day"
                 value={formData.msg_per_day}
                 onChange={handleChange}
+                error={!!errors.msg_per_day}
               />
+              {errors.msg_per_day && <Typography color="red" variant="caption">{errors.msg_per_day}</Typography>}
+
             </Grid2>
             <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel>Minimum time gap (min)</InputLabel>
@@ -350,7 +395,10 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
                 name="time_gap"
                 value={formData.time_gap}
                 onChange={handleChange}
+                error={!!errors.time_gap}
               />
+              {errors.time_gap && <Typography color="red" variant="caption">{errors.time_gap}</Typography>}
+
             </Grid2>
             <Grid2 size={{ xs: 10, sm: 10 }}>
               <label
@@ -421,7 +469,10 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
                 name="imapHost"
                 value={formData.imapHost}
                 onChange={handleChange}
+                error={!!errors.imapHost}
               />
+              {errors.imapHost && <Typography color="red" variant="caption">{errors.imapHost}</Typography>}
+
             </Grid2>
             <Grid2 size={{ xs: 2, sm: 2 }}>
               <InputLabel>IMAP Port</InputLabel>
@@ -430,7 +481,11 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
                 name="imapPort"
                 value={formData.imapPort}
                 onChange={handleChange}
+                error={!!errors.imapPort}
+
               />
+              {errors.imapPort && <Typography color="red" variant="caption">{errors.imapPort}</Typography>}
+
             </Grid2>
             <Grid2 size={{ xs: 2, sm: 2 }}>
               <RadioGroup
@@ -536,6 +591,9 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
                 onChange={handleChange}
                 error={!formData.fromName}
                 helperText={!formData.fromName ? "From Name is required" : ""}
+                InputProps={{
+                  readOnly: true,
+                }}
               />
             </Grid2>
             <Grid2 size={{ xs: 5, sm: 5 }}>
@@ -556,24 +614,53 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
                       ? "Enter a valid email address"
                       : ""
                 }
+                InputProps={{
+                  readOnly: true,
+                }}
               />
             </Grid2>
             <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel>Message Per Day (Warmups not included)</InputLabel>
               <TextField
                 fullWidth
+                type="number"
                 name="msg_per_day"
                 value={formData.msg_per_day}
                 onChange={handleChange}
+                error={!formData.msg_per_day || formData.msg_per_day <= 0}
+                helperText={
+                  !formData.msg_per_day
+                    ? "Message Per Day is required"
+                    : formData.msg_per_day <= 0
+                      ? "Enter a valid positive number"
+                      : ""
+                }
+                inputProps={{
+                  min: 1,
+                }}
               />
+
             </Grid2>
+
             <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel>Minimum time gap (min)</InputLabel>
               <TextField
                 fullWidth
+                type="number"
                 name="time_gap"
                 value={formData.time_gap}
                 onChange={handleChange}
+                error={!formData.time_gap || formData.time_gap <= 0}
+                helperText={
+                  !formData.time_gap
+                    ? "Time gap is required"
+                    : formData.time_gap <= 0
+                      ? "Enter a valid positive number"
+                      : ""
+                }
+                inputProps={{
+                  min: 1,
+                }}
               />
             </Grid2>
             <Grid2 size={{ xs: 10, sm: 10 }}>
@@ -595,17 +682,15 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
                 </Button2>
               ) : (
                 <Button2
+                  disabled={isSaveDisabled}
                   onClick={handleUpdatAccount}
                   color={"white"}
                   background={"var(--theme-color)"}
                   style={{
-                    cursor:
-                      !formData.fromName || !formData.fromEmail
-                        ? "not-allowed"
-                        : "pointer",
-                    width: "20%",
+                    width: "10%",
+                    cursor: isSaveDisabled ? "not-allowed" : "pointer",
                   }}
-                  disabled={!formData.fromName || !formData.fromEmail}
+
                 >
                   Update Details
                 </Button2>
