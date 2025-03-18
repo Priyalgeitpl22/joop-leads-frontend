@@ -14,9 +14,9 @@ body {
 
 :root {
   /* 🌟 Primary Theme Colors */
-  --theme-color: #26155b; /* Base Primary */
+  --theme-color: #2389ae; /* Base Primary */
   --theme-color-light: #eff0ff; /* Light Variant */
-  --theme-color-dark: #291D48; /* Darker Primary Variant */
+  --theme-color-dark: #291d48; /* Darker Primary Variant */
 
   /* 🎨 Background & Grayscale */
   --background-color: #eff0ff; /* Light Mode Background */
@@ -24,52 +24,52 @@ body {
   --background-dark: #130830; /* Dark Mode Background */
   --background-darker: #030426; /* Even Darker Background */
   --background-secondary: #d2d4f3;
-  --background-hover:  #f1f3f5;
+  --background-hover: #f1f3f5;
   --background-head: #f8f9fc;
 
   /* 🌈 Accent & Highlights */
-  --accent-color: #9E8BD0; /* Accent Color */
-  --accent-light: #ECEDFE; /* Light Accent */
-  --hover-color: #4D3687; /* Hover Effect */
-  --active-color: #291D48; /* Active State */
+  --accent-color: #9e8bd0; /* Accent Color */
+  --accent-light: #ecedfe; /* Light Accent */
+  --hover-color: #4d3687; /* Hover Effect */
+  --active-color: #291d48; /* Active State */
   --selected-color: #130830; /* Selected State */
   --selected: #795dc0; /* Hover Effect */
 
   /* 🔤 Text Colors */
   --text-color: #212121de;
   --text-primary: #341093; /* Primary Text */
-  --text-secondary: #291D48; /* Secondary Text */
+  --text-secondary: #291d48; /* Secondary Text */
   --text-light: #747474; /* Lightest Text */
   --text-white: #ffffff; /* Lightest Text */
   --text-black: #000;
-  --text-muted: #9E8BD0; /* Muted Text */
+  --text-muted: #9e8bd0; /* Muted Text */
   --primary-color: #341093;
   --secondary-color: #6c757d;
   --error-color: #dc3545;
   --warning-color: #ffc107;
-  --success-color: #4CAF50;
+  --success-color: #4caf50;
   --info-color: #a1a1a1;
   --text-disabled: #adb5bd;
-  --title-color: #7057c1;
+  --title-color: #252ea9;
   --title-color-secondary: #8b7af2;
 
   /* 🖍️ Borders & Shadows */
-  --border-color: #4D3687; /* Border Default */
-  --border-dark: #291D48; /* Darker Border */
+  --border-color: #4d3687; /* Border Default */
+  --border-dark: #291d48; /* Darker Border */
   --border-light: "1px solid #6e58f1";
   --border-grey: #e8e8e8;
   --border-color-sec: #e9e1ff;
 
   --shadow-color: rgba(64, 45, 112, 0.2); /* Default Shadow */
   --shadow-dark: rgba(19, 8, 48, 0.3); /* Darker Shadow */
-  
+
   --icon-color: #9c82df;
-  --icon-primary: #2E2445;
-  --icon-hover: #46386A;
+  --icon-primary: #2e2445;
+  --icon-hover: #46386a;
   --icon-selected: rgb(255, 0, 238);
   --icon-focused: yellow;
   --icon-light: #fff;
-  
+
   --disable-color: #6e6e6e;
 
   /* Input */
@@ -83,7 +83,7 @@ body {
   --input-disabled-text: #bbb;
 
   /* 🖋️ Global Font */
-  --font-family: 'Inter', sans-serif;
+  --font-family: "Inter", sans-serif;
 }
 
 * {
@@ -99,7 +99,7 @@ body {
   font-family: var(--font-family);
   line-height: 1.6;
   transition: all 0.3s ease-in-out;
-  
+
   /* Prevent horizontal overflow */
   overflow-x: hidden;
 
@@ -120,13 +120,21 @@ body {
 }
 
 /* 🎨 Headings */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: var(--theme-color);
   font-weight: bold;
 }
 
 /* ✏️ Paragraphs & Text */
-span, div, a, textarea {
+span,
+div,
+a,
+textarea {
   color: var(--background-darker);
   font-family: inherit;
 }

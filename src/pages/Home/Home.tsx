@@ -1,8 +1,4 @@
-import {
-  Grid2,
-  Tooltip,
-  Box,
-} from "@mui/material";
+import { Grid2, Tooltip, Box } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import {
   AreaChart,
@@ -22,10 +18,10 @@ import {
 
 const metricStyles = [
   { label: "Total Leads", value: 60, borderColor: "var(--title-color)" },
-  { label: "Total Sent", value: 16, borderColor: "var(--warning-color)" },
-  { label: "Unique Replied", value: 42, borderColor: "var(--error-color)" },
-  { label: "Positive Replies", value: 64, borderColor: "var(--success-color)" },
-  { label: "Unique Bounced", value: 18, borderColor: "var(--icon-selected)" },
+  { label: "Total Sent", value: 16, borderColor: "var(--success-color)" },
+  { label: "Unique Replied", value: 42, borderColor: "var(--warning-color)" },
+  { label: "Positive Replies", value: 64, borderColor: "var(--icon-selected)" },
+  { label: "Unique Bounced", value: 18, borderColor: "var(--error-color)" },
 ];
 
 const data = [
@@ -52,7 +48,9 @@ const Home = () => {
                   />
                 </Tooltip>
               </Box>
-              <Box>{metric.value}</Box>
+              <Box fontSize="xx-large">
+                <b>{metric.value}</b>
+              </Box>
             </MetricCard>
           </Grid2>
         ))}

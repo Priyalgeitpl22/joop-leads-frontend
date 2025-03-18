@@ -1,6 +1,21 @@
 import { createTheme } from "@mui/material/styles";
 
 const theme = createTheme({
+  typography: {
+    fontFamily: [
+      "Poppins",
+      "BlinkMacSystemFont",
+      '"Segoe UI"',
+      "Roboto",
+      '"Helvetica Neue"',
+      "Arial",
+      "sans-serif",
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(","),
+  },
+
   breakpoints: {
     values: {
       xs: 0,
@@ -108,8 +123,8 @@ const theme = createTheme({
     MuiTypography: {
       styleOverrides: {
         root: {
-          color: "var(--text-color)"
-        }
+          color: "var(--text-color)",
+        },
       },
       variants: [
         {
@@ -158,7 +173,7 @@ const theme = createTheme({
             fontWeight: 500,
             color: "#000115",
             lineHeight: "21px",
-            marginBottom: "5px"
+            marginBottom: "5px",
           },
         },
         {
@@ -175,7 +190,7 @@ const theme = createTheme({
             fontSize: "14px",
             fontWeight: 400,
             lineHeight: 1.5,
-            color: "var(--text-black)"
+            color: "var(--text-black)",
           },
         },
         {
@@ -269,9 +284,10 @@ const theme = createTheme({
           cursor: "pointer",
           borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
           justifyContent: "center",
-          "& .MuiSvgIcon-root": {  // ✅ This correctly targets MUI icons inside buttons
+          "& .MuiSvgIcon-root": {
+            // ✅ This correctly targets MUI icons inside buttons
             color: "white !important",
-            fontSize: "40px !important"
+            fontSize: "40px !important",
           },
         },
         colorPrimary: {
@@ -330,20 +346,20 @@ const theme = createTheme({
           padding: "10px !important",
           "& .MuiSvgIcon-root": {
             color: "var(--theme-color) !important",
-            fontSize: "30px !important"
+            fontSize: "30px !important",
           },
           "&:hover": {
             backgroundColor: "var(--background-secondary)",
-            padding: "10px !important"
+            padding: "10px !important",
           },
           "&:active": {
             backgroundColor: "var(--background-secondary)",
-            padding: "10px !important"
+            padding: "10px !important",
           },
           "&.Mui-selected": {
             backgroundColor: "var(--selected) !important",
             color: "white",
-            padding: "10px !important"
+            padding: "10px !important",
           },
           "& a": {
             textDecoration: "none !important",
