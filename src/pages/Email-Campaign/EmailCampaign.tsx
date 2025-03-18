@@ -235,7 +235,7 @@ const EmailCampaign: React.FC = () => {
                       <p>
                         {item.label}:{" "}
                         {
-                          campaign.analytics_count[
+                          campaign?.analytics_count[
                             item.count_label as keyof typeof campaign.analytics_count
                           ]
                         }
