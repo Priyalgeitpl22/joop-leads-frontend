@@ -23,7 +23,7 @@ interface EmailCampaignDialogProps {
 const EmailCampaignDialog: React.FC<EmailCampaignDialogProps> = ({
   open,
   onClose,
-  handleSmtpDetail
+  handleSmtpDetail,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [outlookDialogOpen, setOutlookDialogOpen] = useState<boolean>(false);
@@ -47,7 +47,6 @@ const EmailCampaignDialog: React.FC<EmailCampaignDialogProps> = ({
       console.error("Error fetching Google OAuth URL:", error);
     }
   };
-
 
   // const handleOutlook = async () => {
   //   setOutlookDialogOpen(true);
@@ -110,8 +109,8 @@ const EmailCampaignDialog: React.FC<EmailCampaignDialogProps> = ({
           </Typography>
         </Box> */}
 
-        <Typography fontWeight="bold" mb={1}>
-          Connect Google/Gmail Account
+        <Typography fontWeight="500" mb={2} mt={2}>
+          Choose a Method to Connect Your Email
         </Typography>
 
         <Box display="flex" gap={2} mb={3}>
@@ -195,6 +194,7 @@ const EmailCampaignDialog: React.FC<EmailCampaignDialogProps> = ({
             <Typography mt={1} fontWeight="bold">
               SMTP
             </Typography>
+            <Typography fontSize="12px">App Password</Typography>
           </Button>
 
           {/* <Button

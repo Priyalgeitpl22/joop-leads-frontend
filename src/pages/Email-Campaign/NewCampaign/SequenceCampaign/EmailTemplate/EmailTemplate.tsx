@@ -13,7 +13,6 @@ import {
 import "./EmailEditor.css";
 import ReactQuill from "react-quill";
 import { Menu, MenuItem } from "@mui/material";
-
 export const modules = {
   toolbar: [
     [{ header: [1, 2, 3, false] }],
@@ -25,7 +24,7 @@ export const modules = {
     ["blockquote", "code-block"],
     ["link", "image"],
     ["clean"],
-    ["insertVariables"],
+    ["variables"],
   ],
 };
 
@@ -37,9 +36,11 @@ const variableOptions = [
   "day of week",
   "time of day",
 ];
-
 interface EmailTemplateProps {
-  handleEmailTemplateData: (data: { subject: string; emailBody: string }) => void;
+  handleEmailTemplateData: (data: {
+    subject: string;
+    emailBody: string;
+  }) => void;
   updateSequenceData: (sequence: Sequence) => void;
   selectedSequence?: Sequence;
 }
@@ -49,8 +50,16 @@ const EmailTemplate: React.FC<EmailTemplateProps> = ({
   selectedSequence,
   updateSequenceData,
 }) => {
-  const [emailBody, setEmailBody] = useState(selectedSequence?.seq_variants[0]?.emailBody || "");
-  const [subject, setSubject] = useState(selectedSequence?.seq_variants[0]?.subject || "");
+  const [emailBody, setEmailBody] = useState(
+    selectedSequence?.seq_variants[0]?.emailBody || ""
+  );
+  const [subject, setSubject] = useState(
+    selectedSequence?.seq_variants[0]?.subject || ""
+  );
+
+  const [variableTarget, setVariableTarget] = useState<"subject" | "emailBody">(
+    "subject"
+  );
 
   const quillRef = useRef<typeof ReactQuill | null>(null);
   const subjectRef = useRef<HTMLInputElement | null>(null);
@@ -58,14 +67,45 @@ const EmailTemplate: React.FC<EmailTemplateProps> = ({
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
+  const addCustomButton = () => {
+    const toolbar = document.querySelector(".ql-toolbar");
+    if (!toolbar) return;
+  
+    const existingButton = document.querySelector(".ql-variables");
+    if (existingButton) existingButton.remove();
+  
+    const button = document.createElement("button");
+    button.classList.add("ql-variables");
+  
+    button.innerHTML = `
+    <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+      <text x="3" y="14" font-size="14" font-weight="bold" fill="var(--border-color)">{ } Variables</text>
+    </svg>
+  `;
+    button.onclick = () => handleOpenMenu("subject");
+    const formatGroup = toolbar.querySelector(".ql-formats:last-child");
+    if (formatGroup) {
+      formatGroup.appendChild(button);
+    } else {
+      toolbar.appendChild(button);
+    }
+  };
+  
+  useEffect(() => {
+    setTimeout(addCustomButton, 500);
+  }, []);
+
   useEffect(() => {
     setEmailBody(selectedSequence?.seq_variants[0]?.emailBody || "");
     setSubject(selectedSequence?.seq_variants[0]?.subject || "");
   }, [selectedSequence]);
 
-  const handleOpenMenu = () => {
-    if (subjectRef.current) {
+  const handleOpenMenu = (target: "subject" | "emailBody") => {
+    setVariableTarget(target);
+    if (target === "subject" && subjectRef.current) {
       setAnchorEl(subjectRef.current);
+    } else if (target === "emailBody" && quillRef.current) {
+      setAnchorEl(quillRef.current.getEditor().container);
     }
   };
 
@@ -74,7 +114,15 @@ const EmailTemplate: React.FC<EmailTemplateProps> = ({
   };
 
   const insertVariable = (variable: string) => {
-    setSubject((prev) => prev + ` {{${variable}}}`);
+    if (variableTarget === "subject") {
+      setSubject((prev) => prev + ` {{${variable}}}`);
+    } else if (variableTarget === "emailBody" && quillRef.current) {
+      const quill = quillRef.current.getEditor();
+      const range = quill.getSelection();
+      if (range) {
+        quill.insertText(range.index, ` {{${variable}}}`);
+      }
+    }
     handleCloseMenu();
   };
 
@@ -91,7 +139,10 @@ const EmailTemplate: React.FC<EmailTemplateProps> = ({
           : variant
       );
 
-      const updatedSequence: Sequence = { ...selectedSequence, seq_variants: updatedVariants };
+      const updatedSequence: Sequence = {
+        ...selectedSequence,
+        seq_variants: updatedVariants,
+      };
 
       updateSequenceData(updatedSequence);
     }
@@ -107,6 +158,7 @@ const EmailTemplate: React.FC<EmailTemplateProps> = ({
             display: "flex",
             alignItems: "center",
             gap: "8px",
+            width: "100%",
           }}
         >
           <SubjectText
@@ -115,7 +167,7 @@ const EmailTemplate: React.FC<EmailTemplateProps> = ({
             value={subject}
             onChange={(e) => handleDataChange(e.target.value, emailBody)}
           />
-          <VariablesButton onClick={handleOpenMenu}>
+          <VariablesButton onClick={() => handleOpenMenu("subject")}>
             {"{ } Variables"}
           </VariablesButton>
         </div>
@@ -151,8 +203,9 @@ const EmailTemplate: React.FC<EmailTemplateProps> = ({
 
       <EmailTemplateFooter>
         <FooterContent>
-          Type <strong>%signature%</strong> to insert your email account's signature where you
-          want it added or it will be added at the end of the email by default.
+          Type <strong>%signature%</strong> to insert your email account's
+          signature where you want it added or it will be added at the end of
+          the email by default.
         </FooterContent>
       </EmailTemplateFooter>
     </EmailTemplateWrapper>

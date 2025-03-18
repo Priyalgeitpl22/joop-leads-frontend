@@ -194,7 +194,7 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
 
         <AddStepButtonWrapper>
           <StyledAddIcon />
-          <AddStepButton onClick={handleAddStep}>Add step</AddStepButton>
+          <AddStepButton onClick={handleAddEmailStep}>Add step</AddStepButton>
         </AddStepButtonWrapper>
 
         {showStepOptions && (

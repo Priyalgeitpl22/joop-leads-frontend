@@ -266,6 +266,7 @@ const theme = createTheme({
           color: "#fff",
           height: "65px",
           boxShadow: "none",
+          cursor: "pointer",
           borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
           justifyContent: "center",
           "& .MuiSvgIcon-root": {  // ✅ This correctly targets MUI icons inside buttons

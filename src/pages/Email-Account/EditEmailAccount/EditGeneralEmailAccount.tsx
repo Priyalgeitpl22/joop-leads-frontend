@@ -578,7 +578,7 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
       {(formData.type === "gmail" || formData.type === "outlook") && (
         <div>
           <b>
-            <div>SMTP Settings (sending emassils)</div>
+            <div>SMTP Settings (sending emails)</div>
           </b>
           <Grid2 container spacing={2} sx={{ justifyContent: "left" }}>
             <Grid2 size={{ xs: 5, sm: 5 }}>

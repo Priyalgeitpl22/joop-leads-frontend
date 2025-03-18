@@ -316,9 +316,9 @@ const EmailAccounts: React.FC = () => {
             open={isSettingOpen}
             onClose={() => setIsSettingOpen(false)}
           />
-          <SecondaryButton onClick={handleSettingDialog}>
+          {/* <SecondaryButton onClick={handleSettingDialog}>
             Advanced Settings
-          </SecondaryButton>
+          </SecondaryButton> */}
           <Button onClick={handleOpenDialog}>Add Account</Button>
         </Box>
       </EmailAccountHeader>
