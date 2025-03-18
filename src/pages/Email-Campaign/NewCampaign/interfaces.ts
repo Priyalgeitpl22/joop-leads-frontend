@@ -18,6 +18,7 @@ export interface IEmailCampaign {
 }
 
 export interface IContacts {
+  active: any;
   id: string;
   campaign_id: string;
   email: string;

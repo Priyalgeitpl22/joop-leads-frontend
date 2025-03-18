@@ -30,7 +30,7 @@ import {
 } from "../../redux/slice/contactSlice";
 import { AppDispatch, RootState } from "../../redux/store/store";
 import { SearchBar } from "../../components/Header/header.styled";
-import { Search } from "lucide-react";
+import { CheckCircle, Search, XCircle } from "lucide-react";
 import { CustomDataTable } from "../../assets/Custom/customDataGrid";
 import { GridColDef } from "@mui/x-data-grid";
 import { formatDate } from "../../utils/utils";
@@ -192,11 +192,24 @@ const ContactTable: React.FC = () => {
         renderCell: (params: any) => (
           <span
             style={{
-              color: params?.row?.active ? "green" : "var(--error-color)",
-              fontWeight: "500 ",
+              display: "flex",
+              alignItems: "center",
+              gap: "5px",
+              color: params?.row?.active
+                ? "var(--success-color)"
+                : "var(--error-color)",
+              fontWeight: "bold",
             }}
           >
-            {params?.row?.active ? "✔ Active" : "❌ Inactive"}
+            {params?.row?.active ? (
+              <>
+                <CheckCircle size={16} /> Active
+              </>
+            ) : (
+              <>
+                <XCircle size={16} /> Inactive
+              </>
+            )}
           </span>
         ),
       },

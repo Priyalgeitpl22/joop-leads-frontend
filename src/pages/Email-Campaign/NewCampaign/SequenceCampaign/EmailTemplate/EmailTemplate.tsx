@@ -64,6 +64,8 @@ const EmailTemplate: React.FC<EmailTemplateProps> = ({
   const subjectRef = useRef<HTMLInputElement | null>(null);
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
+
   const open = Boolean(anchorEl);
 
   useEffect(() => {
@@ -75,14 +77,45 @@ const EmailTemplate: React.FC<EmailTemplateProps> = ({
     setTimeout(addCustomButton, 500);
   }, []);
 
-  const handleOpenMenu = (target: "subject" | "emailBody", event?: any) => {
+  const handleOpenMenu = (target: "subject" | "emailBody", _event?: any) => {
     setVariableTarget(target);
-    console.log(event);
+
     if (target === "subject" && subjectRef.current) {
-      setAnchorEl(subjectRef.current);
-    } else if (target === "emailBody" && quillRef.current) {
+      const input = subjectRef.current;
+      const cursorPosition = input.selectionStart || 0;
+
+      const rect = input.getBoundingClientRect();
+
+      const tempSpan = document.createElement("span");
+      tempSpan.style.visibility = "hidden";
+      tempSpan.style.position = "absolute";
+      tempSpan.style.whiteSpace = "pre";
+      tempSpan.style.font = window.getComputedStyle(input).font;
+      tempSpan.innerText = input.value.substring(0, cursorPosition);
+      document.body.appendChild(tempSpan);
+
+      const cursorX = rect.left + tempSpan.offsetWidth;
+      const cursorY = rect.bottom + window.scrollY;
+
+      document.body.removeChild(tempSpan);
+
+      setMenuPosition({ top: cursorY, left: cursorX });
+      setAnchorEl(input);
+    }
+
+    if (target === "emailBody" && quillRef.current) {
       const editor = quillRef.current.getEditor();
-      if (editor) {
+      const range = editor.getSelection();
+
+      if (range) {
+        const bounds = editor.getBounds(range.index);
+        const editorContainer = editor.container.getBoundingClientRect();
+
+        setMenuPosition({
+          top: editorContainer.top + bounds.top + window.scrollY + 40,
+          left: editorContainer.left + bounds.left + window.scrollX,
+        });
+
         setAnchorEl(editor.container);
       }
     }
@@ -90,6 +123,7 @@ const EmailTemplate: React.FC<EmailTemplateProps> = ({
 
   const handleCloseMenu = () => {
     setAnchorEl(null);
+    setMenuPosition({ top: 0, left: 0 });
   };
 
   const insertVariable = (variable: string) => {
@@ -134,18 +168,17 @@ const EmailTemplate: React.FC<EmailTemplateProps> = ({
   const addCustomButton = () => {
     const toolbar = document.querySelector(".ql-toolbar");
     if (!toolbar) return;
-  
+
     const existingButton = document.querySelector(".ql-variables");
     if (existingButton) return;
-  
+
     const button = document.createElement("button");
     button.classList.add("ql-variables");
     button.innerHTML = `{ }`;
-    
+
     button.addEventListener("click", (event) => {
       handleOpenMenu("emailBody", event);
     });
-  
     const formatGroup = toolbar.querySelector(".ql-formats:last-child");
     if (formatGroup) {
       formatGroup.appendChild(button);
@@ -178,19 +211,11 @@ const EmailTemplate: React.FC<EmailTemplateProps> = ({
             {"{ } Variables"}
           </VariablesButton>
         </div>
-
         <Menu
-          anchorEl={anchorEl}
+          anchorReference="anchorPosition"
+          anchorPosition={{ top: menuPosition.top, left: menuPosition.left }}
           open={open}
           onClose={handleCloseMenu}
-          anchorOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
         >
           {variableOptions.map((variable) => (
             <MenuItem key={variable} onClick={() => insertVariable(variable)}>

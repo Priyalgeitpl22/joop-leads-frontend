@@ -97,8 +97,8 @@ const EmailCampaign: React.FC = () => {
     handleSearch(query);
   };
 
-  const handleDetailCampaign = () => {
-    navigate(`/email-campaign/view-email-campaign`);
+  const handleDetailCampaign = (id: string) => {
+    navigate(`/email-campaign/view-email-campaign?view&id=${id}`);
   };
 
   const tableData = [
@@ -221,7 +221,7 @@ const EmailCampaign: React.FC = () => {
             <CustomTableBody key={campaign.id}>
               <CustomTableRow>
                 <CustomTableCell>
-                  <h6 onClick={handleDetailCampaign}>
+                  <h6 onClick={() => handleDetailCampaign(campaign.id)}>
                     {campaign.campaignName}
                   </h6>
                   <p>{`${campaign?.status} | ${formatDate(campaign.createdAt)} | ${campaign?.sequences?.length} Sequences`}</p>
