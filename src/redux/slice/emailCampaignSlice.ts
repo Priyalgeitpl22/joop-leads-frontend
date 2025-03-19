@@ -85,7 +85,7 @@ export const addEmailCampaignSettings = createAsyncThunk<
     try {
       const response = await api.post(
         `${BASE_URL}/add-email-campaign-settings`,
-        data, {headers: {Authorization: `Bearer ${token}` }}
+        data, { headers: { Authorization: `Bearer ${token}` } }
       );
       return response.data;
     } catch (error: unknown) {
@@ -104,7 +104,7 @@ export const addSequencesToCampaign = createAsyncThunk(
     try {
       const response = await api.post(
         `${BASE_URL}/add-sequence-to-campaign`,
-        data, {headers: { Authorization: `Bearer ${token}` }}
+        data, { headers: { Authorization: `Bearer ${token}` } }
       );
       return response.data;
     } catch (error: unknown) {
@@ -232,8 +232,7 @@ export const searchContactsByCampaign = createAsyncThunk(
   ) => {
     try {
       const response = await api.get(
-        `${BASE_URL}/search-contact?campaign_id=${campaign_id}${
-          email ? `&email=${email}` : ""
+        `${BASE_URL}/search-contact?campaign_id=${campaign_id}${email ? `&email=${email}` : ""
         }`
       );
       return response.data;
@@ -260,6 +259,26 @@ export const DeleteEmailCampaign = createAsyncThunk<
   }
 });
 
+export const UpdateCampaignStatus = createAsyncThunk<
+  any,
+  { campaignId: string; status: string },
+  { rejectValue: string }
+>("emailCampaigns/status", async ({ campaignId, status }, { rejectWithValue }) => {
+  try {
+    const response = await api.put(`${BASE_URL}/status`, {
+      campaignId,
+      status,
+    });
+
+    if (response.status !== 200) {
+      throw new Error("Failed to update campaign status");
+    }
+
+    return response.data;
+  } catch (error: any) {
+    return rejectWithValue(error.response?.data?.message || "Network error");
+  }
+});
 
 const emailCampaignSlice = createSlice({
   name: "emailCampaigns",

@@ -10,6 +10,7 @@ import {
 } from "./ViewLeadListCampaign.styled";
 import { useEffect } from "react";
 import LinearWithValueLabel from "../../../../src/assets/Custom/linearProgressBar";
+import Loader from "../../../components/Loader";
 
 interface ViewPerformanceEmailCampaignProps {
   campaignStats: any;
@@ -24,7 +25,7 @@ const ViewPerformanceEmailCampaign: React.FC<
 
   // ✅ Show "Loading..." when campaignStats is undefined or null
   if (!campaignStats) {
-    return <p>Loading...</p>;
+    return <Loader />;
   }
 
   return (

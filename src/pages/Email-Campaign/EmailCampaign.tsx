@@ -25,6 +25,7 @@ import {
   DeleteEmailCampaign,
   fetchEmailCampaigns,
   SearchEmailCampaign,
+  UpdateCampaignStatus,
 } from "../../redux/slice/emailCampaignSlice";
 import { AppDispatch } from "../../redux/store/store";
 import { IEmailCampaign } from "./NewCampaign/interfaces";
@@ -42,6 +43,7 @@ import ProgressBar from "../../assets/Custom/linearProgress";
 import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
 import toast from "react-hot-toast";
 import PauseIcon from "@mui/icons-material/Pause";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 
 const EmailCampaign: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -168,10 +170,40 @@ const EmailCampaign: React.FC = () => {
     }
   };
 
-  const handlePause = () => {
+  const handlePause = async (campaignId: string) => {
     setLoading(true);
-    setTimeout(() => setLoading(false), 2000);
+  
+    const minLoadingTime = new Promise((resolve) => setTimeout(resolve, 1000)); // Ensure 1 sec loading
+  
+    try {
+      await dispatch(UpdateCampaignStatus({ campaignId, status: "PAUSED" })).unwrap();
+      await getAllEmailCampaigns();
+      console.log("Campaign paused successfully");
+    } catch (error) {
+      console.error("Error pausing campaign:", error);
+    } finally {
+      await minLoadingTime;
+      setLoading(false);
+    }
   };
+  
+  const handleResume = async (campaignId: string) => {
+    setLoading(true);
+  
+    const minLoadingTime = new Promise((resolve) => setTimeout(resolve, 1000)); // Ensure 1 sec loading
+  
+    try {
+      await dispatch(UpdateCampaignStatus({ campaignId, status: "RUNNING" })).unwrap();
+      await getAllEmailCampaigns();
+      console.log("Campaign resumed successfully");
+    } catch (error) {
+      console.error("Error resuming campaign:", error);
+    } finally {
+      await minLoadingTime; // Ensure at least 1 sec has passed
+      setLoading(false);
+    }
+  };
+  
 
   return (
     <ContentContainer>
@@ -240,7 +272,6 @@ const EmailCampaign: React.FC = () => {
                   }}
                 >
                   <IconButton
-                    onClick={handlePause}
                     sx={{
                       position: "relative",
                       border: "3px solid #ccc7c7",
@@ -251,7 +282,19 @@ const EmailCampaign: React.FC = () => {
                   >
                     {campaign.status === "RUNNING" && !loading && (
                       <Tooltip title="Pause">
-                        <PauseIcon style={{ fontSize: 20, color: "#acacac" }} />
+                        <PauseIcon
+                          style={{ fontSize: 20, color: "#acacac" }}
+                          onClick={() => handlePause(campaign.id)}
+                        />
+                      </Tooltip>
+                    )}
+
+                    {campaign.status === "PAUSED" && !loading && (
+                      <Tooltip title="Resume">
+                        <PlayArrowIcon
+                          style={{ fontSize: 20, color: "#acacac" }}
+                          onClick={() => handleResume(campaign.id)}
+                        />
                       </Tooltip>
                     )}
 
