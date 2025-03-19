@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Table, TableHead, TableRow } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../redux/store/store";
-import { getCampaignById } from "../../../redux/slice/emailCampaignSlice";
 import { IContacts } from "../NewCampaign/interfaces";
 import {
   CustomTableBody,

@@ -11,7 +11,7 @@ const ViewSequencesEmailCampaign: React.FC<ViewSequencesEmailCampaignProps> = ({
 }) => {
   const navigate = useNavigate();
 
-  const handleAddSequence = (id: string) => {
+  const handleAddSequence = () => {
     navigate(`/email-campaign/new-campaign?edit&id=${campaignId}`);
   };
 
@@ -31,7 +31,7 @@ const ViewSequencesEmailCampaign: React.FC<ViewSequencesEmailCampaignProps> = ({
               Auto-handle & convert "Out of Office", "Not Interested" responses.
             </Subtitle>
             <Button2
-              onClick={() => handleAddSequence(campaignId)}
+              onClick={() => handleAddSequence()}
               color={"#fff"}
               background={"var(--theme-color)"}
               style={{

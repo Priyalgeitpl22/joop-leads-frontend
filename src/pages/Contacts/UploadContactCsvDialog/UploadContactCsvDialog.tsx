@@ -136,7 +136,7 @@ const UploadContactCsvDialog: React.FC<UploadContactCsvDialog> = ({
           <ImportLeadsDetail
             isUplaodContacts={true}
             handleUploadContacts={handleUploadContacts}
-            setIsNextDisabled={setIsNextDisabled}
+            setIsStep1Valid={setIsNextDisabled}
             onEmailFieldsChange={handleLeadsData}
             columns={columns}
             file={selectedFile}
