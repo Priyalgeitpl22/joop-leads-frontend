@@ -231,7 +231,7 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleUpdatAccount = () => {
+  const handleUpdatAccount = () => { 
     if (!validateFields()) return;
     if (!id) return;
 

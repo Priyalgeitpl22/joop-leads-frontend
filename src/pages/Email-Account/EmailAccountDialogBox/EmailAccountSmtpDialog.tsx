@@ -26,6 +26,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../redux/store/store";
 import { validateEmail } from "../../../utils/Validation";
+import toast, { Toaster } from "react-hot-toast";
 
 interface EmailAccountSmtpDialogProps {
   open: boolean;
@@ -158,6 +159,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
   };
 
   const handleCreateAccount = () => {
+    debugger
     setLoading(true);
     const payload: CreateEmailAccountPayload = {
       account: "smtp",
@@ -189,14 +191,16 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
       proxy: null,
       smtpEhloName: "localhost",
     };
-
+  
     dispatch(CreateEmailAccount(payload))
       .unwrap()
-      .then(() => {
+      .then((response) => {
+        toast.success(response || "Email account created successfully!");
         setLoading(false);
         onClose();
       })
-      .catch(() => {
+      .catch((error) => {
+        toast.error(error || "Failed to create email account!");
         setLoading(false);
       });
   };
@@ -238,6 +242,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md">
+      <Toaster position="top-right" />
       <IconButton
         onClick={onClose}
         sx={{ position: "absolute", right: 16, top: 12 }}

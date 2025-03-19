@@ -40,6 +40,7 @@ import ProgressBar from "../../assets/Custom/linearProgress";
 import { SectionTitle } from "../../styles/layout.styled";
 import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
 import EmailAccountSmtpDialog from "./EmailAccountDialogBox/EmailAccountSmtpDialog";
+import toast, { Toaster } from "react-hot-toast";
 // import ProgressBar from "../../assets/Custom/linearProgress";
 
 const EmailAccounts: React.FC = () => {
@@ -233,11 +234,11 @@ const EmailAccounts: React.FC = () => {
     setSelectedEmailAccount(null);
     setOpenDeleteDialog(false);
   };
-
   const handleDeleteEmailAccount = async () => {
     if (!selectedEmailAccount) return;
     try {
       await dispatch(deleteEmailAccount(selectedEmailAccount)).unwrap();
+      toast.success("Email account deleted successfully!"); 
       setRows((prevRows) =>
         prevRows.filter((row) => row.id !== selectedEmailAccount)
       );
@@ -249,7 +250,7 @@ const EmailAccounts: React.FC = () => {
       console.error("Failed to delete email account:", error);
     }
   };
-
+  
   const CustomIcon = () => (
     <svg
       fill="none"
@@ -280,6 +281,7 @@ const EmailAccounts: React.FC = () => {
 
   return (
     <EmailAccountsContainer>
+       <Toaster position="top-right" />
       <EmailAccountHeader>
         <SectionTitle>Email Accounts</SectionTitle>
         <Box
@@ -391,6 +393,7 @@ const EmailAccounts: React.FC = () => {
         confirmText="Delete"
         cancelText="Cancel"
       />
+  
     </EmailAccountsContainer>
   );
 };
