@@ -32,7 +32,9 @@ const ViewPerformanceEmailCampaign: React.FC<
     <CampaignCard>
       <CampaignSection>
         <h3 style={{ marginBottom: "10px" }}>
-          <Percentage>{campaignStats.completedPercentage || "0%"} % of campaign completed</Percentage>
+          <Percentage>
+            {campaignStats.completedPercentage || "0%"} % of campaign completed
+          </Percentage>
         </h3>
         <LinearWithValueLabel value={campaignStats.completedPercentage} />
         <StatsList style={{ marginTop: "24px" }}>
@@ -61,9 +63,7 @@ const ViewPerformanceEmailCampaign: React.FC<
 
       <Divider />
 
-      <CampaignSection
-        style={{ display: "flex", flexDirection: "column" }}
-      >
+      <CampaignSection style={{ display: "flex", flexDirection: "column" }}>
         <h3 style={{ marginBottom: "6px" }}>Campaign Status:</h3>
         <p style={{ marginBottom: "16px" }}>
           <TextGray>{campaignStats.status || "Unknown"}</TextGray>
@@ -71,10 +71,15 @@ const ViewPerformanceEmailCampaign: React.FC<
         <h3 style={{ marginBottom: "16px" }}>Trigger Info:</h3>
         <p>Next Trigger on: </p>
         <TextGray>
-          {campaignStats.nextSequenceTrigger
-            ? formatDateTime(campaignStats.nextSequenceTrigger)
-            : "Not Scheduled"}
+          {campaignStats.status === "COMPLETED"
+            ? "Campaign Completed"
+            : campaignStats.status === "PAUSED"
+              ? "Campaign Paused"
+              : campaignStats.nextSequenceTrigger
+                ? formatDateTime(campaignStats.nextSequenceTrigger)
+                : "Not Scheduled"}
         </TextGray>
+
         {/* <AnalyticsLink href="#">View Trigger Logs</AnalyticsLink> */}
       </CampaignSection>
     </CampaignCard>

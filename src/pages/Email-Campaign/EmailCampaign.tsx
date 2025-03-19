@@ -29,7 +29,7 @@ import {
 } from "../../redux/slice/emailCampaignSlice";
 import { AppDispatch } from "../../redux/store/store";
 import { IEmailCampaign } from "./NewCampaign/interfaces";
-import { formatDate } from "../../utils/utils";
+import { formatDate, formatDateTime } from "../../utils/utils";
 import { Button } from "../../styles/global.styled";
 import ForwardToInboxOutlinedIcon from "@mui/icons-material/ForwardToInboxOutlined";
 import DraftsOutlinedIcon from "@mui/icons-material/DraftsOutlined";
@@ -44,6 +44,7 @@ import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
 import toast from "react-hot-toast";
 import PauseIcon from "@mui/icons-material/Pause";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import DoneIcon from "@mui/icons-material/Done";
 
 const EmailCampaign: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -172,11 +173,13 @@ const EmailCampaign: React.FC = () => {
 
   const handlePause = async (campaignId: string) => {
     setLoading(true);
-  
+
     const minLoadingTime = new Promise((resolve) => setTimeout(resolve, 1000)); // Ensure 1 sec loading
-  
+
     try {
-      await dispatch(UpdateCampaignStatus({ campaignId, status: "PAUSED" })).unwrap();
+      await dispatch(
+        UpdateCampaignStatus({ campaignId, status: "PAUSED" })
+      ).unwrap();
       await getAllEmailCampaigns();
       console.log("Campaign paused successfully");
     } catch (error) {
@@ -186,14 +189,16 @@ const EmailCampaign: React.FC = () => {
       setLoading(false);
     }
   };
-  
+
   const handleResume = async (campaignId: string) => {
     setLoading(true);
-  
+
     const minLoadingTime = new Promise((resolve) => setTimeout(resolve, 1000)); // Ensure 1 sec loading
-  
+
     try {
-      await dispatch(UpdateCampaignStatus({ campaignId, status: "RUNNING" })).unwrap();
+      await dispatch(
+        UpdateCampaignStatus({ campaignId, status: "RUNNING" })
+      ).unwrap();
       await getAllEmailCampaigns();
       console.log("Campaign resumed successfully");
     } catch (error) {
@@ -203,7 +208,6 @@ const EmailCampaign: React.FC = () => {
       setLoading(false);
     }
   };
-  
 
   return (
     <ContentContainer>
@@ -298,6 +302,15 @@ const EmailCampaign: React.FC = () => {
                       </Tooltip>
                     )}
 
+                    {campaign.status === "COMPLETED" && !loading && (
+                      <Tooltip title="completed">
+                        <DoneIcon
+                          style={{ fontSize: 20, color: "#acacac" }}
+                          // onClick={() => handleResume(campaign.id)}
+                        />
+                      </Tooltip>
+                    )}
+
                     {(campaign.status === "DRAFT" ||
                       campaign.status === "SCHEDULED") &&
                       !loading && (
@@ -327,7 +340,7 @@ const EmailCampaign: React.FC = () => {
                     <h6 onClick={() => handleDetailCampaign(campaign.id)}>
                       {campaign.campaignName}
                     </h6>
-                    <p>{`${campaign?.status} | ${formatDate(campaign.createdAt)} | ${campaign?.sequences?.length} Sequences`}</p>
+                    <p>{`${campaign?.status} | ${formatDateTime(campaign?.createdAt)} | ${campaign?.sequences?.length} Sequences`}</p>
                   </div>
                 </CustomTableCell>
 
