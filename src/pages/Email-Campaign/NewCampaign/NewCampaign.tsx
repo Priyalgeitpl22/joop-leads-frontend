@@ -63,7 +63,10 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
     scheduleCampaign: {},
     campaignSettings: {},
   });
-  const [isNextDisabled, setIsNextDisabled] = React.useState(true);
+  const [isScheduleValid, setIsScheduleValid] = React.useState(false);
+  const [isSettingValid, setIsSettingValid] = React.useState(false);
+  const [isSenderAccountValid, setIsSenderAccountValid] = React.useState(true);
+  const [isStep1Valid, setIsStep1Valid] = React.useState(true);
   const [isEdit, setIsEdit] = React.useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
@@ -72,6 +75,11 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
   const handleFileChange = (file: File) => {
     setSelectedFile(file);
   };
+
+  React.useEffect(() => {
+    if (activeStep == 2) {
+    }
+  }, []);
 
   React.useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -353,6 +361,28 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
     }
   };
 
+  const IsCampaignScheduleValid = (data: boolean) => {
+    setIsScheduleValid(data);
+  };
+
+  const IsCampaignSettingsValid = (data: boolean) => {
+    setIsSettingValid(data);
+  };
+
+  const IsCampaignSenderAccountValid = (data: boolean) => {
+    setIsSenderAccountValid(data);
+  };
+
+  const isNextDisabled = () => {
+    if (activeStep === 0) return isStep1Valid;
+    if (activeStep === 1) return !true;
+    if (activeStep === 2) 
+      return !isScheduleValid || !isSettingValid || !isSenderAccountValid;
+    if(activeStep === 3) return true
+
+    return false;
+  };
+
   return (
     <Container>
       <HeaderContainer>
@@ -381,12 +411,10 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
           />
           <UploadLeadsDialog
             open={uploadleads}
-            setIsNextDisabled={setIsNextDisabled}
+            // setIsNextDisabled={setIsStep1Valid}
             uploadCounts={uploadCounts}
             onClose={() => {
               setUploadLeads(false);
-              setIsNextDisabled(false);
-
               if (
                 uploadCounts?.uploadedCount &&
                 uploadCounts?.uploadedCount > 0
@@ -401,16 +429,15 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
         {activeStep === 0 && (
           <ImportLeadsCampaign
             isEdit={isEdit}
+            setIsStep1Valid={setIsStep1Valid}
             handleLeadsData={handleLeadsData}
             handleCSVUpload={handleFileChange}
             saveCSVSetting={saveCSVSetting}
-            setIsNextDisabled={setIsNextDisabled}
           />
         )}
         {activeStep === 1 && (
           <SequenceCampaign
             campaign_id={campaignId}
-            setIsNextDisabled={setIsNextDisabled}
             onClickEmailFollowUp={onClickEmailFollowUp}
             handleEmailTemplateData={handleEmailTemplateData}
             addSequence={addSequence}
@@ -422,17 +449,20 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
         )}
         {activeStep === 2 && (
           <SetupCampaign
+            handleScheduleValid={IsCampaignScheduleValid}
+            handleSettingsValid={IsCampaignSettingsValid}
+            handleSenderAccountValid={IsCampaignSenderAccountValid}
             campaign_id={campaignId}
             handleSenderAccountsUpdate={handleSenderAccountsUpdate}
             handleScheduleCampaignUpdate={handleScheduleCampaignUpdate}
             handleCampaignSettingsUpdate={handleCampaignSettingsUpdate}
           />
         )}
-        {activeStep === 3 && <FinalReviewCampaign campaign_id={campaignId}/>}
+        {activeStep === 3 && <FinalReviewCampaign campaign_id={campaignId} />}
       </MainContainer>
       <FooterContainer>
         {activeStep !== 0 && (
-          <SecondaryButton onClick={handleBack} disabled={activeStep === 0}>
+          <SecondaryButton onClick={handleBack} disabled={activeStep === 0 || activeStep === 1}>
             Back
           </SecondaryButton>
         )}
@@ -450,12 +480,10 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
         ) : (
           <Button2
             onClick={handleNext}
-            disabled={!isEdit && isNextDisabled}
-            color={!isEdit && isNextDisabled ? "lightgray" : "white"}
-            background={!isEdit && isNextDisabled ? "#878484" : "var(--theme-color)"}
-            style={{
-              cursor: !isEdit && isNextDisabled ? "not-allowed" : "pointer",
-            }}
+            disabled={isNextDisabled()}
+            color={isNextDisabled() ? "lightgray" : "white"}
+            background={isNextDisabled() ? "#878484" : "var(--theme-color)"}
+            style={{ cursor: isNextDisabled() ? "not-allowed" : "pointer" }}
           >
             Save and Next
           </Button2>

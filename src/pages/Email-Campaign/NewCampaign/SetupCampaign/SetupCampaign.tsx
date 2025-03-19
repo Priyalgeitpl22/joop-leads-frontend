@@ -15,6 +15,9 @@ interface SetupCampaignProps {
   campaign_id?: string;
   handleSenderAccountsUpdate: (data: any) => void;
   handleScheduleCampaignUpdate: (data: any) => any;
+  handleScheduleValid: (data: any) => any;
+  handleSenderAccountValid: (data: any) => any;
+  handleSettingsValid: (data: any) => any;
   handleCampaignSettingsUpdate: (data: any) => any;
 }
 
@@ -22,6 +25,9 @@ const SetupCampaign: React.FC<SetupCampaignProps> = ({
   campaign_id,
   handleSenderAccountsUpdate,
   handleScheduleCampaignUpdate,
+  handleSettingsValid,
+  handleScheduleValid,
+  handleSenderAccountValid,
   handleCampaignSettingsUpdate,
 }) => {
   const [openSenderAccount, setOpenSenderAccount] = useState(false);
@@ -34,15 +40,16 @@ const SetupCampaign: React.FC<SetupCampaignProps> = ({
   const dispatch = useDispatch<AppDispatch>();
   const location = useLocation();
 
-
   useEffect(() => {
+    console.log(campaign_id);
     const params = new URLSearchParams(location.search);
     const campaignId = params.get("id");
-
-    if (campaignId) {
-      fetchCampaignDetails(campaignId);
+    const id = campaignId ?? campaign_id; 
+    if (id !== undefined && id !== null) {
+      fetchCampaignDetails(id);
     }
-  }, [dispatch]);
+    
+  }, [campaign_id]);
 
   const fetchCampaignDetails = async (id: string) => {
     try {
@@ -119,9 +126,10 @@ const SetupCampaign: React.FC<SetupCampaignProps> = ({
           </SetupButton>
 
           <SenderAccountDialog
-            campaignId={campaign_id}
+            campaign_id={campaign_id}
             senderAccounts={senderAccounts}
             open={openSenderAccount}
+            handleSenderAccountValid={handleSenderAccountValid}
             onClose={() => senderAccountDialogOpen(false)}
             handleSave={handleSenderAccountsUpdate}
           />
@@ -159,9 +167,10 @@ const SetupCampaign: React.FC<SetupCampaignProps> = ({
           </SetupButton>
 
           <ScheduleCampaignDialog
+            handleScheduleValid={handleScheduleValid}
             campaignSchedule={campaignSchedule}
             handleSave={handleScheduleCampaignUpdate}
-            campaignId={campaign_id}
+            campaign_id={campaign_id}
             open={openCampaignSchedule}
             onClose={() => setOpenCampaignSchedule(false)}
           />
@@ -197,14 +206,14 @@ const SetupCampaign: React.FC<SetupCampaignProps> = ({
             Modify Settings
           </SetupButton>
           <CampaignSettingDialog
+            handleSettingsValid={handleSettingsValid}
             campaignSetting={campaignSetting}
             handleSave={handleCampaignSettingsUpdate}
-            campaignId={campaign_id}
+            campaign_id={campaign_id}
             open={openCampaignSetting}
             onClose={() => setOpenCampaignSetting(false)}
           />
         </Box>
-
 
         <Box sx={{ display: "flex", alignItems: "center", marginTop: "10px" }}>
           <CheckCircleIcon

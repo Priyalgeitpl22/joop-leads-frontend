@@ -8,6 +8,8 @@ import {
   TableRow,
   Paper,
   Tooltip,
+  IconButton,
+  CircularProgress,
 } from "@mui/material";
 import {
   ContentContainer,
@@ -39,6 +41,7 @@ import { useNavigate } from "react-router-dom";
 import ProgressBar from "../../assets/Custom/linearProgress";
 import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
 import toast from "react-hot-toast";
+import PauseIcon from "@mui/icons-material/Pause";
 
 const EmailCampaign: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -148,17 +151,26 @@ const EmailCampaign: React.FC = () => {
   const handleCampaignDelete = async () => {
     if (!selectedCampaign) return;
     try {
-     const response= await dispatch(DeleteEmailCampaign(selectedCampaign)).unwrap()
-     if (response?.code === 200) {
-      toast.success(response?.message || "Contacts have been deactivated successfully.");
-    } else {
-      toast.error("Failed to deactivate contacts.");
-    }
+      const response = await dispatch(
+        DeleteEmailCampaign(selectedCampaign)
+      ).unwrap();
+      if (response?.code === 200) {
+        toast.success(
+          response?.message || "Contacts have been deactivated successfully."
+        );
+      } else {
+        toast.error("Failed to deactivate contacts.");
+      }
       handleCloseDeleteDialog();
       getAllEmailCampaigns();
     } catch (error) {
       console.error("Failed to delete campaign:", error);
     }
+  };
+
+  const handlePause = () => {
+    setLoading(true);
+    setTimeout(() => setLoading(false), 2000);
   };
 
   return (
@@ -219,11 +231,61 @@ const EmailCampaign: React.FC = () => {
           {campaigns.map((campaign) => (
             <CustomTableBody key={campaign.id}>
               <CustomTableRow>
-                <CustomTableCell>
-                  <h6 onClick={() => handleDetailCampaign(campaign.id)}>
-                    {campaign.campaignName}
-                  </h6>
-                  <p>{`${campaign?.status} | ${formatDate(campaign.createdAt)} | ${campaign?.sequences?.length} Sequences`}</p>
+                <CustomTableCell
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "flex-start",
+                    gap: "12px",
+                  }}
+                >
+                  <IconButton
+                    onClick={handlePause}
+                    sx={{
+                      position: "relative",
+                      border: "3px solid #ccc7c7",
+                      padding: "6px",
+                      width: 36,
+                      height: 36,
+                    }}
+                  >
+                    {campaign.status === "RUNNING" && !loading && (
+                      <Tooltip title="Pause">
+                        <PauseIcon style={{ fontSize: 20, color: "#acacac" }} />
+                      </Tooltip>
+                    )}
+
+                    {(campaign.status === "DRAFT" ||
+                      campaign.status === "SCHEDULED") &&
+                      !loading && (
+                        <Tooltip title="Edit">
+                          <ModeEditOutlineOutlinedIcon
+                            style={{ fontSize: 20, color: "#acacac" }}
+                            onClick={() => handleEditCampaign(campaign.id)}
+                          />
+                        </Tooltip>
+                      )}
+
+                    {loading && (
+                      <CircularProgress
+                        size={24}
+                        sx={{
+                          color: "#d2cece",
+                          position: "absolute",
+                          top: "12% !important",
+                          left: "10%",
+                          transform: "translate(-50%, -50%)",
+                        }}
+                      />
+                    )}
+                  </IconButton>
+
+                  <div>
+                    <h6 onClick={() => handleDetailCampaign(campaign.id)}>
+                      {campaign.campaignName}
+                    </h6>
+                    <p>{`${campaign?.status} | ${formatDate(campaign.createdAt)} | ${campaign?.sequences?.length} Sequences`}</p>
+                  </div>
                 </CustomTableCell>
 
                 {tableData.map((item, index) => (
@@ -243,11 +305,11 @@ const EmailCampaign: React.FC = () => {
                 ))}
 
                 <CustomTableCell sx={{ display: "flex" }}>
-                  <Tooltip title="Edit">
+                  {/* <Tooltip title="Edit">
                     <ModeEditOutlineOutlinedIcon
                       onClick={() => handleEditCampaign(campaign.id)}
                     />
-                  </Tooltip>
+                  </Tooltip> */}
                   <Tooltip title="Delete">
                     <GridDeleteIcon
                       onClick={() => handleOpenDeleteDialog(campaign.id)}

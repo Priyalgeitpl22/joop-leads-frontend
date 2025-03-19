@@ -18,29 +18,21 @@ import {
 import { CheckCircle, XCircle } from "lucide-react";
 
 interface ViewLeadListEmailCampaignProps {
-  campaignId: string;
+  // campaignId: string;
+  leads: any;
 }
 
 const ViewLeadListEmailCampaign: React.FC<ViewLeadListEmailCampaignProps> = ({
-  campaignId,
+  // campaignId,
+  leads
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [contacts, setContacts] = useState<IContacts[]>([]);
 
   useEffect(() => {
-    const fetchCampaignDetails = async () => {
-      try {
-        const response = await dispatch(getCampaignById(campaignId)).unwrap();
-        setContacts(response.campaign.contacts);
-      } catch (error) {
-        console.error("Error fetching campaign:", error);
-      }
-    };
-
-    if (campaignId) {
-      fetchCampaignDetails();
-    }
-  }, [dispatch, campaignId]);
+    console.log("leads", leads)
+    setContacts(leads);
+  }, [dispatch]);
 
   return (
     <CustomTableContainer>
@@ -55,41 +47,53 @@ const ViewLeadListEmailCampaign: React.FC<ViewLeadListEmailCampaignProps> = ({
         </TableHead>
 
         <CustomTableBody>
-          {contacts.map((contact, index) => (
-            <TableRow key={index}>
-              <CustomTableCell>
-                <LeadInfo>
-                  <div>
-                    <strong>
-                      {contact.first_name} {contact.last_name}
-                    </strong>
-                    <IconText>{contact.email}</IconText>
-                  </div>
-                </LeadInfo>
-              </CustomTableCell>
+          {contacts.length > 0 ? (
+            contacts.map((contact, index) => (
+              <TableRow key={index}>
+                <CustomTableCell>
+                  <LeadInfo>
+                    <div>
+                      <strong>
+                        {contact.first_name} {contact.last_name}
+                      </strong>
+                      <IconText>{contact.email}</IconText>
+                    </div>
+                  </LeadInfo>
+                </CustomTableCell>
 
-              <CustomTableCell>
-                <SequenceStatus>Email</SequenceStatus>
-              </CustomTableCell>
+                <CustomTableCell>
+                  <SequenceStatus>Email</SequenceStatus>
+                </CustomTableCell>
 
-              <CustomTableCell>
-                <IconText>LinkedIn</IconText>
-                <IconText>Others</IconText>
-              </CustomTableCell>
+                <CustomTableCell>
+                  <IconText>LinkedIn</IconText>
+                  <IconText>Others</IconText>
+                </CustomTableCell>
 
-              <CustomTableCell>
-                {contact?.active ? (
-                  <ActiveStatus>
-                    <CheckCircle size={16} /> Active
-                  </ActiveStatus>
-                ) : (
-                  <InactiveStatus>
-                    <XCircle size={16} /> Inactive
-                  </InactiveStatus>
-                )}
-              </CustomTableCell>
-            </TableRow>
-          ))}
+                <CustomTableCell>
+                  {contact?.active ? (
+                    <ActiveStatus>
+                      <CheckCircle size={16} /> Active
+                    </ActiveStatus>
+                  ) : (
+                    <InactiveStatus>
+                      <XCircle size={16} /> Inactive
+                    </InactiveStatus>
+                  )}
+                </CustomTableCell>
+              </TableRow>
+            ))
+          ) : (
+            <div
+              style={{
+                padding: "20px",
+                textAlign: "center",
+                color: "#888",
+              }}
+            >
+              No leads found
+            </div>
+          )}
         </CustomTableBody>
       </Table>
     </CustomTableContainer>

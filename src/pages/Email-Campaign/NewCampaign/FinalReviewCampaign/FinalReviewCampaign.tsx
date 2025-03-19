@@ -72,6 +72,9 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
 
       setContacts(contacts.data);
       setSequences(sequences.data);
+      setSelectedVariant(sequences.data[0].seq_number);
+      setSelectedTemplate(sequences.data[0].seq_variants[0]);
+      setSelectedContact(contacts.data[0]);
     } catch (error) {
       console.error("Error fetching contacts or sequences:", error);
     }

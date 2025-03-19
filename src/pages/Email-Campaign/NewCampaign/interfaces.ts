@@ -13,6 +13,7 @@ export interface IEmailCampaign {
   status: any;
   id: string;
   campaignName: string;
+  contacts: any;
   sequences: Sequence[];
   createdAt: string;
   analytics_count: {
@@ -22,6 +23,7 @@ export interface IEmailCampaign {
     clicked_count: number
     sent_count: number
   }
+  campaignStats: any
 }
 
 export interface IContacts {

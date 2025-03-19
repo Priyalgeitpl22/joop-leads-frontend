@@ -26,15 +26,18 @@ import ProgressBar from "../../../../../assets/Custom/linearProgress";
 interface SettingCampaignProps {
   open: boolean;
   onClose: () => void;
-  campaignId?: string;
+  campaign_id?: string;
   handleSave: (data: any) => void;
   campaignSetting?: any;
+  handleSettingsValid: (data: any) => void;
 }
 
 const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
   open,
   onClose,
   handleSave,
+  campaign_id,
+  handleSettingsValid,
 }) => {
   const [formData, setFormData] = useState({
     campaignName: "",
@@ -52,31 +55,42 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
   const dispatch = useDispatch<AppDispatch>();
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({ campaignName: "" });
+  const [isFormValid, setIsFormValid] = useState(false);
 
+  useEffect(() => {
+    let isValid = errors.campaignName === "" ? true : false
+    setIsFormValid(isValid);
+    handleSettingsValid(isValid);
+  }, [errors]);
 
   const handleChange = (field: keyof typeof formData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     if (field === "campaignName") {
       if (!value.trim()) {
-        setErrors((prev) => ({ ...prev, campaignName: "Campaign Name is required" }));
+        setErrors((prev) => ({
+          ...prev,
+          campaignName: "Campaign Name is required",
+        }));
       } else if (value.length < 3) {
-        setErrors((prev) => ({ ...prev, campaignName: "Must be at least 3 characters" }));
+        setErrors((prev) => ({
+          ...prev,
+          campaignName: "Must be at least 3 characters",
+        }));
       } else {
         setErrors((prev) => ({ ...prev, campaignName: "" }));
       }
     }
   };
 
-  const isFormValid = Object.values(errors).every((error) => error === "") && formData.campaignName.trim() !== "";
-
   useEffect(() => {
     if (open) {
       const params = new URLSearchParams(location.search);
       const campaignId = params.get("id");
 
-      if (campaignId) {
-        fetchCampaignDetails(campaignId);
-      } else {
+        const id = campaignId ?? campaign_id;
+        if (id !== undefined && id !== null) {
+          fetchCampaignDetails(id);
+        } else {
         setLoading(false);
       }
     }
@@ -142,7 +156,6 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
                 onChange={(e) => handleChange("campaignName", e.target.value)}
                 error={!!errors.campaignName}
                 helperText={errors.campaignName}
-
               />
             </Box>
             <Typography variant="h6" mt={2}>

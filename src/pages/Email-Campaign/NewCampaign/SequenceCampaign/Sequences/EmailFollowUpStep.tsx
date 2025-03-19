@@ -40,6 +40,7 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({
   const [waitDays, setWaitDays] = useState(1);
 
   useEffect(() => {
+    debugger
     if (selectedSequence) {
       setVariants(selectedSequence?.seq_variants);
       updateSequenceData({

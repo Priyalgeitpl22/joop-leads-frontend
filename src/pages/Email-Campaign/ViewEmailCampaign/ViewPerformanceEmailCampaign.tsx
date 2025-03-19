@@ -1,100 +1,54 @@
-import styled from "styled-components";
+import { Divider } from "@mui/material";
+import { formatDateTime } from "../../../utils/utils";
+import {
+  CampaignCard,
+  CampaignSection,
+  Percentage,
+  StatsList,
+  AnalyticsLink,
+  TextGray,
+} from "./ViewLeadListCampaign.styled";
+import { useEffect } from "react";
+import LinearWithValueLabel from "../../../../src/assets/Custom/linearProgressBar";
 
-const CampaignCard = styled.div`
-  display: flex;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  border: 1px solid #e0e0e0;
-  margin-top: 5%!important;
-  // width: 80%;
-  margin: 5%;
-`;
+interface ViewPerformanceEmailCampaignProps {
+  campaignStats: any;
+}
 
-const CampaignSection = styled.div`
-  flex: 1;
-  padding: 20px;
-`;
+const ViewPerformanceEmailCampaign: React.FC<
+  ViewPerformanceEmailCampaignProps
+> = ({ campaignStats }) => {
+  useEffect(() => {
+    console.log("Campaign Stats:", campaignStats);
+  }, [campaignStats]);
 
-const Title = styled.h2`
-  font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 10px;
-`;
-
-const Percentage = styled.span`
-  color: black;
-  font-weight: bold;
-`;
-
-const ProgressBar = styled.div`
-  height: 6px;
-  background-color: #d4edda;
-  border-radius: 5px;
-  margin-bottom: 15px;
-`;
-
-const StatsList = styled.ul`
-  list-style: none;
-  padding: 0;
-  margin-bottom: 15px;
-
-  li {
-    margin: 5px 0;
-    color: #444;
+  // ✅ Show "Loading..." when campaignStats is undefined or null
+  if (!campaignStats) {
+    return <p>Loading...</p>;
   }
-`;
 
-const AnalyticsLink = styled.a`
-  color: #6a5acd;
-  text-decoration: none;
-  font-weight: bold;
-  display: block;
-  margin-top: 10px;
-
-  &:hover {
-    text-decoration: underline;
-  }
-`;
-
-const Divider = styled.div`
-  width: 1px;
-  background: #ddd;
-  margin: 0 20px;
-`;
-
-const TextGray = styled.span`
-  color: #888;
-`;
-
-const InfoText = styled.p`
-  font-size: 14px;
-  color: #666;
-  margin-top: 10px;
-`;
-
-const ViewPerformanceEmailCampaign = () => {
   return (
     <CampaignCard>
       <CampaignSection>
-        <Title>
-          <Percentage>0%</Percentage> of Campaign Completed
-        </Title>
-        <ProgressBar />
-
-        <StatsList>
+        <h3 style={{ marginBottom: "10px" }}>
+          <Percentage>{campaignStats.completedPercentage || "0%"} % of campaign completed</Percentage>
+        </h3>
+        <LinearWithValueLabel value={campaignStats.completedPercentage} />
+        <StatsList style={{ marginTop: "24px" }}>
           <li>
-            Total No. of Leads: <strong>0</strong>
+            Total No. of Leads: <strong>{campaignStats.totalLeads || 0}</strong>
           </li>
           <li>
-            Leads Yet to be started: <strong>0</strong>
+            Leads Yet to be started:{" "}
+            <strong>{campaignStats.leadsYetToStart || 0}</strong>
           </li>
           <li>
-            Leads in progress: <strong>0</strong>
+            Leads in progress:{" "}
+            <strong>{campaignStats.leadsInProgress || 0}</strong>
           </li>
           <li>
-            Leads completed: <strong>0</strong>
+            Leads completed:{" "}
+            <strong>{campaignStats.leadsCompleted || 0}</strong>
           </li>
           <li>
             Blocked Leads: <strong>0</strong>
@@ -106,25 +60,21 @@ const ViewPerformanceEmailCampaign = () => {
 
       <Divider />
 
-      <CampaignSection>
-        <h3>Trigger Info</h3>
-        <p>
-          Next Trigger on: <TextGray>--</TextGray>
+      <CampaignSection
+        style={{ display: "flex", flexDirection: "column" }}
+      >
+        <h3 style={{ marginBottom: "6px" }}>Campaign Status:</h3>
+        <p style={{ marginBottom: "16px" }}>
+          <TextGray>{campaignStats.status || "Unknown"}</TextGray>
         </p>
-        <AnalyticsLink href="#">View Trigger Logs</AnalyticsLink>
-
-        <h3 style={{ marginTop: "16px" }}>Sending Pattern Priority</h3>
-        <p>
-          New Leads <TextGray>(0%)</TextGray>
-        </p>
-        <p>
-          Follow up Leads <TextGray>(100%)</TextGray>
-        </p>
-
-        <InfoText>
-          New Leads & Follow-up leads counts are based on your{" "}
-          <AnalyticsLink href="#">campaign settings</AnalyticsLink>.
-        </InfoText>
+        <h3 style={{ marginBottom: "16px" }}>Trigger Info:</h3>
+        <p>Next Trigger on: </p>
+        <TextGray>
+          {campaignStats.nextSequenceTrigger
+            ? formatDateTime(campaignStats.nextSequenceTrigger)
+            : "Not Scheduled"}
+        </TextGray>
+        {/* <AnalyticsLink href="#">View Trigger Logs</AnalyticsLink> */}
       </CampaignSection>
     </CampaignCard>
   );

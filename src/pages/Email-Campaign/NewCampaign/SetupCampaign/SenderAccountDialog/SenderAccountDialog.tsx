@@ -26,16 +26,18 @@ import { getCampaignById } from "../../../../../redux/slice/emailCampaignSlice";
 interface SenderAccountDialogProps {
   open: boolean;
   onClose: () => void;
-  campaignId?: string;
+  campaign_id?: string;
   handleSave: (data: any) => void;
   senderAccounts?: any;
+  handleSenderAccountValid: (data: any) => void;
 }
 
 const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
   open,
   onClose,
-  campaignId,
+  campaign_id,
   handleSave,
+  handleSenderAccountValid
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [emailAccounts, setEmailAccounts] = useState<EmailAccount[]>([]);
@@ -115,11 +117,18 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
   );
 
   useEffect(() => {
+    handleSenderAccountValid(!isSaveDisabled);
+  },[isSaveDisabled]);
+
+  useEffect(() => {
     console.log(emailAccounts);
     const params = new URLSearchParams(location.search);
     const campaignId = params.get("id");
 
-    if (campaignId) fetchCampaignDetails(campaignId);
+    const id = campaignId ?? campaign_id; 
+    if (id !== undefined && id !== null) {
+      fetchCampaignDetails(id);
+    }
 
     dispatch(fetchEmailAccount({ orgId: user?.orgId || "" }))
       .unwrap()
@@ -283,20 +292,18 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
           onClick={() => {
             handleSave({
               sender_accounts: selectedAccounts,
-              campaign_id: campaignId,
+              campaign_id: campaign_id,
             });
             onClose();
           }}
-
           disabled={isSaveDisabled}
           style={{
             color: isSaveDisabled ? "lightgray" : "white",
             background: isSaveDisabled ? "#878484" : "var(--theme-color)",
             opacity: isSaveDisabled ? 0.6 : 1,
+            cursor: isSaveDisabled ? "not-allowed" : "pointer",
           }}
-
         >
-
           Save Email Accounts
         </Button>
       </CustomDialogFooter>

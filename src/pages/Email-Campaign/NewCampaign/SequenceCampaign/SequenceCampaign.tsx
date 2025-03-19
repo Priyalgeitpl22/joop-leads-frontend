@@ -38,7 +38,6 @@ interface ImportLeadsCampaignProps {
   updateSequenceData: (data: any) => void;
   sequences: Sequence[];
   selectedSequence?: Sequence;
-  setIsNextDisabled: (status: boolean) => void;
 }
 
 const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
@@ -50,7 +49,7 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
   updateSequenceData,
   selectedSequence,
   sequences,
-  setIsNextDisabled
+  
 }) => {
   const [showStepOptions, setShowStepOptions] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -63,7 +62,6 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
   // };
 
   useEffect(() => {
-    setIsNextDisabled(false);
     const params = new URLSearchParams(location.search);
     const campaignId = params.get("id");
     console.log(selectedVariant);
@@ -109,6 +107,7 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
         addSequence(newSequence);
         setIsLoading(false);
       } else {
+        setSelectedVariant(sequences[0].seq_variants[0]);
         updateSequences(sequences);
         setIsLoading(false);
       }

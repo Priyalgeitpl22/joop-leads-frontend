@@ -22,7 +22,7 @@ interface ImportLeadsDetailProps {
   columns: string[];
   onFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onEmailFieldsChange: (data: any) => void;
-  setIsNextDisabled: (status: boolean) => void;
+  setIsStep1Valid: (status: boolean) => void;
   isUplaodContacts: boolean;
   handleUploadContacts?: (data: any) => void;
   onDeleteFile?: () => void;
@@ -33,7 +33,7 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
   columns,
   onFileChange,
   onEmailFieldsChange,
-  setIsNextDisabled,
+  setIsStep1Valid,
   isUplaodContacts,
   handleUploadContacts,
 }) => {
@@ -68,7 +68,7 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
         Boolean(updatedFields["Email"] && updatedFields["First Name"]) &&
         Object.values(updatedFields).some((v) => Boolean(v));
 
-      setIsNextDisabled(!hasSelection);
+      setIsStep1Valid(!hasSelection);
 
       return updatedFields;
     });
@@ -197,6 +197,7 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
       </Box>
       <Typography fontSize={14} color="gray" mb={2}>
         Map CSV columns to the variables you want to add to the campaign.
+        Firstname and Email are required.
       </Typography>
       <Box
         sx={{

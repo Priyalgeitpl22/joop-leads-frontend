@@ -34,12 +34,12 @@ import { getCampaignById } from "../../../../../redux/slice/emailCampaignSlice";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../../redux/store/store";
 
-
 interface ScheduleCampaignProps {
   open: boolean;
   onClose: () => void;
-  campaignId?: string;
+  campaign_id?: string;
   handleSave: (data: any) => void;
+  handleScheduleValid: (data: any) => void;
   campaignSchedule?: any;
 }
 
@@ -47,7 +47,9 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
   open,
   onClose,
   handleSave,
+  handleScheduleValid,
   campaignSchedule,
+  campaign_id,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
 
@@ -73,13 +75,14 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const campaignId = params.get("id");
 
-
-    if (campaignId) fetchCampaignDetails(campaignId);
+    const id = campaignId ?? campaign_id;
+    if (id !== undefined && id !== null) {
+      fetchCampaignDetails(id);
+    }
   }, [open, campaignSchedule]);
 
   const fetchCampaignDetails = async (id: string) => {
@@ -111,7 +114,6 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
   const handleChange = (field: keyof typeof formData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     validateField(field, value); // Validate the field on change
-
   };
 
   const handleTimeZoneChange = (value: string | string[]) => {
@@ -131,10 +133,14 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
     }));
   };
 
+  useEffect(() => {
+    let isValid = validateForm();
+    handleScheduleValid(isValid);
+  }, [formData]);
 
   const validateForm = () => {
     let newErrors: { [key: string]: string } = {};
-    console.log("newError", newErrors)
+    console.log("newError", newErrors);
 
     if (!formData.timeZone.length) {
       newErrors.timeZone = "Time zone is required.";
@@ -195,7 +201,8 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
         break;
 
       case "maxLeads":
-        newErrors.maxLeads = value > 0 ? "" : "Max leads must be greater than 0.";
+        newErrors.maxLeads =
+          value > 0 ? "" : "Max leads must be greater than 0.";
         break;
 
       default:
@@ -205,15 +212,14 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
     setErrors(newErrors);
   };
 
-
   const handleSaveClick = () => {
-    console.log("Vlaidate form of  ...........", validateForm);
-    validateForm
     if (validateForm()) {
+      handleScheduleValid(true);
       handleSave({ schedule_settings: formData });
       onClose();
     }
   };
+
   return (
     <Dialog
       open={open}
@@ -238,8 +244,11 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
           alignItems="flex-start"
           gap={2}
         >
-
-          <FormControl fullWidth sx={{ textAlign: "left" }} error={!!errors.timeZone}>
+          <FormControl
+            fullWidth
+            sx={{ textAlign: "left" }}
+            error={!!errors.timeZone}
+          >
             <MultiSelectDropdown
               width="100%"
               label="Select Time Zone"
@@ -248,29 +257,32 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
               onChange={handleTimeZoneChange}
               multiple={false}
             />
-            {errors.timeZone && <FormHelperText>{errors.timeZone}</FormHelperText>}
+            {errors.timeZone && (
+              <FormHelperText>{errors.timeZone}</FormHelperText>
+            )}
           </FormControl>
 
           <Typography>Send these days</Typography>
           <FormControl error={!!errors.selectedDays} component="fieldset">
-
-            <FormGroup row >
+            <FormGroup row>
               {daysOfWeek.map((day) => (
                 <FormControlLabel
                   key={day}
                   control={
                     <Checkbox
                       checked={formData.selectedDays.includes(day)}
-                      onChange={() => handleDayChange(day)} />
+                      onChange={() => handleDayChange(day)}
+                    />
                   }
                   label={DaysOfWeek[day]}
                 />
               ))}
             </FormGroup>
-            {errors.selectedDays && <FormHelperText>{errors.selectedDays}</FormHelperText>}
+            {errors.selectedDays && (
+              <FormHelperText>{errors.selectedDays}</FormHelperText>
+            )}
           </FormControl>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-
             <Grid container spacing={2} sx={{ minWidth: "710px" }}>
               <Grid item xs={4}>
                 <FormControl fullWidth error={!!errors.startTime}>
@@ -279,7 +291,9 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
                     value={formData.startTime}
                     onChange={(value) => handleChange("startTime", value)}
                   />
-                  {errors.startTime && <FormHelperText>{errors.startTime}</FormHelperText>}
+                  {errors.startTime && (
+                    <FormHelperText>{errors.startTime}</FormHelperText>
+                  )}
                 </FormControl>
               </Grid>
 
@@ -290,7 +304,9 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
                     value={formData.endTime}
                     onChange={(value) => handleChange("endTime", value)}
                   />
-                  {errors.endTime && <FormHelperText>{errors.endTime}</FormHelperText>}
+                  {errors.endTime && (
+                    <FormHelperText>{errors.endTime}</FormHelperText>
+                  )}
                 </FormControl>
               </Grid>
 
@@ -306,11 +322,12 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
                     fullWidth
                     error={!!errors.emailInterval}
                   />
-                  {errors.emailInterval && <FormHelperText>{errors.emailInterval}</FormHelperText>}
+                  {errors.emailInterval && (
+                    <FormHelperText>{errors.emailInterval}</FormHelperText>
+                  )}
                 </FormControl>
               </Grid>
             </Grid>
-
           </LocalizationProvider>
 
           <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -325,10 +342,11 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
                       textField: { error: !!errors.startDate },
                     }}
                   />
-                  {errors.startDate && <FormHelperText>{errors.startDate}</FormHelperText>}
+                  {errors.startDate && (
+                    <FormHelperText>{errors.startDate}</FormHelperText>
+                  )}
                 </FormControl>
               </Grid>
-
 
               <Grid item xs={6}>
                 <FormControl fullWidth error={!!errors.maxLeads}>
@@ -342,17 +360,29 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
                     fullWidth
                     error={!!errors.maxLeads}
                   />
-                  {errors.maxLeads && <FormHelperText>{errors.maxLeads}</FormHelperText>}
+                  {errors.maxLeads && (
+                    <FormHelperText>{errors.maxLeads}</FormHelperText>
+                  )}
                 </FormControl>
               </Grid>
             </Grid>
           </LocalizationProvider>
-
         </Box>
       </CustomDialogContainer>
 
       <CustomDialogFooter justifyContent="flex-end">
-        <Button onClick={handleSaveClick}>Save</Button>
+        <Button
+          onClick={handleSaveClick}
+          // disabled={isSaveDisabled}
+          // style={{
+          //   color: isSaveDisabled ? "lightgray" : "white",
+          //   background: isSaveDisabled ? "#878484" : "var(--theme-color)",
+          //   opacity: isSaveDisabled ? 0.6 : 1,
+          //   cursor: isSaveDisabled ? "not-allowed" : "pointer",
+          // }}
+        >
+          Save Schedule
+        </Button>
       </CustomDialogFooter>
     </Dialog>
   );

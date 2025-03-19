@@ -17,14 +17,14 @@ interface ImportLeadsCampaignProps {
   handleLeadsData: (data: ImportedLeadsData) => void;
   handleCSVUpload: (data: any) => void;
   saveCSVSetting: (data: any) => void;
-  setIsNextDisabled: (status: boolean) => void;
+  setIsStep1Valid: (status: boolean) => void;
 }
 
 const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
   handleLeadsData,
   handleCSVUpload,
   saveCSVSetting,
-  setIsNextDisabled,
+  setIsStep1Valid,
   isEdit
 }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -117,7 +117,7 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
           file={selectedFile}
           onFileChange={handleFileChange}
           onDeleteFile={() => setSelectedFile(null)}
-          setIsNextDisabled={setIsNextDisabled}
+          setIsStep1Valid={setIsStep1Valid}
         />
       ) : (
         <>

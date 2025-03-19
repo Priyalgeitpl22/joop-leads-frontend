@@ -12,11 +12,11 @@ const ViewSequencesEmailCampaign: React.FC<ViewSequencesEmailCampaignProps> = ({
   const navigate = useNavigate();
 
   const handleAddSequence = (id: string) => {
-    navigate(`/email-campaign/new-campaign?edit&id=${id}`);
+    navigate(`/email-campaign/new-campaign?edit&id=${campaignId}`);
   };
 
   return (
-    <Container>
+    <Container style={{height: "100%"}}>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

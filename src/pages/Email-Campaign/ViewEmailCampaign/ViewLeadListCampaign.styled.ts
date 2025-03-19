@@ -6,6 +6,7 @@ export const CustomTableContainer = styled(TableContainer)`
   overflow: hidden;
   max-height: 100%;
   overflow-y: auto;
+  height: 100%;
 
   &::-webkit-scrollbar {
     width: 8px;
@@ -89,3 +90,72 @@ export const InactiveStatus = styled.span`
   align-items: center;
   gap: 5px;
 `
+
+
+export const CampaignCard = styled.div`
+  display: flex;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  margin-top: 5% !important;
+  // width: 80%;
+  margin: 5%;
+`;
+
+export const CampaignSection = styled.div`
+  flex: 1;
+  padding: 20px;
+`;
+
+export const Title = styled.h2`
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 10px;
+`;
+
+export const Percentage = styled.span`
+  color: black;
+  font-weight: bold;
+`;
+
+export const ProgressBar = styled.div`
+  height: 6px;
+  background-color: #d4edda;
+  border-radius: 5px;
+  margin-bottom: 15px;
+`;
+
+export const StatsList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin-bottom: 15px;
+
+  li {
+    margin: 5px 0;
+    color: #444;
+  }
+`;
+
+export const AnalyticsLink = styled.a`
+  color: #6a5acd;
+  text-decoration: none;
+  font-weight: bold;
+  display: block;
+  margin-top: 10px;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+export const Divider = styled.div`
+  width: 1px;
+  background: #ddd;
+  margin: 0 20px;
+`;
+
+export const TextGray = styled.span`
+  color: #888;
+`;
