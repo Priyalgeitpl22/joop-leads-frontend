@@ -176,7 +176,6 @@ export const SearchContacts = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      debugger
       const response = await api.get("/contact/search-contacts", {
         params: { query, orgId },
         headers: {
