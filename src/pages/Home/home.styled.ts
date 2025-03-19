@@ -28,7 +28,7 @@ export const MetricCard = styled(Card)(({ borderColor }: { borderColor: string }
   boxShadow: "0px 4px 12px var(--shadow-color)",
   borderLeft: `5px solid ${borderColor}`,
   backgroundColor: "var(--icon-light)",
-  minHeight: "110px",
+  minHeight: "88px",
   transition: "0.3s",
   "&:hover": {
     transform: "scale(1.05)",
@@ -44,13 +44,50 @@ export const GraphContainer = styled(Card)({
 
 export const SideCard = styled(Card)({
   padding: "20px",
-  borderRadius: "12px",
-  boxShadow: "0px 4px 12px var(--shadow-color) ",
-  backgroundColor: "var(--icon-light)",
+  borderRadius: "16px",
+  boxShadow: "0px 6px 15px rgba(0, 0, 0, 0.1)",
+  background: "linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)",
+  color: "#fff",
   textAlign: "center",
   display: "flex",
   flexDirection: "column",
-  gap: "12px",
+  gap: "16px",
   height: "100%",
   justifyContent: "space-between",
+  transition: "0.3s ease-in-out",
+
+  "&:hover": {
+    transform: "scale(1.05)",
+    boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.15)",
+  },
+
+  "& strong": {
+    fontSize: "18px",
+    fontWeight: "600",
+  },
+
+  "& span": {
+    fontSize: "22px",
+    fontWeight: "bold",
+    color: "#ffea00",
+  },
 });
+
+export const MetricCard1 = styled(Card)(
+  ({ borderColor }: { borderColor: string }) => ({
+    padding: "16px",
+    borderRadius: "12px",
+    textAlign: "center",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    minWidth: "160px",
+    height: "88px",
+    boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+    borderLeft: `5px solid ${borderColor}`,
+    transition: "0.3s",
+    "&:hover": {
+      transform: "scale(1.05)",
+    },
+  })
+);

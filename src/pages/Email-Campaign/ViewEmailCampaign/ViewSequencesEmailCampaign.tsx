@@ -1,64 +1,52 @@
 import { motion } from "framer-motion";
-import {
-  Box,
-} from "@mui/material";
-import {
-  EmailCampaignContainer,
-} from "./../EmailCampaign.styled";
-import { Button2 } from "../../../styles/layout.styled";
 import { useNavigate } from "react-router-dom";
-const ViewSequencesEmailCampaign = () => {
+import {Container, ContentBox, Subtitle, TextContainer, Title} from "./ViewSequencesCampaign.styled"
+import { Button2 } from "../../../styles/layout.styled";
+interface ViewSequencesEmailCampaignProps {
+  campaignId: string;
+}
+
+const ViewSequencesEmailCampaign: React.FC<ViewSequencesEmailCampaignProps> = ({
+  campaignId,
+}) => {
   const navigate = useNavigate();
 
-  const handleAddSequence = () => {
-    navigate("/email-campaign/new-campaign")
-  }
+  const handleAddSequence = (id: string) => {
+    navigate(`/email-campaign/new-campaign?edit&id=${id}`);
+  };
 
   return (
-    <EmailCampaignContainer>
+    <Container>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
         style={{ width: "100%" }}
       >
-        <Box
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            padding: "60px 0px",
-            width: "100%",
-          }}
-        >
-          <Box
-            style={{
-              alignItems: "center",
-              display: "flex",
-              flexDirection: "column",
-              maxWidth: "570px",
-              width: "100%",
-            }}
-          >
-            <b>
-              <div>Automate Scenarios Using Your Leads’ Behaviour</div>
-            </b>
-            <div>
-              Listen and react to your
-              lead's replies automatically. <br/>Auto-handle & convert "Out of
-              Office", "Not Interested" responses.
-            </div>
+        <ContentBox>
+          <TextContainer>
+            <Title>Automate Scenarios Using Your Leads’ Behaviour</Title>
+            <Subtitle>
+              Listen and react to your lead's replies automatically. <br />
+              Auto-handle & convert "Out of Office", "Not Interested" responses.
+            </Subtitle>
             <Button2
-              style={{ width: "40%" }}
-              color={""}
-              background={""}
-              onClick={handleAddSequence}
+              onClick={() => handleAddSequence(campaignId)}
+              color={"#fff"}
+              background={"var(--theme-color)"}
+              style={{
+                width: "30%",
+                height: "35%",
+                marginTop: "10px",
+                padding: "0px",
+              }}
             >
               Add Sequences
             </Button2>
-          </Box>
-        </Box>
+          </TextContainer>
+        </ContentBox>
       </motion.div>
-    </EmailCampaignContainer>
+    </Container>
   );
 };
 
