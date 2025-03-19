@@ -121,7 +121,7 @@ export const changePassword = createAsyncThunk(
       if (response.status !== 200) {
         throw new Error(response.data?.message || "Failed to change password");
       }
-      return { success: true };
+      return response.data
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message || "Network error"
