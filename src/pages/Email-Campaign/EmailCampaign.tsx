@@ -29,7 +29,7 @@ import {
 } from "../../redux/slice/emailCampaignSlice";
 import { AppDispatch } from "../../redux/store/store";
 import { IEmailCampaign } from "./NewCampaign/interfaces";
-import { formatDate, formatDateTime } from "../../utils/utils";
+import { formatDateTime } from "../../utils/utils";
 import { Button } from "../../styles/global.styled";
 import ForwardToInboxOutlinedIcon from "@mui/icons-material/ForwardToInboxOutlined";
 import DraftsOutlinedIcon from "@mui/icons-material/DraftsOutlined";
