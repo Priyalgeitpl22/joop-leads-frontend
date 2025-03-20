@@ -177,7 +177,7 @@ export const updateEmailAccountSmtpDetail = createAsyncThunk(
   async ({ id, data }: { id: string; data: any }, { rejectWithValue }) => {
     try {
       const response = await emailApi.put(`/accounts/${id}`, data);
-      return response.data;
+      return response.data ;
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to update email account"
@@ -208,8 +208,8 @@ export const deleteEmailAccount = createAsyncThunk(
   "emailAccounts/deleteEmailAccount",
   async (id: string, { rejectWithValue }) => {
     try {
-      await emailApi.delete(`/accounts/${id}`);
-      return id; 
+      const response = await emailApi.delete(`/accounts/${id}`);
+      return response.data; 
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to delete email account"
