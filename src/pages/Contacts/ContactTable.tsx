@@ -509,13 +509,16 @@ const ContactTable: React.FC = () => {
           <Button>Apply</Button>
         </Box>
       </Menu>
-      <CustomDataTable
-        columns={columns}
-        rows={rows}
-        pageSizeOptions={[15, 10, 5]}
-        rowSelectionModel={rowSelectionModel}
-        handleRowSelection={handleSelectedRows}
-      />
+      <Box sx={{ height: "500px", overflow: "auto" }}>
+        <CustomDataTable
+          columns={columns}
+          rows={rows}
+          pageSizeOptions={[15, 10, 5]}
+          rowSelectionModel={rowSelectionModel}
+          handleRowSelection={handleSelectedRows}
+        />
+      </Box>
+
       <ConfirmDeleteDialog
         open={openDeleteDialog}
         onClose={handleCloseDeleteDialog}

@@ -51,6 +51,22 @@ export const getCampaignById = createAsyncThunk(
   }
 );
 
+export const getCampaignBySender = createAsyncThunk(
+  "emailAccount/campaignSenderAccount",
+  async (id: string, { rejectWithValue }) => {
+    try {
+      const response = await api.get(`${BASE_URL}/get-campaigns-by-sender?sender_account_id=${id}`)
+      return response.data;
+    } catch (error: unknown) {
+      let errorMessage = "Something went wrong";
+      if (error instanceof AxiosError) {
+        errorMessage = error.response?.data?.message || errorMessage;
+      }
+      return rejectWithValue(errorMessage);
+    }
+  }
+)
+
 export const addLeadsToCampaign = createAsyncThunk(
   "emailCampaign/addLeads",
   async (data: any, { rejectWithValue }) => {

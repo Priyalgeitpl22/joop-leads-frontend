@@ -245,7 +245,12 @@ const EmailCampaign: React.FC = () => {
 
       <TableContainer
         component={Paper}
-        sx={{ boxShadow: "none", borderRadius: "8px", overflowY: "auto" }}
+        sx={{
+          boxShadow: "none",
+          borderRadius: "8px",
+          overflowY: "auto",
+          height: "calc(100vh - 150px)",
+        }}
       >
         <Table stickyHeader>
           <TableHead sx={{ backgroundColor: "#f8f9fc" }}>
