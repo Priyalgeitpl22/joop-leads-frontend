@@ -70,42 +70,45 @@ const ChangePassword: React.FC = () => {
 
   const handleChangePassword = async () => {
     setIsSubmitted(true);
-
+  
     Object.keys(formData).forEach((key) =>
       validateField(key, formData[key as keyof typeof formData])
     );
 
-
+  
     if (Object.values(errors).some((error) => error)) {
       toast.error("Missing Required fields.");
       return;
     }
-
+  
     if (!user) {
       toast.error("User not found. Please log in again.");
       return;
     }
-
-    try {
-      const response = await dispatch(
-        changePassword({
-          email: user.email,
-          existingPassword: formData.existingPassword,
-          newPassword: formData.newPassword,
-        })
-      ).unwrap();
-
-      if (response?.code === 200) {
-        toast.success(response?.message || "Password updated successfully!", {
-          duration: 3000,
-          position: "top-right",
-        });
-        navigate("/"); 
+  
+    setTimeout(async () => {
+      try {
+        const response = await dispatch(
+          changePassword({
+            email: user.email,
+            existingPassword: formData.existingPassword,
+            newPassword: formData.newPassword,
+          })
+        ).unwrap();
+  
+        if (response?.code === 200) {
+          toast.success(response?.message || "Password updated successfully!", {
+            duration: 3000,
+            position: "top-right",
+          });
+          navigate("/");
+        }
+      } catch (error) {
+        toast.error(error as string);
       }
-    } catch (error) {
-      toast.error(error as string);
-    }
+    }, 500); 
   };
+  
 
   return (
     <PageContainer>

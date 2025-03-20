@@ -8,17 +8,22 @@ import {
   StyledTextField,
   StyledButton,
 } from "./forgot_password.styled";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { forgetPassword } from "../../redux/slice/authSlice";
-import { AppDispatch } from "../../redux/store/store";
+import { AppDispatch, RootState } from "../../redux/store/store";
 import toast, { Toaster } from "react-hot-toast";
 import { validateEmail } from "../../utils/Validation";
 import { NavigateLink } from "../Login/login.styled";
+import Loader from "../../components/Loader";
+import { useNavigate } from "react-router-dom";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
+  const [showLoader, setShowLoader] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
+  const { loading } = useSelector((state: RootState) => state.auth);
+  const navigate = useNavigate();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -35,7 +40,7 @@ const ForgotPassword = () => {
 
   const handleSubmitEmail = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     if (!email.trim()) {
       setError("Email is required");
       return;
@@ -45,22 +50,30 @@ const ForgotPassword = () => {
       return;
     }
     setError("");
+    setShowLoader(true);
+  
     try {
       const response = await dispatch(forgetPassword({ email })).unwrap();
-
-      if (response.code === 202) {
-        toast.success(response.message);
-        window.location.assign("/confirmation");
-      }
-    } catch (err) {
-      console.error("Error sending reset link", err);
-      setError("Failed to send reset link. Please try again.");
-      toast.error("Failed to send reset link. Please try again.");
+      setTimeout(() => {
+        toast.success(response.message || "Reset link sent successfully!", { duration: 3000 });
+        setShowLoader(false);
+  
+        setTimeout(() => {
+          navigate("/confirmation");
+        }, 2000);
+      }, 1500);
+    } catch (err: any) {
+      setTimeout(() => {
+        setShowLoader(false);
+        toast.error(err?.message || "Failed to send reset link. Please try again.", { duration: 3000 });
+      }, 1500);
     }
   };
+  
 
   return (
     <PageContainer>
+      <Toaster position="top-center" reverseOrder={false} />
       <AuthCard>
         <IllustrationSection>
           <img
@@ -94,10 +107,9 @@ const ForgotPassword = () => {
               fullWidth
             />
 
-            <StyledButton fullWidth type="submit">
-              RESET PASSWORD
+            <StyledButton fullWidth type="submit" disabled={loading || showLoader}>
+              {loading || showLoader ? "SENDING..." : "RESET PASSWORD"}
             </StyledButton>
-          
           </form>
 
           <Typography variant="body2" align="center" sx={{ my: 2 }}>
@@ -108,7 +120,7 @@ const ForgotPassword = () => {
           </Typography>
         </FormSection>
       </AuthCard>
-      <Toaster />
+      {(loading || showLoader) && <Loader />}
     </PageContainer>
   );
 };

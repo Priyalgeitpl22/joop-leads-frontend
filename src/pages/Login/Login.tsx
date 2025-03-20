@@ -26,11 +26,11 @@ function Login() {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [loginSubmitted, setLoginSubmitted] = useState(false);
-    
+
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  const { loading } = useSelector((state: RootState) => state.user);
+  const { loading } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
     if (loginSubmitted) {
@@ -41,14 +41,14 @@ function Login() {
           ).unwrap();
 
           if (response?.code === 200) {
-            toast.success(response?.message);
+            toast.success(response?.message,{duration:4000});
 
             const token = Cookies.get("access_token");
             if (token) {
               await dispatch(getUserDetails(token)).unwrap();
             }
-
-            window.location.assign("/");
+            navigate('/')
+            // window.location.assign("/");
           } else {
             toast.error(response?.message);
           }
