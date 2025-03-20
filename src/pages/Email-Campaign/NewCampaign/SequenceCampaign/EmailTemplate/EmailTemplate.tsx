@@ -179,11 +179,11 @@ const EmailTemplate: React.FC<EmailTemplateProps> = ({
     button.addEventListener("click", (event) => {
       handleOpenMenu("emailBody", event);
     });
-    const formatGroup = toolbar.querySelector(".ql-formats:last-child");
-    if (formatGroup) {
-      formatGroup.appendChild(button);
+    const firstGroup = toolbar.querySelector(".ql-formats:first-child");
+    if (firstGroup) {
+      firstGroup.insertBefore(button, firstGroup.firstChild);
     } else {
-      toolbar.appendChild(button);
+      toolbar.insertBefore(button, toolbar.firstChild);
     }
   };
   

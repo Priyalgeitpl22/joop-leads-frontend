@@ -260,7 +260,7 @@ const EmailCampaign: React.FC = () => {
                 Report
               </TableCell>
               <TableCell sx={{ fontWeight: "bold", color: "#35495c" }}>
-                Actions
+                Action
               </TableCell>
             </TableRow>
           </TableHead>

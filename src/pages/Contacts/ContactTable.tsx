@@ -218,7 +218,7 @@ const ContactTable: React.FC = () => {
         field: "view",
         headerName: "View",
         renderCell: (params) => (
-          <Tooltip title="View Contact Details" arrow>
+          <Tooltip title="View Leads Detail" arrow>
           <IconButton
             onClick={(event) => handleViewClick(event, params.row.id)}
           >
@@ -231,7 +231,7 @@ const ContactTable: React.FC = () => {
         field: "delete",
         headerName: "Delete",
         renderCell: (_params) => (
-          <Tooltip title="Delete Contact" arrow>
+          <Tooltip title="Delete Lead" arrow>
             <IconButton
               color="error"
               onClick={() => handleOpenDeleteDialog(_params.row.id)}
@@ -407,14 +407,14 @@ const ContactTable: React.FC = () => {
           />
 
           {selectedIds.length == 0 && (
-            <Tooltip title="Upload Bulk Contacts" arrow>
+            <Tooltip title="Upload Bulk Leads" arrow>
               <IconsButton onClick={handleOpenDialog}>
                 <CloudUploadIcon />
               </IconsButton>
             </Tooltip>
           )}
           {selectedIds.length == 0 && (
-            <Tooltip title="Add Contact" arrow>
+            <Tooltip title="Add Lead" arrow>
               <IconsButton onClick={handleAccountOpenDialog}>
                 <PersonAddIcon />
               </IconsButton>
