@@ -113,7 +113,7 @@ export const changePassword = createAsyncThunk(
   "auth/changePassword",
   async (data: ChangePasswordData, { rejectWithValue }) => {
     try {
-      debugger
+      
       if (!token) throw new Error("No authentication token found");
 
       const response = await api.post("/auth/change-password", data, {
@@ -124,9 +124,7 @@ export const changePassword = createAsyncThunk(
       }
       return response.data
     } catch (error: any) {
-      return rejectWithValue(
-        error.response?.data?.message || "Network error"
-      );
+      return rejectWithValue(error?.response?.data?.message || error.message);
     }
   }
 );
@@ -190,8 +188,9 @@ export const resetPassword = createAsyncThunk(
       const response = await api.post(`/auth/reset-password`, data);
       return response.data;
     } catch (error: any) {
+      const message = error?.response?.data?.message || error.message || "Failed to reset password";
       return rejectWithValue(
-        error.response?.data || "Failed to reset password"
+        message
       );
     }
   }

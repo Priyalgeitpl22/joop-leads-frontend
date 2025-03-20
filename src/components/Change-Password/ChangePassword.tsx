@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   PageContainer,
   ChangePasswordCard,
@@ -19,7 +19,9 @@ import Loader from "../Loader";
 const ChangePassword: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const { user } = useSelector((state: RootState) => state.user);
+  const location = useLocation();
+  const userEmail = location?.state?.email;
+
   const { loading } = useSelector((state: RootState) => state.auth); // Get loading state from Redux
 
   const [formData, setFormData] = useState({
@@ -80,17 +82,11 @@ const ChangePassword: React.FC = () => {
       toast.error("Missing Required fields.");
       return;
     }
-  
-    if (!user) {
-      toast.error("User not found. Please log in again.");
-      return;
-    }
-  
     setTimeout(async () => {
       try {
         const response = await dispatch(
           changePassword({
-            email: user.email,
+            email: userEmail,
             existingPassword: formData.existingPassword,
             newPassword: formData.newPassword,
           })
