@@ -121,7 +121,7 @@ const ContactTable: React.FC = () => {
     }
   };
 
- 
+
   const handleOpenDeleteDialog = (selectedIds: string[]) => {
     setSelectedIds(selectedIds);
     setOpenDeleteDialog(true);
@@ -134,11 +134,11 @@ const ContactTable: React.FC = () => {
   const handleDeleteContact = async () => {
     if (selectedIds.length > 0) {
       try {
-      
+
         const response = await dispatch(deleteContact(selectedIds)).unwrap();
         if (response?.message) {
           toast.success(response.message);
-        
+
           setRows((prevRows) =>
             prevRows.filter((contact) => !selectedIds.includes(contact.id))
           );
@@ -219,11 +219,11 @@ const ContactTable: React.FC = () => {
         headerName: "View",
         renderCell: (params) => (
           <Tooltip title="View Leads Detail" arrow>
-          <IconButton
-            onClick={(event) => handleViewClick(event, params.row.id)}
-          >
-            <VisibilityIcon />
-          </IconButton>
+            <IconButton
+              onClick={(event) => handleViewClick(event, params.row.id)}
+            >
+              <VisibilityIcon />
+            </IconButton>
           </Tooltip>
         ),
       },
@@ -238,7 +238,7 @@ const ContactTable: React.FC = () => {
             >
               <DeleteIcon />
             </IconButton>
-            </Tooltip>
+          </Tooltip>
         ),
       },
     ],
@@ -251,15 +251,18 @@ const ContactTable: React.FC = () => {
     };
 
     getContactsAccounts();
-  }, []);
+  }, [dispatch]);
+
+
 
   const getFetchAllContacts = async () => {
     try {
+      setLoading(true);
       const data = await dispatch(fetchContacts()).unwrap();
       if (data) {
+        setContactAccount(data);
         setLoading(false);
       }
-      setContactAccount(data);
       setRows(data);
     } catch (error) {
       setLoading(false);
@@ -297,7 +300,7 @@ const ContactTable: React.FC = () => {
     setSelectedIds(selectedIds);
     setRowSelectionModel(selectedIds);
   };
-  
+
   const selectedRowsData = rows.filter((row) => selectedIds.includes(row.id));
 
   const allActive =
@@ -347,7 +350,7 @@ const ContactTable: React.FC = () => {
 
   const handleAccountOpenDialog = () => setIsAddAccountDialogOPen(true);
   const handleAccountCloseDialog = () => setIsAddAccountDialogOPen(false);
-  
+
   const handleUploadContacts = async (data: any) => {
     console.log(emailFieldsToBeAdded);
     console.log(CSVsettings);

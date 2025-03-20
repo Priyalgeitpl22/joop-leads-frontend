@@ -41,7 +41,7 @@ function Login() {
           ).unwrap();
 
           if (response?.code === 200) {
-            toast.success(response?.message,{duration:4000});
+            toast.success(response?.message, { duration: 4000 });
 
             const token = Cookies.get("access_token");
             if (token) {
@@ -118,23 +118,23 @@ function Login() {
 
           <StyledTextField
             fullWidth
-            label="Email Address"
+            label="Email Address *"
             variant="outlined"
             type="email"
             value={email}
             onChange={handleEmailChange}
             error={!!emailError}
             helperText={emailError}
-            required
+
           />
           <PasswordInput
-            label="Password"
+            label="Password *"
             value={password}
             onChange={handlePasswordChange}
             autoComplete="new-password"
             error={!!passwordError}
             helperText={passwordError}
-            required
+
           />
 
           <NavigateLink

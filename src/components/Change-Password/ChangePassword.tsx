@@ -14,13 +14,11 @@ import { changePassword } from "../../redux/slice/authSlice";
 import toast, { Toaster } from "react-hot-toast";
 import PasswordInput from "../../utils/PasswordInput";
 import { validatePassword } from "../../utils/Validation";
-import Loader from "../Loader";
 
 const ChangePassword: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.user);
-  const { loading } = useSelector((state: RootState) => state.auth); // Get loading state from Redux
 
   const [formData, setFormData] = useState({
     existingPassword: "",
@@ -63,52 +61,57 @@ const ChangePassword: React.FC = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    validateField(name, value);
 
 
     if (isSubmitted) validateField(name, value);
   };
 
+  const isFormValid = () => {
+    return (
+      formData.existingPassword.trim() !== "" &&
+      formData.newPassword.trim() !== "" &&
+      formData.confirmPassword.trim() !== "" &&
+      !Object.values(errors).some((error) => error) // Ensures no errors exist
+    );
+  };
+
   const handleChangePassword = async () => {
     setIsSubmitted(true);
-  
+
     Object.keys(formData).forEach((key) =>
       validateField(key, formData[key as keyof typeof formData])
     );
 
-  
+
     if (Object.values(errors).some((error) => error)) {
-      toast.error("Missing Required fields.");
+      toast.error("Please fix errors before proceeding.");
       return;
     }
-  
+
     if (!user) {
       toast.error("User not found. Please log in again.");
       return;
     }
-  
-    setTimeout(async () => {
-      try {
-        const response = await dispatch(
-          changePassword({
-            email: user.email,
-            existingPassword: formData.existingPassword,
-            newPassword: formData.newPassword,
-          })
-        ).unwrap();
-  
-        if (response?.code === 200) {
-          toast.success(response?.message || "Password updated successfully!", {
-            duration: 3000,
-            position: "top-right",
-          });
-          navigate("/");
-        }
-      } catch (error) {
-        toast.error(error as string);
+
+    try {
+      const response = await dispatch(
+        changePassword({
+          email: user.email,
+          existingPassword: formData.existingPassword,
+          newPassword: formData.newPassword,
+        })
+      ).unwrap();
+
+      if (response) {
+        toast.success("Password updated successfully!");
+        navigate("/");
+        window.location.reload();
       }
-    }, 500); 
+    } catch (error) {
+      toast.error(error as string);
+    }
   };
-  
 
   return (
     <PageContainer>
@@ -130,7 +133,7 @@ const ChangePassword: React.FC = () => {
           </Typography>
 
           <PasswordInput
-            label="Existing Password"
+            label="Existing Password *"
             name="existingPassword"
             value={formData.existingPassword}
             onChange={handleInputChange}
@@ -139,7 +142,7 @@ const ChangePassword: React.FC = () => {
           />
 
           <PasswordInput
-            label="New Password"
+            label="New Password *"
             name="newPassword"
             value={formData.newPassword}
             onChange={handleInputChange}
@@ -148,7 +151,7 @@ const ChangePassword: React.FC = () => {
           />
 
           <PasswordInput
-            label="Confirm Password"
+            label="Confirm Password *"
             name="confirmPassword"
             value={formData.confirmPassword}
             onChange={handleInputChange}
@@ -159,9 +162,10 @@ const ChangePassword: React.FC = () => {
           <StyledButton
             variant="contained"
             onClick={handleChangePassword}
-            disabled={loading} 
+            disabled={!isFormValid()}
+
           >
-            {loading ? <Loader /> : "Change Password"}
+            Change Password
           </StyledButton>
         </FormSection>
       </ChangePasswordCard>

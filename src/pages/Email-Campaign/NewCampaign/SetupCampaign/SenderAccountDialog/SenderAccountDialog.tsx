@@ -118,14 +118,14 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
 
   useEffect(() => {
     handleSenderAccountValid(!isSaveDisabled);
-  },[isSaveDisabled]);
+  }, [isSaveDisabled]);
 
   useEffect(() => {
     console.log(emailAccounts);
     const params = new URLSearchParams(location.search);
     const campaignId = params.get("id");
 
-    const id = campaignId ?? campaign_id; 
+    const id = campaignId ?? campaign_id;
     if (id !== undefined && id !== null) {
       fetchCampaignDetails(id);
     }
@@ -213,7 +213,7 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
       }
 
       const filteredData = await dispatch(
-        SearchEmailAccount({ query:trimmedQuery, orgId: user?.orgId || "" })
+        SearchEmailAccount({ query: trimmedQuery, orgId: user?.orgId || "" })
       ).unwrap();
 
       const formattedData = filteredData.map((item: any) => ({
@@ -298,16 +298,15 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
           }}
           disabled={isSaveDisabled}
           style={{
-            color: isSaveDisabled ? "lightgray" : "white",
-            background: isSaveDisabled ? "#878484" : "var(--theme-color)",
-            opacity: isSaveDisabled ? 0.6 : 1,
-            cursor: isSaveDisabled ? "not-allowed" : "pointer",
+            backgroundColor: isSaveDisabled ? "#878484" : "var(--theme-color)",
+            color: isSaveDisabled ? "lightgray" : "white"
+
           }}
         >
           Save Email Accounts
         </Button>
       </CustomDialogFooter>
-    </Dialog>
+    </Dialog >
   );
 };
 

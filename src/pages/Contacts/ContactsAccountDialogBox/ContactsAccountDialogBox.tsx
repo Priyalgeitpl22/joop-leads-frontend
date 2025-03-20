@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -27,6 +27,7 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
 
 
 
+
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -42,6 +43,23 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
     first_name: "",
     email: "",
   });
+
+
+  useEffect(() => {
+    if (open) {
+      setFormData({
+        first_name: "",
+        last_name: "",
+        email: "",
+        phone_number: "",
+        company_name: "",
+        linkedin_profile: "",
+        website: "",
+        location: "",
+        orgId: "",
+      });
+    }
+  }, [open])
 
   const validateField = (name: string, value: string) => {
     let error = "";
@@ -94,6 +112,7 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
     dispatch(CreateContactsAccount(payload))
       .unwrap()
       .then(() => {
+
         onClose();
       })
       .catch(() => {

@@ -231,8 +231,8 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleUpdatAccount = () => { 
-    if (!validateFields()) return;
+  const handleUpdatAccount = () => {
+
     if (!id) return;
 
     let payload;
@@ -626,7 +626,7 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
               />
             </Grid2>
             <Grid2 size={{ xs: 5, sm: 5 }}>
-              <InputLabel>Message Per Day (Warmups not included)</InputLabel>
+              <InputLabel>Message Per Day (Warmups not included) *</InputLabel>
               <SmtpUpdateTextField
                 fullWidth
                 type="number"
@@ -636,16 +636,16 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
                 error={!formData.msg_per_day || formData.msg_per_day <= 0}
                 inputProps={{ min: 1 }}
                 helperText={
-                  !formData.time_gap
-                    ? "Time gap is required"
-                    : formData.time_gap <= 0
+                  !formData.msg_per_day
+                    ? "Msg per day is required"
+                    : formData.msg_per_day <= 0
                       ? "Enter a valid positive number"
                       : ""
                 }
               />
             </Grid2>
             <Grid2 size={{ xs: 5, sm: 5 }}>
-              <InputLabel>Minimum time gap (min)</InputLabel>
+              <InputLabel>Minimum time gap (min) *</InputLabel>
               <SmtpUpdateTextField
                 fullWidth
                 type="number"
@@ -654,9 +654,9 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
                 onChange={handleChange}
                 error={!formData.time_gap || formData.time_gap <= 0}
                 helperText={
-                  !formData.msg_per_day
-                    ? "Message Per Day is required"
-                    : formData.msg_per_day <= 0
+                  !formData.time_gap
+                    ? " Minimum time gap is required"
+                    : formData.time_gap <= 0
                       ? "Enter a valid positive number"
                       : ""
                 }
@@ -668,8 +668,9 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
                 <Button2
                   disabled={isUpdateDisabled}
                   onClick={handleUpdatAccount}
-                  color={"white"}
-                  background={"var(--theme-color)"}
+                  color={isUpdateDisabled ? "black" : "white"}
+                  background={isUpdateDisabled ? "#d3d3d3" : "var(--theme-color)"}
+
                   style={{
                     cursor: isUpdateDisabled ? "not-allowed" : "pointer",
                     width: "20%",

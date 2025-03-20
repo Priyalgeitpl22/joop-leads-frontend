@@ -57,21 +57,24 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
   const [errors, setErrors] = useState({ campaignName: "" });
   const [isFormValid, setIsFormValid] = useState(false);
 
+
   useEffect(() => {
-    let isValid = errors.campaignName === "" ? true : false
+    let isValid = errors.campaignName === "" && formData.campaignName.trim().length >= 3;
     setIsFormValid(isValid);
     handleSettingsValid(isValid);
-  }, [errors]);
+  }, [errors, formData.campaignName]);
 
   const handleChange = (field: keyof typeof formData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+
     if (field === "campaignName") {
-      if (!value.trim()) {
+      const trimmedValue = value.trim();
+      if (!trimmedValue) {
         setErrors((prev) => ({
           ...prev,
           campaignName: "Campaign Name is required",
         }));
-      } else if (value.length < 3) {
+      } else if (trimmedValue.length < 3) {
         setErrors((prev) => ({
           ...prev,
           campaignName: "Must be at least 3 characters",
@@ -82,19 +85,22 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
     }
   };
 
+
   useEffect(() => {
     if (open) {
       const params = new URLSearchParams(location.search);
       const campaignId = params.get("id");
 
-        const id = campaignId ?? campaign_id;
-        if (id !== undefined && id !== null) {
-          fetchCampaignDetails(id);
-        } else {
+      const id = campaignId ?? campaign_id;
+      if (id !== undefined && id !== null) {
+        fetchCampaignDetails(id);
+      } else {
         setLoading(false);
+        setErrors({ campaignName: "" });
       }
     }
   }, [open]);
+
 
   const fetchCampaignDetails = async (id: string) => {
     try {
@@ -118,6 +124,7 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
         }));
         setLoading(false);
       }
+      setErrors({ campaignName: "" });
       return response.campaign;
     } catch (error) {
       setLoading(false);
@@ -149,7 +156,7 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
         <ContentContainer>
           <Box sx={{ padding: 3, margin: "auto" }}>
             <Box>
-              <Typography variant="h6">Campaign Name</Typography>
+              <Typography variant="h6">Campaign Name *</Typography>
               <TextField
                 fullWidth
                 value={formData.campaignName}
@@ -316,11 +323,15 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
               handleSave({ campaign_settings: formData });
               onClose();
             }}
+
             disabled={!isFormValid}
             style={{
               cursor: !isFormValid ? "not-allowed" : "pointer",
-              opacity: !isFormValid ? 0.6 : 1,
+              color: !isFormValid ? "lightgrey" : "white",
+
+              backgroundColor: !isFormValid ? "#878484" : "var(--theme-color)",
             }}
+
           >
             Save General Settings
           </Button>
