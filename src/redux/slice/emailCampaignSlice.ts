@@ -175,11 +175,12 @@ export const fetchCampaignSequences = createAsyncThunk(
 
 export const SendTestEmail = createAsyncThunk(
   "accounts/send-test-email",
-  async (data: { email: string | string[], toEmail: string }, { rejectWithValue }) => {
+  async (data: { email: string | string[], toEmail: string ,sequence:string}, { rejectWithValue }) => {
     try {
       const response = await emailApi.post(`/accounts/send-test-email`, {
         email: data.email,
         toEmail: data.toEmail,
+        emailbody:data.sequence
       },
         {
           headers: { Authorization: `Bearer ${token}` },

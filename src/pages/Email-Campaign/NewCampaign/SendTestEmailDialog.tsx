@@ -23,11 +23,14 @@ import toast from "react-hot-toast";
 interface SendTestEmailDialogProps {
   open: boolean;
   onClose: () => void;
+  sequence: any;
+  selectedSequence:any
 }
 
 const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
   open,
   onClose,
+  sequence,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [rows, setRows] = useState<{ _id: any; id: string; email: string }[]>(
@@ -67,6 +70,7 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
     const payload = {
       email: selectedEmailAccount,
       toEmail,
+      sequence,  
     };
     try {
       setIsLoading(true);
