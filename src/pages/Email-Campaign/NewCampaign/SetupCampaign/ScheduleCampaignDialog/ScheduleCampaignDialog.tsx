@@ -74,6 +74,9 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
   });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [isSaveDisabled, setIsSaveDisabled] = useState(true);
+
+
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -134,8 +137,8 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
   };
 
   useEffect(() => {
-    let isValid = validateForm();
-    handleScheduleValid(isValid);
+    validateForm();
+    // handleScheduleValid(isValid);
   }, [formData]);
 
   const validateForm = () => {
@@ -163,6 +166,8 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
     }
 
     setErrors(newErrors);
+    setIsSaveDisabled(Object.keys(newErrors).some((key) => newErrors[key]));
+
     return Object.keys(newErrors).length === 0;
   };
   const validateField = (field: keyof typeof formData, value: any) => {
@@ -251,7 +256,7 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
           >
             <MultiSelectDropdown
               width="100%"
-              label="Select Time Zone"
+              label="Select Time Zone *"
               options={timeZones}
               selectedValues={formData.timeZone}
               onChange={handleTimeZoneChange}
@@ -262,7 +267,7 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
             )}
           </FormControl>
 
-          <Typography>Send these days</Typography>
+          <Typography>Send these days *</Typography>
           <FormControl error={!!errors.selectedDays} component="fieldset">
             <FormGroup row>
               {daysOfWeek.map((day) => (
@@ -287,7 +292,7 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
               <Grid item xs={4}>
                 <FormControl fullWidth error={!!errors.startTime}>
                   <MobileTimePicker
-                    label="From"
+                    label="From *"
                     value={formData.startTime}
                     onChange={(value) => handleChange("startTime", value)}
                   />
@@ -300,7 +305,7 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
               <Grid item xs={4}>
                 <FormControl fullWidth error={!!errors.endTime}>
                   <MobileTimePicker
-                    label="To"
+                    label="To *"
                     value={formData.endTime}
                     onChange={(value) => handleChange("endTime", value)}
                   />
@@ -313,7 +318,7 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
               <Grid item xs={4}>
                 <FormControl fullWidth error={!!errors.emailInterval}>
                   <TextField
-                    label="Minutes"
+                    label="Minutes *"
                     type="number"
                     value={formData.emailInterval}
                     onChange={(e) =>
@@ -334,7 +339,7 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
             <Grid container spacing={2} sx={{ width: "100%" }}>
               <Grid item xs={6}>
                 <FormControl fullWidth error={!!errors.startDate}>
-                  <Typography>Set Campaign Start Date</Typography>
+                  <Typography>Set Campaign Start Date *</Typography>
                   <DesktopDatePicker
                     value={formData.startDate}
                     onChange={(value) => handleChange("startDate", value)}
@@ -350,7 +355,7 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
 
               <Grid item xs={6}>
                 <FormControl fullWidth error={!!errors.maxLeads}>
-                  <Typography>Max Number Of New Leads Per Day</Typography>
+                  <Typography>Max Number Of New Leads Per Day *</Typography>
                   <TextField
                     type="number"
                     value={formData.maxLeads}
@@ -373,13 +378,14 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
       <CustomDialogFooter justifyContent="flex-end">
         <Button
           onClick={handleSaveClick}
-          // disabled={isSaveDisabled}
-          // style={{
-          //   color: isSaveDisabled ? "lightgray" : "white",
-          //   background: isSaveDisabled ? "#878484" : "var(--theme-color)",
-          //   opacity: isSaveDisabled ? 0.6 : 1,
-          //   cursor: isSaveDisabled ? "not-allowed" : "pointer",
-          // }}
+          disabled={isSaveDisabled}
+
+          style={{
+            color: isSaveDisabled ? "Black" : "white",
+            background: isSaveDisabled ? "#878484" : "var(--theme-color)",
+            opacity: isSaveDisabled ? 0.6 : 1,
+            cursor: isSaveDisabled ? "not-allowed" : "pointer",
+          }}
         >
           Save Schedule
         </Button>

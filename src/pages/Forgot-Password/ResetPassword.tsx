@@ -87,14 +87,15 @@ const ResetPassword = () => {
           </Typography>
 
           <PasswordInput
-            label="New Password"
+            label="New Password *"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             error={!!error}
             helperText={error || ""}
           />
 
-          <StyledButton fullWidth onClick={handleSubmitPassword} disabled={loading}>
+          <StyledButton fullWidth onClick={handleSubmitPassword} disabled={loading}
+          >
             {loading ? "Resetting password..." : "Reset Password"}
           </StyledButton>
         </FormSection>

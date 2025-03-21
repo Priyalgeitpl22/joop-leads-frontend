@@ -204,7 +204,7 @@ const EmailCampaign: React.FC = () => {
     } catch (error) {
       console.error("Error resuming campaign:", error);
     } finally {
-      await minLoadingTime; // Ensure at least 1 sec has passed
+      await minLoadingTime;
       setLoading(false);
     }
   };
@@ -311,7 +311,7 @@ const EmailCampaign: React.FC = () => {
                       <Tooltip title="completed">
                         <DoneIcon
                           style={{ fontSize: 20, color: "#acacac" }}
-                          // onClick={() => handleResume(campaign.id)}
+                        // onClick={() => handleResume(campaign.id)}
                         />
                       </Tooltip>
                     )}
@@ -357,7 +357,7 @@ const EmailCampaign: React.FC = () => {
                         {item.label}:{" "}
                         {
                           campaign?.analytics_count[
-                            item.count_label as keyof typeof campaign.analytics_count
+                          item.count_label as keyof typeof campaign.analytics_count
                           ]
                         }
                       </p>

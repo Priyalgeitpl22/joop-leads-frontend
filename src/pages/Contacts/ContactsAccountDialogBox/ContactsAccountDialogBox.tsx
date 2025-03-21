@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -14,7 +14,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../redux/store/store";
 import { CreateContactsAccount, CreateContactsAccountPayload } from "../../../redux/slice/contactSlice";
 import toast from "react-hot-toast";
-import Loader from "../../../components/Loader";
+import { Loader } from "lucide-react";
 interface EmailCampaignDialogProps {
   open: boolean;
   onClose: () => void;
@@ -26,6 +26,7 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
   onClose,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
+
 
 
 
@@ -45,7 +46,24 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
     email: "",
   });
   const [loading, setLoading] = useState(false);
-  
+
+
+  useEffect(() => {
+    if (open) {
+      setFormData({
+        first_name: "",
+        last_name: "",
+        email: "",
+        phone_number: "",
+        company_name: "",
+        linkedin_profile: "",
+        website: "",
+        location: "",
+        orgId: "",
+      });
+    }
+  }, [open])
+
   const validateField = (name: string, value: string) => {
     let error = "";
     if (!value.trim()) {
@@ -79,7 +97,6 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    setLoading(true);
     e.preventDefault();
     if (!isFormValid()) return;
 
@@ -95,11 +112,19 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
       orgId: formData.orgId,
     };
 
+    dispatch(CreateContactsAccount(payload))
+      .unwrap()
+      .then(() => {
+
+        onClose();
+      })
+      .catch(() => {
+      });
     try {
-     const res= await dispatch(CreateContactsAccount(payload)).unwrap();
-     toast.success(res.message || 'Contact created successfully!');
+      const res = await dispatch(CreateContactsAccount(payload)).unwrap();
+      toast.success(res.message || 'Contact created successfully!');
       onClose();
-    } catch (error:any) {
+    } catch (error: any) {
       toast.error(error.message || 'Failed to create contact. Please try again.');
     } finally {
       setLoading(false);
@@ -206,8 +231,8 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
             <Button type="submit" variant="contained" sx={{ backgroundColor: "var(--theme-color)", cursor: !isFormValid ? "not-allowed" : "pointer" }} disabled={!isFormValid
 
             }>
-                 {loading ? <Loader/> : "Submit"}
-             
+              {loading ? <Loader /> : "Submit"}
+
             </Button>
           </DialogActions>
         </form>

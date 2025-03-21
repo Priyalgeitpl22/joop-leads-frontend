@@ -38,8 +38,8 @@ export interface CampaignList {
   active: boolean | null;
   createdAt: string;
   uploadedBy: string;
-  uploadedUser: UploadedUser; 
-  emailCampaigns: EmailCampaign[]|null;
+  uploadedUser: UploadedUser;
+  emailCampaigns: EmailCampaign[] | null;
 }
 
 export interface ContactsAccount {
@@ -95,33 +95,67 @@ export interface CreateContactsAccountPayload {
 
 const token = Cookies.get("access_token");
 
-export const fetchContacts = createAsyncThunk<
-ContactsAccount[],
-void,
-{ rejectValue: string }
->(
+// export const fetchContacts = createAsyncThunk<
+//   ContactsAccount[],
+//   void,
+//   { rejectValue: string }
+// >(
+//   "contact/all-contacts",
+//   async (_, { rejectWithValue }) => {
+//     try {
+//       const response = await api.get("/contact/all-contacts", {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       });
+//       return response.data.data;
+//       console.log("");
+//     } catch (error: unknown) {
+//       let errorMessage = "Something went wrong";
+//       if (error instanceof AxiosError) {
+//         errorMessage = (error.response?.data as string) || errorMessage;
+//       }
+//       return rejectWithValue(errorMessage);
+//     }
+//   }
+// );
+export const fetchContacts = createAsyncThunk(
   "contact/all-contacts",
   async (_, { rejectWithValue }) => {
     try {
+      const token = Cookies.get("access_token");
+
+      if (!token) {
+        return rejectWithValue("Unauthorized: No token found.");
+      }
+
       const response = await api.get("/contact/all-contacts", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+
       return response.data.data;
-      console.log("");
     } catch (error: unknown) {
       let errorMessage = "Something went wrong";
+
       if (error instanceof AxiosError) {
-        errorMessage = (error.response?.data as string) || errorMessage;
+        if (error.response?.status === 403) {
+          errorMessage = "Invalid or expired token. Please log in again.";
+          // Optionally trigger a logout or refresh token mechanism
+        } else {
+          errorMessage = (error.response?.data as string) || errorMessage;
+        }
       }
+
       return rejectWithValue(errorMessage);
     }
   }
 );
 
+
 export const getCampaignListById = createAsyncThunk<
-  CampaignList, 
+  CampaignList,
   VerifyViewContactPayload,
   { rejectValue: string }
 >(
@@ -135,7 +169,7 @@ export const getCampaignListById = createAsyncThunk<
         },
       });
 
-      return response.data.data as CampaignList; 
+      return response.data.data as CampaignList;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || "Network error");
     }
@@ -151,19 +185,19 @@ export const CreateContactsAccount = createAsyncThunk<
   "/email-campaign/create-contacts",
   async (data: CreateContactsAccountPayload, { rejectWithValue }) => {
     try {
-      const token = Cookies.get("access_token"); 
+      const token = Cookies.get("access_token");
 
       const response = await api.post(
         `/contact/create-contacts`,
-        data, 
+        data,
         {
           headers: {
-            Authorization: token ? `Bearer ${token}` : "", 
+            Authorization: token ? `Bearer ${token}` : "",
           },
         }
       );
 
-      return response.data; 
+      return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || "Network error");
     }
@@ -193,7 +227,7 @@ export const DeactivateContacts = createAsyncThunk(
   "contact/deactivate",
   async (contactIds: string[], { rejectWithValue }) => {
     try {
-      const response = await api.patch("/contact/deactivate", 
+      const response = await api.patch("/contact/deactivate",
         { contactIds },
         {
           headers: {
@@ -210,10 +244,10 @@ export const DeactivateContacts = createAsyncThunk(
 
 export const CreateCampaignWithContacts = createAsyncThunk(
   "contact/create",
-  async ( contactIds: string[], { rejectWithValue }) => {
+  async (contactIds: string[], { rejectWithValue }) => {
     try {
       const response = await api.post(
-        "/contact/create", 
+        "/contact/create",
         { contactIds },
         {
           headers: {
@@ -222,7 +256,7 @@ export const CreateCampaignWithContacts = createAsyncThunk(
         }
       );
 
-      return response.data; 
+      return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || "Network error");
     }
@@ -239,18 +273,18 @@ const contactsSlice = createSlice({
   extraReducers: (builder) => {
     builder
 
-      .addCase(fetchContacts.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(fetchContacts.fulfilled, (state, action: PayloadAction<ContactsAccount[]>) => {
-        state.loading = false;
-        state.contacts = action.payload;
-      })
-      .addCase(fetchContacts.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload ?? action.error.message ?? "Something went wrong";
-      })
+      // .addCase(fetchContacts.pending, (state) => {
+      //   state.loading = true;
+      //   state.error = null;
+      // })
+      // .addCase(fetchContacts.fulfilled, (state, action: PayloadAction<ContactsAccount[]>) => {
+      //   state.loading = false;
+      //   state.contacts = action.payload;
+      // })
+      // .addCase(fetchContacts.rejected, (state, action) => {
+      //   state.loading = false;
+      //   state.error = action.payload ?? action.error.message ?? "Something went wrong";
+      // })
 
 
       .addCase(getCampaignListById.pending, (state) => {
@@ -259,9 +293,9 @@ const contactsSlice = createSlice({
       })
       .addCase(getCampaignListById.fulfilled, (state, action: PayloadAction<CampaignList>) => {
         state.campaignLoading = false;
-        state.campaignList = action.payload; 
+        state.campaignList = action.payload;
       })
-      
+
       .addCase(getCampaignListById.rejected, (state, action) => {
         state.campaignLoading = false;
         state.campaignError = action.payload || "Something went wrong";

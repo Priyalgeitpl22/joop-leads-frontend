@@ -28,7 +28,7 @@ export type FieldValidationConfig = {
 const fieldValidation: FieldValidationConfig = {
   fullName: {
     required: { message: "Full Name is required" },
-    minLength: { value: 3, message: "Full Name must be at least 2 characters" }
+    minLength: { value: 2, message: "Full Name must be at least 2 characters" }
   },
   email: {
     required: { message: "Email is required" },

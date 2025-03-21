@@ -157,9 +157,9 @@ const EmailAccounts: React.FC = () => {
     getEmailAccounts();
   }, []);
 
-  useEffect(()=> {
+  useEffect(() => {
     getAllEmailAccounts();
-  },[smtpDialogOpen])
+  }, [smtpDialogOpen])
 
   const getAllEmailAccounts = async () => {
     try {
@@ -238,7 +238,7 @@ const EmailAccounts: React.FC = () => {
     if (!selectedEmailAccount) return;
     try {
       await dispatch(deleteEmailAccount(selectedEmailAccount)).unwrap();
-      toast.success("Email account deleted successfully!"); 
+      toast.success("Email account deleted successfully!");
       setRows((prevRows) =>
         prevRows.filter((row) => row.id !== selectedEmailAccount)
       );
@@ -250,7 +250,7 @@ const EmailAccounts: React.FC = () => {
       console.error("Failed to delete email account:", error);
     }
   };
-  
+
   const CustomIcon = () => (
     <svg
       fill="none"
@@ -395,7 +395,7 @@ const EmailAccounts: React.FC = () => {
         confirmText="Delete"
         cancelText="Cancel"
       />
-  
+
     </EmailAccountsContainer>
   );
 };

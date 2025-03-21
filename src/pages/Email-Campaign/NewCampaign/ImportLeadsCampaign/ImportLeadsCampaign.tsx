@@ -11,6 +11,7 @@ import ViewImportedCsvFile from "./ViewImportedCsvFile";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../redux/store/store";
 import { getCampaignById } from "../../../../redux/slice/emailCampaignSlice";
+import toast from "react-hot-toast";
 
 interface ImportLeadsCampaignProps {
   isEdit: boolean;
@@ -35,7 +36,7 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
   const [columns, setColumns] = useState<string[]>([]);
   const [csvData, setCSVData] = useState<any[]>([]);
   const [csvFileDetails, setCsvFileDetails] = useState<any[]>([]);
-  
+
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
@@ -70,6 +71,14 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
         complete: (result) => {
           const firstRow = result.data[0] as string[];
           const data = result.data as any[];
+          if (!data.length || data.every(row => row.every((cell: String) => cell === ""))) {
+            setError("Cannot upload an empty CSV file.");
+            toast.error("Cannot upload an empty CSV file.");
+            setSelectedFile(null);
+            setShowDetail(false);
+            setOpenDialog(false);
+            return;
+          }
           setColumns(firstRow);
           setCSVData(data);
         },
