@@ -14,6 +14,7 @@ import { changePassword } from "../../redux/slice/authSlice";
 import toast, { Toaster } from "react-hot-toast";
 import PasswordInput from "../../utils/PasswordInput";
 import { validatePassword } from "../../utils/Validation";
+import { Loader } from "lucide-react";
 
 const ChangePassword: React.FC = () => {
   const navigate = useNavigate();
@@ -166,7 +167,8 @@ const ChangePassword: React.FC = () => {
             disabled={!isFormValid()}
 
           >
-            Change Password
+            {loading ? <Loader /> : "Change Password"}
+
           </StyledButton>
         </FormSection>
       </ChangePasswordCard>

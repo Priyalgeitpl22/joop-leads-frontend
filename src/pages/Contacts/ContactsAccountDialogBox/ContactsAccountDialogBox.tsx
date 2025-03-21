@@ -14,6 +14,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../redux/store/store";
 import { CreateContactsAccount, CreateContactsAccountPayload } from "../../../redux/slice/contactSlice";
 import toast from "react-hot-toast";
+import { Loader } from "lucide-react";
 interface EmailCampaignDialogProps {
   open: boolean;
   onClose: () => void;
@@ -230,7 +231,8 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
             <Button type="submit" variant="contained" sx={{ backgroundColor: "var(--theme-color)", cursor: !isFormValid ? "not-allowed" : "pointer" }} disabled={!isFormValid
 
             }>
-              Submit
+              {loading ? <Loader /> : "Submit"}
+
             </Button>
           </DialogActions>
         </form>
