@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   PageContainer,
   ChangePasswordCard,
@@ -18,7 +18,10 @@ import { validatePassword } from "../../utils/Validation";
 const ChangePassword: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const { user } = useSelector((state: RootState) => state.user);
+  const location = useLocation();
+  const userEmail = location?.state?.email;
+
+  const { loading } = useSelector((state: RootState) => state.auth); // Get loading state from Redux
 
   const [formData, setFormData] = useState({
     existingPassword: "",
@@ -88,29 +91,27 @@ const ChangePassword: React.FC = () => {
       toast.error("Please fix errors before proceeding.");
       return;
     }
+    setTimeout(async () => {
+      try {
+        const response = await dispatch(
+          changePassword({
+            email: userEmail,
+            existingPassword: formData.existingPassword,
+            newPassword: formData.newPassword,
+          })
+        ).unwrap();
 
-    if (!user) {
-      toast.error("User not found. Please log in again.");
-      return;
-    }
-
-    try {
-      const response = await dispatch(
-        changePassword({
-          email: user.email,
-          existingPassword: formData.existingPassword,
-          newPassword: formData.newPassword,
-        })
-      ).unwrap();
-
-      if (response) {
-        toast.success("Password updated successfully!");
-        navigate("/");
-        window.location.reload();
+        if (response?.code === 200) {
+          toast.success(response?.message || "Password updated successfully!", {
+            duration: 3000,
+            position: "top-right",
+          });
+          navigate("/");
+        }
+      } catch (error) {
+        toast.error(error as string);
       }
-    } catch (error) {
-      toast.error(error as string);
-    }
+    }, 500);
   };
 
   return (

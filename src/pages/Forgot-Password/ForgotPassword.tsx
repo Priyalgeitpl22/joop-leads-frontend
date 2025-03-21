@@ -40,7 +40,6 @@ const ForgotPassword = () => {
 
   const handleSubmitEmail = async (e: React.FormEvent) => {
     e.preventDefault();
-  
     if (!email.trim()) {
       setError("Email is required");
       return;
@@ -51,13 +50,13 @@ const ForgotPassword = () => {
     }
     setError("");
     setShowLoader(true);
-  
+
     try {
       const response = await dispatch(forgetPassword({ email })).unwrap();
       setTimeout(() => {
         toast.success(response.message || "Reset link sent successfully!", { duration: 3000 });
         setShowLoader(false);
-  
+
         setTimeout(() => {
           navigate("/confirmation");
         }, 2000);
@@ -69,11 +68,11 @@ const ForgotPassword = () => {
       }, 1500);
     }
   };
-  
+
 
   return (
     <PageContainer>
-      <Toaster position="top-center" reverseOrder={false} />
+      <Toaster position="top-right" reverseOrder={false} />
       <AuthCard>
         <IllustrationSection>
           <img
@@ -97,7 +96,7 @@ const ForgotPassword = () => {
 
           <form onSubmit={handleSubmitEmail}>
             <StyledTextField
-              label="Email Address"
+              label="Email Address *"
               variant="outlined"
               // type="email"
               value={email}

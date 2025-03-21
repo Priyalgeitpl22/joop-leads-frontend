@@ -45,17 +45,17 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
     userName: "",
     password: "",
     smtpHost: "",
-    smtpPort: null,
+    smtpPort: "",
     security: false,
-    msg_per_day: null,
-    time_gap: null,
+    msg_per_day: "",
+    time_gap: "",
     replyToAddressChecked: false,
     replyToAddress: "",
     imapChecked: false,
     imapUserName: "",
     imapPassword: "",
     imapHost: "",
-    imapPort: null,
+    imapPort: "",
     imapSecurity: false,
     bccEmail: "",
     trackingDomainChecked: false,
@@ -63,6 +63,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
     clients: "",
     signature: "",
   });
+
 
   const [isSaveDisabled, setIsSaveDisabled] = useState(true);
   const [isVerified, setIsVerified] = useState(false);
@@ -159,7 +160,6 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
   };
 
   const handleCreateAccount = () => {
-    debugger
     setLoading(true);
     const payload: CreateEmailAccountPayload = {
       account: "smtp",
@@ -239,6 +239,37 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
     return Object.keys(newErrors).length === 0;
   };
 
+  useEffect(() => {
+    if (open) {
+      setFormData({
+        fromName: "",
+        fromEmail: "",
+        userName: "",
+        password: "",
+        smtpHost: "",
+        smtpPort: "",
+        security: false,
+        msg_per_day: "",
+        time_gap: "",
+        replyToAddressChecked: false,
+        replyToAddress: "",
+        imapChecked: false,
+        imapUserName: "",
+        imapPassword: "",
+        imapHost: "",
+        imapPort: "",
+        imapSecurity: false,
+        bccEmail: "",
+        trackingDomainChecked: false,
+        tags: "",
+        clients: "",
+        signature: "",
+      });
+      setIsVerified(false);
+      setVerificationFailed(false);
+    }
+  }, [open]);
+
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md">
@@ -279,6 +310,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
               value={formData.fromName}
               onChange={handleChange}
               error={!!errors.fromName}
+              autoComplete="off"
             />
             {errors.fromName && <Typography color="red" variant="caption">
               {errors.fromName}
@@ -293,6 +325,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
               value={formData.fromEmail}
               onChange={handleChange}
               error={!!errors.fromEmail}
+              autoComplete="off"
             />
             {errors.fromEmail && <Typography color="red" variant="caption">
               {errors.fromEmail}
@@ -308,6 +341,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
               value={formData.userName}
               onChange={handleChange}
               error={!!errors.userName}
+              autoComplete="off"
             />
             {errors.userName && <Typography color="red" variant="caption">{errors.userName}</Typography>}
           </Grid2>
@@ -319,6 +353,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
               value={formData.password}
               onChange={handleChange}
               error={!!errors.password}
+              autoComplete="off"
             />
             {errors.password && <Typography color="red" variant="caption">{errors.password}</Typography>}
           </Grid2>
@@ -330,6 +365,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
               value={formData.smtpHost}
               onChange={handleChange}
               error={!!errors.smtpHost}
+              autoComplete="off"
 
             />
             {errors.smtpHost && <Typography color="red" variant="caption">{errors.smtpHost}</Typography>}
@@ -342,6 +378,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
               value={formData.smtpPort}
               onChange={handleChange}
               error={!!errors.smtpPort}
+              autoComplete="off"
 
             />
             {errors.smtpPort && <Typography color="red" variant="caption">{errors.smtpPort}</Typography>}
@@ -365,6 +402,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
               value={formData.msg_per_day}
               onChange={handleChange}
               error={!!errors.msg_per_day}
+              autoComplete="off"
             />
             {errors.msg_per_day && <Typography color="red" variant="caption">{errors.msg_per_day}</Typography>}
 
@@ -377,6 +415,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
               value={formData.time_gap}
               onChange={handleChange}
               error={!!errors.time_gap}
+              autoComplete="off"
             />
             {errors.time_gap && <Typography color="red" variant="caption">{errors.time_gap}</Typography>}
 
@@ -399,6 +438,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
                   name="replyToAddress"
                   value={formData.replyToAddress}
                   onChange={handleChange}
+                  autoComplete="off"
                 />
               </Grid2>
             )}
@@ -428,6 +468,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
                   name="imapUserName"
                   value={formData.imapUserName}
                   onChange={handleChange}
+                  autoComplete="off"
                 />
               </Grid2>
               <Grid2 size={{ xs: 6, sm: 6 }}>
@@ -437,6 +478,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
                   name="imapPassword"
                   value={formData.imapPassword}
                   onChange={handleChange}
+                  autoComplete="off"
                 />
               </Grid2>
             </>
@@ -450,6 +492,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
               value={formData.imapHost}
               onChange={handleChange}
               error={!!errors.imapHost}
+              autoComplete="off"
             />
             {errors.imapHost && <Typography color="red" variant="caption">{errors.imapHost}</Typography>}
 
@@ -462,6 +505,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
               value={formData.imapPort}
               onChange={handleChange}
               error={!!errors.imapPort}
+              autoComplete="off"
             />
             {errors.imapPort && <Typography color="red" variant="caption">{errors.imapPort}</Typography>}
 

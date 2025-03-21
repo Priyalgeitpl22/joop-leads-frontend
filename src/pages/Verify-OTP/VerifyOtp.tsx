@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, ChangeEvent, KeyboardEvent } from "react";
 import { Typography, Box, CircularProgress } from "@mui/material";
 import {
   PageContainer,
@@ -30,20 +30,23 @@ const VerifyOtp = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setTimer(60);
-    setIsTimerRunning(true);
-    const interval = setInterval(() => {
-      setTimer((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          setIsTimerRunning(false);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
+    let interval: NodeJS.Timeout | null = null;
+    if (isTimerRunning) {
+      interval = setInterval(() => {
+        setTimer((prev) => {
+          if (prev <= 1) {
+            clearInterval(interval!);
+            setIsTimerRunning(false);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isTimerRunning]);
 
   const handleResendOtp = () => {
     if (!email) return;
@@ -63,9 +66,54 @@ const VerifyOtp = () => {
       });
   };
 
+  const handleSaveButton = () => {
+    const otpString = otp.join("");
+    if (otpString.length === 6) {
+      setIsLoading(true);
+      dispatch(verifyOtp({ email, otp: otpString }))
+        .unwrap()
+        .then(() => {
+          toast.success("OTP Verified Successfully!");
+          navigate("/login");
+        })
+        .catch(() => {
+          toast.error("Invalid OTP. Please try again.");
+          setIsLoading(false);
+        });
+    } else {
+      toast.error("Please enter a valid 6-digit OTP.");
+    }
+  }
+
+  const handleKeyChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index: number) => {
+    const value = e.target.value;
+    if (/^\d{0,1}$/.test(value)) {
+      setOtp((prevOtp) => {
+        const newOtp = [...prevOtp];
+        newOtp[index] = value;
+        return newOtp;
+      });
+      if (value && index < otp.length - 1) {
+        otpRefs.current[index + 1]?.focus();
+      }
+    }
+  }
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>, index: number) => {
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
+      otpRefs.current[index - 1]?.focus();
+      setOtp((prevOtp) => {
+        const newOtp = [...prevOtp];
+        newOtp[index - 1] = "";
+        return newOtp;
+      });
+      e.preventDefault();
+    }
+  }
+
   return (
     <PageContainer>
-      <Toaster />
+      <Toaster position="top-right" />
       <VerifyCard>
         <IllustrationSection>
           <img
@@ -92,30 +140,8 @@ const VerifyOtp = () => {
               <OtpField
                 key={index}
                 value={digit}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (/^\d{0,1}$/.test(value)) {
-                    setOtp((prevOtp) => {
-                      const newOtp = [...prevOtp];
-                      newOtp[index] = value;
-                      return newOtp;
-                    });
-                    if (value && index < otp.length - 1) {
-                      otpRefs.current[index + 1]?.focus();
-                    }
-                  }
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Backspace" && !otp[index] && index > 0) {
-                    otpRefs.current[index - 1]?.focus();
-                    setOtp((prevOtp) => {
-                      const newOtp = [...prevOtp];
-                      newOtp[index - 1] = "";
-                      return newOtp;
-                    });
-                    e.preventDefault();
-                  }
-                }}
+                onChange={(e) => handleKeyChange(e, index)}
+                onKeyDown={(e) => handleKeyDown(e, index)}
                 inputProps={{
                   maxLength: 1,
                   ref: (el: HTMLInputElement | null) =>
@@ -127,31 +153,12 @@ const VerifyOtp = () => {
 
           <StyledButton
             variant="contained"
-            onClick={() => {
-              const otpString = otp.join("");
-              if (otpString.length === 6) {
-                setIsLoading(true);
-                dispatch(verifyOtp({ email, otp: otpString }))
-                  .unwrap()
-                  .then(() => {
-                    toast.success("OTP Verified Successfully!");
-                    navigate("/login");
-                  })
-                  .catch(() => {
-                    toast.error("Invalid OTP. Please try again.");
-                    setIsLoading(false);
-                  });
-              } else {
-                toast.error("Please enter a valid 6-digit OTP.");
-              }
-            }}
+            onClick={handleSaveButton}
             disabled={isLoading || !isTimerRunning}
           >
-            {isLoading ? (
-              <CircularProgress size={24} color="inherit" />
-            ) : (
+            {!isLoading &&
               "VERIFY OTP"
-            )}
+            }
           </StyledButton>
 
           <Box sx={{ marginTop: 2 }}>

@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { Sequence } from "./SequenceCampaign/Sequences/interfaces";
 
 export interface ILeadsCounts {
@@ -10,6 +11,9 @@ export interface ILeadsCounts {
 }
 
 export interface IEmailCampaign {
+  created_at: string;
+  campaign_status: ReactNode;
+  campaign_name: ReactNode;
   status: any;
   id: string;
   campaignName: string;

@@ -55,6 +55,7 @@ import { DeleteIcon } from "./ContactTable.styled";
 import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
 
 
+
 export interface ImportedLeadsData {
   csvSettings: csvSettingsType;
 }
@@ -64,7 +65,8 @@ const ContactTable: React.FC = () => {
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [contactAccount, setContactAccount] = useState<ContactsAccount[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  // const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
   const [CSVsettings, setCSVsettings] = React.useState<csvSettingsType>();
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
@@ -251,9 +253,11 @@ const ContactTable: React.FC = () => {
     };
 
     getContactsAccounts();
-  }, [dispatch]);
+  }, []);
 
-
+  useEffect(() => {
+    getFetchAllContacts();
+  }, [isUploadDialogOpen])
 
   const getFetchAllContacts = async () => {
     try {
@@ -267,8 +271,12 @@ const ContactTable: React.FC = () => {
     } catch (error) {
       setLoading(false);
       console.error("Failed to fetch Account:", error);
+    } finally {
+      setLoading(false);
     }
   };
+
+
 
   const handleSearch = async (query: string) => {
     try {
@@ -512,13 +520,16 @@ const ContactTable: React.FC = () => {
           <Button>Apply</Button>
         </Box>
       </Menu>
-      <CustomDataTable
-        columns={columns}
-        rows={rows}
-        pageSizeOptions={[15, 10, 5]}
-        rowSelectionModel={rowSelectionModel}
-        handleRowSelection={handleSelectedRows}
-      />
+      <Box sx={{ height: "500px", overflow: "auto" }}>
+        <CustomDataTable
+          columns={columns}
+          rows={rows}
+          pageSizeOptions={[15, 10, 5]}
+          rowSelectionModel={rowSelectionModel}
+          handleRowSelection={handleSelectedRows}
+        />
+      </Box>
+
       <ConfirmDeleteDialog
         open={openDeleteDialog}
         onClose={handleCloseDeleteDialog}

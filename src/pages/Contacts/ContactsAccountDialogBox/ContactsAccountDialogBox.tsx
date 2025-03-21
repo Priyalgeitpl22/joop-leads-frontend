@@ -13,6 +13,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../redux/store/store";
 import { CreateContactsAccount, CreateContactsAccountPayload } from "../../../redux/slice/contactSlice";
+import toast from "react-hot-toast";
 interface EmailCampaignDialogProps {
   open: boolean;
   onClose: () => void;
@@ -43,6 +44,7 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
     first_name: "",
     email: "",
   });
+  const [loading, setLoading] = useState(false);
 
 
   useEffect(() => {
@@ -93,7 +95,7 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
     return Object.values(errors).every((error) => error === "");
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isFormValid()) return;
 
@@ -117,6 +119,15 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
       })
       .catch(() => {
       });
+    try {
+      const res = await dispatch(CreateContactsAccount(payload)).unwrap();
+      toast.success(res.message || 'Contact created successfully!');
+      onClose();
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to create contact. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
 

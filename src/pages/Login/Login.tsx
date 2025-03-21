@@ -41,7 +41,7 @@ function Login() {
           ).unwrap();
 
           if (response?.code === 200) {
-            toast.success(response?.message, { duration: 4000 });
+            toast.success(response?.message, { duration: 1000 });
 
             const token = Cookies.get("access_token");
             if (token) {

@@ -157,9 +157,9 @@ const EmailAccounts: React.FC = () => {
     getEmailAccounts();
   }, []);
 
-  useEffect(()=> {
+  useEffect(() => {
     getAllEmailAccounts();
-  },[smtpDialogOpen])
+  }, [smtpDialogOpen])
 
   const getAllEmailAccounts = async () => {
     try {
@@ -238,7 +238,7 @@ const EmailAccounts: React.FC = () => {
     if (!selectedEmailAccount) return;
     try {
       await dispatch(deleteEmailAccount(selectedEmailAccount)).unwrap();
-      toast.success("Email account deleted successfully!"); 
+      toast.success("Email account deleted successfully!");
       setRows((prevRows) =>
         prevRows.filter((row) => row.id !== selectedEmailAccount)
       );
@@ -250,7 +250,7 @@ const EmailAccounts: React.FC = () => {
       console.error("Failed to delete email account:", error);
     }
   };
-  
+
   const CustomIcon = () => (
     <svg
       fill="none"
@@ -281,7 +281,7 @@ const EmailAccounts: React.FC = () => {
 
   return (
     <EmailAccountsContainer>
-       <Toaster position="top-right" />
+      <Toaster position="top-right" />
       <EmailAccountHeader>
         <SectionTitle>Email Accounts</SectionTitle>
         <Box
@@ -376,14 +376,16 @@ const EmailAccounts: React.FC = () => {
           <Button>Apply</Button>
         </Box>
       </Menu>
-      <EmailAccountTable>
-        <CustomDataTable
-          columns={columns}
-          rows={rows}
-          pageSizeOptions={[15, 10, 5]}
-          enableCheckboxSelection={false}
-        />
-      </EmailAccountTable>
+      <Box sx={{ height: "500px", overflow: "auto" }}>
+        <EmailAccountTable>
+          <CustomDataTable
+            columns={columns}
+            rows={rows}
+            pageSizeOptions={[15, 10, 5]}
+            enableCheckboxSelection={false}
+          />
+        </EmailAccountTable>
+      </Box>
       <ConfirmDeleteDialog
         open={openDeleteDialog}
         onClose={handleCloseDeleteDialog}
@@ -393,7 +395,7 @@ const EmailAccounts: React.FC = () => {
         confirmText="Delete"
         cancelText="Cancel"
       />
-  
+
     </EmailAccountsContainer>
   );
 };
