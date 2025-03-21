@@ -1,75 +1,85 @@
-import {
-  Table,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  TableBody,
-} from "@mui/material";
-import { useDispatch } from "react-redux";
-import { fetchEmailCampaigns } from "../../../redux/slice/emailCampaignSlice";
-import { AppDispatch } from "../../../redux/store/store";
-import { IEmailCampaign } from "./../../Email-Campaign/NewCampaign/interfaces";
 import { useEffect, useState } from "react";
-import { TableHeadingCell, TableDataCell } from "./EditEmailAccount.styled";
+import { useDispatch } from "react-redux";
+import { TableRow, TableBody, CircularProgress } from "@mui/material";
+import { AppDispatch } from "../../../redux/store/store";
+import { getCampaignBySender } from "../../../redux/slice/emailCampaignSlice";
+import { IEmailCampaign } from "../../Email-Campaign/NewCampaign/interfaces";
+import { LoadingContainer, NoDataContainer, StyledTable, StyledTableContainer, TableDataCell, TableHeadingCell } from "./EditCampaignEmailAccount.styled";
 
-const EditCampaignEmailAccount = () => {
+
+const EditCampaignEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [campaigns, setCampaigns] = useState<IEmailCampaign[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const getEmailCampaigns = async () => {
-      await getAllEmailCampaigns();
+    if (!id) return;
+
+    const fetchCampaigns = async () => {
+      setIsLoading(true);
+      try {
+        const response = await dispatch(getCampaignBySender(id)).unwrap();
+        setCampaigns(response?.campaigns || []);
+      } catch (error) {
+        console.error("Error fetching campaigns:", error);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
-    getEmailCampaigns();
-  }, []);
-
-  const getAllEmailCampaigns = async () => {
-    const response = await dispatch(fetchEmailCampaigns());
-    setCampaigns(response.payload.data || []);
-  };
+    fetchCampaigns();
+  }, [dispatch, id]);
 
   return (
-    <TableContainer
-      component={Paper}
-      sx={{ boxShadow: "none", borderRadius: "8px" }}
-    >
-      <Table>
-        <TableHead sx={{ backgroundColor: "var(--background-heading)" }}>
-          <TableRow>
-            <TableHeadingCell>Campaign Name</TableHeadingCell>
-            <TableHeadingCell>Campaign Status</TableHeadingCell>
-            <TableHeadingCell>Time Added To Campaign</TableHeadingCell>
-          </TableRow>
-        </TableHead>
-
+    <StyledTableContainer>
+      <StyledTable>
+        <TableRow>
+          <TableHeadingCell>Campaign Name</TableHeadingCell>
+          <TableHeadingCell>Campaign Status</TableHeadingCell>
+          <TableHeadingCell>Time Added</TableHeadingCell>
+        </TableRow>
         <TableBody>
-          {campaigns?.length > 0 ? (
+          {isLoading ? (
+            <TableRow>
+              <td colSpan={3}>
+                <LoadingContainer>
+                  <CircularProgress size={24} />
+                </LoadingContainer>
+              </td>
+            </TableRow>
+          ) : campaigns.length > 0 ? (
             campaigns.map((campaign) => (
-              <TableRow
-                key={campaign.id}
-                sx={{ borderBottom: "1px solid #E0E0E0" }}
-              >
-                <TableDataCell>{campaign?.campaignName}</TableDataCell>
-                <TableDataCell>{campaign?.status}</TableDataCell>
-                <TableDataCell>{campaign?.createdAt}</TableDataCell>
+              <TableRow key={campaign.id}>
+                <TableDataCell>{campaign?.campaign_name}</TableDataCell>
+                <TableDataCell>{campaign?.campaign_status}</TableDataCell>
+                <TableDataCell>
+                  {campaign?.created_at
+                    ? `${new Date(campaign.created_at).toLocaleDateString(
+                        "en-GB",
+                        {
+                          day: "2-digit",
+                          month: "short",
+                        }
+                      )}, ${new Date(campaign.created_at).toLocaleTimeString(
+                        "en-GB",
+                        {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          hour12: true,
+                        }
+                      )}`
+                    : "N/A"}
+                </TableDataCell>
               </TableRow>
             ))
           ) : (
             <TableRow>
-              <TableCell
-                colSpan={4}
-                sx={{ textAlign: "center", color: "#888", padding: "20px" }}
-              >
-                No Campaigns found
-              </TableCell>
+              <NoDataContainer colSpan={3}>No Campaigns found</NoDataContainer>
             </TableRow>
           )}
         </TableBody>
-      </Table>
-    </TableContainer>
+      </StyledTable>
+    </StyledTableContainer>
   );
 };
 

@@ -45,17 +45,17 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
     userName: "",
     password: "",
     smtpHost: "",
-    smtpPort: null,
+    smtpPort: "",
     security: false,
-    msg_per_day: null,
-    time_gap: null,
+    msg_per_day: "",
+    time_gap: "",
     replyToAddressChecked: false,
     replyToAddress: "",
     imapChecked: false,
     imapUserName: "",
     imapPassword: "",
     imapHost: "",
-    imapPort: null,
+    imapPort: "",
     imapSecurity: false,
     bccEmail: "",
     trackingDomainChecked: false,
@@ -63,6 +63,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
     clients: "",
     signature: "",
   });
+
 
   const [isSaveDisabled, setIsSaveDisabled] = useState(true);
   const [isVerified, setIsVerified] = useState(false);
@@ -159,7 +160,6 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
   };
 
   const handleCreateAccount = () => {
-    debugger
     setLoading(true);
     const payload: CreateEmailAccountPayload = {
       account: "smtp",
@@ -238,6 +238,37 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
 
     return Object.keys(newErrors).length === 0;
   };
+
+  useEffect(() => {
+    if (open) {
+      setFormData({
+        fromName: "",
+        fromEmail: "",
+        userName: "",
+        password: "",
+        smtpHost: "",
+        smtpPort: "",
+        security: false,
+        msg_per_day: "",
+        time_gap: "",
+        replyToAddressChecked: false,
+        replyToAddress: "",
+        imapChecked: false,
+        imapUserName: "",
+        imapPassword: "",
+        imapHost: "",
+        imapPort: "",
+        imapSecurity: false,
+        bccEmail: "",
+        trackingDomainChecked: false,
+        tags: "",
+        clients: "",
+        signature: "",
+      });
+      setIsVerified(false);
+      setVerificationFailed(false);
+    }
+  }, [open]);
 
 
   return (

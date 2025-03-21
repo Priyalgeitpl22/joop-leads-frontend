@@ -141,7 +141,7 @@ export const CustomDialogContainer = styled.div`
   background: white;
   padding: 16px;
   width: 100%;
-  overflow: auto;
+  // overflow: auto;
 `
 export const TitleBody = styled.input`
   border: 1px solid #e1e2ef;

@@ -126,15 +126,21 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
         gap: "10px",
       }}
     >
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 3 }}>
-        <Typography
-          variant="h6"
-          fontWeight="bold"
-          sx={{ color: "var(--theme-color)" }}
-        >
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 2,
+          mb: 3,
+          color: "var(--theme-color)",
+        }}
+      >
+        <Typography variant="h6" fontWeight="bold">
           1
         </Typography>
-        <Typography fontWeight="bold">CSV File</Typography>
+        <Typography fontWeight="bold" variant="h6">
+          CSV File
+        </Typography>
       </Box>
       <Box
         sx={{
@@ -185,15 +191,22 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
         onChange={handleFileChange}
         style={{ display: "none" }}
       />
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 4, mb: 2 }}>
-        <Typography
-          variant="h6"
-          fontWeight="bold"
-          sx={{ color: "var(--theme-color)" }}
-        >
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 2,
+          mt: 4,
+          mb: 3,
+          color: "var(--theme-color)",
+        }}
+      >
+        <Typography variant="h6" fontWeight="bold">
           2
         </Typography>
-        <Typography fontWeight="bold">Map Fields</Typography>
+        <Typography fontWeight="bold" variant="h6">
+          Map Fields
+        </Typography>
       </Box>
       <Typography fontSize={14} color="gray" mb={2}>
         Map CSV columns to the variables you want to add to the campaign.
