@@ -113,7 +113,6 @@ export const changePassword = createAsyncThunk(
   "auth/changePassword",
   async (data: ChangePasswordData, { rejectWithValue }) => {
     try {
-      
       if (!token) throw new Error("No authentication token found");
 
       const response = await api.post("/auth/change-password", data, {

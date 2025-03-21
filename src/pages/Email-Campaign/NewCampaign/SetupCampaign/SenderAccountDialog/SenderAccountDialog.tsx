@@ -216,12 +216,12 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
         SearchEmailAccount({ query:trimmedQuery, orgId: user?.orgId || "" })
       ).unwrap();
 
-      const formattedData = filteredData.map((item: any) => ({
-        ...item,
-        id: item._id,
-      }));
+      // const formattedData = filteredData.map((item: any) => ({
+      //   ...item,
+      //   id: item._id,
+      // }));
 
-      setRows(formattedData);
+      setRows(filteredData.data);
     } catch (error) {
       console.error("Search failed:", error);
     }
@@ -263,7 +263,7 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
             variant="h6"
             sx={{ fontWeight: 600, fontSize: "18px" }}
             mt={1}
-          // ml={1}
+            // ml={1}
           >
             Email Accounts
           </Typography>
@@ -278,13 +278,15 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
             </SearchBar>
           </Box>
         </Box>
-        <CustomDataTable
-          columns={columns}
-          rows={rows}
-          pageSizeOptions={[15, 10, 5]}
-          handleRowSelection={handleSelectedAccounts}
-          rowSelectionModel={selectedEmailAccounts}
-        />
+        <Box sx={{ height: "350px", overflow: "auto" }}>
+          <CustomDataTable
+            columns={columns}
+            rows={rows}
+            pageSizeOptions={[15, 10, 5]}
+            handleRowSelection={handleSelectedAccounts}
+            rowSelectionModel={selectedEmailAccounts}
+          />
+        </Box>
       </CustomDialogContainer>
 
       <CustomDialogFooter justifyContent={"flex-end"}>

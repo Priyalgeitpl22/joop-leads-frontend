@@ -31,12 +31,12 @@ const EditEmailAccount = ({ id }: { id?: string }) => {
       >
         <CustomTab label="General" value="general" />
         <CustomTab label="Warm Up" value="warmUp" />
-        {/* <CustomTab label="Campaign" value="campaign" /> */}
+        <CustomTab label="Campaign" value="campaign" />
       </CustomTabs>
 
       {activeTab === "general" && <EditGeneralEmailAccount id={id} />}
       {activeTab === "warmUp" && <EditWarmupEmailAccount />}
-      {activeTab === "campaign" && <EditCampaignEmailAccount />}
+      {activeTab === "campaign" && <EditCampaignEmailAccount id={id}/>}
     </ContentContainer>
   );
 };

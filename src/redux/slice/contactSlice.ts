@@ -144,7 +144,7 @@ export const getCampaignListById = createAsyncThunk<
 
 
 export const CreateContactsAccount = createAsyncThunk<
-  string,
+{ message: string }, 
   CreateContactsAccountPayload,
   { rejectValue: string }
 >(

@@ -281,7 +281,7 @@ const EmailAccounts: React.FC = () => {
 
   return (
     <EmailAccountsContainer>
-       <Toaster position="top-right" />
+      <Toaster position="top-right" />
       <EmailAccountHeader>
         <SectionTitle>Email Accounts</SectionTitle>
         <Box
@@ -376,14 +376,16 @@ const EmailAccounts: React.FC = () => {
           <Button>Apply</Button>
         </Box>
       </Menu>
-      <EmailAccountTable>
-        <CustomDataTable
-          columns={columns}
-          rows={rows}
-          pageSizeOptions={[15, 10, 5]}
-          enableCheckboxSelection={false}
-        />
-      </EmailAccountTable>
+      <Box sx={{ height: "500px", overflow: "auto" }}>
+        <EmailAccountTable>
+          <CustomDataTable
+            columns={columns}
+            rows={rows}
+            pageSizeOptions={[15, 10, 5]}
+            enableCheckboxSelection={false}
+          />
+        </EmailAccountTable>
+      </Box>
       <ConfirmDeleteDialog
         open={openDeleteDialog}
         onClose={handleCloseDeleteDialog}
