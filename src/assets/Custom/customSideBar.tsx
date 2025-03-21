@@ -4,6 +4,7 @@ import CampaignIcon from "@mui/icons-material/Campaign";
 import ContactMailIcon from "@mui/icons-material/ContactMail";
 // import ArchiveIcon from "@mui/icons-material/Archive";
 import ContactPhoneIcon from "@mui/icons-material/ContactPhone";
+import AccountBoxIcon from "@mui/icons-material/AccountBox";
 
 export const NAVIGATION: Navigation = [
   {
@@ -51,12 +52,12 @@ export const NAVIGATION: Navigation = [
   // {
   //   kind: "divider",
   // },
-  // {
-  //   segment: "chats",
-  //   title: "Chats",
-  //   icon: <ForumIcon style={{ color: "var(--icon-hover)" }}/>,
-  // },
-  // {
-  //   kind: "divider",
-  // },
+  {
+    segment: "user",
+    title: "Users",
+    icon: <AccountBoxIcon style={{ color: "var(--icon-hover)" }} />,
+  },
+  {
+    kind: "divider",
+  },
 ];
