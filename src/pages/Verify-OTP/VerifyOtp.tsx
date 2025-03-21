@@ -113,7 +113,7 @@ const VerifyOtp = () => {
 
   return (
     <PageContainer>
-      <Toaster />
+      <Toaster position="top-right" />
       <VerifyCard>
         <IllustrationSection>
           <img

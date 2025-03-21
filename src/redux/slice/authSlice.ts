@@ -123,9 +123,7 @@ export const changePassword = createAsyncThunk(
       }
       return response.data
     } catch (error: any) {
-      return rejectWithValue(
-        error.response?.data?.message || "Network error"
-      );
+      return rejectWithValue(error?.response?.data?.message || error.message);
     }
   }
 );
@@ -189,8 +187,9 @@ export const resetPassword = createAsyncThunk(
       const response = await api.post(`/auth/reset-password`, data);
       return response.data;
     } catch (error: any) {
+      const message = error?.response?.data?.message || error.message || "Failed to reset password";
       return rejectWithValue(
-        error.response?.data || "Failed to reset password"
+        message
       );
     }
   }

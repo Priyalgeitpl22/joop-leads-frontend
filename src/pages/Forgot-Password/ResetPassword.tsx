@@ -13,16 +13,18 @@ import { resetPassword } from "../../redux/slice/authSlice";
 import { AppDispatch, RootState } from "../../redux/store/store";
 import toast, { Toaster } from "react-hot-toast";
 import PasswordInput from "../../utils/PasswordInput";
+import { validatePassword } from "../../utils/Validation";
 
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
   const [token, setToken] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const dispatch = useDispatch<AppDispatch>();
 
-  const { loading, error, success } = useSelector((state: RootState) => state.auth);
+  const { loading } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
     const searchToken = searchParams.get("token");
@@ -36,29 +38,38 @@ const ResetPassword = () => {
     }
   }, [searchParams, navigate]);
 
-  useEffect(() => {
-    if (success) {
-      window.location.assign("/login");
-    }
-  }, [success, navigate]);
+
+
 
   const handleSubmitPassword = async () => {
     if (!password || !token || !email) {
+      setError("Password is required");
       return;
     }
-
+    if (!validatePassword(password)) {
+      setError(
+        "Password must be at least 8 characters, contain 1 uppercase, 1 lowercase, 1 number, and 1 special character."
+      );
+      return;
+    }
+    setError("");
+   
     try {
-      await dispatch(resetPassword({ token, password, email })).unwrap();
-      toast.success("Password reset successful!");
-      window.location.assign("/login");
-    } catch (err) {
-      console.error("Error resetting password:", err);
-      toast.error("Error resetting password. Please try again.");
+     const response= await dispatch(resetPassword({ token, password, email })).unwrap();
+      toast.success(response.message ||"Password reset successful!",{duration:2000});    
+      setTimeout(() => {
+        window.location.assign("/login");
+      }, 1000); 
+    } catch (err:any) {
+      const errorMessage = err|| "Error resetting password. Please try again.";
+      setError(errorMessage); 
+      toast.error(errorMessage);
     }
   };
 
   return (
     <PageContainer>
+      <Toaster position="top-right" />
       <AuthCard>
         <IllustrationSection>
           <img
@@ -75,8 +86,6 @@ const ResetPassword = () => {
             Your identity has been verified. Set your new password.
           </Typography>
 
-          {error && <Typography color="error">{error}</Typography>}
-
           <PasswordInput
             label="New Password"
             value={password}
@@ -90,7 +99,6 @@ const ResetPassword = () => {
           </StyledButton>
         </FormSection>
       </AuthCard>
-      <Toaster />
     </PageContainer>
   );
 };
