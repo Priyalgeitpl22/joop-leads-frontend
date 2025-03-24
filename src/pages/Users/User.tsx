@@ -1,5 +1,4 @@
 import { Box, IconButton, Tooltip, CircularProgress } from "@mui/material";
-import { Toaster, toast } from "react-hot-toast";
 import { UserHeader, UsersContainer, UserTable } from "./User.styled";
 import { SectionTitle } from "../../styles/layout.styled";
 import { SearchBar } from "../../components/Header/header.styled";
@@ -13,27 +12,44 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import AddUserDialog from "./AddUser/AddUserDialog";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../redux/store/store";
-import { getAllUsers } from "../../redux/slice/userSlice";
+import { getAllUsers, SearchContacts } from "../../redux/slice/userSlice";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-
 
 const Users = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { loading } = useSelector((state: RootState) => state.user);
 
   const [rows, setRows] = useState<any[]>([]);
+  const [filteredRows, setFilteredRows] = useState<any[]>([]);
   const [addUser, setAddUser] = useState<boolean>(false);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+   const { user } = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
     dispatch(getAllUsers())
       .unwrap()
       .then((response) => {
         setRows(response.data);
+        setFilteredRows(response.data);
       })
-      .catch((error) => {
-        toast.error(error || "Failed to fetch users");
-      });
+      .catch(() => {});
   }, [dispatch, addUser]);
+
+  useEffect(() => {
+    if (searchTerm.trim() === "") {
+      setFilteredRows(rows);
+      return;
+    }
+
+    const delayDebounceFn = setTimeout(() => {
+      dispatch(SearchContacts({ query: searchTerm, orgId: user?.orgId || "" }))
+        .unwrap()
+        .then((response) => setFilteredRows(response))
+        .catch(() => setFilteredRows([]));
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm, dispatch, rows]);
 
   const columns: GridColDef[] = useMemo(
     () => [
@@ -64,7 +80,6 @@ const Users = () => {
                   />
                 )}
               </Box>
-
               <Box>{params?.row?.fullName || "N/A"}</Box>
             </Box>
           </>
@@ -118,7 +133,6 @@ const Users = () => {
 
   return (
     <UsersContainer>
-      <Toaster position="top-right" />
       <UserHeader>
         <SectionTitle>Users</SectionTitle>
         <Box
@@ -132,7 +146,11 @@ const Users = () => {
         >
           <SearchBar>
             <Search size={20} />
-            <input placeholder="Search by Email or Name" />
+            <input
+              placeholder="Search by Email or Name"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </SearchBar>
           <AddUserDialog open={addUser} onClose={() => setAddUser(false)} />
           <Button onClick={() => setAddUser(true)}>Add User</Button>
@@ -144,11 +162,15 @@ const Users = () => {
           <Box sx={{ display: "flex", justifyContent: "center", mt: 5 }}>
             <CircularProgress />
           </Box>
+        ) : filteredRows.length === 0 ? (
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 5 }}>
+            No records found
+          </Box>
         ) : (
           <UserTable>
             <CustomDataTable
               columns={columns}
-              rows={rows}
+              rows={filteredRows}
               pageSizeOptions={[15, 10, 5]}
               enableCheckboxSelection={false}
             />
