@@ -7,22 +7,24 @@ import {
   AuthCard,
   IllustrationSection,
   FormSection,
-  StyledTextField,
   StyledButton,
 } from "./activateAccount.styled";
 import { AppDispatch, RootState } from "../../redux/store/store";
 import { activateAccount } from "../../redux/slice/authSlice";
+import { validatePassword } from "../../utils/Validation";
+import PasswordInput from "../../utils/PasswordInput";
 // import { activateAccount } from "../../redux/slice/authSlice";
 
 const ActivateAccount = () => {
   const [password, setPassword] = useState("");
   const [token, setToken] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const dispatch = useDispatch<AppDispatch>();
 
-  const { loading, error, success } = useSelector((state: RootState) => state.user);
+  const { loading, success } = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
     const token = searchParams.get("token");
@@ -44,8 +46,17 @@ const ActivateAccount = () => {
 
   const handleSubmitPassword = () => {
     if (!password || !token || !email) {
-      return;
-    }
+         setError("Password is required");
+         return;
+       }
+       if (!validatePassword(password)) {
+         setError(
+           "Password must be at least 8 characters, contain 1 uppercase, 1 lowercase, 1 number, and 1 special character."
+         );
+         return;
+       }
+       setError("");
+      
     
     const payload = {
       token, 
@@ -73,18 +84,19 @@ const ActivateAccount = () => {
             Enter your new password to activate your account.
           </Typography>
 
-          {error && <Typography color="error">{error}</Typography>}
-
-          <StyledTextField
-            label="New Password"
-            variant="outlined"
-            type="password"
+          <PasswordInput
+            label="New Password *"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            disabled={loading}
+            error={!!error}
+            helperText={error || ""}
           />
 
-          <StyledButton fullWidth onClick={handleSubmitPassword} disabled={loading}>
+          <StyledButton
+            fullWidth
+            onClick={handleSubmitPassword}
+            disabled={loading}
+          >
             {loading ? "Activating..." : "Activate Account"}
           </StyledButton>
         </FormSection>
