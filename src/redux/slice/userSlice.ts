@@ -2,6 +2,17 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import {api} from "../../services/api";
 import Cookies from "js-cookie";
 import { User } from "../../components/User-Profile/UserProfile";
+
+export interface UserAccount {
+  id: string;
+  full_name: string;
+  email: string;
+  phone_number: string;
+  role: string;
+  type: string;
+  createdAt: string;
+}
+
 interface AuthState {
   user: {
     id: string;
@@ -20,12 +31,14 @@ interface AuthState {
   passwordChangeSuccess: boolean;
 }
 
+const token = Cookies.get("access_token");
+
 export const getUserDetails = createAsyncThunk(
   "auth/getUserDetails",
   async (token: string, { rejectWithValue }) => {
     try {
       const response = await api.get("/user", {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: ` Bearer ${token}` },
       });
       return response.data.user;
     } catch (error: any) {
@@ -54,7 +67,9 @@ export const updateUserDetails = createAsyncThunk(
 );
 
 export const createUser = createAsyncThunk<
-  { data: User },
+  {
+    message: string; data: User 
+},
   FormData,
   { rejectValue: string }
 >("user/createUser", async (formData, { rejectWithValue }) => {
@@ -92,6 +107,44 @@ export const getAllUsers = createAsyncThunk<
     );
   }
 });
+
+export const deleteUser = createAsyncThunk(
+  "user/delete-user",
+  async (id: string, {rejectWithValue}) => {
+    try {
+      const token = Cookies.get("access_token");
+      const response = await api.delete(`/user/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to delete user"
+      );
+    }
+  }
+)
+
+export const SearchUsers = createAsyncThunk(
+  "user/search-user",
+  async (
+    { query, orgId }: { query: string; orgId: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await api.get("/user/search-user", {
+        params: { query, orgId },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      return response.data.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Network error");
+    }
+  }
+);
 
 const userSlice = createSlice({
   name: "user",
