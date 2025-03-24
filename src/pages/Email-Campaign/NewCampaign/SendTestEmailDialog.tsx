@@ -23,8 +23,7 @@ import toast from "react-hot-toast";
 interface SendTestEmailDialogProps {
   open: boolean;
   onClose: () => void;
-  sequence: any;
-  selectedSequence:any
+  sequence: string;
 }
 
 const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({

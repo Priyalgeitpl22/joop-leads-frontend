@@ -55,7 +55,7 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
   const [uploadCounts, setUploadCounts] = React.useState<ILeadsCounts>();
   const [sequences, setSequences] = React.useState<Sequence[]>([]);
   const [selectedSequence, setSelectedSequence] = React.useState<Sequence>();
-  const [newSequnce,setSelectedNewSequnce]=React.useState()
+  const [newSequnce,setSelectedNewSequnce]=React.useState("")
   const [campaignId, setCampaignId] = React.useState<string>("");
   const [isLoading, setIsLoading] = React.useState(false);
   const [testEmailDialog, setTestEmailDialog] = React.useState(false);
@@ -459,7 +459,7 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
             handleCampaignSettingsUpdate={handleCampaignSettingsUpdate}
           />
         )}
-        {activeStep === 3 && <FinalReviewCampaign campaign_id={campaignId}  setSelectedNewSequnce={setSelectedNewSequnce}/>}
+        {activeStep === 3 && <FinalReviewCampaign campaign_id={campaignId}  setSelectedEmailTemplate={setSelectedNewSequnce}/>}
       </MainContainer>
       <FooterContainer>
         {activeStep !== 0 && (
@@ -473,7 +473,6 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
               open={testEmailDialog}
               onClose={() => setTestEmailDialog(false)}
               sequence={newSequnce}
-              selectedSequence={selectedSequence}
             />
             <SecondaryButton onClick={handleTestEmail}>
               Send Test Email
