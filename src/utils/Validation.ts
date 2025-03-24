@@ -1,4 +1,6 @@
 
+import { parsePhoneNumberFromString, getExampleNumber, CountryCode } from "libphonenumber-js/max";
+import examples from "libphonenumber-js/examples.mobile.json";
 
 export const validateEmail = (email: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -9,6 +11,42 @@ export const validatePassword = (password: string): boolean => {
   const passwordRegex =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
   return passwordRegex.test(password);
+};
+
+
+export const validatePhoneNumber = (phone: string, countryCode: string) => {
+  try {
+    if (!countryCode || typeof countryCode !== "string") {
+      return { isValid: false, formatted: null, error: "Invalid country code" };
+    }
+
+    const countryCodeTyped = countryCode.toUpperCase() as CountryCode;
+    const normalizedPhone = phone.replace(/\s|-/g, "");
+
+
+    const phoneNumber = parsePhoneNumberFromString(normalizedPhone, countryCodeTyped);
+    console.log(phoneNumber);
+
+    if (!phoneNumber || !phoneNumber.isValid()) {
+      return { isValid: false, formatted: null, error: "Invalid phone number format" };
+    }
+
+    const exampleNumber = getExampleNumber(countryCodeTyped, examples);
+
+    const expectedLength = exampleNumber?.nationalNumber.length;
+
+    if (phoneNumber.nationalNumber.length !== expectedLength) {
+      return {
+        isValid: false,
+        formatted: null,
+        error: `Phone number must be exactly ${expectedLength} digits for ${countryCodeTyped}`,
+      };
+    }
+
+    return { isValid: true, formatted: phoneNumber.formatInternational() };
+  } catch (error) {
+    return { isValid: false, formatted: null, error: "Invalid phone number format" };
+  }
 };
 
 

@@ -13,7 +13,7 @@ export const Button = styled.button`
   color: var(--text-white);
   background-color:var(--theme-color);
   cursor: pointer;
-  font-size: 16px;  
+  font-size: 16px;
   white-space: nowrap;
   box-shadow: var(--shadow-dark);
 
@@ -45,7 +45,7 @@ export const SecondaryButton = styled.button`
   color: var(--theme-color);
   background-color: var(--text-white);
   cursor: pointer;
-  font-size: 16px;  
+  font-size: 16px;
   white-space: nowrap;
   box-shadow: var(--shadow-dark);
 
@@ -78,7 +78,7 @@ export const IconsButton = styled.button`
   color: var(--theme-color);
   background-color: var(--text-white);
   cursor: pointer;
-  font-size: 16px;  
+  font-size: 16px;
   white-space: nowrap;
   box-shadow: var(--shadow-dark);
 
@@ -169,3 +169,4 @@ export const TitleBody = styled.input`
     background-color: inherit !important;
   }
 `;
+
