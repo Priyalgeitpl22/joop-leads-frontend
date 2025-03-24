@@ -13,6 +13,9 @@ import { AppDispatch, RootState } from "../../redux/store/store";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ProfileDetail from "./Profile-Details/ProfileDetail";
 export interface User {
+  type: string;
+  createdAt: any;
+  phone: any;
   id: string;
   email: string;
   fullName: string;
