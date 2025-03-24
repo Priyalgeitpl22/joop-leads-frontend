@@ -25,12 +25,12 @@ import { modules } from "../SequenceCampaign/EmailTemplate/EmailTemplate";
 
 interface FinalReviewCampaignProps {
   campaign_id: string;
-  setSelectedNewSequnce:any
+  setSelectedEmailTemplate:any
 }
 
 const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
   campaign_id,
-  setSelectedNewSequnce
+  setSelectedEmailTemplate
 }) => {
   const [selectedContact, setSelectedContact] = useState<IContacts>();
   const [selectedVariant, setSelectedVariant] = React.useState(1);
@@ -112,7 +112,7 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
       console.error("Error searching contacts:", error);
     }
   };
-  setSelectedNewSequnce(selectedTemplate);
+  setSelectedEmailTemplate(selectedTemplate);
   return (
     <FinalReviewContainer>
       <SidebarContainer

@@ -177,14 +177,17 @@ export const SendTestEmail = createAsyncThunk(
   "accounts/send-test-email",
   async (data: { email: string | string[], toEmail: string ,sequence:string}, { rejectWithValue }) => {
     try {
-      const response = await emailApi.post(`/accounts/send-test-email`, {
-        email: data.email,
-        toEmail: data.toEmail,
-        emailbody:data.sequence
-      },
+      const response = await emailApi.post(
+        `/accounts/send-test-email`,
+        {
+          email: data.email,
+          toEmail: data.toEmail,
+          emailTemplate: data.sequence,
+        },
         {
           headers: { Authorization: `Bearer ${token}` },
-        });
+        }
+      );
       return response.data;
     } catch (error: unknown) {
       let errorMessage = "Network error";
