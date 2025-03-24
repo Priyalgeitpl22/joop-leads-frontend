@@ -4,7 +4,7 @@ import { TableRow, TableBody, CircularProgress } from "@mui/material";
 import { AppDispatch } from "../../../redux/store/store";
 import { getCampaignBySender } from "../../../redux/slice/emailCampaignSlice";
 import { IEmailCampaign } from "../../Email-Campaign/NewCampaign/interfaces";
-import { LoadingContainer, NoDataContainer, StyledTable, StyledTableContainer, TableDataCell, TableHeadingCell } from "./EditCampaignEmailAccount.styled";
+import { LoadingContainer, NoDataContainer, StyledTable, StyledTableContainer, StyledTableHead, TableDataCell, TableHeadingCell } from "./EditCampaignEmailAccount.styled";
 
 
 const EditCampaignEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
@@ -33,11 +33,13 @@ const EditCampaignEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
   return (
     <StyledTableContainer>
       <StyledTable>
-        <TableRow>
-          <TableHeadingCell>Campaign Name</TableHeadingCell>
-          <TableHeadingCell>Campaign Status</TableHeadingCell>
-          <TableHeadingCell>Time Added</TableHeadingCell>
-        </TableRow>
+        <StyledTableHead>
+          <TableRow>
+            <TableHeadingCell>Campaign Name</TableHeadingCell>
+            <TableHeadingCell>Campaign Status</TableHeadingCell>
+            <TableHeadingCell>Time Added</TableHeadingCell>
+          </TableRow>
+        </StyledTableHead>
         <TableBody>
           {isLoading ? (
             <TableRow>

@@ -31,6 +31,7 @@ import ContactTable from "./pages/Contacts/ContactTable";
 import EditEmailAccount from "./pages/Email-Account/EditEmailAccount/EditEmailAccount";
 import ViewEmailCampaign from "./pages/Email-Campaign/ViewEmailCampaign/ViewEmailCampaign";
 import { Toaster } from "react-hot-toast";
+import Users from "./pages/Users/User";
 
 const UNPROTECTED_ROUTES = [
   "/login",
@@ -145,6 +146,7 @@ export default function DashboardLayoutBasic() {
               "/email-campaign/view-email-campaign"
             ) && <ViewEmailCampaign />}
             {router.pathname === "/inbox" && <EmailInboxs />}
+            {router.pathname === "/user" && <Users />}
             {router.pathname === "/leads" && <Leads />}
             {router.pathname === "/chats" && <Chats />}
             {router.pathname === "/all-leads" && <ContactTable />}

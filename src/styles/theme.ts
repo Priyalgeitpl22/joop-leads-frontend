@@ -317,7 +317,7 @@ const theme = createTheme({
           width: "240px",
           backgroundColor: "#fff",
           color: "#FFFFFF",
-          paddingTop: "10px",
+          padding: "10px",
           justifyContent: "center",
         },
       },

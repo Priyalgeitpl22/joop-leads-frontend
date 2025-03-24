@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import {api} from "../../services/api";
 import Cookies from "js-cookie";
+import { User } from "../../components/User-Profile/UserProfile";
 interface AuthState {
   user: {
     id: string;
@@ -51,6 +52,46 @@ export const updateUserDetails = createAsyncThunk(
     }
   }
 );
+
+export const createUser = createAsyncThunk<
+  { data: User },
+  FormData,
+  { rejectValue: string }
+>("user/createUser", async (formData, { rejectWithValue }) => {
+  try {
+    const token = Cookies.get("access_token");
+
+    const response = await api.post("/user/create-user", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    return rejectWithValue(
+      error.response?.data?.message || "Failed to create user"
+    );
+  }
+});
+
+export const getAllUsers = createAsyncThunk<
+  { data: User[] },
+  void,
+  { rejectValue: string }
+>("user/getAllUsers", async (_, { rejectWithValue }) => {
+  try {
+    const token = Cookies.get("access_token");
+    const response = await api.get(`/user/users`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error: any) {
+    return rejectWithValue(
+      error.response?.data?.message || "Failed to fetch users"
+    );
+  }
+});
 
 const userSlice = createSlice({
   name: "user",

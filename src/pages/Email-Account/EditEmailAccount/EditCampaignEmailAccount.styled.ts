@@ -3,17 +3,17 @@ import {
   Table,
   TableContainer,
   TableHead,
-  TableRow,
 } from "@mui/material";
 
 export const StyledTableContainer = styled(TableContainer)`
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-  border-radius: 12px;
   overflow: hidden;
+  height: 100vh;
 `;
 
 export const StyledTable = styled(Table)`
-  background: var(--icon-light);
+  border-collapse: collapse;
+  width: 100%;
 `;
 
 export const StyledTableHead = styled(TableHead)`
@@ -23,12 +23,8 @@ export const StyledTableHead = styled(TableHead)`
     font-weight: bold;
     padding: 12px;
     text-align: left;
-  }
-`;
-
-export const StyledTableRow = styled(TableRow)`
-  &::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, var(--theme-color));
+    text-transform: uppercase;
+    border-bottom: 2px solid var(--border-grey);
   }
 `;
 
@@ -39,6 +35,7 @@ export const TableHeadingCell = styled.th`
   text-align: left;
   text-transform: uppercase;
   color: #333;
+  border-bottom: 2px solid var(--border-grey);
 `;
 
 export const TableDataCell = styled.td`
@@ -46,6 +43,7 @@ export const TableDataCell = styled.td`
   font-size: 14px;
   text-align: left;
   color: #555;
+  border-bottom: 1px solid var(--border-grey);
 `;
 
 export const LoadingContainer = styled.div`
@@ -59,4 +57,6 @@ export const NoDataContainer = styled.td`
   text-align: center;
   color: #888;
   padding: 20px;
+  font-size: 16px;
+  font-weight: bold;
 `;
