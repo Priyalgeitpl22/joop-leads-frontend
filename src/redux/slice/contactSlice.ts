@@ -95,30 +95,6 @@ export interface CreateContactsAccountPayload {
 
 const token = Cookies.get("access_token");
 
-// export const fetchContacts = createAsyncThunk<
-//   ContactsAccount[],
-//   void,
-//   { rejectValue: string }
-// >(
-//   "contact/all-contacts",
-//   async (_, { rejectWithValue }) => {
-//     try {
-//       const response = await api.get("/contact/all-contacts", {
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//         },
-//       });
-//       return response.data.data;
-//       console.log("");
-//     } catch (error: unknown) {
-//       let errorMessage = "Something went wrong";
-//       if (error instanceof AxiosError) {
-//         errorMessage = (error.response?.data as string) || errorMessage;
-//       }
-//       return rejectWithValue(errorMessage);
-//     }
-//   }
-// );
 export const fetchContacts = createAsyncThunk(
   "contact/all-contacts",
   async (_, { rejectWithValue }) => {
@@ -142,7 +118,7 @@ export const fetchContacts = createAsyncThunk(
       if (error instanceof AxiosError) {
         if (error.response?.status === 403) {
           errorMessage = "Invalid or expired token. Please log in again.";
-          // Optionally trigger a logout or refresh token mechanism
+
         } else {
           errorMessage = (error.response?.data as string) || errorMessage;
         }
@@ -178,7 +154,7 @@ export const getCampaignListById = createAsyncThunk<
 
 
 export const CreateContactsAccount = createAsyncThunk<
-{ message: string }, 
+  { message: string },
   CreateContactsAccountPayload,
   { rejectValue: string }
 >(
@@ -273,18 +249,22 @@ const contactsSlice = createSlice({
   extraReducers: (builder) => {
     builder
 
-      // .addCase(fetchContacts.pending, (state) => {
-      //   state.loading = true;
-      //   state.error = null;
-      // })
-      // .addCase(fetchContacts.fulfilled, (state, action: PayloadAction<ContactsAccount[]>) => {
-      //   state.loading = false;
-      //   state.contacts = action.payload;
-      // })
-      // .addCase(fetchContacts.rejected, (state, action) => {
-      //   state.loading = false;
-      //   state.error = action.payload ?? action.error.message ?? "Something went wrong";
-      // })
+      .addCase(fetchContacts.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchContacts.fulfilled, (state, action: PayloadAction<ContactsAccount[]>) => {
+        state.loading = false;
+        state.contacts = action.payload;
+
+      })
+      .addCase(fetchContacts.rejected, (state, action) => {
+        state.loading = false;
+        state.error =
+          typeof action.payload === "string"
+            ? action.payload
+            : action.error?.message || "Something went wrong while fetching contacts.";
+      })
 
 
       .addCase(getCampaignListById.pending, (state) => {

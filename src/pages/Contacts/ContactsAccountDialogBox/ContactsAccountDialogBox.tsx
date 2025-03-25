@@ -8,13 +8,17 @@ import {
   IconButton,
   DialogActions,
   TextField,
+  FormControl,
+  FormHelperText,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../redux/store/store";
-import { CreateContactsAccount, CreateContactsAccountPayload } from "../../../redux/slice/contactSlice";
+import { CreateContactsAccount, CreateContactsAccountPayload, fetchContacts } from "../../../redux/slice/contactSlice";
 import toast from "react-hot-toast";
 import { Loader } from "lucide-react";
+import { validateEmail } from "../../../utils/Validation";
+import PhoneNumberField from "../../../assets/Custom/PhoneNumberField";
 interface EmailCampaignDialogProps {
   open: boolean;
   onClose: () => void;
@@ -44,7 +48,9 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
   const [formErrors, setFormErrors] = useState({
     first_name: "",
     email: "",
+    phone_number: "",
   });
+
   const [loading, setLoading] = useState(false);
 
 
@@ -61,6 +67,11 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
         location: "",
         orgId: "",
       });
+      setFormErrors({
+        first_name: "",
+        email: "",
+        phone_number: "",
+      });
     }
   }, [open])
 
@@ -68,9 +79,10 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
     let error = "";
     if (!value.trim()) {
       error = `${name.replace("_", " ")} is required`;
-    } else if (name === "email" && !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(value)) {
+    } else if (name === "email" && !validateEmail(value)) {
       error = "Invalid email format";
     }
+
     return error;
   };
 
@@ -86,6 +98,8 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
       [name]: validateField(name, value),
     }));
   };
+
+
 
   const isFormValid = () => {
     const errors: any = {};
@@ -112,22 +126,18 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
       orgId: formData.orgId,
     };
 
-    dispatch(CreateContactsAccount(payload))
-      .unwrap()
-      .then(() => {
 
-        onClose();
-      })
-      .catch(() => {
-      });
     try {
       const res = await dispatch(CreateContactsAccount(payload)).unwrap();
       toast.success(res.message || 'Contact created successfully!');
+      dispatch(fetchContacts());
       onClose();
+
     } catch (error: any) {
       toast.error(error.message || 'Failed to create contact. Please try again.');
     } finally {
       setLoading(false);
+
     }
   };
 
@@ -172,9 +182,8 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
                 value={formData.last_name}
                 onChange={handleChange}
                 fullWidth
-
-
               />
+
               <TextField
                 label="Email *"
                 name="email"
@@ -187,14 +196,24 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
 
 
               />
-              <TextField
-                label="Phone Number"
-                name="phone_number"
-                value={formData.phone_number}
-                onChange={handleChange}
-                fullWidth
 
-              />
+              <FormControl fullWidth error={!!formErrors.phone_number}>
+                <PhoneNumberField
+                  value={formData.phone_number}
+                  onChange={(value: string) => {
+                    setFormData((prev) => ({ ...prev, phone_number: value }));
+                    setFormErrors((prevErrors) => ({
+                      ...prevErrors,
+                      phone_number: validateField("phone_number", value),
+                    }));
+                  }}
+                />
+                {!!formErrors.phone_number && (
+                  <FormHelperText>{formErrors.phone_number}</FormHelperText>
+                )}
+              </FormControl>
+
+
               <TextField
                 label="Company Name"
                 name="company_name"
