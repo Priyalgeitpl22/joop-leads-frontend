@@ -9,6 +9,30 @@
   </head>
   <body>
     <div id="root"></div>
+    <div id="chat-widget"></div>
+    <script src="http://api.chat.jooper.ai/socket.io/socket.io.js"></script>
+    <script type="text/javascript">
+        (function () {
+            var socketScript = document.createElement("script");
+            socketScript.src = "http://api.chat.jooper.ai/socket.io/socket.io.js";
+            socketScript.async = true;
+            socketScript.onload = function () {
+                var chatWidgetScript = document.createElement("script");
+                chatWidgetScript.src = "http://api.chat.jooper.ai/chat-widget.js"; 
+                chatWidgetScript.async = true;
+                chatWidgetScript.onload = function () {
+                    if (typeof ChatWidget !== "undefined") {
+                        ChatWidget.init({
+                            elementId: "chat-widget",
+                            orgId: "3c2378fa-b8e8-400a-bc6b-458945a120af",
+                        });
+                    }
+                };
+                document.body.appendChild(chatWidgetScript);
+            };
+            document.body.appendChild(socketScript);
+        })();
+        </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
