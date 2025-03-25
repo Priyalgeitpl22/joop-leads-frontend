@@ -14,6 +14,7 @@ import { activateAccount } from "../../redux/slice/authSlice";
 import { validatePassword } from "../../utils/Validation";
 import PasswordInput from "../../utils/PasswordInput";
 // import { activateAccount } from "../../redux/slice/authSlice";
+import { toast } from "react-hot-toast";
 
 const ActivateAccount = () => {
   const [password, setPassword] = useState("");
@@ -23,8 +24,10 @@ const ActivateAccount = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const dispatch = useDispatch<AppDispatch>();
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const { loading, success } = useSelector((state: RootState) => state.user);
+  // const { loading } = useSelector((state: RootState) => state.user);
+  const { success } = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
     const token = searchParams.get("token");
@@ -34,17 +37,17 @@ const ActivateAccount = () => {
       setToken(token);
       setEmail(email);
     } else {
-      window.location.assign("/login")
+      navigate("/login")
     }
   }, [searchParams, navigate]);
 
   useEffect(() => {
     if (success) {
-      window.location.assign("/login")
+      navigate("/login");
     }
   }, [success, navigate]);
 
-  const handleSubmitPassword = () => {
+  const handleSubmitPassword = async () => {
     if (!password || !token || !email) {
          setError("Password is required");
          return;
@@ -63,16 +66,38 @@ const ActivateAccount = () => {
       password,
       email
     }
-    dispatch(activateAccount(payload)).unwrap();
+
+    try {
+      setLoading(true);
+      const response = await dispatch(activateAccount(payload)).unwrap();
+      if (response.code === 200) {
+        toast.success(
+          response.message|| "Account activated successfully. Please login to continue."
+        );
+        navigate("/login");
+      }
+    } catch (error: any) {
+      toast.error(error || "Something went wrong");
+      console.error("Error activating account:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <PageContainer>
       <AuthCard>
-        <IllustrationSection>
+        {/* <IllustrationSection>
           <img
             src="https://cdn.dribbble.com/users/2058540/screenshots/8225403/media/bc617eec455a72c77feab587e09daa96.gif"
             alt="Account Activation Illustration"
+          />
+        </IllustrationSection> */}
+        <IllustrationSection>
+          <img
+            src="/great-learning.gif"
+            alt="Email illustration"
+            style={{ width: "75%", height: "auto" }}
           />
         </IllustrationSection>
 

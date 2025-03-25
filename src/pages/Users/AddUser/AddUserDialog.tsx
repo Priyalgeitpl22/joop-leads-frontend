@@ -7,6 +7,7 @@ import {
   FormControl,
   IconButton,
   Typography,
+  CircularProgress,
 } from "@mui/material";
 import {
   DialogBody,
@@ -17,14 +18,15 @@ import {
 } from "../../../components/User-Profile/Profile-Details/profileDetail.styled";
 import { TextField } from "../../../styles/layout.styled";
 import { Button } from "../../../styles/global.styled";
-import { Toaster, toast } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../redux/store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../redux/store/store";
 import { createUser, getAllUsers } from "../../../redux/slice/userSlice";
 import { validateEmail, validateFullName } from "../../../utils/Validation";
+import { DialogBox, DialogBoxHead } from "./AddUserDialog.styled";
 
 interface AddUserDialogProps {
   open: boolean;
@@ -46,6 +48,8 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onClose }) => {
     phone: "",
     role: "",
   });
+  const [addAccountInProgress, setAddAccountInProgress] = useState(false);
+  const { loading } = useSelector((state: RootState) => state.auth);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -75,8 +79,7 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onClose }) => {
 
  
   const handleCreateUser = async () => {
-  
-    
+    setAddAccountInProgress(true);
     if (!validateFields()) {
       return;
     }
@@ -90,13 +93,20 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onClose }) => {
       if (profilePicture) {
         userPayload.append("profilePicture", profilePicture);
       }
-
-      await dispatch(createUser(userPayload)).unwrap();
-      toast.success("User created successfully!");
+      setAddAccountInProgress(true);
+      const response = await dispatch(createUser(userPayload)).unwrap();
+      toast.success(response.message || "User created successfully!");
 
       dispatch(getAllUsers());
-
+        setAddAccountInProgress(false);
       onClose();
+      setFullName("");
+      setEmail("");
+      setPhone("");
+      setRole("");
+      setProfilePicture(null);
+      setPreview(null);
+      setAddAccountInProgress(false);
     } catch (error) {
       toast.error("Failed to create user.");
     }
@@ -110,23 +120,10 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onClose }) => {
       >
         <CloseIcon />
       </IconButton>
-      <Box
-        sx={{
-          width: "100%",
-          height: "80px",
-          backgroundColor: "var(--theme-color-light)",
-        }}
-      />
+      <DialogBox />
+
       <DialogHeader>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            width: "100%",
-            mt: -5,
-          }}
-        >
+        <DialogBoxHead>
           <Box sx={{ position: "relative", display: "inline-block" }}>
             <label htmlFor="profile-upload" style={{ cursor: "pointer" }}>
               {preview ? (
@@ -161,7 +158,7 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onClose }) => {
           >
             Add New User
           </StyledTitle>
-        </Box>
+        </DialogBoxHead>
       </DialogHeader>
 
       <DialogBody dividers>
@@ -174,16 +171,17 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onClose }) => {
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             error={!!error.fullName}
-           
+            autoComplete="off"
           />
-          {error.fullName && <Typography color="red" variant="caption">
+          {error.fullName && (
+            <Typography color="red" variant="caption">
               {error.fullName}
             </Typography>
-            }
+          )}
         </FieldWrapper>
 
         <FieldWrapper>
-          <TextField 
+          <TextField
             label="Email *"
             variant="outlined"
             fullWidth
@@ -191,11 +189,13 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onClose }) => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             error={!!error.email}
-           
-          />{error.email && <Typography color="red" variant="caption">
-            {error.email}
-          </Typography>
-          }
+            autoComplete="off"
+          />
+          {error.email && (
+            <Typography color="red" variant="caption">
+              {error.email}
+            </Typography>
+          )}
         </FieldWrapper>
 
         <FieldWrapper>
@@ -206,6 +206,7 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onClose }) => {
             name="phoneNumber"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
+            autoComplete="off"
           />
         </FieldWrapper>
 
@@ -217,7 +218,11 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onClose }) => {
               onChange={(e) => setRole(e.target.value)}
               label="Role *"
               name="role"
-              sx={{ background: "white!important" }}
+              sx={{
+                background: "white!important",
+                borderRadius: "4px",
+                boxShadow: "1px 1px 1px 1px #bebebe",
+              }}
             >
               <MenuItem value="admin">Admin</MenuItem>
               <MenuItem value="user">User</MenuItem>
@@ -227,10 +232,15 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onClose }) => {
       </DialogBody>
 
       <DialogFooter>
-        <Button onClick={handleCreateUser}>Create User</Button>
+        <Button onClick={handleCreateUser}>
+          {addAccountInProgress ? (
+            <CircularProgress size={24} sx={{ color: "white" }} />
+          ) : (
+            "Create User"
+          )}
+        </Button>
       </DialogFooter>
-
-      <Toaster />
+      {loading || addAccountInProgress}
     </Dialog>
   );
 };

@@ -74,10 +74,17 @@ const ForgotPassword = () => {
     <PageContainer>
       <Toaster position="top-right" reverseOrder={false} />
       <AuthCard>
-        <IllustrationSection>
+        {/* <IllustrationSection>
           <img
             src="https://cdn.dribbble.com/users/2058540/screenshots/8225403/media/bc617eec455a72c77feab587e09daa96.gif"
             alt="Forgot Password Illustration"
+          />
+        </IllustrationSection> */}
+        <IllustrationSection>
+          <img
+            src="/great-learning.gif"
+            alt="Email illustration"
+            style={{ width: "70%", height: "auto" }}
           />
         </IllustrationSection>
         <FormSection>

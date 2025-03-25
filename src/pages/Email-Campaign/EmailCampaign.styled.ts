@@ -234,6 +234,15 @@ export const CustomTableRow = styled(TableRow)(({ }) => ({
   // },
 }));
 
+export const SectionTitle = styled(Tab)({
+  fontSize: "18px",
+  fontWeight: "600",
+  color: "#35495c",
+  display: "flex",
+  whiteSpace: "nowrap",
+  textTransform: "none"
+});
+
 export const CustomTableCell = styled(TableCell)(({ }) => ({
   fontSize: "14px",
   fontWeight: "500",

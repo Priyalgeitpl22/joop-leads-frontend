@@ -119,11 +119,18 @@ const ChangePassword: React.FC = () => {
     <PageContainer>
       <Toaster position="top-right" />
       <ChangePasswordCard>
-        <IllustrationSection>
+        {/* <IllustrationSection>
           <img
             src="https://cdn.dribbble.com/users/2058540/screenshots/8225403/media/bc617eec455a72c77feab587e09daa96.gif"
             alt="Auth illustration"
             style={{ maxWidth: "100%", height: "auto" }}
+          />
+        </IllustrationSection> */}
+        <IllustrationSection>
+          <img
+            src="/great-learning-enviroment.gif"
+            alt="Email illustration"
+            style={{ width: "100%", height: "75%" }}
           />
         </IllustrationSection>
         <FormSection>

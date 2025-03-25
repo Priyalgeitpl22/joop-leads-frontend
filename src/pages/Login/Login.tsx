@@ -100,11 +100,18 @@ function Login() {
     <PageContainer>
       <Toaster position="top-right" />
       <LoginCard>
-        <IllustrationSection>
+        {/* <IllustrationSection>
           <img
             src="https://cdn.dribbble.com/users/2058540/screenshots/8225403/media/bc617eec455a72c77feab587e09daa96.gif"
             alt="Login illustration"
             style={{ maxWidth: "100%", height: "auto" }}
+          />
+        </IllustrationSection> */}
+        <IllustrationSection>
+          <img
+            src="/great-learning.gif"
+            alt="Email illustration"
+            style={{ maxWidth: "80%", height: "auto"}}
           />
         </IllustrationSection>
 
