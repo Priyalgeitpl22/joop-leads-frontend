@@ -6,6 +6,7 @@ import {
   InputLabel,
   FormControl,
   IconButton,
+  Typography,
 } from "@mui/material";
 import {
   DialogBody,
@@ -23,6 +24,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../redux/store/store";
 import { createUser, getAllUsers } from "../../../redux/slice/userSlice";
+import { validateEmail, validateFullName } from "../../../utils/Validation";
 
 interface AddUserDialogProps {
   open: boolean;
@@ -38,18 +40,44 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onClose }) => {
   const [role, setRole] = useState("");
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [error, setError] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    role: "",
+  });
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
       setProfilePicture(file);
       setPreview(URL.createObjectURL(file));
+      // setError((prevErrors) => ({ ...prevErrors, [name:any]: "" }));
     }
   };
+  const validateFields = () => {
+    let newErrors: any = {};
+  
+    if (!fullName.trim()) newErrors.fullName = "Full Name is required";
+    else if(!validateFullName){
+      newErrors.fullName="Enter a valid name"
+    }
+    if (!email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!validateEmail(email)) {
+      newErrors.email = "Enter a valid email address";
+    }
+  
+    setError(newErrors);
+  
+    return Object.keys(newErrors).length === 0;
+  };
 
+ 
   const handleCreateUser = async () => {
-    if (!fullName || !email || !phone || !role) {
-      toast.error("Please fill all fields");
+  
+    
+    if (!validateFields()) {
       return;
     }
 
@@ -70,7 +98,7 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onClose }) => {
 
       onClose();
     } catch (error) {
-      toast.error("Failed to create user");
+      toast.error("Failed to create user.");
     }
   };
 
@@ -89,7 +117,6 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onClose }) => {
           backgroundColor: "var(--theme-color-light)",
         }}
       />
-
       <DialogHeader>
         <Box
           sx={{
@@ -140,29 +167,40 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onClose }) => {
       <DialogBody dividers>
         <FieldWrapper>
           <TextField
-            label="Name"
+            label="Full Name *"
             variant="outlined"
             fullWidth
-            name="name"
+            name="fullName"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
+            error={!!error.fullName}
+           
           />
+          {error.fullName && <Typography color="red" variant="caption">
+              {error.fullName}
+            </Typography>
+            }
         </FieldWrapper>
 
         <FieldWrapper>
-          <TextField
-            label="Email"
+          <TextField 
+            label="Email *"
             variant="outlined"
             fullWidth
             name="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-          />
+            error={!!error.email}
+           
+          />{error.email && <Typography color="red" variant="caption">
+            {error.email}
+          </Typography>
+          }
         </FieldWrapper>
 
         <FieldWrapper>
           <TextField
-            label="Phone Number"
+            label="Phone Number *"
             variant="outlined"
             fullWidth
             name="phoneNumber"
@@ -177,7 +215,7 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onClose }) => {
             <Select
               value={role}
               onChange={(e) => setRole(e.target.value)}
-              label="Role"
+              label="Role *"
               name="role"
               sx={{ background: "white!important" }}
             >

@@ -7,6 +7,10 @@ export const validateEmail = (email: string): boolean => {
   return emailRegex.test(email);
 };
 
+export const validateFullName=(fullName:string):boolean=>{
+  const fullNameRegex = /^[a-zA-Z-' ]{2,}$/;
+  return fullNameRegex.test(fullName);
+}
 export const validatePassword = (password: string): boolean => {
   const passwordRegex =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -86,6 +90,33 @@ const fieldValidation: FieldValidationConfig = {
       message: "Password must be at least 6 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character."
     }
   }
+
+
+};
+
+export interface FieldValidationRule {
+  required?: { message: string };
+  minLength?: { value: number; message: string };
+  email?: { message: string };
+  pattern?: { value: string; message: string };
+}
+
+export type FieldValidationConfig1 = {
+  [key in "fullName" | "email" ]?: FieldValidationRule;
+} & {
+  [key: string]: FieldValidationRule | undefined;
+};
+
+export const fieldValidation1: FieldValidationConfig1 = {
+  fullName: {
+    required: { message: "Full Name is required" },
+    minLength: { value: 2, message: "Full Name must be at least 2 characters" }
+  },
+  email: {
+    required: { message: "Email is required" },
+    pattern: { value: "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$", message: "Email is not valid" }
+  },
+  
 
 
 };
