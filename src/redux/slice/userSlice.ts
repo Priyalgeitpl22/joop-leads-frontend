@@ -93,6 +93,29 @@ export const getAllUsers = createAsyncThunk<
   }
 });
 
+const token = Cookies.get("access_token");
+export const SearchContacts = createAsyncThunk(
+  "user/search-user",
+  async (
+    { query, orgId }: { query: string; orgId: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await api.get("/user/search-user", {
+        params: { query, orgId },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      return response.data.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Network error");
+    }
+  }
+);
+
+
 const userSlice = createSlice({
   name: "user",
   initialState: {
