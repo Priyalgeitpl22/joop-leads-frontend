@@ -71,13 +71,19 @@ const ResetPassword = () => {
     <PageContainer>
       <Toaster position="top-right" />
       <AuthCard>
-        <IllustrationSection>
+        {/* <IllustrationSection>
           <img
             src="https://cdn.dribbble.com/users/2058540/screenshots/8225403/media/bc617eec455a72c77feab587e09daa96.gif"
             alt="Account Activation Illustration"
           />
+        </IllustrationSection> */}
+        <IllustrationSection>
+          <img
+            src="/great-learning.gif"
+            alt="Email illustration"
+            style={{ width: "75%", height: "auto" }}
+          />
         </IllustrationSection>
-
         <FormSection>
           <Typography variant="h4" fontWeight="bold" mb={1}>
             Reset Password

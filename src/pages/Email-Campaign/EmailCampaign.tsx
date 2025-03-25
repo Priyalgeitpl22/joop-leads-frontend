@@ -10,13 +10,19 @@ import {
   Tooltip,
   IconButton,
   CircularProgress,
+  Tabs,
+  Typography,
 } from "@mui/material";
+import FolderOpenOutlinedIcon from "@mui/icons-material/FolderOpenOutlined";
+import { motion } from "framer-motion";
 import {
   ContentContainer,
   SectionHeader,
   CustomTableRow,
   CustomTableCell,
   CustomTableBody,
+  EmailCampaignContainer,
+  SectionTitle,
 } from "./EmailCampaign.styled";
 import { SearchBar } from "../../components/Header/header.styled";
 import { Search } from "lucide-react";
@@ -36,7 +42,7 @@ import DraftsOutlinedIcon from "@mui/icons-material/DraftsOutlined";
 import AdsClickOutlinedIcon from "@mui/icons-material/AdsClickOutlined";
 import ErrorOutlinedIcon from "@mui/icons-material/ErrorOutlined";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
-import { SectionTitle, TableItem } from "../../styles/layout.styled";
+import { Button2, TableItem } from "../../styles/layout.styled";
 import { GridDeleteIcon } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import ProgressBar from "../../assets/Custom/linearProgress";
@@ -45,6 +51,7 @@ import toast from "react-hot-toast";
 import PauseIcon from "@mui/icons-material/Pause";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import DoneIcon from "@mui/icons-material/Done";
+import EmailCampaignDialog from "./EmailCampaignDialog/AddEmailCampaignDialog";
 
 const EmailCampaign: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -54,6 +61,8 @@ const EmailCampaign: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [selectedCampaign, setSelectedCampaign] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState("all_campaign");
+  const [createFolder, setCreateFolder] = useState<boolean>(false);
 
   useEffect(() => {
     const getEmailCampaigns = async () => {
@@ -62,6 +71,16 @@ const EmailCampaign: React.FC = () => {
 
     getEmailCampaigns();
   }, []);
+
+  const handleTabChange = (_event: React.SyntheticEvent, newValue: string) => {
+    setActiveTab(newValue);
+    if (newValue === "folder") {
+    }
+  };
+
+  const handleCreateFolder = () => {
+    setCreateFolder(true);
+  };
 
   const getAllEmailCampaigns = async () => {
     try {
@@ -211,92 +230,129 @@ const EmailCampaign: React.FC = () => {
 
   return (
     <ContentContainer>
-      <SectionHeader
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          borderBottom: 1,
-          borderColor: "divider",
-        }}
-      >
-        <SectionTitle>Email Campaigns</SectionTitle>
-        <Box
+      <SectionHeader>
+        <Tabs
+          value={activeTab}
+          onChange={handleTabChange}
           sx={{
-            display: "flex",
-            gap: "15px",
-            width: "100%",
-            alignItems: "center",
-            justifyContent: "flex-end",
+            "& .MuiTab-root": {
+              fontSize: "14px",
+              fontWeight: "600",
+              color: "#35495c",
+            },
+            "& .MuiTab-root.Mui-selected": {
+              color: "var(--theme-color)",
+            },
           }}
         >
-          <SearchBar>
-            <Search size={20} />
-            <input
-              placeholder="Search by Campaign Name"
-              value={searchQuery}
-              onChange={handleSearchChange}
-            />
-          </SearchBar>
-          <Button onClick={handleCreateCampaign}>Create Campaign</Button>
-        </Box>
+          <SectionTitle label="All Campaign" value="all_campaign" />
+          <SectionTitle
+            label="Folders"
+            value="folder"
+          />
+          {activeTab === "all_campaign" && (
+            <Box
+              sx={{
+                display: "flex",
+                gap: "15px",
+                width: "100%",
+                alignItems: "center",
+                justifyContent: "flex-end",
+              }}
+            >
+              <SearchBar>
+                <Search size={20} />
+                <input
+                  placeholder="Search by Campaign Name"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                />
+              </SearchBar>
+              <Button onClick={handleCreateCampaign}>Create Campaign</Button>
+            </Box>
+          )}
+          {activeTab === "folder" && (
+            <Box
+              sx={{
+                display: "flex",
+                gap: "15px",
+                alignItems: "center",
+                marginLeft: "auto",
+              }}
+            >
+              <EmailCampaignDialog
+                open={createFolder}
+                onClose={() => setCreateFolder(false)}
+              />
+              <Button2
+                background="var(--theme-color)"
+                color="white"
+                style={{ height: "90%" }}
+                onClick={handleCreateFolder}
+              >
+                Create Folder
+              </Button2>
+            </Box>
+          )}
+        </Tabs>
       </SectionHeader>
 
       {loading && <ProgressBar />}
-
-      <TableContainer
-        component={Paper}
-        sx={{
-          boxShadow: "none",
-          borderRadius: "8px",
-          overflowY: "auto",
-          height: "calc(100vh - 150px)",
-        }}
-      >
-        <Table stickyHeader>
-          <TableHead sx={{ backgroundColor: "#f8f9fc" }}>
-            <TableRow>
-              <TableCell sx={{ fontWeight: "bold", color: "#35495c" }}>
-                Campaign Details
-              </TableCell>
-              <TableCell
-                colSpan={4}
-                sx={{ fontWeight: "bold", color: "#35495c" }}
-              >
-                Report
-              </TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: "#35495c" }}>
-                Action
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          {campaigns.map((campaign) => (
-            <CustomTableBody key={campaign.id}>
-              <CustomTableRow>
-                <CustomTableCell
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "flex-start",
-                    gap: "12px",
-                  }}
+      {activeTab === "all_campaign" && (
+        <TableContainer
+          component={Paper}
+          sx={{
+            boxShadow: "none",
+            borderRadius: "8px",
+            overflowY: "auto",
+            height: "calc(100vh - 150px)",
+          }}
+        >
+          <Table stickyHeader>
+            <TableHead sx={{ backgroundColor: "#f8f9fc" }}>
+              <TableRow>
+                <TableCell sx={{ fontWeight: "bold", color: "#35495c" }}>
+                  Campaign Details
+                </TableCell>
+                <TableCell
+                  colSpan={4}
+                  sx={{ fontWeight: "bold", color: "#35495c" }}
                 >
-                  <IconButton
-                    sx={{
-                      position: "relative",
-                      border: "3px solid #ccc7c7",
-                      padding: "6px",
-                      width: 36,
-                      height: 36,
+                  Report
+                </TableCell>
+                <TableCell sx={{ fontWeight: "bold", color: "#35495c" }}>
+                  Action
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            {campaigns.map((campaign) => (
+              <CustomTableBody key={campaign.id}>
+                <CustomTableRow>
+                  <CustomTableCell
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "flex-start",
+                      gap: "12px",
                     }}
                   >
-                    {campaign.status === "RUNNING" && !loading && (
-                      <Tooltip title="Pause">
-                        <PauseIcon
-                          style={{ fontSize: 20, color: "#acacac" }}
-                          onClick={() => handlePause(campaign.id)}
-                        />
-                      </Tooltip>
-                    )}
+                    <IconButton
+                      sx={{
+                        position: "relative",
+                        border: "3px solid #ccc7c7",
+                        padding: "6px",
+                        width: 36,
+                        height: 36,
+                      }}
+                    >
+                      {campaign.status === "RUNNING" && !loading && (
+                        <Tooltip title="Pause">
+                          <PauseIcon
+                            style={{ fontSize: 20, color: "#acacac" }}
+                            onClick={() => handlePause(campaign.id)}
+                          />
+                        </Tooltip>
+                      )}
 
                     {campaign.status === "PAUSED" && !loading && (
                       <Tooltip title="Resume">
@@ -365,28 +421,81 @@ const EmailCampaign: React.FC = () => {
                   </CustomTableCell>
                 ))}
 
-                <CustomTableCell sx={{ display: "flex" }}>
-                  {/* <Tooltip title="Edit">
-                    <ModeEditOutlineOutlinedIcon
-                      onClick={() => handleEditCampaign(campaign.id)}
-                    />
-                  </Tooltip> */}
-                  <Tooltip title="Delete">
-                    <GridDeleteIcon
-                      onClick={() => handleOpenDeleteDialog(campaign.id)}
-                    />
-                  </Tooltip>
-                </CustomTableCell>
-              </CustomTableRow>
-            </CustomTableBody>
-          ))}
-        </Table>
-        {campaigns.length === 0 && (
-          <div style={{ padding: "20px", textAlign: "center", color: "#888" }}>
-            No campaigns found
-          </div>
-        )}
-      </TableContainer>
+                  <CustomTableCell sx={{ display: "flex" }}>
+                    <Tooltip title="Delete">
+                      <GridDeleteIcon
+                        onClick={() => handleOpenDeleteDialog(campaign.id)}
+                      />
+                    </Tooltip>
+                  </CustomTableCell>
+                </CustomTableRow>
+              </CustomTableBody>
+            ))}
+          </Table>
+          {campaigns.length === 0 && (
+            <div
+              style={{ padding: "20px", textAlign: "center", color: "#888" }}
+            >
+              No campaigns found
+            </div>
+          )}
+        </TableContainer>
+      )}
+
+      {activeTab === "folder" && (
+        <EmailCampaignContainer>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            style={{ width: "100%" }}
+          >
+            <Box
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                padding: "60px 0px",
+                width: "100%",
+              }}
+            >
+              <Box
+                style={{
+                  alignItems: "center",
+                  display: "flex",
+                  flexDirection: "column",
+                  maxWidth: "570px",
+                  width: "100%",
+                }}
+              >
+                <FolderOpenOutlinedIcon
+                  style={{ height: "20%", width: "20%" }}
+                />
+                <Typography style={{ textAlign: "center", fontWeight: "200" }}>
+                  Campaign Organization with Folders
+                </Typography>
+                Streamline Your Workflow by Grouping Campaigns into Folders 🚀.
+                <EmailCampaignDialog
+                  open={createFolder}
+                  onClose={() => setCreateFolder(false)}
+                />
+                <Button2
+                  background="var(--theme-color)"
+                  color="white"
+                  style={{
+                    width: "25%",
+                    height: "25%",
+                    marginTop: "10px",
+                    padding: "0px",
+                  }}
+                  onClick={handleCreateFolder}
+                >
+                  Create Folder
+                </Button2>
+              </Box>
+            </Box>
+          </motion.div>
+        </EmailCampaignContainer>
+      )}
 
       <ConfirmDeleteDialog
         open={openDeleteDialog}

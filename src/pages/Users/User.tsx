@@ -6,7 +6,7 @@ import { Search } from "lucide-react";
 import { CustomDataTable } from "../../assets/Custom/customDataGrid";
 import { Button } from "../../styles/global.styled";
 import { GridColDef } from "@mui/x-data-grid";
-import { SetStateAction, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { DeleteIcon } from "../Contacts/ContactTable.styled";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import AddUserDialog from "./AddUser/AddUserDialog";

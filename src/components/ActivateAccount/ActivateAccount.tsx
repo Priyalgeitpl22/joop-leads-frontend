@@ -87,10 +87,17 @@ const ActivateAccount = () => {
   return (
     <PageContainer>
       <AuthCard>
-        <IllustrationSection>
+        {/* <IllustrationSection>
           <img
             src="https://cdn.dribbble.com/users/2058540/screenshots/8225403/media/bc617eec455a72c77feab587e09daa96.gif"
             alt="Account Activation Illustration"
+          />
+        </IllustrationSection> */}
+        <IllustrationSection>
+          <img
+            src="/great-learning.gif"
+            alt="Email illustration"
+            style={{ width: "75%", height: "auto" }}
           />
         </IllustrationSection>
 

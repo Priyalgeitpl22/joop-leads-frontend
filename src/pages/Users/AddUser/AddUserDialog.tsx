@@ -80,9 +80,7 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onClose }) => {
  
   const handleCreateUser = async () => {
     setAddAccountInProgress(true);
-    if (!fullName || !email || !phone || !role) {
-      setAddAccountInProgress(false);
-      toast.error("Please fill all fields");
+    if (!validateFields()) {
       return;
     }
 
