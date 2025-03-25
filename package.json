@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "git pull origin master && npm run build && [ -d ~/apps/joop-leads-frontend/dist ] && sudo rsync -av --delete ~/apps/joop-leads-frontend/dist/ /var/www/joop-leads-frontend/ || echo 'Build failed, skipping deployment' && sudo chown -R www-data:www-data /var/www/joop-leads-frontend/ && sudo chmod -R 755 /var/www/joop-leads-frontend/ && sudo systemctl restart nginx"
   },
   "dependencies": {
     "@emoji-mart/data": "^1.2.1",
