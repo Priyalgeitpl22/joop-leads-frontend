@@ -1,5 +1,23 @@
-import { Box, IconButton, Tooltip, CircularProgress } from "@mui/material";
-import { UserHeader, UsersContainer, UserTable } from "./User.styled";
+import {
+  Box,
+  IconButton,
+  Tooltip,
+  CircularProgress,
+  MenuItem,
+  Link,
+  Typography,
+  Menu,
+  FormControl,
+  InputLabel,
+  Select,
+} from "@mui/material";
+import {toast } from "react-hot-toast";
+import {
+  FilterIcon,
+  UserHeader,
+  UsersContainer,
+  UserTable,
+} from "./User.styled";
 import { SectionTitle } from "../../styles/layout.styled";
 import { SearchBar } from "../../components/Header/header.styled";
 import { Search } from "lucide-react";
@@ -18,22 +36,55 @@ import {
   SearchUsers,
 } from "../../redux/slice/userSlice";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
-import toast from "react-hot-toast";
+import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
+import { SelectChangeEvent } from "@mui/material";import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
+
 
 const Users = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
   const { loading } = useSelector((state: RootState) => state.user);
   const { user } = useSelector((state: RootState) => state.user);
 
   const [rows, setRows] = useState<any[]>([]);
   const [filteredRows, setFilteredRows] = useState<any[]>([]);
   const [addUser, setAddUser] = useState<boolean>(false);
+  const [filters, setFilters] = useState({
+    role: "",
+    created: "",
+  });
+  const filterOptions: Record<"Role" | "Created", string[]> = {
+    Role: ["","Admin", "User"],
+    Created: ["", "Latest", "Oldest"],
+  };
+
+  const handleFilterChange =
+    (field: keyof typeof filters) => (event: SelectChangeEvent<string>) => {
+      setFilters((prev) => ({
+        ...prev,
+        [field]: event.target.value,
+      }));
+    };
+
+
+
+  const handleClearFilters = () => {
+    setFilters({ role: "", created: "" });
+  };
+
+  const isMenuOpen = Boolean(anchorEl);
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
   const [searchTerm, setSearchTerm] = useState<string>("");
 
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  
+
   useEffect(() => {
     dispatch(getAllUsers())
       .unwrap()
@@ -199,10 +250,70 @@ const Users = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </SearchBar>
+          <FilterIcon onClick={handleMenuOpen}>
+            <FilterAltOutlinedIcon />
+          </FilterIcon>
           <AddUserDialog open={addUser} onClose={() => setAddUser(false)} />
           <Button onClick={() => setAddUser(true)}>Add User</Button>
         </Box>
       </UserHeader>
+      <Menu
+        anchorEl={anchorEl}
+        open={isMenuOpen}
+        onClose={handleMenuClose}
+        MenuListProps={{ "aria-labelledby": "profile-menu-button" }}
+        sx={{
+          "& .MuiMenu-paper": {
+            minWidth: "320px",
+            padding: "10px",
+            boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+            borderRadius: "8px",
+          },
+        }}
+      >
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          mb={1}
+        >
+          <Typography fontWeight="bold">Filter</Typography>
+          <Link
+            href="#"
+            underline="hover"
+            onClick={handleClearFilters}
+            sx={{ color: "var(--theme-color)", fontSize: "14px" }}
+          >
+            Clear all
+          </Link>
+        </Box>
+
+        {Object.keys(filterOptions).map((label) => (
+          <FormControl key={label} fullWidth sx={{ mt: 2 }}>
+            <InputLabel>{label}</InputLabel>
+            <Select
+              value={filters[label.toLowerCase() as keyof typeof filters] || ""}
+              onChange={handleFilterChange(
+                label.toLowerCase() as keyof typeof filters
+              )}
+              sx={{ background: "white!important" }}
+            >
+              {filterOptions[label as keyof typeof filterOptions]?.map(
+                (option) => (
+                  <MenuItem key={option} value={option}>
+                    {option}
+                  </MenuItem>
+                )
+              )}
+            </Select>
+          </FormControl>
+        ))}
+
+        <Box display="flex" justifyContent="space-between" mt={2}>
+          <Button onClick={handleMenuClose}>Cancel</Button>
+          <Button onClick={() => console.log(filters)}>Apply</Button>
+        </Box>
+      </Menu>
 
       <Box sx={{ height: "500px", overflow: "auto" }}>
         {loading ? (

@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
   Box,
-  Checkbox,
   Menu,
   Typography,
   Link,
@@ -15,6 +14,7 @@ import {
   EmailAccountsContainer,
   EmailAccountHeader,
   EmailAccountTable,
+  FilterIcon,
 } from "./EmailAccount.styled";
 import EmailAccountDialog from "./EmailAccountDialogBox/EmailAccountDialog";
 import AdvancedSettingDialog from "./AdvancedSettingDialogBox/AdvancedSettingDialog";
@@ -42,6 +42,8 @@ import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
 import EmailAccountSmtpDialog from "./EmailAccountDialogBox/EmailAccountSmtpDialog";
 import toast, { Toaster } from "react-hot-toast";
 // import ProgressBar from "../../assets/Custom/linearProgress";
+import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
+import { SelectChangeEvent } from "@mui/material";
 
 const EmailAccounts: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -59,7 +61,36 @@ const EmailAccounts: React.FC = () => {
     string | null
   >(null);
 
+   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+      setAnchorEl(event.currentTarget);
+    };
+
   const [smtpDialogOpen, setSmtpDialogOpen] = useState<boolean>(false);
+
+  const [filters, setFilters] = useState({
+    status: "",
+    created: "",
+  });
+  const filterOptions: Record<"status" | "Created", string[]> = {
+    status: ["","Schedule", "Running", "Pause", "Draft"],
+    Created: ["", "Latest", "Oldest"],
+  };
+
+
+    const handleFilterChange =
+      (field: keyof typeof filters) => (event: SelectChangeEvent<string>) => {
+        setFilters((prev) => ({
+          ...prev,
+          [field]: event.target.value,
+        }));
+      };
+
+
+
+    const handleClearFilters = () => {
+      setFilters({ status: "", created: "" });
+    };
+
 
   const columns: GridColDef[] = useMemo(
     () => [
@@ -293,9 +324,7 @@ const EmailAccounts: React.FC = () => {
             justifyContent: "flex-end"
           }}
         >
-          {/* <FilterIcon onClick={handleMenuOpen}>
-            <FilterAltOutlinedIcon />
-          </FilterIcon> */}
+
           <SearchBar>
             <Search size={20} />
             <input
@@ -304,6 +333,11 @@ const EmailAccounts: React.FC = () => {
               onChange={handleSearchChange}
             />
           </SearchBar>
+          <Tooltip title="filter">
+          <FilterIcon onClick={handleMenuOpen}>
+            <FilterAltOutlinedIcon />
+          </FilterIcon>
+          </Tooltip>
           <EmailAccountSmtpDialog
             open={smtpDialogOpen}
             onClose={() => setSmtpDialogOpen(false)}
@@ -324,58 +358,63 @@ const EmailAccounts: React.FC = () => {
         </Box>
       </EmailAccountHeader>
       {loading && <ProgressBar />}
-      <Menu
-        anchorEl={anchorEl}
-        open={isMenuOpen}
-        onClose={handleMenuClose}
-        MenuListProps={{ "aria-labelledby": "profile-menu-button" }}
-        sx={{
-          "& .MuiMenu-paper": {
-            minWidth: "320px",
-            padding: "10px",
-            boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
-            borderRadius: "8px",
-          },
-        }}
-      >
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          mb={1}
-        >
-          <Typography fontWeight="bold">Filter</Typography>
-          <Link
-            href="#"
-            underline="hover"
-            sx={{ color: "var(--theme-color)", fontSize: "14px" }}
-          >
-            Clear all
-          </Link>
-        </Box>
-        <MenuItem disableRipple>
-          <Checkbox size="small" />
-          <Typography variant="body2">Filter disconnected accounts</Typography>
-        </MenuItem>
-        <MenuItem disableRipple>
-          <Checkbox size="small" />
-          <Typography variant="body2">Filter by Warmup Reputation</Typography>
-        </MenuItem>
+   <Menu
+         anchorEl={anchorEl}
+         open={isMenuOpen}
+         onClose={handleMenuClose}
+         MenuListProps={{ "aria-labelledby": "profile-menu-button" }}
+         sx={{
+           "& .MuiMenu-paper": {
+             minWidth: "320px",
+             padding: "10px",
+             boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+             borderRadius: "8px",
+           },
+         }}
+       >
+         <Box
+           display="flex"
+           justifyContent="space-between"
+           alignItems="center"
+           mb={1}
+         >
+           <Typography fontWeight="bold">Filter</Typography>
+           <Link
+             href="#"
+             underline="hover"
+             onClick={handleClearFilters}
+             sx={{ color: "var(--theme-color)", fontSize: "14px" }}
+           >
+             Clear all
+           </Link>
+         </Box>
 
-        {["Warmup Status", "Tag Name", "Client Name"].map((label) => (
-          <FormControl fullWidth sx={{ mt: 2 }}>
-            <InputLabel shrink={false}>{label}</InputLabel>
-            <Select sx={{ background: "white!important" }}>
-              <MenuItem value="">Select {label}</MenuItem>
-            </Select>
-          </FormControl>
-        ))}
+         {Object.keys(filterOptions).map((label) => (
+           <FormControl key={label} fullWidth sx={{ mt: 2 }}>
+             <InputLabel>{label}</InputLabel>
+             <Select
+               value={filters[label.toLowerCase() as keyof typeof filters] || ""}
+               onChange={handleFilterChange(
+                 label.toLowerCase() as keyof typeof filters
+               )}
+               sx={{ background: "white!important" }}
+             >
+               {filterOptions[label as keyof typeof filterOptions]?.map(
+                 (option) => (
+                   <MenuItem key={option} value={option}>
+                     {option}
+                   </MenuItem>
+                 )
+               )}
+             </Select>
+           </FormControl>
+         ))}
 
-        <Box display="flex" justifyContent="space-between" mt={2}>
-          <Button onClick={handleMenuClose}>Cancel</Button>
-          <Button>Apply</Button>
-        </Box>
-      </Menu>
+         <Box display="flex" justifyContent="space-between" mt={2}>
+           <Button onClick={handleMenuClose}>Cancel</Button>
+           <Button onClick={() => console.log(filters)}>Apply</Button>
+         </Box>
+       </Menu>
       <Box sx={{ height: "500px", overflow: "auto" }}>
         <EmailAccountTable>
           <CustomDataTable

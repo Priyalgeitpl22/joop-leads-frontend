@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Box, Tab, TableBody, TableCell, TableRow, Tabs } from "@mui/material";
+import { Box, IconButton, Tab, TableBody, TableCell, TableRow, Tabs } from "@mui/material";
 import { MuiColorInput } from "mui-color-input";
 
 export const EmailCampaignContainer = styled.div`
@@ -188,6 +188,13 @@ export const ContentContainer = styled(Box)`
   position: relative;
   flex-direction: column;
 `;
+export const FilterIcon = styled(IconButton)`
+  height: 40px;
+  background: var(--background-color);
+  border-radius: 5px;
+  border: 1px solid var(--border-color);
+  padding: 5px;
+`;
 
 export const CustomTableBody = styled(TableBody)(({ }) => ({
   backgroundColor: "var(--background-primary)",
@@ -264,3 +271,4 @@ export const CustomTableCell = styled(TableCell)(({ }) => ({
     borderBottom: "1px solid var(--border-color-sec)",
   },
 }));
+

@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
   Box,
-  Checkbox,
   Menu,
   Typography,
   Link,
@@ -11,12 +10,14 @@ import {
   MenuItem,
   IconButton,
   Tooltip,
+  SelectChangeEvent,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import {
   ContactsHeader,
   ContactsContainer,
+  FilterIcon,
 } from "./ContactTable.styled";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -49,6 +50,8 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import PersonOffIcon from "@mui/icons-material/PersonOff";
 import HowToRegIcon from '@mui/icons-material/HowToReg'
 import AddCircleIcon from "@mui/icons-material/AddCircle";
+import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
+
 import toast, { Toaster } from 'react-hot-toast';
 import { SectionTitle } from "../../styles/layout.styled";
 import { DeleteIcon } from "./ContactTable.styled";
@@ -63,6 +66,7 @@ export interface ImportedLeadsData {
 const ContactTable: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [contactAccount, setContactAccount] = useState<ContactsAccount[]>([]);
   // const [loading, setLoading] = useState<boolean>(true);
@@ -72,6 +76,15 @@ const ContactTable: React.FC = () => {
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
   const [isAddAccountDialogOPen, setIsAddAccountDialogOPen] = useState(false);
   const [rowSelectionModel, setRowSelectionModel] = useState<string[]>([]);
+  const [filters, setFilters] = useState({
+    status: "",
+    created: "",
+  });
+
+  const filterOptions: Record<"status" | "Created", string[]> = {
+    status: ["","Active", "Inactive"],
+    Created: ["", "Latest", "Oldest"],
+  };
 
   const [emailFieldsToBeAdded, setEmailFieldsToBeAdded] =
     React.useState<ImportedLeadsData>();
@@ -95,6 +108,23 @@ const ContactTable: React.FC = () => {
   const saveCSVSetting = (settings: any) => {
     setCSVsettings(settings);
   };
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleFilterChange =
+      (field: keyof typeof filters) => (event: SelectChangeEvent<string>) => {
+        setFilters((prev) => ({
+          ...prev,
+          [field]: event.target.value,
+        }));
+      };
+
+    const handleClearFilters = () => {
+      setFilters({ status: "", created: "" });
+    };
+
 
   const handleFileChange = (file: File) => {
     console.log(isCsvUploaded);
@@ -255,9 +285,9 @@ const ContactTable: React.FC = () => {
     getContactsAccounts();
   }, []);
 
-  useEffect(() => {
-    getFetchAllContacts();
-  }, [isUploadDialogOpen])
+  // useEffect(() => {
+  //   getFetchAllContacts();
+  // }, [isUploadDialogOpen])
 
   const getFetchAllContacts = async () => {
     try {
@@ -401,9 +431,7 @@ const ContactTable: React.FC = () => {
             justifyContent: 'right'
           }}
         >
-          {/* <FilterIcon onClick={handleMenuOpen}>
-            <FilterAltOutlinedIcon />
-          </FilterIcon> */}
+
           <SearchBar>
             <Search size={20} />
             <input
@@ -412,10 +440,16 @@ const ContactTable: React.FC = () => {
               onChange={handleSearchChange}
             />
           </SearchBar>
+          <Tooltip title="filter">
+          <FilterIcon onClick={handleMenuOpen}>
+            <FilterAltOutlinedIcon />
+           </FilterIcon>
+           </Tooltip>
           <ContactsAccountDialogBox
             open={isAddAccountDialogOPen}
             onClose={handleAccountCloseDialog}
           />
+
 
           {selectedIds.length == 0 && (
             <Tooltip title="Upload Bulk Leads" arrow>
@@ -492,32 +526,37 @@ const ContactTable: React.FC = () => {
           <Link
             href="#"
             underline="hover"
+            onClick={handleClearFilters}
             sx={{ color: "var(--theme-color)", fontSize: "14px" }}
           >
             Clear all
           </Link>
         </Box>
-        <MenuItem disableRipple>
-          <Checkbox size="small" />
-          <Typography variant="body2">Filter disconnected accounts</Typography>
-        </MenuItem>
-        <MenuItem disableRipple>
-          <Checkbox size="small" />
-          <Typography variant="body2">Filter by Warmup Reputation</Typography>
-        </MenuItem>
 
-        {["Warmup Status", "Tag Name", "Client Name"].map((label) => (
-          <FormControl fullWidth sx={{ mt: 2 }}>
-            <InputLabel shrink={false}>{label}</InputLabel>
-            <Select sx={{ background: "white!important" }}>
-              <MenuItem value="">Select {label}</MenuItem>
+        {Object.keys(filterOptions).map((label) => (
+          <FormControl key={label} fullWidth sx={{ mt: 2 }}>
+            <InputLabel>{label}</InputLabel>
+            <Select
+              value={filters[label.toLowerCase() as keyof typeof filters] || ""}
+              onChange={handleFilterChange(
+                label.toLowerCase() as keyof typeof filters
+              )}
+              sx={{ background: "white!important" }}
+            >
+              {filterOptions[label as keyof typeof filterOptions]?.map(
+                (option) => (
+                  <MenuItem key={option} value={option}>
+                    {option}
+                  </MenuItem>
+                )
+              )}
             </Select>
           </FormControl>
         ))}
 
         <Box display="flex" justifyContent="space-between" mt={2}>
           <Button onClick={handleMenuClose}>Cancel</Button>
-          <Button>Apply</Button>
+          <Button onClick={() => console.log(filters)}>Apply</Button>
         </Box>
       </Menu>
       <Box sx={{ height: "500px", overflow: "auto" }}>

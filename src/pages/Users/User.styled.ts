@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { IconButton } from "@mui/material";
 
 export const UsersContainer = styled.div`
   width: 100%;
@@ -20,6 +21,13 @@ export const UserHeader = styled.section`
   justify-content: space-between;
   padding: 12px;
   background: var(--background-secondary);
+`;
+export const FilterIcon = styled(IconButton)`
+  height: 40px;
+  background: var(--background-color);
+  border-radius: 5px;
+  border: 1px solid var(--border-color);
+  padding: 5px;
 `;
 
 export const UserTable = styled.div`
