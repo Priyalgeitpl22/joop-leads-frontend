@@ -4,6 +4,7 @@ import { api } from "../../services/api";
 import { AxiosError } from "axios";
 import Cookies from "js-cookie";
 
+
 export interface UploadedUser {
   id: string;
   fullName: string;
