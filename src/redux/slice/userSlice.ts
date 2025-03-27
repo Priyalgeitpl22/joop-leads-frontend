@@ -146,6 +146,23 @@ export const SearchUsers = createAsyncThunk(
   }
 );
 
+export const filterUsers = createAsyncThunk(
+  'user/filter',
+  async ( query: string | null) => {
+    try {
+      const response = await api.get(`user/filter`, {
+      params:{query},
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error:any) {
+      throw error.response?.data || error.message; 
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState: {

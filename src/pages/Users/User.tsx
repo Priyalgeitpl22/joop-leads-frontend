@@ -26,12 +26,12 @@ import { Button } from "../../styles/global.styled";
 import { GridColDef } from "@mui/x-data-grid";
 import { useEffect, useMemo, useState } from "react";
 import { DeleteIcon } from "../Contacts/ContactTable.styled";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import AddUserDialog from "./AddUser/AddUserDialog";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../redux/store/store";
 import {
   deleteUser,
+  filterUsers,
   getAllUsers,
   SearchUsers,
 } from "../../redux/slice/userSlice";
@@ -52,11 +52,9 @@ const Users = () => {
   const [addUser, setAddUser] = useState<boolean>(false);
   const [filters, setFilters] = useState({
     role: "",
-    created: "",
   });
-  const filterOptions: Record<"Role" | "Created", string[]> = {
+  const filterOptions: Record<"Role", string[]> = {
     Role: ["","Admin", "User"],
-    Created: ["", "Latest", "Oldest"],
   };
 
   const handleFilterChange =
@@ -69,8 +67,19 @@ const Users = () => {
 
 
 
-  const handleClearFilters = () => {
-    setFilters({ role: "", created: "" });
+  const handleClearFilters = () => { 
+    setFilters({ role: ""});
+    dispatch(getAllUsers())   
+    .unwrap()             
+    .then((response) => {
+      setRows(response.data);       
+      setFilteredRows(response.data); 
+      handleMenuClose()
+    })
+    .catch((error) => {
+      console.error("Error fetching users:", error);  
+      toast.error("Failed to fetch users.");
+    });
   };
 
   const isMenuOpen = Boolean(anchorEl);
@@ -148,6 +157,17 @@ const Users = () => {
     }
   };
 
+
+  const handleApplyFilter = async () => {
+    try {
+      debugger;
+      const filterData = await dispatch(filterUsers(filters.role));
+      setFilteredRows(filterData.payload.data);
+      handleMenuClose();
+    } catch (error) {
+      console.error("Error applying filter:", error);
+    }
+  };
   const columns: GridColDef[] = useMemo(
     () => [
       {
@@ -197,18 +217,6 @@ const Users = () => {
         headerName: "Role",
         width: 150,
         renderCell: (params) => <Box>{params?.row?.role || "N/A"} </Box>,
-      },
-      {
-        field: "view",
-        headerName: "View",
-        width: 100,
-        renderCell: (_params) => (
-          <Tooltip title="View User Detail" arrow>
-            <IconButton>
-              <VisibilityIcon />
-            </IconButton>
-          </Tooltip>
-        ),
       },
       {
         field: "delete",
@@ -311,7 +319,7 @@ const Users = () => {
 
         <Box display="flex" justifyContent="space-between" mt={2}>
           <Button onClick={handleMenuClose}>Cancel</Button>
-          <Button onClick={() => console.log(filters)}>Apply</Button>
+          <Button onClick={handleApplyFilter}>Apply</Button>
         </Box>
       </Menu>
 

@@ -241,7 +241,22 @@ export const CreateCampaignWithContacts = createAsyncThunk(
 );
 
 
-
+export const filterContacts = createAsyncThunk(
+  'contact/filter',
+  async ( status: string | null) => {
+    try {
+      const response = await api.get(`contact/filter`, {
+      params:{status},
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error:any) {
+      throw error.response?.data || error.message; 
+    }
+  }
+);
 
 const contactsSlice = createSlice({
   name: "contacts",
