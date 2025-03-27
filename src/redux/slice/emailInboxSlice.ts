@@ -83,20 +83,20 @@ export const getAllAccountMailBox = createAsyncThunk(
     {
       accountId,
       mailBoxId,
-      page = 1,
-      limit = 5,
-    }: { accountId: string; mailBoxId: string; page?: number; limit?: number },
+      // page = 1,
+      // limit = 5,
+    }: { accountId: string; mailBoxId: string},
     { rejectWithValue }
   ) => {
     try {
       const response = await emailApi.get(
-        `/accounts/${accountId}/${mailBoxId}/messages?page=${page}&limit=${limit}`
+        `/accounts/messages/${accountId}/${mailBoxId}`
       );
 
 
       return {
-        messages: response.data?.data?.messages || [], 
-        totalMessages: response.data?.data?.totalMessages || 0,
+        messages: response.data?.messages || [], 
+        totalMessages: response.data?.totalMessages || 0,
         currentPage: Number(response.data?.data?.currentPage) || 1,
       };
     } catch (error: any) {

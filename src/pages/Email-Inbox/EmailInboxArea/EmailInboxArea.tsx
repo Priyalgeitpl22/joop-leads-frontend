@@ -58,8 +58,8 @@ const EmailInboxArea: React.FC = () => {
         getAllAccountMailBox({
           accountId: selectedAccountId,
           mailBoxId: selectedMailboxId,
-          page,
-          limit: messagesPerPage,
+          // page,
+          // limit: messagesPerPage,
         })
       );
     }

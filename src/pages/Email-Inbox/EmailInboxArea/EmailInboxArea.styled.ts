@@ -173,7 +173,7 @@ export const TotalPageCount = styled(Box)`
   background-color: #fff;
   position: sticky;
   bottom: 0;
-  z-index: 10;
+  // z-index: 10;
 `;
 
 export const NoMailboxMessage = styled(Box)({

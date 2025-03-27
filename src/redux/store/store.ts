@@ -9,6 +9,7 @@ import contactReducer from "../slice/contactSlice";
 import emailInboxReducer from "../slice/emailInboxSlice";
 import emailAccountReducer from "../slice/emailAccountSlice";
 import dashboardReducer from "../slice/dashboardSlice";
+import folderReducer from "../slice/emailCampaignFolderSlice"
 
 
 export const store = configureStore({
@@ -23,6 +24,7 @@ export const store = configureStore({
     emailInbox: emailInboxReducer,
     emailAccount: emailAccountReducer,
     dashboard: dashboardReducer,
+    folder: folderReducer,
   },
 });
 
