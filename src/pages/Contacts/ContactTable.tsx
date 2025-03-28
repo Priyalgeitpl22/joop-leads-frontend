@@ -25,6 +25,7 @@ import {
   CreateCampaignWithContacts,
   DeactivateContacts,
   deleteContact,
+  filterContacts,
   getCampaignListById,
   SearchContacts,
   VerifyViewContactPayload,
@@ -78,12 +79,11 @@ const ContactTable: React.FC = () => {
   const [rowSelectionModel, setRowSelectionModel] = useState<string[]>([]);
   const [filters, setFilters] = useState({
     status: "",
-    created: "",
   });
 
-  const filterOptions: Record<"status" | "Created", string[]> = {
-    status: ["","Active", "Inactive"],
-    Created: ["", "Latest", "Oldest"],
+  const filterOptions: Record<"status", string[]> = {
+    status: ["Active", "InActive"],
+ 
   };
 
   const [emailFieldsToBeAdded, setEmailFieldsToBeAdded] =
@@ -121,9 +121,7 @@ const ContactTable: React.FC = () => {
         }));
       };
 
-    const handleClearFilters = () => {
-      setFilters({ status: "", created: "" });
-    };
+    
 
 
   const handleFileChange = (file: File) => {
@@ -285,6 +283,17 @@ const ContactTable: React.FC = () => {
     getContactsAccounts();
   }, []);
 
+
+  const handleClearFilters = () => {
+    setFilters({ status: "" });
+    const getContactsAccounts = async () => {
+      await getFetchAllContacts();
+    };
+
+    getContactsAccounts();
+    handleMenuClose()
+  };
+
   // useEffect(() => {
   //   getFetchAllContacts();
   // }, [isUploadDialogOpen])
@@ -412,7 +421,25 @@ const ContactTable: React.FC = () => {
     }
   };
 
-
+  const handleApplyFilter = async () => {
+    try {
+      let statusFilter = filters.status;
+  
+      if (statusFilter === "Active") {
+        statusFilter = "true";
+      } else if (statusFilter === "Inactive") {
+        statusFilter = "false";
+      }
+  
+      const updatedFilters = { status: statusFilter };
+  
+      const data = await dispatch(filterContacts(updatedFilters.status));
+      setRows(data.payload.data);
+      handleMenuClose();
+    } catch (error) {
+      console.error("Error applying filter:", error);
+    }
+  };
   const goToNextStep = () => {
     navigate(`/email-campaign/new-campaign?campaignId=${campaignId}`);
   };
@@ -556,7 +583,7 @@ const ContactTable: React.FC = () => {
 
         <Box display="flex" justifyContent="space-between" mt={2}>
           <Button onClick={handleMenuClose}>Cancel</Button>
-          <Button onClick={() => console.log(filters)}>Apply</Button>
+          <Button onClick={handleApplyFilter}>Apply</Button>
         </Box>
       </Menu>
       <Box sx={{ height: "500px", overflow: "auto" }}>

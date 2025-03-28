@@ -38,8 +38,8 @@ const EmailInboxSideBar = () => {
       getAllAccountMailBox({
         accountId: selectedAccountId,
         mailBoxId: mailbox._id,
-        page: 1,
-        limit: 5,
+        // page: 1,
+        // limit: 5,
       })
     );
   };
@@ -71,8 +71,7 @@ const EmailInboxSideBar = () => {
         getAllAccountMailBox({
           accountId: selectedAccountId,
           mailBoxId: firstMailbox._id,
-          page: 1,
-          limit: 5,
+         
         })
       );
     }

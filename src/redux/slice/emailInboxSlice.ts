@@ -83,21 +83,21 @@ export const getAllAccountMailBox = createAsyncThunk(
     {
       accountId,
       mailBoxId,
-      page = 1,
-      limit = 5,
-    }: { accountId: string; mailBoxId: string; page?: number; limit?: number },
+      
+    }: { accountId: string; mailBoxId: string;},
     { rejectWithValue }
   ) => {
     try {
+      debugger
       const response = await emailApi.get(
-        `/accounts/${accountId}/${mailBoxId}/messages?page=${page}&limit=${limit}`
+        `/accounts/messages/${accountId}/${mailBoxId}`
       );
 
 
       return {
-        messages: response.data?.data?.messages || [], 
-        totalMessages: response.data?.data?.totalMessages || 0,
-        currentPage: Number(response.data?.data?.currentPage) || 1,
+        messages: response.data?.messages || [], 
+        totalMessages: response.data?.totalMessages || 0,
+     
       };
     } catch (error: any) {
       console.error("API Error:", error);
@@ -168,7 +168,7 @@ const emailInboxSlice = createSlice({
         state.loading = false;
         state.mailboxMessages = action.payload.messages;
         state.totalMessages = action.payload?.totalMessages || 0;
-        state.currentPage = action.payload?.currentPage || 1;
+      
       })
       .addCase(getAllAccountMailBox.rejected, (state, action) => {
         state.loading = false;

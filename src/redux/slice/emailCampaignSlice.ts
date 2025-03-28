@@ -244,6 +244,23 @@ export const SearchEmailCampaign = createAsyncThunk(
   }
 );
 
+export const filterCamapign = createAsyncThunk(
+  'email-campaign/filter',
+  async ( status: string | null) => {
+    try {
+      const response = await api.get(`${BASE_URL}/filter`, {
+      params:{status},
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error:any) {
+      throw error.response?.data || error.message; 
+    }
+  }
+);
+
 export const searchContactsByCampaign = createAsyncThunk(
   "contacts/searchByCampaign",
   async (

@@ -37,6 +37,7 @@ import { useDispatch } from "react-redux";
 import {
  DeleteEmailCampaign,
  fetchEmailCampaigns,
+ filterCamapign,
  SearchEmailCampaign,
  UpdateCampaignStatus,
 } from "../../redux/slice/emailCampaignSlice";
@@ -84,11 +85,10 @@ const EmailCampaign: React.FC = () => {
 
   const [filters, setFilters] = useState({
     status: "",
-    created: "",
+   
   });
-  const filterOptions: Record<"status" | "Created", string[]> = {
-    status: ["","Schedule", "Running", "Pause", "Draft"],
-    Created: ["", "Latest", "Oldest"],
+  const filterOptions: Record<"status" , string[]> = {
+    status: ["","SCHEDULED", "RUNNING", "PAUSED", "DRAFT","COMPLETED"],
   };
 
   const isMenuOpen = Boolean(anchorEl);
@@ -115,7 +115,10 @@ const EmailCampaign: React.FC = () => {
 
 
      const handleClearFilters = () => {
-       setFilters({ status: "", created: "" });
+       setFilters({ status: "" });
+
+       getAllEmailCampaigns();
+       handleMenuClose();
      };
 
 
@@ -297,6 +300,16 @@ const EmailCampaign: React.FC = () => {
  };
 
 
+ const handleApplyFilters = async () => {
+  try {
+    const filterData = await dispatch(filterCamapign(filters.status));
+    setCampaigns(filterData.payload.data);
+    handleMenuClose();
+  } catch (error) {
+    console.error("Error applying filters:", error);
+  }
+};
+
  return (
    <ContentContainer>
      <SectionHeader>
@@ -428,7 +441,7 @@ const EmailCampaign: React.FC = () => {
 
               <Box display="flex" justifyContent="space-between" mt={2}>
                 <Button onClick={handleMenuClose}>Cancel</Button>
-                <Button onClick={() => console.log(filters)}>Apply</Button>
+                <Button onClick={handleApplyFilters}>Apply</Button>
               </Box>
             </Menu>
      {activeTab === "all_campaign" && (
