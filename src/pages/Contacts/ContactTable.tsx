@@ -35,7 +35,7 @@ import { SearchBar } from "../../components/Header/header.styled";
 import { CheckCircle, Search, XCircle } from "lucide-react";
 import { CustomDataTable } from "../../assets/Custom/customDataGrid";
 import { GridColDef } from "@mui/x-data-grid";
-import { formatDate } from "../../utils/utils";
+import {  formatDateTime } from "../../utils/utils";
 import { Button, IconsButton } from "../../styles/global.styled";
 import ProgressBar from "../../assets/Custom/linearProgress";
 import { fetchContacts } from "../../redux/slice/contactSlice";
@@ -54,9 +54,12 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 
 import toast, { Toaster } from 'react-hot-toast';
-import { SectionTitle } from "../../styles/layout.styled";
+import { Button2, SectionTitle } from "../../styles/layout.styled";
 import { DeleteIcon } from "./ContactTable.styled";
 import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
+import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { Dayjs } from "dayjs";
 
 
 
@@ -105,6 +108,16 @@ const ContactTable: React.FC = () => {
   const [campaignId, setCampaignId] = React.useState("");
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
+   const [dateFilters, setDateFilters] = useState<{ 
+      startDate: Dayjs | null; 
+      endDate: Dayjs | null; 
+      [key: string]: string | Dayjs | null; 
+    }>({
+      startDate: null,
+      endDate: null,
+  
+    });
+
   const saveCSVSetting = (settings: any) => {
     setCSVsettings(settings);
   };
@@ -120,7 +133,13 @@ const ContactTable: React.FC = () => {
           [field]: event.target.value,
         }));
       };
-
+ const handleDateChange =
+   (field: "startDate" | "endDate") => (value: Dayjs | null) => {
+     setDateFilters((prev) => ({
+       ...prev,
+       [field]: value,
+     }));
+   };
     
 
 
@@ -214,7 +233,7 @@ const ContactTable: React.FC = () => {
         field: "createdAt",
         headerName: "Uploaded Date",
         width: 150,
-        valueGetter: (params: any) => (params ? formatDate(params) : "N/A"),
+        valueGetter: (params: any) => (params ? formatDateTime(params) : "N/A"),
       },
       {
         field: "active",
@@ -286,6 +305,7 @@ const ContactTable: React.FC = () => {
 
   const handleClearFilters = () => {
     setFilters({ status: "" });
+    setDateFilters({ startDate: null, endDate: null });
     const getContactsAccounts = async () => {
       await getFetchAllContacts();
     };
@@ -433,8 +453,18 @@ const ContactTable: React.FC = () => {
   
       const updatedFilters = { status: statusFilter };
   
-      const data = await dispatch(filterContacts(updatedFilters.status));
-      setRows(data.payload.data);
+       const filterData = await dispatch(
+         filterContacts({
+           status: updatedFilters.status,
+           startDate: dateFilters.startDate
+             ? dateFilters.startDate.format("YYYY-MM-DD")
+             : "",
+           endDate: dateFilters.endDate
+             ? dateFilters.endDate.format("YYYY-MM-DD")
+             : "",
+         })
+       );
+       setRows(filterData.payload.data);
       handleMenuClose();
     } catch (error) {
       console.error("Error applying filter:", error);
@@ -455,10 +485,9 @@ const ContactTable: React.FC = () => {
             gap: "15px",
             width: "100%",
             alignItems: "center",
-            justifyContent: 'right'
+            justifyContent: "right",
           }}
         >
-
           <SearchBar>
             <Search size={20} />
             <input
@@ -467,16 +496,15 @@ const ContactTable: React.FC = () => {
               onChange={handleSearchChange}
             />
           </SearchBar>
-          <Tooltip title="filter">
-          <FilterIcon onClick={handleMenuOpen}>
-            <FilterAltOutlinedIcon />
-           </FilterIcon>
-           </Tooltip>
+          <Tooltip title="Filter" arrow>
+            <FilterIcon onClick={handleMenuOpen}>
+              <FilterAltOutlinedIcon />
+            </FilterIcon>
+          </Tooltip>
           <ContactsAccountDialogBox
             open={isAddAccountDialogOPen}
             onClose={handleAccountCloseDialog}
           />
-
 
           {selectedIds.length == 0 && (
             <Tooltip title="Upload Bulk Leads" arrow>
@@ -501,7 +529,6 @@ const ContactTable: React.FC = () => {
             </Tooltip>
           )}
 
-
           {selectedIds.length > 0 && allInactive && (
             <Tooltip title="Activate User" arrow>
               <IconsButton onClick={handleDeactivate}>
@@ -509,7 +536,6 @@ const ContactTable: React.FC = () => {
               </IconsButton>
             </Tooltip>
           )}
-
 
           {selectedIds.length > 0 && (
             <Tooltip title="Create Campaign" arrow>
@@ -549,7 +575,9 @@ const ContactTable: React.FC = () => {
           alignItems="center"
           mb={1}
         >
-          <Typography fontWeight="bold">Filter</Typography>
+          <Typography fontWeight="bold" fontSize={14}>
+            Filter
+          </Typography>
           <Link
             href="#"
             underline="hover"
@@ -560,6 +588,25 @@ const ContactTable: React.FC = () => {
           </Link>
         </Box>
 
+        <Box sx={{ mt: 2 }}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DesktopDatePicker
+              label="Start Date *"
+              value={dateFilters.startDate}
+              onChange={handleDateChange("startDate")}
+            />
+          </LocalizationProvider>
+
+          <Box sx={{ mt: 2 }}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DesktopDatePicker
+                label="End Date *"
+                value={dateFilters.endDate}
+                onChange={handleDateChange("endDate")}
+              />
+            </LocalizationProvider>
+          </Box>
+        </Box>
         {Object.keys(filterOptions).map((label) => (
           <FormControl key={label} fullWidth sx={{ mt: 2 }}>
             <InputLabel>{label}</InputLabel>
@@ -568,6 +615,7 @@ const ContactTable: React.FC = () => {
               onChange={handleFilterChange(
                 label.toLowerCase() as keyof typeof filters
               )}
+              label={label}
               sx={{ background: "white!important" }}
             >
               {filterOptions[label as keyof typeof filterOptions]?.map(
@@ -582,7 +630,9 @@ const ContactTable: React.FC = () => {
         ))}
 
         <Box display="flex" justifyContent="space-between" mt={2}>
-          <Button onClick={handleMenuClose}>Cancel</Button>
+          <Button2 onClick={handleMenuClose} color={""} background={""}>
+            Cancel
+          </Button2>
           <Button onClick={handleApplyFilter}>Apply</Button>
         </Box>
       </Menu>

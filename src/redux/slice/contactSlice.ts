@@ -243,10 +243,10 @@ export const CreateCampaignWithContacts = createAsyncThunk(
 
 export const filterContacts = createAsyncThunk(
   'contact/filter',
-  async ( status: string | null) => {
+  async ({ status, startDate, endDate }: { status: string; startDate: string; endDate: string }) => {
     try {
       const response = await api.get(`contact/filter`, {
-      params:{status},
+      params:{status,startDate,endDate},
         headers: {
           Authorization: `Bearer ${token}`
         }

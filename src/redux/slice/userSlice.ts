@@ -148,10 +148,10 @@ export const SearchUsers = createAsyncThunk(
 
 export const filterUsers = createAsyncThunk(
   'user/filter',
-  async ( query: string | null) => {
+  async ({ query, startDate, endDate }: { query: string; startDate: string; endDate: string }) => {
     try {
       const response = await api.get(`user/filter`, {
-      params:{query},
+      params:{query,startDate,endDate},
         headers: {
           Authorization: `Bearer ${token}`
         }
