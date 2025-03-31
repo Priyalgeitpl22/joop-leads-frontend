@@ -16,8 +16,7 @@ import {
   FieldWrapper,
   StyledTitle,
 } from "../../../components/User-Profile/Profile-Details/profileDetail.styled";
-import { TextField } from "../../../styles/layout.styled";
-import { Button } from "../../../styles/global.styled";
+import { Button2, TextField } from "../../../styles/layout.styled";
 import { toast } from "react-hot-toast";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useState } from "react";
@@ -51,33 +50,39 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onClose }) => {
   const [addAccountInProgress, setAddAccountInProgress] = useState(false);
   const { loading } = useSelector((state: RootState) => state.auth);
 
+  const isFormValid =
+    fullName.trim() &&
+    email.trim() &&
+    validateEmail(email) &&
+    validateFullName(fullName);
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
       setProfilePicture(file);
       setPreview(URL.createObjectURL(file));
-      // setError((prevErrors) => ({ ...prevErrors, [name:any]: "" }));
     }
   };
+
   const validateFields = () => {
     let newErrors: any = {};
-  
+
     if (!fullName.trim()) newErrors.fullName = "Full Name is required";
-    else if(!validateFullName){
-      newErrors.fullName="Enter a valid name"
+    else if (!validateFullName(fullName)) {
+      newErrors.fullName = "Enter a valid name";
     }
+
     if (!email.trim()) {
       newErrors.email = "Email is required";
     } else if (!validateEmail(email)) {
       newErrors.email = "Enter a valid email address";
     }
-  
+
     setError(newErrors);
-  
+
     return Object.keys(newErrors).length === 0;
   };
 
- 
   const handleCreateUser = async () => {
     setAddAccountInProgress(true);
     if (!validateFields()) {
@@ -98,7 +103,7 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onClose }) => {
       toast.success(response.message || "User created successfully!");
 
       dispatch(getAllUsers());
-        setAddAccountInProgress(false);
+      setAddAccountInProgress(false);
       onClose();
       setFullName("");
       setEmail("");
@@ -232,13 +237,18 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onClose }) => {
       </DialogBody>
 
       <DialogFooter>
-        <Button onClick={handleCreateUser}>
+        <Button2
+          onClick={handleCreateUser}
+          disabled={!isFormValid}
+          color={!isFormValid ? "lightgray" : "white"}
+          background={!isFormValid ? "#878484" : "var(--theme-color)"}
+        >
           {addAccountInProgress ? (
             <CircularProgress size={24} sx={{ color: "white" }} />
           ) : (
             "Create User"
           )}
-        </Button>
+        </Button2>
       </DialogFooter>
       {loading || addAccountInProgress}
     </Dialog>
