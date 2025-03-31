@@ -18,7 +18,7 @@ import {
   UsersContainer,
   UserTable,
 } from "./User.styled";
-import { SectionTitle } from "../../styles/layout.styled";
+import { Button2, SectionTitle } from "../../styles/layout.styled";
 import { SearchBar } from "../../components/Header/header.styled";
 import { Search } from "lucide-react";
 import { CustomDataTable } from "../../assets/Custom/customDataGrid";
@@ -38,6 +38,10 @@ import {
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import { SelectChangeEvent } from "@mui/material";import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
+import { formatDateTime } from "../../utils/utils";
+import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { Dayjs } from "dayjs";
 
 
 const Users = () => {
@@ -54,8 +58,18 @@ const Users = () => {
     role: "",
   });
   const filterOptions: Record<"Role", string[]> = {
-    Role: ["","Admin", "User"],
+    Role: ["Admin", "User"],
   };
+
+  const [dateFilters, setDateFilters] = useState<{ 
+        startDate: Dayjs | null; 
+        endDate: Dayjs | null; 
+        [key: string]: string | Dayjs | null; 
+      }>({
+        startDate: null,
+        endDate: null,
+    
+      });
 
   const handleFilterChange =
     (field: keyof typeof filters) => (event: SelectChangeEvent<string>) => {
@@ -65,10 +79,17 @@ const Users = () => {
       }));
     };
 
-
+const handleDateChange =
+   (field: "startDate" | "endDate") => (value: Dayjs | null) => {
+     setDateFilters((prev) => ({
+       ...prev,
+       [field]: value,
+     }));
+   };
 
   const handleClearFilters = () => { 
     setFilters({ role: ""});
+    setDateFilters({ startDate: null, endDate: null });
     dispatch(getAllUsers())   
     .unwrap()             
     .then((response) => {
@@ -161,7 +182,17 @@ const Users = () => {
   const handleApplyFilter = async () => {
     try {
       debugger;
-      const filterData = await dispatch(filterUsers(filters.role));
+    const filterData = await dispatch(
+             filterUsers({
+               query: filters.role,
+               startDate: dateFilters.startDate
+                 ? dateFilters.startDate.format("YYYY-MM-DD")
+                 : "",
+               endDate: dateFilters.endDate
+                 ? dateFilters.endDate.format("YYYY-MM-DD")
+                 : "",
+             })
+           );
       setFilteredRows(filterData.payload.data);
       handleMenuClose();
     } catch (error) {
@@ -219,6 +250,12 @@ const Users = () => {
         renderCell: (params) => <Box>{params?.row?.role || "N/A"} </Box>,
       },
       {
+        field: "createdAt",
+        headerName: "Uploaded Date",
+        width: 150,
+        valueGetter: (params: any) => (params ? formatDateTime(params) : "N/A"),
+      },
+      {
         field: "delete",
         headerName: "Delete",
         width: 100,
@@ -258,9 +295,11 @@ const Users = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </SearchBar>
-          <FilterIcon onClick={handleMenuOpen}>
-            <FilterAltOutlinedIcon />
-          </FilterIcon>
+          <Tooltip title="Filter" arrow>
+            <FilterIcon onClick={handleMenuOpen}>
+              <FilterAltOutlinedIcon />
+            </FilterIcon>
+          </Tooltip>
           <AddUserDialog open={addUser} onClose={() => setAddUser(false)} />
           <Button onClick={() => setAddUser(true)}>Add User</Button>
         </Box>
@@ -285,7 +324,7 @@ const Users = () => {
           alignItems="center"
           mb={1}
         >
-          <Typography fontWeight="bold">Filter</Typography>
+          <Typography fontWeight="bold" fontSize={14}>Filter</Typography>
           <Link
             href="#"
             underline="hover"
@@ -296,6 +335,25 @@ const Users = () => {
           </Link>
         </Box>
 
+        <Box sx={{ mt: 2 }}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DesktopDatePicker
+              label="Start Date *"
+              value={dateFilters.startDate}
+              onChange={handleDateChange("startDate")}
+            />
+          </LocalizationProvider>
+
+          <Box sx={{ mt: 2 }}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DesktopDatePicker
+                label="End Date *"
+                value={dateFilters.endDate}
+                onChange={handleDateChange("endDate")}
+              />
+            </LocalizationProvider>
+          </Box>
+        </Box>
         {Object.keys(filterOptions).map((label) => (
           <FormControl key={label} fullWidth sx={{ mt: 2 }}>
             <InputLabel>{label}</InputLabel>
@@ -305,6 +363,7 @@ const Users = () => {
                 label.toLowerCase() as keyof typeof filters
               )}
               sx={{ background: "white!important" }}
+              label={label}
             >
               {filterOptions[label as keyof typeof filterOptions]?.map(
                 (option) => (
@@ -318,7 +377,9 @@ const Users = () => {
         ))}
 
         <Box display="flex" justifyContent="space-between" mt={2}>
-          <Button onClick={handleMenuClose}>Cancel</Button>
+          <Button2 onClick={handleMenuClose} color={""} background={""}>
+            Cancel
+          </Button2>
           <Button onClick={handleApplyFilter}>Apply</Button>
         </Box>
       </Menu>
@@ -358,3 +419,5 @@ const Users = () => {
 };
 
 export default Users;
+
+

@@ -62,6 +62,9 @@ import DoneIcon from "@mui/icons-material/Done";
 import EmailCampaignDialog from "./EmailCampaignDialog/AddEmailCampaignDialog";
 import { SelectChangeEvent } from "@mui/material";
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
+import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { Dayjs } from "dayjs";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 
 
@@ -87,8 +90,20 @@ const EmailCampaign: React.FC = () => {
     status: "",
    
   });
+
+  const [dateFilters, setDateFilters] = useState<{ 
+    startDate: Dayjs | null; 
+    endDate: Dayjs | null; 
+    [key: string]: string | Dayjs | null; 
+  }>({
+    startDate: null,
+    endDate: null,
+
+  });
+  
+  
   const filterOptions: Record<"status" , string[]> = {
-    status: ["","SCHEDULED", "RUNNING", "PAUSED", "DRAFT","COMPLETED"],
+    status: ["SCHEDULED", "RUNNING", "PAUSED", "DRAFT","COMPLETED"],
   };
 
   const isMenuOpen = Boolean(anchorEl);
@@ -111,12 +126,18 @@ const EmailCampaign: React.FC = () => {
            [field]: event.target.value,
          }));
        };
-
-
+       const handleDateChange =
+         (field: "startDate" | "endDate") => (value: Dayjs | null) => {
+           setDateFilters((prev) => ({
+             ...prev,
+             [field]: value,
+           }));
+         };
+      
 
      const handleClearFilters = () => {
        setFilters({ status: "" });
-
+       setDateFilters({ startDate: null, endDate: null });
        getAllEmailCampaigns();
        handleMenuClose();
      };
@@ -301,14 +322,24 @@ const EmailCampaign: React.FC = () => {
 
 
  const handleApplyFilters = async () => {
-  try {
-    const filterData = await dispatch(filterCamapign(filters.status));
-    setCampaigns(filterData.payload.data);
-    handleMenuClose();
-  } catch (error) {
-    console.error("Error applying filters:", error);
-  }
-};
+   try {
+     const filterData = await dispatch(
+       filterCamapign({
+         status: filters.status,
+         startDate: dateFilters.startDate
+           ? dateFilters.startDate.format("YYYY-MM-DD")
+           : "",
+         endDate: dateFilters.endDate
+           ? dateFilters.endDate.format("YYYY-MM-DD")
+           : "",
+       })
+     );
+     setCampaigns(filterData.payload.data);
+     handleMenuClose();
+   } catch (error) {
+     console.error("Error applying filters:", error);
+   }
+ };
 
  return (
    <ContentContainer>
@@ -350,11 +381,11 @@ const EmailCampaign: React.FC = () => {
                  onChange={handleSearchChange}
                />
              </SearchBar>
-                       <Tooltip title="filter">
-                       <FilterIcon onClick={handleMenuOpen}>
-                         <FilterAltOutlinedIcon />
-                       </FilterIcon>
-                       </Tooltip>
+             <Tooltip title="Filter" arrow>
+               <FilterIcon onClick={handleMenuOpen}>
+                 <FilterAltOutlinedIcon />
+               </FilterIcon>
+             </Tooltip>
              <Button onClick={handleCreateCampaign}>Create Campaign</Button>
            </Box>
          )}
@@ -386,64 +417,95 @@ const EmailCampaign: React.FC = () => {
 
 
      {loading && <ProgressBar />}
-        <Menu
-              anchorEl={anchorEl}
-              open={isMenuOpen}
-              onClose={handleMenuClose}
-              MenuListProps={{ "aria-labelledby": "profile-menu-button" }}
-              sx={{
-                "& .MuiMenu-paper": {
-                  minWidth: "320px",
-                  padding: "10px",
-                  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
-                  borderRadius: "8px",
-                },
-              }}
-            >
-              <Box
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
-                mb={1}
-              >
-                <Typography fontWeight="bold">Filter</Typography>
-                <Link
-                  href="#"
-                  underline="hover"
-                  onClick={handleClearFilters}
-                  sx={{ color: "var(--theme-color)", fontSize: "14px" }}
-                >
-                  Clear all
-                </Link>
-              </Box>
+     <Menu
+       anchorEl={anchorEl}
+       open={isMenuOpen}
+       onClose={handleMenuClose}
+       MenuListProps={{ "aria-labelledby": "profile-menu-button" }}
+       sx={{
+         "& .MuiMenu-paper": {
+           minWidth: "320px",
+           padding: "10px",
+           boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+           borderRadius: "8px",
+         },
+       }}
+     >
+       <Box
+         display="flex"
+         justifyContent="space-between"
+         alignItems="center"
+         mb={1}
+       >
+         <Typography fontWeight="bold" fontSize={14}>
+           Filter
+         </Typography>
+         <Link
+           href="#"
+           underline="hover"
+           onClick={handleClearFilters}
+           sx={{ color: "var(--theme-color)", fontSize: "14px" }}
+         >
+           Clear all
+         </Link>
+       </Box>
+       <Box sx={{ mt: 2 }}>
+         <LocalizationProvider dateAdapter={AdapterDayjs}>
+           <DesktopDatePicker
+             label="Start Date *"
+             value={dateFilters.startDate}
+             onChange={handleDateChange("startDate")}
+             sx={{ borderRadius: "8px" }} // Adding border-radius to the Start Date picker
+           />
+         </LocalizationProvider>
 
-              {Object.keys(filterOptions).map((label) => (
-                <FormControl key={label} fullWidth sx={{ mt: 2 }}>
-                  <InputLabel>{label}</InputLabel>
-                  <Select
-                    value={filters[label.toLowerCase() as keyof typeof filters] || ""}
-                    onChange={handleFilterChange(
-                      label.toLowerCase() as keyof typeof filters
-                    )}
-                    sx={{ background: "white!important" }}
-                  >
-                    {filterOptions[label as keyof typeof filterOptions]?.map(
-                      (option) => (
-                        <MenuItem
-                         key={option} value={option}>
-                          {option}
-                        </MenuItem>
-                      )
-                    )}
-                  </Select>
-                </FormControl>
-              ))}
+         <Box sx={{ mt: 2 }}>
+           <LocalizationProvider dateAdapter={AdapterDayjs}>
+             <DesktopDatePicker
+               label="End Date *"
+               value={dateFilters.endDate}
+               onChange={handleDateChange("endDate")}
+               sx={{ borderRadius: "8px" }} // Adding border-radius to the End Date picker
+             />
+           </LocalizationProvider>
+         </Box>
+       </Box>
+       {Object.keys(filterOptions).map((label) => (
+         <FormControl key={label} fullWidth sx={{ mt: 2 }} variant="outlined">
+           <InputLabel>{label}</InputLabel>
+           <Select
+             value={filters[label.toLowerCase() as keyof typeof filters] || ""}
+             onChange={handleFilterChange(
+               label.toLowerCase() as keyof typeof filters
+             )}
+             label={label}
+             sx={{
+               borderRadius: "10px",
+               backgroundColor: "var(--text-white)",
 
-              <Box display="flex" justifyContent="space-between" mt={2}>
-                <Button onClick={handleMenuClose}>Cancel</Button>
-                <Button onClick={handleApplyFilters}>Apply</Button>
-              </Box>
-            </Menu>
+               "& .MuiOutlinedInput-input": {
+                 backgroundColor: "var(--text-white)",
+               },
+             }}
+           >
+             {filterOptions[label as keyof typeof filterOptions]?.map(
+               (option) => (
+                 <MenuItem key={option} value={option}>
+                   {option}
+                 </MenuItem>
+               )
+             )}
+           </Select>
+         </FormControl>
+       ))}
+
+       <Box display="flex" justifyContent="space-between" mt={2}>
+         <Button2 onClick={handleMenuClose} color={""} background={""}>
+           Cancel
+         </Button2>
+         <Button onClick={handleApplyFilters}>Apply</Button>
+       </Box>
+     </Menu>
      {activeTab === "all_campaign" && (
        <TableContainer
          component={Paper}
