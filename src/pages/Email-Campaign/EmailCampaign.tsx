@@ -75,6 +75,9 @@ const EmailCampaign: React.FC = () => {
   }, []);
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: string) => {
+    if (typeof newValue != "string") {
+      return;
+    }
     setActiveTab(newValue);
     if(newValue==='all')
     {
@@ -288,7 +291,9 @@ const EmailCampaign: React.FC = () => {
                       onChange={handleSearchChange}
                     />
                   </SearchBar>
-              <Button onClick={handleCreateCampaign}>Create Campaign</Button>
+                  <Button onClick={handleCreateCampaign}>
+                    Create Campaign
+                  </Button>
                 </Box>
               )}
               {activeTab === "folders" && (
@@ -310,7 +315,7 @@ const EmailCampaign: React.FC = () => {
                     style={{ height: "90%" }}
                     onClick={(event) => handleCreateFolder(event)}
                   >
-                Create Folder
+                    Create Folder
                   </Button2>
                 </Box>
               )}
@@ -349,7 +354,7 @@ const EmailCampaign: React.FC = () => {
                     fontWeight: "bold",
                     marginTop: "10px",
                     marginBottom: "10px",
-                cursor: "pointer"
+                    cursor: "pointer",
                   }}
                 >
                   <span
@@ -369,13 +374,23 @@ const EmailCampaign: React.FC = () => {
                     </>
                   )}
                 </Box>
-                  {/* <CampaignFolder
+                {/* <CampaignFolder
                   selectedFolder={selectedFolder}
                   setSelectedFolder={setSelectedFolder}
                 /> */}
-                {folders && folders.length > 0  ? (
-                  <CampaignFolder  selectedFolder={selectedFolder}
-                  setSelectedFolder={setSelectedFolder}/>
+                {folders && folders.length > 0 ? (
+                  <CampaignFolder
+                    selectedFolder={selectedFolder}
+                    setSelectedFolder={setSelectedFolder}
+                    handleEditCampaign={handleEditCampaign}
+                    handleOpenDeleteDialog={handleOpenDeleteDialog}
+                    handleMoveFolderOpen={handleMoveFolderOpen}
+                    handleDetailCampaign={handleDetailCampaign}
+                    handleMenuOpen={handleMenuOpen}
+                    handleMenuClose={handleMenuClose}
+                    anchorEl={anchorEl}
+                    selectedCampaign={selectedCampaign}
+                  />
                 ) : (
                   <Box
                     style={{

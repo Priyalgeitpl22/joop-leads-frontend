@@ -221,7 +221,7 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
                 <FolderMenu
                   anchorEl={selectedCampaign === campaign.id ? anchorEl : null}
                   open={Boolean(anchorEl && selectedCampaign === campaign.id)}
-                  // onClose={handleMenuClose}
+                  onClose={handleMenuClose}
                 >
                   <MenuItem onClick={() => handleMoveFolderOpen(campaign.id)}>
                     Move to folder

@@ -34,11 +34,30 @@ import { useNavigate } from "react-router-dom";
 const CampaignFolder = ({
   setSelectedFolder,
   selectedFolder,
+  handleEditCampaign,
+  handleOpenDeleteDialog,
+  handleMoveFolderOpen,
+  handleDetailCampaign,
+  handleMenuOpen,
+  handleMenuClose,
+  anchorEl,
+  selectedCampaign
 }: {
   setSelectedFolder: (folder: string) => void;
   selectedFolder: string | null;
+  handleEditCampaign: (campaignId: string) => void;
+  handleOpenDeleteDialog: (campaignId: string) => void;
+  handleMoveFolderOpen: (campaignId: string) => void;
+  handleDetailCampaign: (campaignId: string) => void;
+  handleMenuOpen: (
+    event: React.MouseEvent<HTMLElement>,
+    campaignId: string
+  ) => void;
+  handleMenuClose: () => void;
+  anchorEl: null | HTMLElement;
+  selectedCampaign: string | null;
 }) => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [anchorEl1, setAnchorEl1] = useState<null | HTMLElement>(null);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
   const [openRenameDialog, setOpenRenameDialog] = useState(false);
@@ -58,23 +77,23 @@ const CampaignFolder = ({
     dispatch(showFolders());
   }, [dispatch]);
 
-  const handleMenuOpen = (
+  const handleMenuOpenbox = (
     event: React.MouseEvent<HTMLButtonElement>,
     folderId: string,
     folderName: string
   ) => {
     event.stopPropagation();
-    setAnchorEl(event.currentTarget);
+    setAnchorEl1(event.currentTarget);
     setSelectedFolderId(folderId);
     setSelectedFolderName(folderName);
   };
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
+  const handleMenuClosebox = () => {
+    setAnchorEl1(null);
   };
 
   const handleOpenRenameDialog = () => {
-    handleMenuClose();
+    handleMenuClosebox();
     setOpenRenameDialog(true);
   };
 
@@ -82,8 +101,8 @@ const CampaignFolder = ({
     setOpenRenameDialog(false);
   };
 
-  const handleOpenDeleteDialog = () => {
-    handleMenuClose();
+  const handleOpenDeleteDialogbox = () => {
+    handleMenuClosebox();
     setOpenDeleteDialog(true);
   };
 
@@ -129,7 +148,6 @@ const CampaignFolder = ({
         );
 
         setFolderCampaigns(transformedCampaigns);
-        console.log("transform dataa------->>>>",transformedCampaigns)
         navigate(`/email-campaign/folders/${folderId}/view`);
       } else {
         setFolderCampaigns([]);
@@ -146,7 +164,7 @@ const CampaignFolder = ({
   const handleViewClick = () => {
     if (!selectedFolderId) return;
     setOpenViewDialog(true);
-    handleMenuClose();
+    handleMenuClosebox();
   };
 
   const handlePause = async (campaignId: string) => {
@@ -176,14 +194,14 @@ const CampaignFolder = ({
           loading={loadingCampaigns}
           handlePause={handlePause}
           handleResume={handleResume}
-          handleEditCampaign={() => {}}
-          handleOpenDeleteDialog={() => {}}
-          handleMoveFolderOpen={() => {}}
-          handleDetailCampaign={() => {}}
-          anchorEl={null}
-          selectedCampaign={null}
-          handleMenuOpen={() => {}}
-          handleMenuClose={() => {}}
+          handleEditCampaign={handleEditCampaign}
+          handleOpenDeleteDialog={handleOpenDeleteDialog}
+          handleMoveFolderOpen={handleMoveFolderOpen}
+          handleDetailCampaign={handleDetailCampaign}
+          handleMenuOpen={handleMenuOpen}
+          handleMenuClose={handleMenuClose}
+          anchorEl={anchorEl}
+          selectedCampaign={selectedCampaign}
         />
       ) : (
         <Grid2 container spacing={3}>
@@ -196,14 +214,14 @@ const CampaignFolder = ({
                 </Icon>
                 <IconButton
                   size="small"
-                  onClick={(e) => handleMenuOpen(e, folder.id, folder.name)}
+                  onClick={(e) => handleMenuOpenbox(e, folder.id, folder.name)}
                 >
                   <MoreVertIcon fontSize="small" />
                 </IconButton>
                 <FolderMenu
-                  anchorEl={anchorEl}
-                  open={Boolean(anchorEl)}
-                  onClose={handleMenuClose}
+                  anchorEl={anchorEl1}
+                  open={Boolean(anchorEl1)}
+                  onClose={handleMenuClosebox}
                   anchorOrigin={{
                     vertical: "bottom",
                     horizontal: "right",
@@ -216,7 +234,7 @@ const CampaignFolder = ({
                   <MenuItem onClick={handleOpenRenameDialog}>Rename</MenuItem>
                   <MenuItem onClick={handleViewClick}>Details</MenuItem>
                   <MenuItem
-                    onClick={handleOpenDeleteDialog}
+                    onClick={handleOpenDeleteDialogbox}
                     sx={{ color: "red", fontWeight: "500" }}
                   >
                     Delete
