@@ -97,7 +97,7 @@ export const getAllAccountMailBox = createAsyncThunk(
       return {
         messages: response.data?.messages || [], 
         totalMessages: response.data?.totalMessages || 0,
-     
+        currentPage: Number(response.data?.data?.currentPage) || 1,
       };
     } catch (error: any) {
       console.error("API Error:", error);

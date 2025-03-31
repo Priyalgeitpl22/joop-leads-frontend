@@ -7,7 +7,7 @@ interface SidebarItemProps {
 
 export const SidebarContainer = styled(Box)`
   width: 12%;
-  height: 100vh;
+  height: 100%;
   overflow-y: auto;
   padding: 10px;
   background-color: "var(--text-white)";
@@ -34,10 +34,12 @@ export const SidebarHeader = styled(Box)`
 
 export const EmailInboxListHeader = styled(Box)({
   alignItems: "center",
-  marginTop: "5px",
+  // marginTop: "5px",
   marginBottom: "8px",
   paddingBottom: "5px",
-
+  position: "sticky",
+  top: 0,
+  backgroundColor: "var(--text-white)",
   "@media (max-width: 600px)": {
     flexDirection: "column",
     alignItems: "flex-start",
@@ -48,9 +50,10 @@ export const StyledDivider = styled(Divider)`
   margin-bottom: 10px;
 `;
 
-export const StyledList = styled(List)`
-  padding-top: 15px;
-`;
+export const StyledList = styled(List)({
+  maxHeight: "calc(100vh - 80px)",
+  overflowY: "auto",
+});
 
 export const StyledListItem = styled(ListItem, {
   shouldForwardProp: (prop) => prop !== "active",
