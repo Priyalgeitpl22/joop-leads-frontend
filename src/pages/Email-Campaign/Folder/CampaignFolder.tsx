@@ -110,19 +110,19 @@ const CampaignFolder = ({
           (campaign: any) => ({
             id: campaign?.id,
             campaignName: campaign?.campaignName,
-            created_at: campaign?.created_at || "",
+            created_at: campaign?.createdAt || "",
             campaign_status: campaign?.status || "Unknown",
-            campaign_name: campaign?.name || "Unnamed Campaign",
+            campaign_name: campaign?.name || "",
             status: campaign?.status,
             contacts: campaign?.contacts || [],
             sequences: campaign?.sequences || [],
-            createdAt: campaign?.created_at || "",
-            analytics_count: campaign?.analytics_count || {
+            createdAt: campaign?.createdAt || "",
+            analytics_count: campaign?.analytics || {
               campaignId: campaign?.id,
-              bounced_count: 0,
-              opened_count: 0,
-              clicked_count: 0,
-              sent_count: 0,
+              bounced_count: campaign?.bounced_count,
+              opened_count: campaign?.opened_count,
+              clicked_count: campaign?.clicked_count,
+              sent_count: campaign?.sent_count,
             },
             campaignStats: campaign.campaignStats || {},
           })
@@ -235,17 +235,17 @@ const CampaignFolder = ({
         folderName={selectedFolderName}
       />
 
+      <ViewFolderDialog
+        open={openViewDialog}
+        onClose={() => setOpenViewDialog(false)}
+        selectedId={selectedFolderId}
+      />
+
       <ConfirmDeleteDialog
         open={openDeleteDialog}
         onClose={handleCloseDeleteDialog}
         onConfirmDelete={handleConfirmDelete}
         folderId={selectedFolderId}
-      />
-
-      <ViewFolderDialog
-        open={openViewDialog}
-        onClose={() => setOpenViewDialog(false)}
-        selectedId={selectedFolderId}
       />
     </div>
   );

@@ -179,7 +179,8 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
 
                 <div>
                   <h6 onClick={() => handleDetailCampaign(campaign.id)}>
-                    {campaign.campaignName}
+                    {campaign?.campaignName}
+                    {campaign?.campaign_name}
                   </h6>
                   <p>{`${campaign?.status} | ${formatDateTime(
                     campaign?.createdAt

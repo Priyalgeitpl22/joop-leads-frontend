@@ -241,7 +241,7 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
   };
 
   const GoBack = () => {
-    window.location.assign("/email-campaign");
+    window.location.assign("/email-campaign/all");
   };
 
   const onClickEmailFollowUp = (sequence: Sequence) => {
