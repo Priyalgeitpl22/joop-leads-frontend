@@ -32,6 +32,9 @@ import EmailCampaignTable from "../EmailCampaignTable";
 import { useNavigate } from "react-router-dom";
 
 const CampaignFolder = ({
+  loading,
+  handlePause,
+  handleResume,
   setSelectedFolder,
   selectedFolder,
   handleEditCampaign,
@@ -43,6 +46,9 @@ const CampaignFolder = ({
   anchorEl,
   selectedCampaign
 }: {
+  loading: boolean;
+  handlePause: (campaignId: string) => Promise<void>;
+  handleResume: (campaignId: string) => Promise<void>;
   setSelectedFolder: (folder: string) => void;
   selectedFolder: string | null;
   handleEditCampaign: (campaignId: string) => void;
@@ -70,7 +76,7 @@ const CampaignFolder = ({
   const navigate = useNavigate();
 
   const folders = useSelector((state: any) => state.folder.folders);
-  const loading = useSelector(selectFolderLoading);
+  const loading1 = useSelector(selectFolderLoading);
   const error = useSelector(selectFolderError);
 
   useEffect(() => {
@@ -127,7 +133,7 @@ const CampaignFolder = ({
       if (response && Array.isArray(response.campaigns)) {
         const transformedCampaigns: IEmailCampaign[] = response.campaigns.map(
           (campaign: any) => ({
-            id: campaign?.id,
+            id: campaign?.analytics?.campaignId,
             campaignName: campaign?.campaignName,
             created_at: campaign?.createdAt || "",
             campaign_status: campaign?.status || "Unknown",
@@ -167,31 +173,16 @@ const CampaignFolder = ({
     handleMenuClosebox();
   };
 
-  const handlePause = async (campaignId: string) => {
-    try {
-      console.log(`Pausing campaign: ${campaignId}`);
-    } catch (error) {
-      console.error("Error pausing campaign:", error);
-    }
-  };
-
-  const handleResume = async (campaignId: string) => {
-    try {
-      console.log(`Resuming campaign: ${campaignId}`);
-    } catch (error) {
-      console.error("Error resuming campaign:", error);
-    }
-  };
   return (
     <div>
-      {loading ? (
+      {loading1 ? (
         <CircularProgress />
       ) : error ? (
         <Box sx={{ color: "red" }}>Error: {error}</Box>
       ) : selectedFolder ? (
         <EmailCampaignTable
           campaigns={folderCampaigns}
-          loading={loadingCampaigns}
+          loading={loading}
           handlePause={handlePause}
           handleResume={handleResume}
           handleEditCampaign={handleEditCampaign}

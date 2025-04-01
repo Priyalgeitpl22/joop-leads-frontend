@@ -60,10 +60,10 @@ export const showFolderDetail = createAsyncThunk<
     const campaigns =
       folder.campaigns?.map((campaign: any) => ({
         id: campaign?.id,
-        name: campaign?.campaignName,
-        createdAt: campaign?.createdAt,
-        status: campaign?.status,
-        analytics: campaign?.CampaignAnalytics?.[0] || {},
+        name: campaign?.campaign?.campaignName,
+        createdAt: campaign?.campaign?.createdAt,
+        status: campaign?.campaign?.status,
+        analytics: campaign?.campaign?.CampaignAnalytics?.[0] || {},
       })) || [];
 
     const folderAnalytics = campaigns.length > 0 ? campaigns[0].analytics : {};
@@ -175,8 +175,8 @@ export const addCampaignToFolder = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await api.put(
-        `/email-campaign/email-campaign-add`,
+      const response = await api.post(
+        `/email-campaign/add`,
         {
           campaignId,
           folderId,

@@ -103,12 +103,17 @@ const EmailCampaign: React.FC = () => {
   }, []);
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: string) => {
-    if (typeof newValue != "string") {
+    if (typeof newValue !== "string") {
       return;
     }
     setActiveTab(newValue);
+
     if (newValue === "all") {
       setSelectedFolder(null);
+    } else if (newValue === "folders") {
+      setSelectedFolder(null);
+      navigate(`/email-campaign/folders`, { replace: true });
+      return;
     }
     navigate(`/email-campaign/${newValue}`, { replace: true });
   };
@@ -545,6 +550,9 @@ const EmailCampaign: React.FC = () => {
                         setSelectedFolder={setSelectedFolder}/> */}
                 {folders && folders.length > 0 ? (
                   <CampaignFolder
+                    loading={loading}
+                    handlePause={handlePause}
+                    handleResume={handleResume}
                     selectedFolder={selectedFolder}
                     setSelectedFolder={setSelectedFolder}
                     handleEditCampaign={handleEditCampaign}
