@@ -179,7 +179,8 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
 
                 <div>
                   <h6 onClick={() => handleDetailCampaign(campaign.id)}>
-                    {campaign.campaignName}
+                    {campaign?.campaignName}
+                    {campaign?.campaign_name}
                   </h6>
                   <p>{`${campaign?.status} | ${formatDateTime(
                     campaign?.createdAt
@@ -220,7 +221,7 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
                 <FolderMenu
                   anchorEl={selectedCampaign === campaign.id ? anchorEl : null}
                   open={Boolean(anchorEl && selectedCampaign === campaign.id)}
-                  // onClose={handleMenuClose}
+                  onClose={handleMenuClose}
                 >
                   <MenuItem onClick={() => handleMoveFolderOpen(campaign.id)}>
                     Move to folder

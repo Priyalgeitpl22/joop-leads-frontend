@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../redux/store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../redux/store/store";
 import EmailInboxArea from "./EmailInboxArea/EmailInboxArea";
 import EmailInboxList from "./EmailInboxList/EmailInboxList";
 import EmailInboxSideBar from "./EmailInboxSidebar/EmailInboxSidebar";
@@ -10,10 +10,12 @@ import { SectionTitle } from "../../styles/layout.styled";
 
 export default function EmailInboxs() {
   const dispatch = useDispatch<AppDispatch>();
+  const { user } = useSelector((state: RootState) => state.user);
+  
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      dispatch(getAllChats());
+      dispatch(getAllChats({ orgId: user?.orgId || "" }));
     }, 1000);
 
     return () => clearTimeout(timer);

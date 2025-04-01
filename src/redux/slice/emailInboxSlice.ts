@@ -48,9 +48,11 @@ const initialState: EmailInboxState = {
 
 export const getAllChats = createAsyncThunk(
   "emailInbox/getAllChats",
-  async (_, { rejectWithValue }) => {
+  async ({ orgId }: { orgId: string }, { rejectWithValue }) => {
     try {
-      const response = await emailApi.get("/accounts");
+      const response = await emailApi.get("/accounts", {
+        params: { orgId },
+      });
 
       if (!Array.isArray(response.data)) {
         return rejectWithValue("Invalid API response format");
@@ -88,7 +90,6 @@ export const getAllAccountMailBox = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      debugger
       const response = await emailApi.get(
         `/accounts/messages/${accountId}/${mailBoxId}`
       );
