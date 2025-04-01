@@ -18,10 +18,11 @@ import {
 
 const EmailInboxSideBar = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const { user } = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      dispatch(getAllChats());
+      dispatch(getAllChats({ orgId: user?.orgId || "" }));
     }, 1000);
 
     return () => clearTimeout(timer);

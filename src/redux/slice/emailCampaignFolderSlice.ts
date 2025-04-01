@@ -49,27 +49,36 @@ export const showFolderDetail = createAsyncThunk<
       },
     });
 
-    const data = response.data.data; // `data` is directly the folder object
+    const data = response.data.data;
 
     if (!data || Object.keys(data).length === 0) {
       return rejectWithValue("No folder details found.");
     }
 
     const folder = data[0];
-    const folderAnalytics = folder?.campaigns?.[0].CampaignAnalytics?.[0]
+
+    const campaigns =
+      folder.campaigns?.map((campaign: any) => ({
+        id: campaign?.id,
+        name: campaign?.campaignName,
+        createdAt: campaign?.createdAt,
+        status: campaign?.status,
+        analytics: campaign?.CampaignAnalytics?.[0] || {},
+      })) || [];
+
+    const folderAnalytics = campaigns.length > 0 ? campaigns[0].analytics : {};
 
     return {
       id: folder.id,
       name: folder.name,
       createdAt: folder.createdAt,
-      campaignCount: folder.campaigns ? folder.campaigns.length : 0,
-      campaigns: folder.campaigns || [],
-      bounced_count: folderAnalytics.bounced_count,
-      sent_count: folderAnalytics.sent_count,
-      opened_count: folderAnalytics.opened_count,
-      clicked_count: folderAnalytics.clicked_count
+      campaignCount: campaigns?.length,
+      campaigns: campaigns,
+      bounced_count: folderAnalytics?.bounced_count || 0,
+      sent_count: folderAnalytics?.sent_count || 0,
+      opened_count: folderAnalytics?.opened_count || 0,
+      clicked_count: folderAnalytics?.clicked_count || 0,
     };
-
   } catch (error) {
     console.error("Error fetching folder details:", error);
     return rejectWithValue("Network error");
@@ -194,6 +203,10 @@ const folderSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(addFolder.fulfilled, (state, action) => {
+        console.log("New folder added:", action.payload);
+        state.folders.push(action.payload);
+      })
       .addCase(showFolders.pending, (state) => {
         state.loading = true;
         state.error = null;

@@ -80,7 +80,7 @@ const ViewDrawer: React.FC<ViewDrawerProps> = ({
                   <CampaignCard key={campaign.id}>
                     <Typography>
                       <CampaignIcon sx={IconStyle("#FF5722")} />
-                      <strong>Name:</strong> {campaign.campaignName}
+                      <strong>Name:</strong> {campaign.name}
                     </Typography>
                   </CampaignCard>
                 ))

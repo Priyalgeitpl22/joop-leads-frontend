@@ -181,7 +181,6 @@ const handleDateChange =
 
   const handleApplyFilter = async () => {
     try {
-      debugger;
     const filterData = await dispatch(
              filterUsers({
                query: filters.role,

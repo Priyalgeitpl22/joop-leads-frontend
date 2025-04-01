@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   Box,
   Tabs,
+  Typography,
 } from "@mui/material";
 import { motion } from "framer-motion";
 import {
@@ -31,10 +32,15 @@ import EmailCampaignDialog from "./EmailCampaignDialog/AddEmailCampaignDialog";
 import CampaignFolder from "./Folder/CampaignFolder";
 import MoveToFolderDialog from "./MoveToFolderDialog";
 import EmailCampaignTable from "./EmailCampaignTable";
+import FolderOpenOutlinedIcon from "@mui/icons-material/FolderOpenOutlined";
+import { showFolders } from "../../redux/slice/emailCampaignFolderSlice";
 
 const EmailCampaign: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const folders = useSelector((state: any) => state.folder.folders);
+  console.log("folderrr", folders.length);
   const location = useLocation();
+  console.log(location,"Location");
   const pathParts = location.pathname.split("/");
   const tab = pathParts[2]; 
   console.log("active tab--->",tab )
@@ -52,13 +58,12 @@ const EmailCampaign: React.FC = () => {
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
 
   // const open = Boolean(anchorEl);
-  const folders = useSelector((state: any) => state.folder.folders);
-  console.log("folderrr", folders.length);
 
   useEffect(() => {
     if (tab) {
       setActiveTab(tab);
     }
+    dispatch(showFolders());
   }, [tab]);
 
   useEffect(() => {
@@ -70,6 +75,9 @@ const EmailCampaign: React.FC = () => {
   }, []);
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: string) => {
+    if (typeof newValue != "string") {
+      return;
+    }
     setActiveTab(newValue);
     if(newValue==='all')
     {
@@ -239,130 +247,203 @@ const EmailCampaign: React.FC = () => {
   }
 
   return (
-    <ContentContainer>
-      <SectionHeader>
-        <Tabs
-          value={activeTab}
-          onChange={handleTabChange}
-          sx={{
-            "& .MuiTab-root": {
-              fontSize: "14px",
-              fontWeight: "600",
-              color: "#35495c",
-            },
-            "& .MuiTab-root.Mui-selected": {
-              color: "var(--theme-color)",
-            },
-          }}
-        >
-          <SectionTitle label="All Campaign" value="all" />
-          <SectionTitle label="Folders" value="folders" />
-          {activeTab === "all" && (
-            <Box
+    <ContentContainer
+      style={{
+        height: activeTab === "all" || activeTab === "folders" ? "100%" : "0",
+        display:
+          activeTab === "all" || activeTab === "folders" ? "flex" : "none",
+      }}
+    >
+      {activeTab === "all" || activeTab === "folders" ? (
+        <>
+          <SectionHeader>
+            <Tabs
+              value={activeTab}
+              onChange={handleTabChange}
               sx={{
-                display: "flex",
-                gap: "15px",
-                width: "100%",
-                alignItems: "center",
-                justifyContent: "flex-end",
+                "& .MuiTab-root": {
+                  fontSize: "14px",
+                  fontWeight: "600",
+                  color: "#35495c",
+                },
+                "& .MuiTab-root.Mui-selected": {
+                  color: "var(--theme-color)",
+                },
               }}
             >
-              <SearchBar>
-                <Search size={20} />
-                <input
-                  placeholder="Search by Campaign Name"
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                />
-              </SearchBar>
-              <Button onClick={handleCreateCampaign}>Create Campaign</Button>
-            </Box>
-          )}
-          {activeTab === "folders" && (
-            <Box
-              sx={{
-                display: "flex",
-                gap: "15px",
-                alignItems: "center",
-                marginLeft: "auto",
-              }}
-            >
-              <EmailCampaignDialog
-                open={createFolder}
-                onClose={() => setCreateFolder(false)}
-              />
-              <Button2
-                background="var(--theme-color)"
-                color="white"
-                style={{ height: "90%" }}
-                onClick={(event) => handleCreateFolder(event)}
-              >
-                Create Folder
-              </Button2>
-            </Box>
-          )}
-        </Tabs>
-      </SectionHeader>
-
-      {loading && <ProgressBar />}
-      {activeTab === "all" ? (
-        <EmailCampaignTable
-          campaigns={campaigns}
-          loading={loading}
-          handlePause={handlePause}
-          handleResume={handleResume}
-          handleEditCampaign={handleEditCampaign}
-          handleOpenDeleteDialog={handleOpenDeleteDialog}
-          handleMoveFolderOpen={handleMoveFolderOpen}
-          handleDetailCampaign={handleDetailCampaign}
-          handleMenuOpen={handleMenuOpen}
-          handleMenuClose={handleMenuClose}
-          anchorEl={anchorEl}
-          selectedCampaign={selectedCampaign}
-        />
-      ) : (
-        <EmailCampaignContainer>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            style={{ width: "100%" }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                gap: 1,
-                alignItems: "center",
-                fontWeight: "bold",
-                marginTop: "10px",
-                marginBottom: "10px",
-                cursor: "pointer"
-              }}
-            >
-              <span
-                onClick={handleFolderChange}
-                style={{
-                  color: selectedFolder ? "grey" : "var(--theme-color)",
-                }}
-              >
-                All Folders
-              </span>
-              {selectedFolder && (
-                <>
-                  <span style={{ color: "var(--theme-color)" }}>{">"}</span>
-                  <span style={{ color: "var(--theme-color)" }}>
-                    {selectedFolder}
-                  </span>
-                </>
+              <SectionTitle label="All Campaign" value="all" />
+              <SectionTitle label="Folders" value="folders" />
+              {activeTab === "all" && (
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: "15px",
+                    width: "100%",
+                    alignItems: "center",
+                    justifyContent: "flex-end",
+                  }}
+                >
+                  <SearchBar>
+                    <Search size={20} />
+                    <input
+                      placeholder="Search by Campaign Name"
+                      value={searchQuery}
+                      onChange={handleSearchChange}
+                    />
+                  </SearchBar>
+                  <Button onClick={handleCreateCampaign}>
+                    Create Campaign
+                  </Button>
+                </Box>
               )}
-            </Box>
-            <CampaignFolder
-              selectedFolder={selectedFolder}
-              setSelectedFolder={setSelectedFolder}
+              {activeTab === "folders" && (
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: "15px",
+                    alignItems: "center",
+                    marginLeft: "auto",
+                  }}
+                >
+                  <EmailCampaignDialog
+                    open={createFolder}
+                    onClose={() => setCreateFolder(false)}
+                  />
+                  <Button2
+                    background="var(--theme-color)"
+                    color="white"
+                    style={{ height: "90%" }}
+                    onClick={(event) => handleCreateFolder(event)}
+                  >
+                    Create Folder
+                  </Button2>
+                </Box>
+              )}
+            </Tabs>
+          </SectionHeader>
+
+          {loading && <ProgressBar />}
+          {activeTab === "all" ? (
+            <EmailCampaignTable
+              campaigns={campaigns}
+              loading={loading}
+              handlePause={handlePause}
+              handleResume={handleResume}
+              handleEditCampaign={handleEditCampaign}
+              handleOpenDeleteDialog={handleOpenDeleteDialog}
+              handleMoveFolderOpen={handleMoveFolderOpen}
+              handleDetailCampaign={handleDetailCampaign}
+              handleMenuOpen={handleMenuOpen}
+              handleMenuClose={handleMenuClose}
+              anchorEl={anchorEl}
+              selectedCampaign={selectedCampaign}
             />
-          </motion.div>
-        </EmailCampaignContainer>
-      )}
+          ) : (
+            <EmailCampaignContainer>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                style={{ width: "100%" }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: 1,
+                    alignItems: "center",
+                    fontWeight: "bold",
+                    marginTop: "10px",
+                    marginBottom: "10px",
+                    cursor: "pointer",
+                  }}
+                >
+                  <span
+                    onClick={handleFolderChange}
+                    style={{
+                      color: selectedFolder ? "grey" : "var(--theme-color)",
+                    }}
+                  >
+                    All Folders
+                  </span>
+                  {selectedFolder && (
+                    <>
+                      <span style={{ color: "var(--theme-color)" }}>{">"}</span>
+                      <span style={{ color: "var(--theme-color)" }}>
+                        {selectedFolder}
+                      </span>
+                    </>
+                  )}
+                </Box>
+                {/* <CampaignFolder
+                  selectedFolder={selectedFolder}
+                  setSelectedFolder={setSelectedFolder}
+                /> */}
+                {folders && folders.length > 0 ? (
+                  <CampaignFolder
+                    selectedFolder={selectedFolder}
+                    setSelectedFolder={setSelectedFolder}
+                    handleEditCampaign={handleEditCampaign}
+                    handleOpenDeleteDialog={handleOpenDeleteDialog}
+                    handleMoveFolderOpen={handleMoveFolderOpen}
+                    handleDetailCampaign={handleDetailCampaign}
+                    handleMenuOpen={handleMenuOpen}
+                    handleMenuClose={handleMenuClose}
+                    anchorEl={anchorEl}
+                    selectedCampaign={selectedCampaign}
+                  />
+                ) : (
+                  <Box
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      padding: "60px 0px",
+                      width: "100%",
+                    }}
+                  >
+                    <Box
+                      style={{
+                        alignItems: "center",
+                        display: "flex",
+                        flexDirection: "column",
+                        maxWidth: "570px",
+                        width: "100%",
+                      }}
+                    >
+                      <FolderOpenOutlinedIcon
+                        style={{ height: "20%", width: "20%" }}
+                      />
+                      <Typography
+                        style={{ textAlign: "center", fontWeight: "200" }}
+                      >
+                        Campaign Organization with Folders
+                      </Typography>
+                      Streamline Your Workflow by Grouping Campaigns into Folders
+                      :rocket:.
+                      <EmailCampaignDialog
+                        open={createFolder}
+                        onClose={() => setCreateFolder(false)}
+                      />
+                      <Button2
+                        background="var(--theme-color)"
+                        color="white"
+                        style={{
+                          width: "25%",
+                          height: "25%",
+                          marginTop: "10px",
+                          padding: "0px",
+                        }}
+                        onClick={(event) => handleCreateFolder(event)}
+                      >
+                        Create Folder
+                      </Button2>
+                    </Box>
+                  </Box>
+                )}
+              </motion.div>
+            </EmailCampaignContainer>
+          )}
+        </>
+      ) : null}
 
       <ConfirmDeleteDialog
         open={openDeleteDialog}
