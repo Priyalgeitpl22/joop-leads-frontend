@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from "react";
 import {
   Box,
+  FormControl,
+  InputLabel,
+  Link,
+  Menu,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
   Tabs,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { motion } from "framer-motion";
@@ -10,6 +18,7 @@ import {
   SectionHeader,
   EmailCampaignContainer,
   SectionTitle,
+  FilterIcon
 } from "./EmailCampaign.styled";
 import { SearchBar } from "../../components/Header/header.styled";
 import { Search } from "lucide-react";
@@ -17,6 +26,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   DeleteEmailCampaign,
   fetchEmailCampaigns,
+  filterCamapign,
   SearchEmailCampaign,
   UpdateCampaignStatus,
 } from "../../redux/slice/emailCampaignSlice";
@@ -32,8 +42,13 @@ import EmailCampaignDialog from "./EmailCampaignDialog/AddEmailCampaignDialog";
 import CampaignFolder from "./Folder/CampaignFolder";
 import MoveToFolderDialog from "./MoveToFolderDialog";
 import EmailCampaignTable from "./EmailCampaignTable";
-import FolderOpenOutlinedIcon from "@mui/icons-material/FolderOpenOutlined";
+import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
+import { Dayjs } from "dayjs";
+import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
+
 import { showFolders } from "../../redux/slice/emailCampaignFolderSlice";
+
 
 const EmailCampaign: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -43,8 +58,7 @@ const EmailCampaign: React.FC = () => {
   console.log(location,"Location");
   const pathParts = location.pathname.split("/");
   const tab = pathParts[2]; 
-  console.log("active tab--->",tab )
-
+  
   const [campaigns, setCampaigns] = useState<IEmailCampaign[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const navigate = useNavigate();
@@ -54,10 +68,30 @@ const EmailCampaign: React.FC = () => {
   const [activeTab, setActiveTab] = useState(tab);
   const [createFolder, setCreateFolder] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [filterOpen, setFilterOpen] = useState<null | HTMLElement>(null);
   const [moveToFolderDialog, setMoveToFolderDialog] = useState(false);
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
+  const [filters, setFilters] = useState({
+    status: "",
+  });
 
-  // const open = Boolean(anchorEl);
+  const filterOptions: Record<"status", string[]> = {
+    status: ["SCHEDULED", "RUNNING", "PAUSED", "DRAFT", "COMPLETED"],
+  };
+ 
+
+  const [dateFilters, setDateFilters] = useState<{
+    startDate: Dayjs | null;
+    endDate: Dayjs | null;
+    [key: string]: string | Dayjs | null;
+  }>({
+    startDate: null,
+    endDate: null,
+  });
+  const isFilterOpen = Boolean(filterOpen);
+  const folders = useSelector((state: any) => state.folder.folders);
+  console.log("folderrr", folders.length);
+
 
   useEffect(() => {
     if (tab) {
@@ -86,29 +120,41 @@ const EmailCampaign: React.FC = () => {
     navigate(`/email-campaign/${newValue}`, { replace: true });
   };
 
-  // useEffect(() => {
-  //   dispatch(showFolders());
-  // }, [dispatch]);
+   const handleFilterChange =
+     (field: keyof typeof filters) => (event: SelectChangeEvent<string>) => {
+       setFilters((prev) => ({
+         ...prev,
+         [field]: event.target.value,
+       }));
+     };
+   const handleDateChange =
+     (field: "startDate" | "endDate") => (value: Dayjs | null) => {
+       setDateFilters((prev) => ({
+         ...prev,
+         [field]: value,
+       }));
+     };
+      
 
-  // const handleMenuOpen = (
-  //     event: React.MouseEvent<HTMLButtonElement>,
-  //   ) => {
-  //     setAnchorEl(event.currentTarget);
-  //   };
+  const handleMenuOpen1 = (event: any) => {
+    setFilterOpen(event.currentTarget);
+  };
 
   const handleMenuOpen = (
     event: React.MouseEvent<HTMLElement>,
-    campaignId: string
+    campaignId?: string
   ) => {
     setAnchorEl(event.currentTarget);
-    setSelectedCampaign(campaignId);
+    setSelectedCampaign(campaignId || "");
   };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
     setSelectedCampaign(null);
   };
-
+  const handleFilterClose = () => {
+    setFilterOpen(null);
+  };
   const handleCreateFolder = (event?: React.MouseEvent) => {
     if (event) {
       event.stopPropagation();
@@ -246,7 +292,226 @@ const EmailCampaign: React.FC = () => {
     navigate(`/email-campaign/folders`)
   }
 
+  const handleApplyFilters = async () => {
+    try {
+      const filterData = await dispatch(
+        filterCamapign({
+          status: filters.status,
+          startDate: dateFilters.startDate
+            ? dateFilters.startDate.format("YYYY-MM-DD")
+            : "",
+          endDate: dateFilters.endDate
+            ? dateFilters.endDate.format("YYYY-MM-DD")
+            : "",
+        })
+      );
+      setCampaigns(filterData.payload.data);
+      handleFilterClose();
+    } catch (error) {
+      console.error("Error applying filters:", error);
+    }
+  };
+  const handleClearFilters = () => {
+    setFilters({ status: "" });
+    setDateFilters({ startDate: null, endDate: null });
+    getAllEmailCampaigns();
+    handleFilterClose();
+  };
+
+
   return (
+
+    <ContentContainer>
+      <SectionHeader>
+        <Tabs
+          value={activeTab}
+          onChange={handleTabChange}
+          sx={{
+            "& .MuiTab-root": {
+              fontSize: "14px",
+              fontWeight: "600",
+              color: "#35495c",
+            },
+            "& .MuiTab-root.Mui-selected": {
+              color: "var(--theme-color)",
+            },
+          }}
+        >
+          <SectionTitle label="All Campaign" value="all" />
+          <SectionTitle label="Folders" value="folders" />
+          {activeTab === "all" && (
+            <Box
+              sx={{
+                display: "flex",
+                gap: "15px",
+                width: "100%",
+                alignItems: "center",
+                justifyContent: "flex-end",
+              }}
+            >
+              <SearchBar>
+                <Search size={20} />
+                <input
+                  placeholder="Search by Campaign Name"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                />
+              </SearchBar>
+              <Tooltip title="Filter" arrow>
+            <FilterIcon onClick={handleMenuOpen1}>
+            <FilterAltOutlinedIcon />
+            </FilterIcon>
+          </Tooltip>
+              <Button onClick={handleCreateCampaign}>Create Campaign</Button>
+            </Box>
+          )}
+          {activeTab === "folders" && (
+            <Box
+              sx={{
+                display: "flex",
+                gap: "15px",
+                alignItems: "center",
+                marginLeft: "auto",
+              }}
+            >
+              <EmailCampaignDialog
+                open={createFolder}
+                onClose={() => setCreateFolder(false)}
+              />
+              <Button2
+                background="var(--theme-color)"
+                color="white"
+                style={{ height: "90%" }}
+                onClick={(event) => handleCreateFolder(event)}
+              >
+                Create Folder
+              </Button2>
+            </Box>
+          )}
+        </Tabs>
+      </SectionHeader>
+
+      {loading && <ProgressBar />}
+    <Menu
+      anchorEl={filterOpen}
+      open={isFilterOpen}
+      onClose={handleFilterClose}
+      MenuListProps={{ "aria-labelledby": "profile-menu-button" }}
+      sx={{
+        "& .MuiMenu-paper": {
+          minWidth: "320px",
+          padding: "10px",
+          boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+          borderRadius: "8px",
+        },
+      }}
+    >
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={1}
+      >
+        <Typography fontWeight="bold" fontSize={14}>
+          Filter
+        </Typography>
+        <Link
+          href="#"
+          underline="hover"
+          onClick={handleClearFilters}
+          sx={{ color: "var(--theme-color)", fontSize: "14px" }}
+        >
+          Clear all
+        </Link>
+      </Box>
+      <Box sx={{ mt: 2 }}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DesktopDatePicker
+            label="Start Date *"
+            value={dateFilters.startDate}
+            onChange={handleDateChange("startDate")}
+            sx={{ borderRadius: "8px" }} 
+          />
+        </LocalizationProvider>
+
+
+        <Box sx={{ mt: 2 }}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DesktopDatePicker
+              label="End Date *"
+              value={dateFilters.endDate}
+              onChange={handleDateChange("endDate")}
+              sx={{ borderRadius: "8px" }} // Adding border-radius to the End Date picker
+            />
+          </LocalizationProvider>
+        </Box>
+      </Box>
+      {Object.keys(filterOptions).map((label) => (
+        <FormControl key={label} fullWidth sx={{ mt: 2 }} variant="outlined">
+          <InputLabel>{label}</InputLabel>
+          <Select
+            value={filters[label.toLowerCase() as keyof typeof filters] || ""}
+            onChange={handleFilterChange(
+              label.toLowerCase() as keyof typeof filters
+            )}
+            label={label}
+            sx={{
+              borderRadius: "10px",
+              backgroundColor: "var(--text-white)",
+
+
+              "& .MuiOutlinedInput-input": {
+                backgroundColor: "var(--text-white)",
+              },
+            }}
+          >
+            {filterOptions[label as keyof typeof filterOptions]?.map(
+              (option) => (
+                <MenuItem key={option} value={option}>
+                  {option}
+                </MenuItem>
+              )
+            )}
+          </Select>
+        </FormControl>
+      ))}
+
+
+      <Box display="flex" justifyContent="space-between" mt={2}>
+        <Button2 onClick={handleFilterClose} color={""} background={""}>
+          Cancel
+        </Button2>
+        <Button onClick={handleApplyFilters}>Apply</Button>
+      </Box>
+    </Menu>
+
+
+      {loading && <ProgressBar />}
+      {activeTab === "all" ? (
+        <EmailCampaignTable
+          campaigns={campaigns}
+          loading={loading}
+          handlePause={handlePause}
+          handleResume={handleResume}
+          handleEditCampaign={handleEditCampaign}
+          handleOpenDeleteDialog={handleOpenDeleteDialog}
+          handleMoveFolderOpen={handleMoveFolderOpen}
+          handleDetailCampaign={handleDetailCampaign}
+          handleMenuOpen={handleMenuOpen}
+          handleMenuClose={handleMenuClose}
+          anchorEl={anchorEl}
+          selectedCampaign={selectedCampaign}
+        />
+      ) : (
+        <EmailCampaignContainer>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            style={{ width: "100%" }}
+          >
+            <Box
+
     <ContentContainer
       style={{
         height: activeTab === "all" || activeTab === "folders" ? "100%" : "0",
@@ -260,6 +525,7 @@ const EmailCampaign: React.FC = () => {
             <Tabs
               value={activeTab}
               onChange={handleTabChange}
+
               sx={{
                 "& .MuiTab-root": {
                   fontSize: "14px",
