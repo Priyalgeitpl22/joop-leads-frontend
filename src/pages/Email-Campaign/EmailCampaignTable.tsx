@@ -182,9 +182,13 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
                     {campaign?.campaignName}
                     {campaign?.campaign_name}
                   </h6>
-                  <p>{`${campaign?.status} | ${formatDateTime(
-                    campaign?.createdAt
-                  )} | ${campaign?.sequences?.length} Sequences`}</p>
+                  <p>
+                    {campaign.status} | {formatDateTime(campaign.createdAt)} |{" "}
+                    {campaign.sequences && campaign.sequences.length > 0
+                      ? campaign.sequences.length
+                      : campaign.sequence_count}{" "}
+                    Sequences
+                  </p>
                 </div>
               </CustomTableCell>
 

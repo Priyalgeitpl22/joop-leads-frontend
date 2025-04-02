@@ -21,13 +21,14 @@ export interface IEmailCampaign {
   sequences: Sequence[];
   createdAt: string;
   analytics_count: {
-    campaignId: number
-    bounced_count: number
-    opened_count: number
-    clicked_count: number
-    sent_count: number
-  }
-  campaignStats: any
+    campaignId: number;
+    bounced_count: number;
+    opened_count: number;
+    clicked_count: number;
+    sent_count: number;
+  };
+  campaignStats: any;
+  sequence_count: number;
 }
 
 export interface IContacts {

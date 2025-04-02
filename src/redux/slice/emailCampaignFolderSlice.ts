@@ -64,6 +64,7 @@ export const showFolderDetail = createAsyncThunk<
         createdAt: campaign?.campaign?.createdAt,
         status: campaign?.campaign?.status,
         analytics: campaign?.campaign?.CampaignAnalytics?.[0] || {},
+        sequence_count: folder?.sequence_count,
       })) || [];
 
     const folderAnalytics = campaigns.length > 0 ? campaigns[0].analytics : {};
@@ -102,7 +103,7 @@ export const addFolder = createAsyncThunk(
           },
         }
       );
-      return response.data.data;
+      return response.data;
     } catch (error) {
       console.error("Error adding folder:", error);
       return rejectWithValue("Network error");
@@ -131,10 +132,10 @@ export const showFolders = createAsyncThunk(
 );
 
 export const deleteFolder = createAsyncThunk<
-  string,
+  any,
   string,
   { rejectValue: string }
->("folder/deleteFolder", async (folderId: string, { rejectWithValue }) => {
+>("folder/deleteFolder", async (folderId, { rejectWithValue }) => {
   try {
     const response = await api.delete(`/folder/${folderId}`, {
       headers: {
@@ -142,7 +143,7 @@ export const deleteFolder = createAsyncThunk<
       },
     });
     console.log("response", response);
-    return folderId;
+    return response.data;
   } catch (error: any) {
     return rejectWithValue(
       error.response?.data?.message || "Failed to delete folder"
@@ -168,19 +169,17 @@ export const updateFolder = createAsyncThunk(
   }
 );
 
-export const addCampaignToFolder = createAsyncThunk(
+export const addCampaignToFolder = createAsyncThunk<
+  any,
+  { campaignId: string; folderId: string },
+  { rejectValue: string }
+>(
   "folder/addCampaignToFolder",
-  async (
-    { campaignId, folderId }: { campaignId: string; folderId: string },
-    { rejectWithValue }
-  ) => {
+  async ({ campaignId, folderId }, { rejectWithValue }) => {
     try {
       const response = await api.post(
         `/email-campaign/add`,
-        {
-          campaignId,
-          folderId,
-        },
+        { campaignId, folderId },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -188,11 +187,10 @@ export const addCampaignToFolder = createAsyncThunk(
           },
         }
       );
-
       return response.data;
-    } catch (error) {
-      console.error("Error adding campaign to folder:", error);
-      return rejectWithValue("Network error");
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || "Network error";
+      return rejectWithValue(errorMessage);
     }
   }
 );

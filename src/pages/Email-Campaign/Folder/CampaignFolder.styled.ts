@@ -24,7 +24,7 @@ export const Icon = styled(Box)({
 });
 
 export const FoldersIcon = styled(FolderIcon)({
-  color: "var(--secondary-color)"
+  color: "var(--theme-color)",
 });
 
 export const FolderMenu = styled(Menu)({

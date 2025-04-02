@@ -6,8 +6,6 @@ import {
   DialogActions,
   IconButton,
   Typography,
-  Checkbox,
-  FormControlLabel,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { Button2 } from "../../../styles/layout.styled";
@@ -26,6 +24,7 @@ const ConfirmDeleteDialog: React.FC<ConfirmDeleteDialogProps> = ({
   folderId,
 }) => {
   const [deleteCampaigns, setDeleteCampaigns] = useState(false);
+  console.log(setDeleteCampaigns);
 
   const handleConfirmDelete = () => {
     if (folderId) {
@@ -61,7 +60,7 @@ const ConfirmDeleteDialog: React.FC<ConfirmDeleteDialogProps> = ({
           Are you sure you want to delete the folder?
         </Typography>
 
-        <FormControlLabel
+        {/* <FormControlLabel
           control={
             <Checkbox
               checked={deleteCampaigns}
@@ -70,7 +69,7 @@ const ConfirmDeleteDialog: React.FC<ConfirmDeleteDialogProps> = ({
           }
           label="Do you wish to delete the campaigns within this folder?"
           sx={{ fontSize: 14 }}
-        />
+        /> */}
       </DialogContent>
 
       <DialogActions sx={{ padding: "16px 24px", gap: "8px" }}>

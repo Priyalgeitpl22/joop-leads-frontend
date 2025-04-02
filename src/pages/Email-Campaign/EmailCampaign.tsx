@@ -70,6 +70,7 @@ const EmailCampaign: React.FC = () => {
   const [filters, setFilters] = useState({
     status: "",
   });
+  const [folderCampaignDelete,setFolderCampaignDelete] = useState<string | null>(null);
 
   const filterOptions: Record<"status", string[]> = {
     status: ["SCHEDULED", "RUNNING", "PAUSED", "DRAFT", "COMPLETED"],
@@ -223,6 +224,7 @@ const EmailCampaign: React.FC = () => {
         DeleteEmailCampaign(selectedCampaign)
       ).unwrap();
       if (response?.code === 200) {
+        setFolderCampaignDelete(selectedCampaign);
         toast.success(
           response?.message || "Contacts have been deactivated successfully."
         );
@@ -563,6 +565,7 @@ const EmailCampaign: React.FC = () => {
                     handleMenuClose={handleMenuClose}
                     anchorEl={anchorEl}
                     selectedCampaign={selectedCampaign}
+                    folderCampaignDel={folderCampaignDelete}
                   />
                 ) : (
                   <Box

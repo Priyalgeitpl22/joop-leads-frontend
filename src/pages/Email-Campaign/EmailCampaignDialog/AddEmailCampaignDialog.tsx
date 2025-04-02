@@ -10,11 +10,13 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useDispatch, useSelector } from "react-redux";
-import { addFolder } from "../../../redux/slice/emailCampaignFolderSlice";
+import { addFolder, showFolders } from "../../../redux/slice/emailCampaignFolderSlice";
 import {
   selectFolderError,
 } from "../../../redux/slice/emailCampaignFolderSlice";
 import { AppDispatch } from "../../../redux/store/store";
+import toast from "react-hot-toast";
+
 interface EmailCampaignDialogProps {
   open: boolean;
   onClose: () => void;
@@ -32,10 +34,15 @@ const EmailCampaignDialog: React.FC<EmailCampaignDialogProps> = ({
     const folderName = folderNameRef.current?.value.trim();
     if (folderName) {
       try {
-        await dispatch(addFolder(folderName));
+        const response = await dispatch(addFolder(folderName)).unwrap();
+
+        if (response?.message) {
+          toast.success(response.message);
+        }
+        dispatch(showFolders());
         onClose();
-      } catch (err) {
-        console.error("Error creating folder:", err);
+      } catch (error) {
+        toast.error("Failed to create folder");
       }
     }
   };
