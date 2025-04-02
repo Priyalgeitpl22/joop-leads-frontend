@@ -398,7 +398,7 @@ const EmailCampaign: React.FC = () => {
             </Tabs>
           </SectionHeader>
 
-          {loading && <ProgressBar />}
+          {/* {loading && <ProgressBar />} */}
           <Menu
             anchorEl={filterOpen}
             open={isFilterOpen}
