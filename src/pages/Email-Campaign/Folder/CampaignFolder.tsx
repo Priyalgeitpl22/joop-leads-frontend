@@ -15,7 +15,6 @@ import {
 } from "../../../redux/slice/emailCampaignFolderSlice";
 import {
   selectFolderLoading,
-  selectFolderError,
 } from "../../../redux/slice/emailCampaignFolderSlice";
 import {
   CampaignsFolder,
@@ -30,8 +29,12 @@ import ViewFolderDialog from "./ViewFolderDialog";
 import { IEmailCampaign } from "../NewCampaign/interfaces";
 import EmailCampaignTable from "../EmailCampaignTable";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const CampaignFolder = ({
+  loading,
+  handlePause,
+  handleResume,
   setSelectedFolder,
   selectedFolder,
   handleEditCampaign,
@@ -41,8 +44,12 @@ const CampaignFolder = ({
   handleMenuOpen,
   handleMenuClose,
   anchorEl,
-  selectedCampaign
+  selectedCampaign,
+  folderCampaignDel,
 }: {
+  loading: boolean;
+  handlePause: (campaignId: string) => Promise<void>;
+  handleResume: (campaignId: string) => Promise<void>;
   setSelectedFolder: (folder: string) => void;
   selectedFolder: string | null;
   handleEditCampaign: (campaignId: string) => void;
@@ -56,6 +63,7 @@ const CampaignFolder = ({
   handleMenuClose: () => void;
   anchorEl: null | HTMLElement;
   selectedCampaign: string | null;
+  folderCampaignDel: string | null ;
 }) => {
   const [anchorEl1, setAnchorEl1] = useState<null | HTMLElement>(null);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -68,14 +76,22 @@ const CampaignFolder = ({
 
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  console.log(loadingCampaigns);
 
   const folders = useSelector((state: any) => state.folder.folders);
-  const loading = useSelector(selectFolderLoading);
-  const error = useSelector(selectFolderError);
+  const loading1 = useSelector(selectFolderLoading);
 
   useEffect(() => {
-    dispatch(showFolders());
-  }, [dispatch]);
+    if (folderCampaignDel && selectedFolderId) {
+      setFolderCampaigns((prevCampaigns) =>
+        prevCampaigns.filter((campaign) => campaign.id !== folderCampaignDel)
+      );
+    }
+  }, [folderCampaignDel, selectedFolderId]);
+
+  // useEffect(() => {
+  //   dispatch(showFolders());
+  // }, [dispatch]);
 
   const handleMenuOpenbox = (
     event: React.MouseEvent<HTMLButtonElement>,
@@ -112,8 +128,18 @@ const CampaignFolder = ({
 
   const handleConfirmDelete = (folderId: string, _deleteCampaigns: boolean) => {
     if (folderId) {
-      dispatch(deleteFolder(folderId));
-      setOpenDeleteDialog(false);
+      dispatch(deleteFolder(folderId))
+        .unwrap()
+        .then((response) => {
+          if (response?.code === 200) {
+            toast.success(response?.message || "Folder deleted successfully.");
+          }
+          setOpenDeleteDialog(false);
+          dispatch(showFolders());
+        })
+        .catch((error) => {
+          toast.error(error?.message || "Failed to delete folder");
+        });
     }
   };
 
@@ -127,7 +153,8 @@ const CampaignFolder = ({
       if (response && Array.isArray(response.campaigns)) {
         const transformedCampaigns: IEmailCampaign[] = response.campaigns.map(
           (campaign: any) => ({
-            id: campaign?.id,
+            id: campaign?.analytics?.campaignId,
+            sequence_count: campaign?.sequence_count,
             campaignName: campaign?.campaignName,
             created_at: campaign?.createdAt || "",
             campaign_status: campaign?.status || "Unknown",
@@ -143,7 +170,7 @@ const CampaignFolder = ({
               clicked_count: campaign?.clicked_count,
               sent_count: campaign?.sent_count,
             },
-            campaignStats: campaign.campaignStats || {},
+            campaignStats: campaign?.campaignStats || {},
           })
         );
 
@@ -167,31 +194,14 @@ const CampaignFolder = ({
     handleMenuClosebox();
   };
 
-  const handlePause = async (campaignId: string) => {
-    try {
-      console.log(`Pausing campaign: ${campaignId}`);
-    } catch (error) {
-      console.error("Error pausing campaign:", error);
-    }
-  };
-
-  const handleResume = async (campaignId: string) => {
-    try {
-      console.log(`Resuming campaign: ${campaignId}`);
-    } catch (error) {
-      console.error("Error resuming campaign:", error);
-    }
-  };
   return (
     <div>
-      {loading ? (
+      {loading1 ? (
         <CircularProgress />
-      ) : error ? (
-        <Box sx={{ color: "red" }}>Error: {error}</Box>
       ) : selectedFolder ? (
         <EmailCampaignTable
           campaigns={folderCampaigns}
-          loading={loadingCampaigns}
+          loading={loading}
           handlePause={handlePause}
           handleResume={handleResume}
           handleEditCampaign={handleEditCampaign}
@@ -206,11 +216,20 @@ const CampaignFolder = ({
       ) : (
         <Grid2 container spacing={3}>
           {folders.map((folder: any) => (
-            <Grid2 size={{xs:12, sm:4, md:3}} key={folder.id}>
+            <Grid2 size={{ xs: 12, sm: 4, md: 3 }} key={folder.id}>
               <CampaignsFolder>
                 <Icon onClick={() => handleFolderClick(folder.id, folder.name)}>
                   <FoldersIcon />
-                  <Box sx={{cursor: "pointer"}}>{folder.name}</Box>
+                  <Box
+                    sx={{
+                      cursor: "pointer!important",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      maxWidth: "100%",
+                    }}
+                  >
+                    {folder.name}
+                  </Box>
                 </Icon>
                 <IconButton
                   size="small"

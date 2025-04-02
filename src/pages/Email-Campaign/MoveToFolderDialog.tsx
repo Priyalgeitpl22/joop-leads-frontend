@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
   Dialog,
   DialogContent,
@@ -13,11 +13,11 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  showFolders,
   addCampaignToFolder,
 } from "../../redux/slice/emailCampaignFolderSlice";
 import { AppDispatch } from "../../redux/store/store";
 import { FoldersIcon } from "./Folder/CampaignFolder.styled";
+import toast from "react-hot-toast";
 
 const MoveToFolderDialog: React.FC<{
   open: boolean;
@@ -28,18 +28,26 @@ const MoveToFolderDialog: React.FC<{
 
   const folders = useSelector((state: any) => state.folder.folders);
   const loading = useSelector((state: any) => state.folder.loading);
-  const error = useSelector((state: any) => state.folder.error);
 
-  useEffect(() => {
-    if (open) {
-      dispatch(showFolders());
-    }
-  }, [open, dispatch]);
+  // useEffect(() => {
+  //   if (open) {
+  //     dispatch(showFolders());
+  //   }
+  // }, [open, dispatch]);
 
   const handleMoveToFolder = (folderId: string) => {
     if (campaignId) {
-      dispatch(addCampaignToFolder({ campaignId, folderId }));
-      onClose();
+      dispatch(addCampaignToFolder({ campaignId, folderId }))
+        .unwrap()
+        .then((response) => {
+          if (response?.message) {
+            toast.success(response.message);
+          }
+          onClose();
+        })
+        .catch((error) => {
+          toast.error(error || "Failed to move campaign");
+        });
     }
   };
 
@@ -76,8 +84,6 @@ const MoveToFolderDialog: React.FC<{
       >
         {loading ? (
           <Typography>Loading folders...</Typography>
-        ) : error ? (
-          <Typography color="error">Error: {error}</Typography>
         ) : (
           <List>
             {folders.map((folder: any) => (

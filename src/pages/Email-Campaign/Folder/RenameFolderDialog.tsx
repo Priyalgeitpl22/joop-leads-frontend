@@ -12,6 +12,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useDispatch } from "react-redux";
 import { showFolders, updateFolder } from "../../../redux/slice/emailCampaignFolderSlice";
 import { AppDispatch } from "../../../redux/store/store";
+import toast from 'react-hot-toast';
 
 interface RenameFolderDialogProps {
   open: boolean;
@@ -35,12 +36,17 @@ const RenameFolderDialog: React.FC<RenameFolderDialogProps> = ({
   const handleSave = () => {
     if (folderId) {
       dispatch(updateFolder({ id: folderId, data: { name: newName } }))
-      .then(
-        () => {
+        .unwrap()
+        .then((response) => {
+          if (response?.message) {
+            toast.success(response.message);
+          }
           dispatch(showFolders());
-        }
-      );
-      onClose();
+          onClose();
+        })
+        .catch((error) => {
+          toast.error(error?.message || "Failed to update folder");
+        });
     }
   };
 

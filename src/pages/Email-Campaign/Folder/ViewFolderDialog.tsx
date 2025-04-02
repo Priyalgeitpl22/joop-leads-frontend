@@ -1,10 +1,9 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Stack, Divider, Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import CampaignIcon from "@mui/icons-material/Campaign";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../../redux/store/store";
-import { showFolderDetail } from "../../../redux/slice/emailCampaignFolderSlice";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/store/store";
 import {
   StyledDrawer,
   TitleContainer,
@@ -27,19 +26,17 @@ interface ViewDrawerProps {
 const ViewDrawer: React.FC<ViewDrawerProps> = ({
   open,
   onClose,
-  selectedId,
 }) => {
-  const dispatch = useDispatch<AppDispatch>();
 
   const { folderDetail, loading, error } = useSelector(
     (state: RootState) => state.folder
   );
 
-  useEffect(() => {
-    if (selectedId) {
-      dispatch(showFolderDetail(selectedId));
-    }
-  }, [dispatch, selectedId]);
+  // useEffect(() => {
+  //   if (selectedId) {
+  //     dispatch(showFolderDetail(selectedId));
+  //   }
+  // }, [dispatch, selectedId]);
 
   return (
     <StyledDrawer anchor="right" open={open} onClose={onClose}>
@@ -85,7 +82,9 @@ const ViewDrawer: React.FC<ViewDrawerProps> = ({
                   </CampaignCard>
                 ))
               ) : (
-                <Typography>No campaigns available.</Typography>
+                <CampaignCard>
+                  <Typography>No campaigns available.</Typography>
+                </CampaignCard>
               )}
             </>
           ) : (

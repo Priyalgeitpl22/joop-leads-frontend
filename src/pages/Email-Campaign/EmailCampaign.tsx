@@ -70,6 +70,7 @@ const EmailCampaign: React.FC = () => {
   const [filters, setFilters] = useState({
     status: "",
   });
+  const [folderCampaignDelete,setFolderCampaignDelete] = useState<string | null>(null);
 
   const filterOptions: Record<"status", string[]> = {
     status: ["SCHEDULED", "RUNNING", "PAUSED", "DRAFT", "COMPLETED"],
@@ -103,12 +104,17 @@ const EmailCampaign: React.FC = () => {
   }, []);
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: string) => {
-    if (typeof newValue != "string") {
+    if (typeof newValue !== "string") {
       return;
     }
     setActiveTab(newValue);
+
     if (newValue === "all") {
       setSelectedFolder(null);
+    } else if (newValue === "folders") {
+      setSelectedFolder(null);
+      navigate(`/email-campaign/folders`, { replace: true });
+      return;
     }
     navigate(`/email-campaign/${newValue}`, { replace: true });
   };
@@ -218,6 +224,7 @@ const EmailCampaign: React.FC = () => {
         DeleteEmailCampaign(selectedCampaign)
       ).unwrap();
       if (response?.code === 200) {
+        setFolderCampaignDelete(selectedCampaign);
         toast.success(
           response?.message || "Contacts have been deactivated successfully."
         );
@@ -545,6 +552,9 @@ const EmailCampaign: React.FC = () => {
                         setSelectedFolder={setSelectedFolder}/> */}
                 {folders && folders.length > 0 ? (
                   <CampaignFolder
+                    loading={loading}
+                    handlePause={handlePause}
+                    handleResume={handleResume}
                     selectedFolder={selectedFolder}
                     setSelectedFolder={setSelectedFolder}
                     handleEditCampaign={handleEditCampaign}
@@ -555,6 +565,7 @@ const EmailCampaign: React.FC = () => {
                     handleMenuClose={handleMenuClose}
                     anchorEl={anchorEl}
                     selectedCampaign={selectedCampaign}
+                    folderCampaignDel={folderCampaignDelete}
                   />
                 ) : (
                   <Box
