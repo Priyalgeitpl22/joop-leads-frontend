@@ -3,7 +3,6 @@ import {
   Box,
   IconButton,
   MenuItem,
-  CircularProgress,
   Grid2,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -12,9 +11,6 @@ import {
   deleteFolder,
   showFolderDetail,
   showFolders,
-} from "../../../redux/slice/emailCampaignFolderSlice";
-import {
-  selectFolderLoading,
 } from "../../../redux/slice/emailCampaignFolderSlice";
 import {
   CampaignsFolder,
@@ -79,7 +75,6 @@ const CampaignFolder = ({
   console.log(loadingCampaigns);
 
   const folders = useSelector((state: any) => state.folder.folders);
-  const loading1 = useSelector(selectFolderLoading);
 
   useEffect(() => {
     if (folderCampaignDel && selectedFolderId) {
@@ -196,9 +191,7 @@ const CampaignFolder = ({
 
   return (
     <div>
-      {loading1 ? (
-        <CircularProgress />
-      ) : selectedFolder ? (
+      {selectedFolder ? (
         <EmailCampaignTable
           campaigns={folderCampaigns}
           loading={loading}
@@ -224,7 +217,7 @@ const CampaignFolder = ({
                     sx={{
                       cursor: "pointer!important",
                       whiteSpace: "nowrap",
-                      overflow: "hidden",
+                      // overflow: "hidden",
                       maxWidth: "100%",
                     }}
                   >
