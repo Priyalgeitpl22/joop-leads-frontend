@@ -32,6 +32,7 @@ import EditEmailAccount from "./pages/Email-Account/EditEmailAccount/EditEmailAc
 import ViewEmailCampaign from "./pages/Email-Campaign/ViewEmailCampaign/ViewEmailCampaign";
 import { Toaster } from "react-hot-toast";
 import Users from "./pages/Users/User";
+import Unsubscribe from "./pages/Unsubscribe/Unsubscribe";
 
 const UNPROTECTED_ROUTES = [
   "/login",
@@ -42,6 +43,7 @@ const UNPROTECTED_ROUTES = [
   "/confirmation",
   "/change-password",
   "/activate-account",
+  "/unsubscribe",
 ];
 
 function useDemoRouter(initialPath: string): Router {
@@ -100,6 +102,7 @@ export default function DashboardLayoutBasic() {
           {router.pathname === "/confirmation" && <PasswordResetConfirmation />}
           {router.pathname === "/change-password" && <ChangePassword />}
           {router.pathname === "/activate-account" && <ActivateAccount />}
+          {router.pathname === "/unsubscribe" && <Unsubscribe />}
         </PageContainer>
       </AppProvider>
     );
