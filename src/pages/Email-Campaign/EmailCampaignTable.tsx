@@ -100,7 +100,7 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
       }}
     >
       <Table stickyHeader>
-        <TableHead sx={{ backgroundColor: "#f8f9fc" }}>
+        <TableHead sx={{ backgroundColor: "#f8f9fc", position:"sticky" }}>
           <TableRow>
             <TableCellHead>Campaign Details</TableCellHead>
             <TableCellHead colSpan={4}>Report</TableCellHead>
