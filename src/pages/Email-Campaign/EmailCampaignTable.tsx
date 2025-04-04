@@ -25,6 +25,8 @@ import DoneIcon from "@mui/icons-material/Done";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { FolderMenu } from "./Folder/CampaignFolder.styled";
 import { CustomTableBody, CustomTableCell, CustomTableRow, TableCellHead } from "./EmailCampaign.styled";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store/store";
 
 export interface EmailCampaignTableProps {
   campaigns: IEmailCampaign[];
@@ -58,6 +60,7 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
   handleMenuOpen,
   handleMenuClose,
 }) => {
+  const { user } = useSelector((state: RootState) => state.user);
   const tableData = [
     {
       count: 0,
@@ -99,12 +102,14 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
         height: "calc(100vh - 150px)",
       }}
     >
-      <Table stickyHeader>
-        <TableHead sx={{ backgroundColor: "#f8f9fc", position:"sticky" }}>
+      <Table stickyHeader sx={{ position: "sticky" }}>
+        <TableHead sx={{ backgroundColor: "#f8f9fc" }}>
           <TableRow>
             <TableCellHead>Campaign Details</TableCellHead>
             <TableCellHead colSpan={4}>Report</TableCellHead>
+            {user?.role === "Admin" && 
             <TableCellHead>Action</TableCellHead>
+            }
             <TableCellHead></TableCellHead>
           </TableRow>
         </TableHead>
@@ -207,14 +212,15 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
                   </TableItem>
                 </CustomTableCell>
               ))}
-
-              <CustomTableCell sx={{ display: "flex" }}>
-                <Tooltip title="Delete">
-                  <GridDeleteIcon
-                    onClick={() => handleOpenDeleteDialog(campaign.id)}
-                  />
-                </Tooltip>
-              </CustomTableCell>
+              { user?.role === "Admin" &&
+                <CustomTableCell sx={{ display: "flex" }}>
+                  <Tooltip title="Delete">
+                    <GridDeleteIcon
+                      onClick={() => handleOpenDeleteDialog(campaign.id)}
+                    />
+                  </Tooltip>
+                </CustomTableCell>
+              }
               <CustomTableCell>
                 <IconButton
                   size="small"
