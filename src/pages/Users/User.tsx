@@ -79,13 +79,13 @@ const Users = () => {
       }));
     };
 
-const handleDateChange =
-   (field: "startDate" | "endDate") => (value: Dayjs | null) => {
-     setDateFilters((prev) => ({
-       ...prev,
-       [field]: value,
-     }));
-   };
+  const handleDateChange =
+    (field: "startDate" | "endDate") => (value: Dayjs | null) => {
+      setDateFilters((prev) => ({
+        ...prev,
+        [field]: value,
+      }));
+    };
 
   const handleClearFilters = () => { 
     setFilters({ role: ""});
@@ -182,24 +182,24 @@ const handleDateChange =
   const handleApplyFilter = async () => {
     try {
     const filterData = await dispatch(
-             filterUsers({
-               query: filters.role,
-               startDate: dateFilters.startDate
-                 ? dateFilters.startDate.format("YYYY-MM-DD")
-                 : "",
-               endDate: dateFilters.endDate
-                 ? dateFilters.endDate.format("YYYY-MM-DD")
-                 : "",
-             })
-           );
+            filterUsers({
+              query: filters.role,
+              startDate: dateFilters.startDate
+                ? dateFilters.startDate.format("YYYY-MM-DD")
+                : "",
+              endDate: dateFilters.endDate
+                ? dateFilters.endDate.format("YYYY-MM-DD")
+                : "",
+            })
+          );
       setFilteredRows(filterData.payload.data);
       handleMenuClose();
     } catch (error) {
       console.error("Error applying filter:", error);
     }
   };
-  const columns: GridColDef[] = useMemo(
-    () => [
+  const columns: GridColDef[] = useMemo(() => {
+    const baseColumns: GridColDef[] = [
       {
         field: "fullName",
         headerName: "Full Name",
@@ -246,7 +246,13 @@ const handleDateChange =
         field: "role",
         headerName: "Role",
         width: 150,
-        renderCell: (params) => <Box>{params?.row?.role || "N/A"} </Box>,
+        renderCell: (params) => {
+          const role = params?.row?.role;
+          const formattedRole = role
+            ? role.charAt(0).toUpperCase() + role.slice(1)
+            : "N/A";
+          return <Box>{formattedRole}</Box>;
+        },
       },
       {
         field: "createdAt",
@@ -254,7 +260,10 @@ const handleDateChange =
         width: 150,
         valueGetter: (params: any) => (params ? formatDateTime(params) : "N/A"),
       },
-      {
+    ];
+
+    if (user?.role === "Admin") {
+      baseColumns.push({
         field: "delete",
         headerName: "Delete",
         width: 100,
@@ -268,10 +277,11 @@ const handleDateChange =
             </IconButton>
           </Tooltip>
         ),
-      },
-    ],
-    []
-  );
+      });
+    }
+
+    return baseColumns;
+  }, [user?.role]);
 
   return (
     <UsersContainer>

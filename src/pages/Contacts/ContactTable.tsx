@@ -108,15 +108,15 @@ const ContactTable: React.FC = () => {
   const [campaignId, setCampaignId] = React.useState("");
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
-   const [dateFilters, setDateFilters] = useState<{ 
-      startDate: Dayjs | null; 
-      endDate: Dayjs | null; 
-      [key: string]: string | Dayjs | null; 
-    }>({
-      startDate: null,
-      endDate: null,
-  
-    });
+  const [dateFilters, setDateFilters] = useState<{ 
+    startDate: Dayjs | null; 
+    endDate: Dayjs | null; 
+    [key: string]: string | Dayjs | null; 
+  }>({
+    startDate: null,
+    endDate: null,
+
+  });
 
   const saveCSVSetting = (settings: any) => {
     setCSVsettings(settings);
@@ -133,14 +133,13 @@ const ContactTable: React.FC = () => {
           [field]: event.target.value,
         }));
       };
- const handleDateChange =
-   (field: "startDate" | "endDate") => (value: Dayjs | null) => {
-     setDateFilters((prev) => ({
-       ...prev,
-       [field]: value,
-     }));
-   };
-    
+  const handleDateChange =
+    (field: "startDate" | "endDate") => (value: Dayjs | null) => {
+      setDateFilters((prev) => ({
+        ...prev,
+        [field]: value,
+      }));
+    };
 
 
   const handleFileChange = (file: File) => {
@@ -201,14 +200,12 @@ const ContactTable: React.FC = () => {
     handleCloseDeleteDialog();
   };
 
-
-
-  const columns: GridColDef[] = useMemo(
-    () => [
+  const columns: GridColDef[] = useMemo(() => {
+    const baseColumns: GridColDef[] = [
       {
         field: "fullName",
         headerName: "Full Name",
-        width: 150,
+        width: 180,
         renderCell: (params) => (
           <Box>
             {params.row.first_name} {params.row.last_name}
@@ -219,7 +216,7 @@ const ContactTable: React.FC = () => {
       {
         field: "phone_number",
         headerName: "Phone",
-        width: 150,
+        width: 180,
         valueGetter: (params) => params || "N/A",
       },
       {
@@ -227,8 +224,6 @@ const ContactTable: React.FC = () => {
         headerName: "Used in Campaign (Count)",
         width: 120,
       },
-
-
       {
         field: "createdAt",
         headerName: "Uploaded Date",
@@ -262,10 +257,10 @@ const ContactTable: React.FC = () => {
           </span>
         ),
       },
-
       {
         field: "view",
         headerName: "View",
+        width: 60,
         renderCell: (params) => (
           <Tooltip title="View Leads Detail" arrow>
             <IconButton
@@ -276,9 +271,13 @@ const ContactTable: React.FC = () => {
           </Tooltip>
         ),
       },
-      {
+    ];
+
+    if (user?.role === "Admin") {
+      baseColumns.push({
         field: "delete",
         headerName: "Delete",
+        width: 60,
         renderCell: (_params) => (
           <Tooltip title="Delete Lead" arrow>
             <IconButton
@@ -289,10 +288,12 @@ const ContactTable: React.FC = () => {
             </IconButton>
           </Tooltip>
         ),
-      },
-    ],
-    []
-  );
+      });
+    }
+
+    return baseColumns;
+  }, [user?.role]);
+
 
   useEffect(() => {
     const getContactsAccounts = async () => {
