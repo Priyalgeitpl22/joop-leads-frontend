@@ -6,7 +6,6 @@ import {
   Box,
   Button,
   IconButton,
-  DialogActions,
   TextField,
   FormControl,
   FormHelperText,
@@ -14,25 +13,30 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../redux/store/store";
-import { CreateContactsAccount, CreateContactsAccountPayload, fetchContacts } from "../../../redux/slice/contactSlice";
+import {
+  CreateContactsAccount,
+  CreateContactsAccountPayload,
+  fetchContacts,
+  getCampaignListById,
+  UpdateContactAccount,
+} from "../../../redux/slice/contactSlice";
 import toast from "react-hot-toast";
 import { Loader } from "lucide-react";
 import { validateEmail } from "../../../utils/Validation";
 import PhoneNumberField from "../../../assets/Custom/PhoneNumberField";
-interface EmailCampaignDialogProps {
+
+interface ContactsAccountDialogProps {
   open: boolean;
   onClose: () => void;
+  selectedId: string | null;
 }
 
-
-const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
+const ContactsAccountDialogBox: React.FC<ContactsAccountDialogProps> = ({
   open,
   onClose,
+  selectedId,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
-
-
-
 
   const [formData, setFormData] = useState({
     first_name: "",
@@ -45,6 +49,7 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
     location: "",
     orgId: "",
   });
+
   const [formErrors, setFormErrors] = useState({
     first_name: "",
     email: "",
@@ -53,9 +58,14 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
 
   const [loading, setLoading] = useState(false);
 
-
   useEffect(() => {
-    if (open) {
+    if (open && selectedId) {
+      dispatch(getCampaignListById({ id: selectedId })).then((res: any) => {
+        if (res?.payload) {
+          setFormData(res.payload);
+        }
+      });
+    } else if (open && !selectedId) {
       setFormData({
         first_name: "",
         last_name: "",
@@ -73,7 +83,7 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
         phone_number: "",
       });
     }
-  }, [open])
+  }, [open, selectedId]);
 
   const validateField = (name: string, value: string) => {
     let error = "";
@@ -82,7 +92,6 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
     } else if (name === "email" && !validateEmail(value)) {
       error = "Invalid email format";
     }
-
     return error;
   };
 
@@ -99,8 +108,6 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
     }));
   };
 
-
-
   const isFormValid = () => {
     const errors: any = {};
     Object.keys(formErrors).forEach((field) => {
@@ -113,6 +120,7 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isFormValid()) return;
+    setLoading(true);
 
     const payload: CreateContactsAccountPayload = {
       first_name: formData.first_name,
@@ -126,21 +134,26 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
       orgId: formData.orgId,
     };
 
-
     try {
-      const res = await dispatch(CreateContactsAccount(payload)).unwrap();
-      toast.success(res.message || 'Contact created successfully!');
+      let res;
+      if (selectedId) {
+        res = await dispatch(
+          UpdateContactAccount({ id: selectedId, data: payload })
+        ).unwrap();
+        toast.success(res.message || "Contact updated successfully!");
+      } else {
+        res = await dispatch(CreateContactsAccount(payload)).unwrap();
+        toast.success(res.message || "Contact created successfully!");
+      }
+
       dispatch(fetchContacts());
       onClose();
-
     } catch (error: any) {
-      toast.error(error.message || 'Failed to create contact. Please try again.');
+      toast.error(error.message || "Something went wrong.");
     } finally {
       setLoading(false);
-
     }
   };
-
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -159,13 +172,12 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
           padding: "12px 24px",
         }}
       >
-        Add Lead Account
+        {selectedId ? "Edit Lead" : "Add Lead Account"}
       </DialogTitle>
       <DialogContent>
         <form onSubmit={handleSubmit}>
           <DialogContent>
             <Box display="flex" flexDirection="column" gap={2}>
-
               <TextField
                 label="First Name *"
                 name="first_name"
@@ -174,7 +186,6 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
                 fullWidth
                 error={!!formErrors.first_name}
                 helperText={formErrors.first_name}
-
               />
               <TextField
                 label="Last Name"
@@ -183,7 +194,6 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
                 onChange={handleChange}
                 fullWidth
               />
-
               <TextField
                 label="Email *"
                 name="email"
@@ -193,10 +203,7 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
                 type="email"
                 error={!!formErrors.email}
                 helperText={formErrors.email}
-
-
               />
-
               <FormControl fullWidth error={!!formErrors.phone_number}>
                 <PhoneNumberField
                   value={formData.phone_number}
@@ -212,8 +219,6 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
                   <FormHelperText>{formErrors.phone_number}</FormHelperText>
                 )}
               </FormControl>
-
-
               <TextField
                 label="Company Name"
                 name="company_name"
@@ -222,16 +227,14 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
                 fullWidth
               />
               <TextField
-                label="Linkedin Profile"
+                label="LinkedIn Profile"
                 name="linkedin_profile"
                 value={formData.linkedin_profile}
                 onChange={handleChange}
                 fullWidth
               />
-
-
               <TextField
-                label="website"
+                label="Website"
                 name="website"
                 value={formData.website}
                 onChange={handleChange}
@@ -244,16 +247,21 @@ const ContactsAccountDialogBox: React.FC<EmailCampaignDialogProps> = ({
                 onChange={handleChange}
                 fullWidth
               />
+            <Box sx={{textAlign: "right"}}>
+              <Button
+                type="submit"
+                variant="contained"
+                sx={{
+                  backgroundColor: "var(--theme-color)",
+                  cursor: !isFormValid ? "not-allowed" : "pointer",
+                }}
+                disabled={!isFormValid || loading}
+              >
+                {loading ? <Loader /> : selectedId ? "Update" : "Submit"}
+              </Button>
+            </Box>
             </Box>
           </DialogContent>
-          <DialogActions>
-            <Button type="submit" variant="contained" sx={{ backgroundColor: "var(--theme-color)", cursor: !isFormValid ? "not-allowed" : "pointer" }} disabled={!isFormValid
-
-            }>
-              {loading ? <Loader /> : "Submit"}
-
-            </Button>
-          </DialogActions>
         </form>
       </DialogContent>
     </Dialog>

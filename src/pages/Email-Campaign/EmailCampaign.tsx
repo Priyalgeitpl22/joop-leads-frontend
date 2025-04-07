@@ -351,6 +351,7 @@ const EmailCampaign: React.FC = () => {
                     gap: "15px",
                     width: "100%",
                     alignItems: "center",
+                    paddingBottom: "12px",
                     justifyContent: "flex-end",
                   }}
                 >
@@ -378,6 +379,7 @@ const EmailCampaign: React.FC = () => {
                     display: "flex",
                     gap: "15px",
                     alignItems: "center",
+                    paddingBottom: "12px",
                     marginLeft: "auto",
                   }}
                 >

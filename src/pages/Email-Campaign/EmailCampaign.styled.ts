@@ -152,7 +152,7 @@ export const CustomTabs = styled(Tabs)`
 export const SectionHeader = styled(Box)`
   min-height: 60px;
   // height: 250px;
-  padding: 12px;
+  padding: 12px 12px 0px 12px;
   background: var(--background-secondary);
 
   .MuiTabs-indicator {
