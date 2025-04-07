@@ -61,9 +61,9 @@ const EmailAccounts: React.FC = () => {
     string | null
   >(null);
 
-   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-      setAnchorEl(event.currentTarget);
-    };
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
 
   const [smtpDialogOpen, setSmtpDialogOpen] = useState<boolean>(false);
 
@@ -92,8 +92,8 @@ const EmailAccounts: React.FC = () => {
     };
 
 
-  const columns: GridColDef[] = useMemo(
-    () => [
+  const columns: GridColDef[] = useMemo(() => {
+    const baseColumns: GridColDef[] = [
       { field: "name", headerName: "Name", width: 160 },
       { field: "email", headerName: "Email", width: 260 },
       {
@@ -166,19 +166,22 @@ const EmailAccounts: React.FC = () => {
                   sx={{ cursor: "pointer" }}
                 />
               </Tooltip>
-              <Tooltip title="Delete Email Account" arrow>
-                <GridDeleteIcon
-                  sx={{ cursor: "pointer" }}
-                  onClick={() => handleOpenDeleteDialog(params.row.id)}
-                />
-              </Tooltip>
+
+              {user?.role === "Admin" && (
+                <Tooltip title="Delete Email Account" arrow>
+                  <GridDeleteIcon
+                    sx={{ cursor: "pointer" }}
+                    onClick={() => handleOpenDeleteDialog(params.row.id)}
+                  />
+                </Tooltip>
+              )}
             </Box>
           </CustomTableCell>
         ),
       },
-    ],
-    []
-  );
+    ];
+    return baseColumns;
+  }, [user?.role]);
 
   useEffect(() => {
     const getEmailAccounts = async () => {
