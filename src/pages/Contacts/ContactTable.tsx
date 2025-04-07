@@ -60,6 +60,7 @@ import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Dayjs } from "dayjs";
+import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
 
 
 
@@ -216,7 +217,7 @@ const ContactTable: React.FC = () => {
       {
         field: "phone_number",
         headerName: "Phone",
-        width: 180,
+        width: 135,
         valueGetter: (params) => params || "N/A",
       },
       {
@@ -267,6 +268,20 @@ const ContactTable: React.FC = () => {
               onClick={(event) => handleViewClick(event, params.row.id)}
             >
               <VisibilityIcon />
+            </IconButton>
+          </Tooltip>
+        ),
+      },
+      {
+        field: "edit",
+        headerName: "Edit",
+        width: 60,
+        renderCell: (params) => (
+          <Tooltip title="Edit Leads Detail" arrow>
+            <IconButton
+              onClick={(event) => handleEditClick(event, params.row.id)}
+            >
+              <ModeEditOutlineOutlinedIcon />
             </IconButton>
           </Tooltip>
         ),
@@ -413,11 +428,26 @@ const ContactTable: React.FC = () => {
   };
   const isMenuOpen = Boolean(anchorEl);
 
+  const handleEditClick = (event: React.MouseEvent, id: string) => {
+    event.stopPropagation();
+    setSelectedId(id);
+    setIsAddAccountDialogOPen(true);
+    const payload: VerifyViewContactPayload = { id };
+    dispatch(getCampaignListById(payload));
+  };
+
+
   const handleOpenDialog = () => setIsUploadDialogOpen(true);
   const handleCloseDialog = () => setIsUploadDialogOpen(false);
+  const handleAccountOpenDialog = () => {
+    setSelectedId(null);
+    setIsAddAccountDialogOPen(true);
+  };
 
-  const handleAccountOpenDialog = () => setIsAddAccountDialogOPen(true);
-  const handleAccountCloseDialog = () => setIsAddAccountDialogOPen(false);
+  const handleAccountCloseDialog = async () => {
+    setIsAddAccountDialogOPen(false);
+    await getFetchAllContacts();
+  };
 
   const handleUploadContacts = async (data: any) => {
     console.log(emailFieldsToBeAdded);
@@ -505,6 +535,7 @@ const ContactTable: React.FC = () => {
           <ContactsAccountDialogBox
             open={isAddAccountDialogOPen}
             onClose={handleAccountCloseDialog}
+            selectedId={selectedId}
           />
 
           {selectedIds.length == 0 && (

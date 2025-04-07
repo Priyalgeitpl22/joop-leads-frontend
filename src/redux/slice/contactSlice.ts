@@ -153,6 +153,23 @@ export const getCampaignListById = createAsyncThunk<
   }
 );
 
+export const UpdateContactAccount = createAsyncThunk(
+  "contact/updateContactAccount",
+  async ({ id, data }: { id: string; data: any}, { rejectWithValue }) => {
+    try {
+      const response = await api.put(`/contact/${id}`, data, {
+        headers: {
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+      });
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to update contact account"
+      );
+    }
+  }
+)
 
 export const CreateContactsAccount = createAsyncThunk<
   { message: string },
@@ -270,8 +287,8 @@ const contactsSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchContacts.fulfilled, (state, action: PayloadAction<ContactsAccount[]>) => {
-        state.loading = false;
-        state.contacts = action.payload;
+          state.loading = false;
+          state.contacts = action.payload;
 
       })
       .addCase(fetchContacts.rejected, (state, action) => {
@@ -288,8 +305,8 @@ const contactsSlice = createSlice({
         state.campaignError = null;
       })
       .addCase(getCampaignListById.fulfilled, (state, action: PayloadAction<CampaignList>) => {
-        state.campaignLoading = false;
-        state.campaignList = action.payload;
+          state.campaignLoading = false;
+          state.campaignList = action.payload;
       })
 
       .addCase(getCampaignListById.rejected, (state, action) => {
@@ -306,8 +323,8 @@ const contactsSlice = createSlice({
         state.loading = false;
       })
       .addCase(CreateContactsAccount.rejected, (state, action: PayloadAction<string | undefined>) => {
-        state.loading = false;
-        state.error = action.payload || "Something went wrong";
+          state.loading = false;
+          state.error = action.payload || "Something went wrong";
       });
   },
 });
