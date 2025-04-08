@@ -275,6 +275,31 @@ export const filterContacts = createAsyncThunk(
   }
 );
 
+
+export const UnSubscribeContact = createAsyncThunk(
+  "contact/unsubscribe",
+  async ({ email }: { email: string }, { rejectWithValue }) => {
+    try {
+      const response = await api.patch(
+        `/contact/unsubscribe`,
+        { email },
+        {
+          headers: {
+            Authorization: token ? `Bearer ${token}` : "",
+          },
+        }
+      );
+      return response.data;
+    } catch (error: any) {
+      console.log("error", error);
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to unsubscribe"
+      );
+    }
+  }
+);
+
+
 const contactsSlice = createSlice({
   name: "contacts",
   initialState,

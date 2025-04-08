@@ -90,7 +90,10 @@ export default function DashboardLayoutBasic() {
     }
   }, [dispatch, router.pathname, navigate]);
 
-  if (UNPROTECTED_ROUTES.includes(router.pathname)) {
+  if (
+    UNPROTECTED_ROUTES.some((path) => router.pathname.startsWith(path)) ||
+    router.pathname.startsWith("/unsubscribe")
+  ) {
     return (
       <AppProvider router={router} theme={theme}>
         <PageContainer>
@@ -102,7 +105,7 @@ export default function DashboardLayoutBasic() {
           {router.pathname === "/confirmation" && <PasswordResetConfirmation />}
           {router.pathname === "/change-password" && <ChangePassword />}
           {router.pathname === "/activate-account" && <ActivateAccount />}
-          {router.pathname === "/unsubscribe" && <Unsubscribe />}
+          {router.pathname.startsWith("/unsubscribe") && <Unsubscribe />}
         </PageContainer>
       </AppProvider>
     );
