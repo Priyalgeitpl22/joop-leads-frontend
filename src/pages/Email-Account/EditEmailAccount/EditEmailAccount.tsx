@@ -3,6 +3,7 @@ import {
   ContentContainer,
   CustomTab,
   CustomTabs,
+  ScrollableContent,
 } from "../../Email-Campaign/EmailCampaign.styled";
 import EditGeneralEmailAccount from "./EditGeneralEmailAccount";
 import EditCampaignEmailAccount from "./EditCampaignEmailAccount";
@@ -34,9 +35,11 @@ const EditEmailAccount = ({ id }: { id?: string }) => {
         <CustomTab label="Campaign" value="campaign" />
       </CustomTabs>
 
-      {activeTab === "general" && <EditGeneralEmailAccount id={id} />}
-      {activeTab === "warmUp" && <EditWarmupEmailAccount />}
-      {activeTab === "campaign" && <EditCampaignEmailAccount id={id}/>}
+      <ScrollableContent>
+        {activeTab === "general" && <EditGeneralEmailAccount id={id} />}
+        {activeTab === "warmUp" && <EditWarmupEmailAccount />}
+        {activeTab === "campaign" && <EditCampaignEmailAccount id={id}/>}
+      </ScrollableContent>
     </ContentContainer>
   );
 };

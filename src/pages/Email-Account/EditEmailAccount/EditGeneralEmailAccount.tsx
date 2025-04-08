@@ -309,7 +309,7 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
             <div>SMTP Settings (sending emails)</div>
           </b>
           <Grid2 container spacing={2} sx={{ justifyContent: "left", mt: 1 }}>
-            <Grid2 size={{ xs: 6, sm: 6 }}>
+            <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel>From Name</InputLabel>
               <SmtpUpdateTextField
                 fullWidth

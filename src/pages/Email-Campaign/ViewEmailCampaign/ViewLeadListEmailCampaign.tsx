@@ -15,6 +15,7 @@ import {
   InactiveStatus,
 } from "./ViewLeadListCampaign.styled";
 import { CheckCircle, XCircle } from "lucide-react";
+import { NoDataContainer } from "../../Email-Account/EditEmailAccount/EditCampaignEmailAccount.styled";
 
 interface ViewLeadListEmailCampaignProps {
   // campaignId: string;
@@ -83,15 +84,9 @@ const ViewLeadListEmailCampaign: React.FC<ViewLeadListEmailCampaignProps> = ({
               </TableRow>
             ))
           ) : (
-            <div
-              style={{
-                padding: "20px",
-                textAlign: "center",
-                color: "#888",
-              }}
-            >
-              No leads found
-            </div>
+            <TableRow>
+              <NoDataContainer colSpan={4}>No leads found</NoDataContainer>
+            </TableRow>
           )}
         </CustomTableBody>
       </Table>

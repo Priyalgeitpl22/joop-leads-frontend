@@ -45,10 +45,21 @@ const ImportSettingDialog: React.FC<ImportSettingDialogProps> = ({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+    <Dialog
+      open={open}
+      fullWidth
+      maxWidth="sm"
+      disableEscapeKeyDown
+      onClose={(_event, reason) => {
+        if (reason === "backdropClick" || reason === "escapeKeyDown") {
+          return;
+        }
+        onClose();
+      }}
+    >
       <IconButton
         onClick={onClose}
-        sx={{ position: "absolute", right: 16, top: 12 }}
+        sx={{ position: "absolute", right: 16 }}
       >
         <CloseIcon />
       </IconButton>

@@ -138,7 +138,7 @@ export const CopyButton = styled.button`
 `;
 
 export const CustomTabs = styled(Tabs)`
-  min-height: 40px;
+  min-height: 46px;
   padding: 5px 5px 0px 5px;
   background: var(--background-secondary);
 
@@ -186,11 +186,17 @@ export const ContentContainer = styled(Box)`
   width: 100%;
   display: flex;
   border-radius: 8px;
-  overflow: auto;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   background: white;
   position: relative;
   flex-direction: column;
+  height: 90vh;
+  overflow: hidden;
+`;
+
+export const ScrollableContent = styled("div")`
+  flex: 1;
+  overflow-y: auto;
 `;
 export const FilterIcon = styled(IconButton)`
   height: 40px;

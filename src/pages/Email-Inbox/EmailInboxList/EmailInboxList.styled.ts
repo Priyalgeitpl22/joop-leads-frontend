@@ -45,7 +45,7 @@ export const SearchBar = styled(Box)`
   background-color: white;
   border-radius: 5px;
   flex-grow: 1;
-  max-width: 230px;
+  max-width: 310px;
   margin-bottom: 10px;
   width: 80%;
   gap: 10px;
