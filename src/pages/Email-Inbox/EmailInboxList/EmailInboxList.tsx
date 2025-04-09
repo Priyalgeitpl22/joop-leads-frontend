@@ -7,6 +7,7 @@ import {
   resetMailboxes,
   setSelectedMailbox,
   getAllAccountMailBox,
+  reloadAccountMailboxes,
 } from "../../../redux/slice/emailInboxSlice";
 import { Search } from "lucide-react";
 import {
@@ -18,6 +19,7 @@ import {
   EmailInboxHeading,
   SearchBar,
   NoAccount,
+  RefreshRoundedbutton,
 } from "./EmailInboxList.styled";
 import { fetchEmailAccount } from "../../../redux/slice/emailAccountSlice";
 import { EmailAccount } from "../../Email-Campaign/NewCampaign/SetupCampaign/Interface";
@@ -100,6 +102,45 @@ const EmailInboxList: React.FC = () => {
     handleSearch(query);
   };
 
+  const handleReload = async () => {
+    if (!emailAccounts || emailAccounts.length === 0 || !selectedAccountId)
+      return;
+
+    try {
+      const res = await dispatch(
+        reloadAccountMailboxes({ accountId: selectedAccountId })
+      ).unwrap();
+      console.log(res,"res")
+      // if (res) {
+      //   const fetchMessages = await dispatch(
+      //     reloadAccountMessages({ accountId: selectedAccountId })
+      //   );
+      //   console.log(fetchMessages);
+      // }
+
+      await getAllEmailAccounts();
+
+      dispatch(resetMailboxes());
+      const mailboxResponse = await dispatch(
+        getAllMailBox(selectedAccountId)
+      ).unwrap();
+
+      if (mailboxResponse.length > 0) {
+        const firstMailbox = mailboxResponse[0];
+        dispatch(setSelectedMailbox(firstMailbox._id));
+        dispatch(
+          getAllAccountMailBox({
+            accountId: selectedAccountId,
+            mailBoxId: firstMailbox._id,
+          })
+        );
+      }
+    } catch (error) {
+      console.error("❌ Error while reloading account mailboxes:", error);
+    }
+  };
+  
+  
   return (
     <EmailInboxListContainer>
       <EmailInboxHeading>
@@ -114,6 +155,7 @@ const EmailInboxList: React.FC = () => {
             onChange={handleSearchChange}
           />
         </SearchBar>
+        <RefreshRoundedbutton onClick={handleReload} />
       </EmailInboxHeading>
 
       <AccountList>
