@@ -11,8 +11,6 @@ import {
 import { Search } from "lucide-react";
 import {
   EmailInboxListContainer,
-  EmailInboxListHeader,
-  HeaderTitle,
   AccountList,
   AccountItem,
   AccountAvatar,
@@ -105,9 +103,9 @@ const EmailInboxList: React.FC = () => {
   return (
     <EmailInboxListContainer>
       <EmailInboxHeading>
-        <EmailInboxListHeader>
-          <HeaderTitle>Inbox</HeaderTitle>
-        </EmailInboxListHeader>
+        {/* <EmailInboxListHeader>
+          <HeaderTitle>Accounts</HeaderTitle>
+        </EmailInboxListHeader> */}
         <SearchBar>
           <Search/>
           <input

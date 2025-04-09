@@ -267,6 +267,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
       });
       setIsVerified(false);
       setVerificationFailed(false);
+      setIsSaveDisabled(true);
     }
   }, [open]);
 

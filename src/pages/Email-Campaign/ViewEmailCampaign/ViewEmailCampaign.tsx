@@ -50,7 +50,7 @@ const ViewEmailCampaign = () => {
   };
 
   return (
-    <ContentContainer>
+    <ContentContainer style={{height: "100%"}}>
       <CustomTabs
         value={activeTab}
         onChange={handleTabChange}

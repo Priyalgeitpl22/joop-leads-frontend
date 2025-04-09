@@ -6,11 +6,13 @@ interface SidebarItemProps {
 }
 
 export const SidebarContainer = styled(Box)`
-  width: 12%;
+  width: 210px;
   height: 100%;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   padding: 10px;
-  background-color: "var(--text-white)";
+  background-color: var(--text-white);
   border-right: 1px solid #ddd;
 `;
 
@@ -35,7 +37,7 @@ export const SidebarHeader = styled(Box)`
 export const EmailInboxListHeader = styled(Box)({
   alignItems: "center",
   // marginTop: "5px",
-  marginBottom: "8px",
+  marginBottom: "13px",
   paddingBottom: "5px",
   position: "sticky",
   top: 0,
@@ -49,25 +51,32 @@ export const EmailInboxListHeader = styled(Box)({
 export const StyledDivider = styled(Divider)`
   margin-bottom: 10px;
 `;
-
 export const StyledList = styled(List)({
   maxHeight: "calc(100vh - 80px)",
   overflowY: "auto",
+  overflowX: "auto",
+  whiteSpace: "nowrap",
 });
 
 export const StyledListItem = styled(ListItem, {
   shouldForwardProp: (prop) => prop !== "active",
 })<SidebarItemProps>(({ active }) => ({
+  flex: "0 0 auto",
+  marginRight: "8px",
   padding: "8px 15px",
   borderRadius: "8px",
   cursor: "pointer",
-  fontSize: "15px",
-  borderBottom: "1px solid #eee",
+  fontSize: "13px",
+  border: "1px solid #eee",
   backgroundColor: active ? "var(--background-hover)" : "transparent",
   color: active ? "rgb(9 16 115)" : "var(--input-text)",
   fontWeight: active ? "bold" : "normal",
   transition: "background 0.2s",
-  "&:hover": { backgroundColor: "var(--background-hover)" },
+  whiteSpace: "nowrap",
+
+  "&:hover": {
+    backgroundColor: "var(--background-hover)",
+  },
 }));
 
 export const NoMailboxMessage = styled(Box)`
