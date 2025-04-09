@@ -36,8 +36,10 @@ export const SidebarHeader = styled(Box)`
 
 export const EmailInboxListHeader = styled(Box)({
   alignItems: "center",
-  // marginTop: "5px",
-  marginBottom: "13px",
+  color: "var(--active-color)",
+  textAlign: "center",
+  marginTop: "5px",
+  marginBottom: "8px",
   paddingBottom: "5px",
   position: "sticky",
   top: 0,

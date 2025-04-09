@@ -1,10 +1,10 @@
 import { SetStateAction, useState } from "react";
 import {
-  ContentContainer,
   CustomTab,
   CustomTabs,
   ScrollableContent,
 } from "../../Email-Campaign/EmailCampaign.styled";
+import { ContentContainer } from "./EditCampaignEmailAccount.styled";
 import EditGeneralEmailAccount from "./EditGeneralEmailAccount";
 import EditCampaignEmailAccount from "./EditCampaignEmailAccount";
 import EditWarmupEmailAccount from "./EditWarmupEmailAccount";

@@ -81,7 +81,7 @@ const EmailInboxSideBar = () => {
   return (
     <SidebarContainer>
       <EmailInboxListHeader>
-        <SidebarHeader>For Me</SidebarHeader>
+        <SidebarHeader>Mailbox</SidebarHeader>
       </EmailInboxListHeader>
       <StyledDivider />
       <StyledList>
