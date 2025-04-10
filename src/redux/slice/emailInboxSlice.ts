@@ -107,6 +107,39 @@ export const getAllAccountMailBox = createAsyncThunk(
   }
 );
 
+export const reloadAccountMailboxes = createAsyncThunk(
+  "emailInbox/reloadAccountMailboxes",
+  async (
+    { accountId }: { accountId: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await emailApi.post(`/accounts/${accountId}/loadmailboxes`);
+      return response.data; 
+    } catch (error: any) {
+      console.error("API Error:", error);
+      return rejectWithValue(error.response?.data?.message || "Network error");
+    }
+  }
+);
+
+export const reloadAccountMessages = createAsyncThunk(
+  "emailInbox/reloadAccountMailboxes",
+  async (
+    { accountId }: { accountId: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await emailApi.post(`/accounts/${accountId}/load-messages`);
+      return response.data; 
+    } catch (error: any) {
+      console.error("API Error:", error);
+      return rejectWithValue(error.response?.data?.message || "Network error");
+    }
+  }
+);
+
+
 const emailInboxSlice = createSlice({
   name: "emailInbox",
   initialState,

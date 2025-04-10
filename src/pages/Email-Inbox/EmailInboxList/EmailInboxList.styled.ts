@@ -1,5 +1,6 @@
 import { styled } from "@mui/material/styles";
 import { Box, List, ListItem } from "@mui/material";
+import { RefreshRounded } from "@mui/icons-material";
 
 export const EmailInboxListContainer = styled(Box)({
   width: "28%",
@@ -257,4 +258,13 @@ export const NoAccount = styled(Box)`
   margin-top: 20px;
   height: 100%;
   width: 100%;
+`;
+
+export const RefreshRoundedbutton = styled(RefreshRounded)`
+  cursor: pointer;
+  padding: 2px;
+  margin-left: 2px;
+  height: 2rem;
+  width: 2rem;
+  color: rgb(9 16 115);
 `;
