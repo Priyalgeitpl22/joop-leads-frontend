@@ -91,17 +91,17 @@ export const getAllAccountMailBox = createAsyncThunk(
   ) => {
     try {
       const response = await emailApi.get(
-        `/accounts/messages/${accountId}/${mailBoxId}`
+        `/accounts/${accountId}/${mailBoxId}/messages`
       );
 
 
       return {
-        messages: response.data?.messages || [], 
-        totalMessages: response.data?.totalMessages || 0,
+        messages: response.data?.data?.messages || [], 
+        totalMessages: response.data?.data?.totalMessages || 0,
         currentPage: Number(response.data?.data?.currentPage) || 1,
       };
     } catch (error: any) {
-      console.error("API Error:", error);
+      // console.error("API Error:", error);
       return rejectWithValue(error.response?.data?.message || "Network error");
     }
   }
