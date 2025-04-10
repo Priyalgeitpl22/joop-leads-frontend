@@ -393,7 +393,7 @@ const Users = () => {
         </Box>
       </Menu>
 
-      <Box sx={{ height: "500px", overflow: "auto" }}>
+      <Box sx={{ height: "100%", overflow: "auto" }}>
         {loading ? (
           <Box sx={{ display: "flex", justifyContent: "center", mt: 5 }}>
             <CircularProgress />
