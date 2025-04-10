@@ -418,7 +418,7 @@ const EmailAccounts: React.FC = () => {
            <Button onClick={() => console.log(filters)}>Apply</Button>
          </Box>
        </Menu>
-      <Box sx={{ height: "500px", overflow: "auto" }}>
+      <Box sx={{ height: "100%", overflow: "auto" }}>
         <EmailAccountTable>
           <CustomDataTable
             columns={columns}

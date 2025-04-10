@@ -668,7 +668,12 @@ const ContactTable: React.FC = () => {
           <Button onClick={handleApplyFilter}>Apply</Button>
         </Box>
       </Menu>
-      <Box sx={{ height: "500px", overflow: "auto" }}>
+      <Box
+        sx={{
+          height: "100%",
+          overflow: "auto",
+        }}
+      >
         <CustomDataTable
           columns={columns}
           rows={rows}

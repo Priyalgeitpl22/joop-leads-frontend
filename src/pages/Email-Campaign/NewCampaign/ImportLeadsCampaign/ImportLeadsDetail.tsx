@@ -64,11 +64,15 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
       };
 
       onEmailFieldsChange(updatedFields);
-      const hasSelection =
-        Boolean(updatedFields["Email"] && updatedFields["First Name"]) &&
-        Object.values(updatedFields).some((v) => Boolean(v));
 
-      setIsStep1Valid(!hasSelection);
+      const requiredKeys = ["First Name", "Last Name", "Email"];
+      const allRequiredMapped = requiredKeys.every((key) =>
+        Object.values(updatedFields).includes(
+          CSV_COLUMNS.find((col) => col.label === key)?.key ?? ""
+        )
+      );
+
+      setIsStep1Valid(!allRequiredMapped);
 
       return updatedFields;
     });

@@ -30,7 +30,7 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
   return (
     <Box
       sx={{
-        height: "100%", 
+        height: "100%",
         display: "flex",
         flexDirection: "column",
       }}
@@ -68,6 +68,11 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
               {
                 outline: "none",
               },
+            "& .MuiDataGrid-virtualScrollerContent": {
+              // width: "100% !important",
+              flexBasis: "0px !important",
+              // flexShrink: "1 !important",
+            },
           }}
         />
       </Paper>
