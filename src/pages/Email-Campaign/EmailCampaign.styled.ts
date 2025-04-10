@@ -190,8 +190,7 @@ export const ContentContainer = styled(Box)`
   background: white;
   position: relative;
   flex-direction: column;
-  height: 90vh;
-  overflow: hidden;
+  overflow: auto;
 `;
 
 export const ScrollableContent = styled("div")`

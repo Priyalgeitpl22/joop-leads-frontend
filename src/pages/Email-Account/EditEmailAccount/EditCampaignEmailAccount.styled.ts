@@ -1,9 +1,5 @@
 import styled from "styled-components";
-import {
-  Table,
-  TableContainer,
-  TableHead,
-} from "@mui/material";
+import { Box, Table, TableContainer, TableHead } from "@mui/material";
 
 export const StyledTableContainer = styled(TableContainer)`
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
@@ -59,4 +55,16 @@ export const NoDataContainer = styled.td`
   padding: 20px;
   font-size: 16px;
   font-weight: bold;
+`;
+
+export const ContentContainer = styled(Box)`
+  width: 100%;
+  display: flex;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background: white;
+  position: relative;
+  flex-direction: column;
+  height: 90vh;
+  overflow: hidden;
 `;

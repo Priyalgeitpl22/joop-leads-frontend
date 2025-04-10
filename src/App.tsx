@@ -74,6 +74,27 @@ export default function DashboardLayoutBasic() {
   const { user } = useSelector((state: RootState) => state.user);
 
   React.useEffect(() => {
+    const hideChatWidget = () => {
+      const chatWidgetIframe = document.querySelector(
+        "iframe[src*='chat.jooper.ai']"
+      ) as HTMLElement;
+      const chatWidgetContainer = document.getElementById("chat-widget");
+
+      if (UNPROTECTED_ROUTES.includes(router.pathname)) {
+        if (chatWidgetIframe) chatWidgetIframe.style.display = "none";
+        if (chatWidgetContainer) chatWidgetContainer.style.display = "none";
+      } else {
+        if (chatWidgetIframe) chatWidgetIframe.style.display = "block";
+        if (chatWidgetContainer) chatWidgetContainer.style.display = "block";
+      }
+    };
+
+    hideChatWidget();
+    const delayHide = setTimeout(hideChatWidget, 1000);
+    return () => clearTimeout(delayHide);
+  }, [router.pathname]);
+
+  React.useEffect(() => {
     const token = Cookies.get("access_token");
 
     if (!UNPROTECTED_ROUTES.includes(router.pathname)) {
@@ -135,6 +156,7 @@ export default function DashboardLayoutBasic() {
           }}
         >
           <PageContainer
+            maxWidth={false}
             title=""
             sx={{
               marginTop: "0 !important",
