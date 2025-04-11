@@ -75,7 +75,7 @@ export const EmailInboxMessagesContainer = styled(Box)`
   flex-direction: column;
   height: 100%;
   position: relative; /* Ensure child elements are positioned relative to this */
-  padding: 20px;
+  padding: 18px 20px 0px 20px;
   overflow: hidden; /* Prevents scrollbars from affecting layout */
 
   > div {

@@ -54,8 +54,8 @@ const EmailInboxList: React.FC = () => {
         getAllAccountMailBox({
           accountId,
           mailBoxId: firstMailbox._id,
-          // page: 1,
-          // limit: 5,
+          page: 1,
+          limit: 10,
         })
       );
     }

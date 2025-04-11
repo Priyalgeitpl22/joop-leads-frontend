@@ -41,7 +41,7 @@ const EmailInboxArea: React.FC = () => {
     null
   );
 
-  const messagesPerPage = 5;
+  const messagesPerPage = 10;
   const totalPages = Math.ceil(totalMessages / messagesPerPage);
 
   const toggleMessageBody = (messageId: string) => {
@@ -58,8 +58,8 @@ const EmailInboxArea: React.FC = () => {
         getAllAccountMailBox({
           accountId: selectedAccountId,
           mailBoxId: selectedMailboxId,
-          // page,
-          // limit: messagesPerPage,
+          page,
+          limit: messagesPerPage,
         })
       );
     }

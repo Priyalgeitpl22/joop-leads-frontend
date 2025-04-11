@@ -39,8 +39,8 @@ const EmailInboxSideBar = () => {
       getAllAccountMailBox({
         accountId: selectedAccountId,
         mailBoxId: mailbox._id,
-        // page: 1,
-        // limit: 5,
+        page: 1,
+        limit: 10,
       })
     );
   };
