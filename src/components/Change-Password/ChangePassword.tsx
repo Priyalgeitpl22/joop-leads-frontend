@@ -127,10 +127,10 @@ const ChangePassword: React.FC = () => {
           />
         </IllustrationSection> */}
         <IllustrationSection>
-          <img
-            src="/great-learning-enviroment.gif"
+        <img
+            src="/great-learning.gif"
             alt="Email illustration"
-            style={{ width: "100%", height: "75%" }}
+            style={{ maxWidth: "80%", height: "auto"}}
           />
         </IllustrationSection>
         <FormSection>

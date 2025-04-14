@@ -262,7 +262,7 @@ const Users = () => {
       },
     ];
 
-    if (user?.role === "Admin") {
+    if (user?.role === "Admin" || "admin") {
       baseColumns.push({
         field: "delete",
         headerName: "Delete",
