@@ -132,7 +132,7 @@ const EditUserDialog: React.FC<EditUserDialogProps> = ({
           color={"white"}
           background={"var(--theme-color)"}
         >
-          Save
+          Save Changes
           {loading && <CircularProgress size={20} color="inherit" />}
         </Button2>
       </DialogActions>

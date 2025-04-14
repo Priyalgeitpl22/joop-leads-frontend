@@ -299,23 +299,25 @@ const Users = () => {
         width: 150,
         valueGetter: (params: any) => (params ? formatDateTime(params) : "N/A"),
       },
-      {
+    ];
+    
+    if (user?.role === "Admin" || user?.role === "admin") {
+      baseColumns.push({
         field: "edit",
         headerName: "Edit",
         width: 100,
         renderCell: (params) => (
           <Tooltip title="Edit User" arrow>
-            <ModeEditOutlineOutlined
+            <IconButton
               color="primary"
-              onClick={() => handleOpenEditDialog(params?.row)}
-            />
+              onClick={() => handleOpenEditDialog(params.row)}
+            >
+              <ModeEditOutlineOutlined />
+            </IconButton>
           </Tooltip>
         ),
-      },
-    ];
-    
+      });
 
-    if (user?.role === "Admin" || "admin") {
       baseColumns.push({
         field: "delete",
         headerName: "Delete",
@@ -332,9 +334,9 @@ const Users = () => {
         ),
       });
     }
-
+  
     return baseColumns;
-  }, [user?.role]);
+  }, [user?.role, handleOpenEditDialog, handleOpenDeleteDialog]);
 
   return (
     <UsersContainer>
