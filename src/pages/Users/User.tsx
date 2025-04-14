@@ -34,6 +34,7 @@ import {
   filterUsers,
   getAllUsers,
   SearchUsers,
+  updateUserDetails,
 } from "../../redux/slice/userSlice";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
@@ -42,6 +43,8 @@ import { formatDateTime } from "../../utils/utils";
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Dayjs } from "dayjs";
+import EditUserDialog from "./EditUser/EditUserRoleDialogue";
+import { ModeEditOutlineOutlined } from "@mui/icons-material";
 
 
 const Users = () => {
@@ -70,7 +73,43 @@ const Users = () => {
         endDate: null,
     
       });
+   
+      const [openEditDialog, setOpenEditDialog] = useState(false);
+      const [editUserData, setEditUserData] = useState<any>(null);
+      // const [isSavingEdit, setIsSavingEdit] = useState(false); // New saving s
 
+      const handleOpenEditDialog = (userData: any) => {
+        setEditUserData(userData);
+        setOpenEditDialog(true);
+      };
+      const handleSaveEdit = async (updatedUserData: {
+        id: string;
+        role: string;
+      }) => {
+        try {
+          const formData = new FormData();
+          formData.append("id", updatedUserData.id);
+          formData.append("role", updatedUserData.role);
+
+          const response = await dispatch(
+            updateUserDetails({ userData: formData })
+          ).unwrap();
+
+          if (response?.code === 200) {
+            toast.success("User details updated successfully!");
+          }
+        } catch (err: any) {
+          toast.error(err?.message || "Failed to update user details.");
+        } finally {
+          setOpenEditDialog(false);
+        }
+      };
+
+      const handleCloseEditDialog = () => {
+        setOpenEditDialog(false);
+        setEditUserData(null);
+      };
+            
   const handleFilterChange =
     (field: keyof typeof filters) => (event: SelectChangeEvent<string>) => {
       setFilters((prev) => ({
@@ -123,7 +162,7 @@ const Users = () => {
         setFilteredRows(response.data);
       })
       .catch(() => {});
-  }, [dispatch, addUser]);
+  }, [dispatch, addUser,editUserData]);
 
   useEffect(() => {
     if (searchTerm.trim() === "") {
@@ -260,7 +299,21 @@ const Users = () => {
         width: 150,
         valueGetter: (params: any) => (params ? formatDateTime(params) : "N/A"),
       },
+      {
+        field: "edit",
+        headerName: "Edit",
+        width: 100,
+        renderCell: (params) => (
+          <Tooltip title="Edit User" arrow>
+            <ModeEditOutlineOutlined
+              color="primary"
+              onClick={() => handleOpenEditDialog(params?.row)}
+            />
+          </Tooltip>
+        ),
+      },
     ];
+    
 
     if (user?.role === "Admin" || "admin") {
       baseColumns.push({
@@ -423,6 +476,13 @@ const Users = () => {
         confirmText="Delete"
         cancelText="Cancel"
       />
+
+      <EditUserDialog
+        open={openEditDialog}
+        onClose={handleCloseEditDialog}
+        user={editUserData}
+        loading={loading} 
+        onSave={handleSaveEdit}       />
     </UsersContainer>
   );
 };
