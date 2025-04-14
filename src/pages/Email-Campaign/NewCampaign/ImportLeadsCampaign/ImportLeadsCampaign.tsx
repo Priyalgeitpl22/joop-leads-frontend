@@ -106,6 +106,28 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
     if (file) processFile(file);
   };
 
+  useEffect(() => {
+    const handleDragOver = (event: DragEvent) => {
+      event.preventDefault();
+    };
+  
+    const handleDropAnywhere = (event: DragEvent) => {
+      event.preventDefault();
+  
+      const file = event.dataTransfer?.files?.[0];
+      if (file) processFile(file);
+    };
+  
+    window.addEventListener("dragover", handleDragOver);
+    window.addEventListener("drop", handleDropAnywhere);
+  
+    return () => {
+      window.removeEventListener("dragover", handleDragOver);
+      window.removeEventListener("drop", handleDropAnywhere);
+    };
+  }, []);
+  
+
   return (
     <Box
       sx={{
