@@ -42,6 +42,8 @@ import { formatDateTime } from "../../utils/utils";
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Dayjs } from "dayjs";
+import EditUserDialog from "./EditUser/EditUserRoleDialogue";
+import { ModeEditOutlineOutlined } from "@mui/icons-material";
 
 
 const Users = () => {
@@ -70,7 +72,19 @@ const Users = () => {
         endDate: null,
     
       });
+   
+      const [openEditDialog, setOpenEditDialog] = useState(false);
+      const [editUserData, setEditUserData] = useState<any>(null);
 
+      const handleOpenEditDialog = (userData: any) => {
+        setEditUserData(userData);
+        setOpenEditDialog(true);
+      };
+    
+      const handleCloseEditDialog = () => {
+        setOpenEditDialog(false);
+      };
+            
   const handleFilterChange =
     (field: keyof typeof filters) => (event: SelectChangeEvent<string>) => {
       setFilters((prev) => ({
@@ -260,7 +274,21 @@ const Users = () => {
         width: 150,
         valueGetter: (params: any) => (params ? formatDateTime(params) : "N/A"),
       },
+      {
+        field: "edit",
+        headerName: "Edit",
+        width: 100,
+        renderCell: (params) => (
+          <Tooltip title="Edit User" arrow>
+            <ModeEditOutlineOutlined
+              color="primary"
+              onClick={() => handleOpenEditDialog(params?.row)}
+            />
+          </Tooltip>
+        ),
+      },
     ];
+    
 
     if (user?.role === "Admin") {
       baseColumns.push({
@@ -422,6 +450,13 @@ const Users = () => {
         message="Are you sure you want to delete this user?"
         confirmText="Delete"
         cancelText="Cancel"
+      />
+
+      <EditUserDialog
+        open={openEditDialog}
+        onClose={handleCloseEditDialog}
+        user={editUserData}
+        loading={loading}
       />
     </UsersContainer>
   );
