@@ -49,7 +49,7 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
   updateSequenceData,
   selectedSequence,
   sequences,
-  
+
 }) => {
   const [showStepOptions, setShowStepOptions] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -65,7 +65,7 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
     const params = new URLSearchParams(location.search);
     const campaignId = params.get("id");
     console.log(selectedVariant);
-    
+
     if (campaignId || campaign_id) {
       fetchCampaignDetails(campaignId || campaign_id);
     } else {
@@ -118,8 +118,9 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
   };
 
   const handleAddEmailStep = () => {
+    const sequenceCount = sequences.length;
     const newSequence: Sequence = {
-      seq_number: sequences.length + 1,
+      seq_number: sequenceCount + 1,
       seq_type: SequenceType.EMAIL,
       seq_delay_details: { delay_in_days: 1 },
       sequence_schedular_type: SequenceSchedularType.AUTOMATIC,
@@ -133,8 +134,9 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
   };
 
   const handleAddManualStep = () => {
+    const sequenceCount = sequences.length;
     const newSequence: Sequence = {
-      seq_number: sequences.length + 1,
+      seq_number: sequenceCount + 1,
       seq_type: SequenceType.MANUAL,
       seq_delay_details: { delay_in_days: 1 },
       sequence_schedular_type: SequenceSchedularType.MANUAL,
@@ -150,6 +152,7 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
     const renumberedSequences = updatedSequences.map((seq, i) => ({
       ...seq,
       seq_number: i + 1,
+      seq_variants: seq.seq_variants.map(variant => ({ ...variant }))
     }));
 
     updateSequences(renumberedSequences);
@@ -175,13 +178,13 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
               updateSequenceData={updateSequenceData}
               onSelectVariant={onSelectVariant}
               openAbConfigurationDialog={openAbConfigurationDialog}
-              onAddStep={() => {}}
+              onAddStep={() => { }}
               onDelete={() => handleRemoveStep(index)}
               isFirstEmail={index === 0}
             />
           ) : (
             <ManualFollowUp
-              onAddStep={() => {}}
+              onAddStep={() => { }}
               key={sequence.seq_number}
               selectedSequence={sequence}
               updateSequenceData={updateSequenceData}
