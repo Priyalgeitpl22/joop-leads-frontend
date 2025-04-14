@@ -1,5 +1,5 @@
 import { styled } from "@mui/material/styles";
-import { Box, Typography, Button, Pagination } from "@mui/material";
+import { Box, Typography, Button, Pagination, Divider } from "@mui/material";
 
 export const EmailInboxContainer = styled(Box)({
   flex: 1,
@@ -75,7 +75,7 @@ export const EmailInboxMessagesContainer = styled(Box)`
   flex-direction: column;
   height: 100%;
   position: relative; /* Ensure child elements are positioned relative to this */
-  padding: 18px 20px 0px 20px;
+  padding: 9px 20px 0px 20px;
   overflow: hidden; /* Prevents scrollbars from affecting layout */
 
   > div {
@@ -190,3 +190,83 @@ export const NoMailboxMessage = styled(Box)({
   height: "100%",
   width: "100%",
 });
+
+export const EmailInboxListHeader = styled(Box)({
+  alignItems: "center",
+  color: "var(--active-color)",
+  textAlign: "center",
+  paddingBottom: "9px",
+  position: "sticky",
+  top: 0,
+  backgroundColor: "var(--text-white)",
+  "@media (max-width: 600px)": {
+    flexDirection: "column",
+    alignItems: "flex-start",
+  },
+});
+
+export const StyledDivider = styled(Divider)`
+  margin-bottom: 10px;
+`;
+
+export const SearchBar = styled(Box)`
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  background-color: white;
+  border-radius: 5px;
+  flex-grow: 1;
+  margin-bottom: 1px;
+  width: 100%;
+  gap: 10px;
+  height: 35px;
+
+  input {
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--theme-color);
+    flex-grow: 1;
+    font-size: 14px;
+
+    &::placeholder {
+      color: #94a3b8;
+    }
+  }
+
+  svg {
+    color: var(--border-color);
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    display: block;
+
+    @media (max-width: 768px) {
+      width: 16px;
+      height: 16px;
+    }
+    @media (max-width: 480px) {
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    max-width: 270px;
+    height: 38px;
+  }
+
+  @media (max-width: 768px) {
+    max-width: 250px;
+    height: 35px;
+    padding: 8px 10px;
+  }
+
+  @media (max-width: 480px) {
+    max-width: 200px;
+    height: 32px;
+    padding: 6px 8px;
+    gap: 6px;
+  }
+`;

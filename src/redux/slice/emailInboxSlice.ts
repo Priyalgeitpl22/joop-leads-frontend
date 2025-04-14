@@ -23,6 +23,7 @@ export interface Message {
 }
 
 interface EmailInboxState {
+  searchResults: any;
   mailboxMessages: Message[];
   accounts: Account[];
   mailboxes: Mailbox[];
@@ -32,9 +33,12 @@ interface EmailInboxState {
   totalMessages: number;
   loading: boolean;
   error: string | null;
+  searchLoading: boolean;
+  results: Message[];
 }
 
 const initialState: EmailInboxState = {
+  searchResults: [],
   accounts: [],
   mailboxes: [],
   mailboxMessages: [],
@@ -44,6 +48,8 @@ const initialState: EmailInboxState = {
   totalMessages: 0,
   loading: false,
   error: null,
+  searchLoading: false,
+  results: [],
 };
 
 export const getAllChats = createAsyncThunk(
@@ -140,6 +146,30 @@ export const reloadAccountMessages = createAsyncThunk(
   }
 );
 
+export const searchEmails = createAsyncThunk(
+  "emailSearch/searchEmails",
+  async ({
+    accountId,
+    mailboxId,
+    search,
+    page = 1,
+    limit = 10,
+  }: {
+    accountId: string;
+    mailboxId: string;
+    search: string;
+    page?: number;
+    limit?: number;
+  }) => {
+    const response = await emailApi.get(
+      `/accounts/${accountId}/${mailboxId}/messages`,
+      {
+        params: { limit, page, search },
+      }
+    );
+    return response.data.data;
+  }
+);
 
 const emailInboxSlice = createSlice({
   name: "emailInbox",
@@ -208,6 +238,17 @@ const emailInboxSlice = createSlice({
       .addCase(getAllAccountMailBox.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+      .addCase(searchEmails.pending, (state) => {
+        state.searchLoading = true;
+      })
+      .addCase(searchEmails.fulfilled, (state, action) => {
+        state.searchLoading = false;
+        state.searchResults = action.payload?.messages || [];
+      })
+      .addCase(searchEmails.rejected, (state) => {
+        state.searchLoading = false;
+        state.searchResults = [];
       });
   },
 });
