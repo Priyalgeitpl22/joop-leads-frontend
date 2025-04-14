@@ -648,7 +648,7 @@ const ContactTable: React.FC = () => {
                 label.toLowerCase() as keyof typeof filters
               )}
               label={label}
-              sx={{ background: "white!important" }}
+              sx={{ background: "white!important", borderRadius: "4px" }}
             >
               {filterOptions[label as keyof typeof filterOptions]?.map(
                 (option) => (

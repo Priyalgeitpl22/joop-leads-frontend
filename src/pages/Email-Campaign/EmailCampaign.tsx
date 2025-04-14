@@ -471,7 +471,7 @@ const EmailCampaign: React.FC = () => {
                   )}
                   label={label}
                   sx={{
-                    borderRadius: "10px",
+                    borderRadius: "4px",
                     backgroundColor: "var(--text-white)",
 
                     "& .MuiOutlinedInput-input": {

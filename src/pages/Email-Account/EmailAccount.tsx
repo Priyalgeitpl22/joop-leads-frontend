@@ -400,7 +400,7 @@ const EmailAccounts: React.FC = () => {
                onChange={handleFilterChange(
                  label.toLowerCase() as keyof typeof filters
                )}
-               sx={{ background: "white!important" }}
+               sx={{ background: "white!important", borderRadius: "4px" }}
              >
                {filterOptions[label as keyof typeof filterOptions]?.map(
                  (option) => (
