@@ -5,17 +5,18 @@ export const PageContainer = styled(Box)`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  height: 100%;
 `;
 
 export const AuthCard = styled(Box)`
   background: white;
   border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-dark);
   width: 100%;
   max-width: 900px;
   display: flex;
   overflow: auto;
+  margin-top: 100px;
 `;
 
 export const IllustrationSection = styled(Box)`
@@ -53,7 +54,7 @@ export const StyledTextField = styled(TextField)`
   }
 
   .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
-    border: 1px solid #ddd;
+  border: 1px solid var(--border-dark);
   }
 
   .MuiOutlinedInput-input {

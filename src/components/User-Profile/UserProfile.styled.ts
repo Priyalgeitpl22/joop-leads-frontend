@@ -18,7 +18,7 @@ export const StyledMenuItem = styled(MenuItem)`
   align-items: center;
   padding: 10px 20px;
   &:hover {
-    background-color: #f1f1f1;
+  background-color: var(--background-color)
   }
 `;
 

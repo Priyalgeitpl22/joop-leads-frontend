@@ -1,17 +1,31 @@
-import React, { useState, useRef } from "react";
-import { Box, Typography, Select, MenuItem, IconButton } from "@mui/material";
+import React, { useState, useRef, useEffect } from "react";
+import {
+  Box,
+  Typography,
+  Select,
+  MenuItem,
+  IconButton,
+  Tooltip,
+} from "@mui/material";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CampaignIcon from "@mui/icons-material/Campaign";
-import { CSV_COLUMNS as csv_columns } from "../../../../constants";
+import { CSV_COLUMNS, CSV_COLUMNS as csv_columns } from "../../../../constants";
+import { Button2 } from "../../../../styles/layout.styled";
+import Papa from "papaparse";
+import CSVPreviewDialog from "./CsvPreviewDialog";
 
 interface ImportLeadsDetailProps {
   file?: File | null;
   columns: string[];
   onFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onEmailFieldsChange: (data: any) => void;
+  setIsStep1Valid: (status: boolean) => void;
+  isUplaodContacts: boolean;
+  handleUploadContacts?: (data: any) => void;
+  onDeleteFile?: () => void;
 }
 
 const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
@@ -19,34 +33,52 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
   columns,
   onFileChange,
   onEmailFieldsChange,
+  setIsStep1Valid,
+  isUplaodContacts,
+  handleUploadContacts,
 }) => {
-  const [emailFieldMapping, setEmailFieldMapping] = useState<Record<string, string>>({});
-  const [emailFieldsAdded, setEmailFieldAdded] = useState<Record<string, string>>({});
+  const [emailFieldMapping, setEmailFieldMapping] = useState<
+    Record<string, string>
+  >({});
+  const [emailFieldsAdded, setEmailFieldAdded] = useState<
+    Record<string, string>
+  >({});
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleEmailFieldsChange = (event: any, field: string) => {
     const value = event.target.value;
+    console.log("emailFieldMapping", emailFieldMapping);
     setEmailFieldMapping((prev) => ({
       ...prev,
       [field]: value,
     }));
-  
+
     const column = csv_columns.find((o) => o.key === value)?.key as string;
-  
+    console.log("emailFieldAdded", emailFieldsAdded);
+
     setEmailFieldAdded((prev) => {
       const updatedFields = {
         ...prev,
         [field]: column,
       };
-  
+
       onEmailFieldsChange(updatedFields);
+
+      const requiredKeys = ["First Name", "Last Name", "Email"];
+      const allRequiredMapped = requiredKeys.every((key) =>
+        Object.values(updatedFields).includes(
+          CSV_COLUMNS.find((col) => col.label === key)?.key ?? ""
+        )
+      );
+
+      setIsStep1Valid(!allRequiredMapped);
+
       return updatedFields;
     });
-  };  
+  };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
-      const selectedFile = event.target.files[0];
       onFileChange(event);
     }
   };
@@ -56,8 +88,32 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
   };
 
   const handleDeleteFile = () => {
-    onFileChange({ target: { files: null } } as React.ChangeEvent<HTMLInputElement>);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+    onFileChange({
+      target: { files: null } as unknown as HTMLInputElement,
+    } as React.ChangeEvent<HTMLInputElement>);
+    window.location.reload();
   };
+
+  const [csvData, setCsvData] = useState<string[][]>([]);
+
+  const [isCSVModalOpen, setCSVModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (e.target?.result) {
+          Papa.parse(e.target.result as string, {
+            complete: (result) => setCsvData(result.data as string[][]),
+          });
+        }
+      };
+      reader.readAsText(file);
+    }
+  }, [file]);
 
   return (
     <Box
@@ -67,47 +123,125 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
         padding: "20px",
         background: "#FAFBFF",
         overflowY: "auto",
-        height: "462px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "10px",
       }}
     >
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 3 }}>
-        <Typography variant="h6" fontWeight="bold" sx={{ color: "#6e58f1" }}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 2,
+          mb: 3,
+          color: "var(--theme-color)",
+        }}
+      >
+        <Typography variant="h6" fontWeight="bold">
           1
         </Typography>
-        <Typography fontWeight="bold">CSV File</Typography>
+        <Typography fontWeight="bold" variant="h6">
+          CSV File
+        </Typography>
       </Box>
-      <Box sx={{ background: "#ffffff", padding: "16px", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <Box
+        sx={{
+          background: "var(--background-light)",
+          padding: "16px",
+          borderRadius: "8px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
           <InsertDriveFileIcon sx={{ fontSize: 40, color: "#4caf50" }} />
-          {file ? <Typography>{file.name}</Typography> : <Typography color="gray">No file uploaded</Typography>}
+          {file ? (
+            <Typography>{file.name}</Typography>
+          ) : (
+            <Typography color="gray">No file uploaded</Typography>
+          )}
         </Box>
         <Box sx={{ display: "flex", gap: 1 }}>
-          <IconButton>
-            <VisibilityIcon sx={{ color: "#6e58f1" }} />
-          </IconButton>
-          <IconButton onClick={handleReupload}>
-            <RefreshIcon sx={{ color: "#6e58f1" }} />
-          </IconButton>
-          <IconButton onClick={handleDeleteFile}>
-            <DeleteIcon sx={{ color: "red" }} />
-          </IconButton>
+          <Tooltip title="View CSV">
+            <span>
+              <IconButton
+                onClick={() => setCSVModalOpen(true)}
+                disabled={!file}
+              >
+                <VisibilityIcon sx={{ color: "var(--theme-color)" }} />
+              </IconButton>
+            </span>
+          </Tooltip>
+
+          <Tooltip title="Reupload">
+            <IconButton onClick={handleReupload}>
+              <RefreshIcon sx={{ color: "var(--theme-color)" }} />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title="Delete File">
+            <IconButton onClick={handleDeleteFile}>
+              <DeleteIcon sx={{ color: "var(--theme-color)" }} />
+            </IconButton>
+          </Tooltip>
         </Box>
       </Box>
-      <input type="file" ref={fileInputRef} onChange={handleFileChange} style={{ display: "none" }} />
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 4, mb: 2 }}>
-        <Typography variant="h6" fontWeight="bold" sx={{ color: "#6e58f1" }}>
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        style={{ display: "none" }}
+      />
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 2,
+          mt: 4,
+          mb: 3,
+          color: "var(--theme-color)",
+        }}
+      >
+        <Typography variant="h6" fontWeight="bold">
           2
         </Typography>
-        <Typography fontWeight="bold">Map Fields</Typography>
+        <Typography fontWeight="bold" variant="h6">
+          Map Fields
+        </Typography>
       </Box>
       <Typography fontSize={14} color="gray" mb={2}>
         Map CSV columns to the variables you want to add to the campaign.
+        Firstname and Email are required.
       </Typography>
-      <Box sx={{ background: "#ffffff", padding: "16px", borderRadius: "8px" }}>
-        <InsertDriveFileIcon sx={{ fontSize: 30, color: "#6e58f1", marginLeft: "5%", mb: 3 }} />
-        <CampaignIcon sx={{ marginLeft: "50%", fontSize: 33, color: "#6e58f1", mb: 3 }} />
-        {columns.map((field, index) => (
-          <Box key={index} sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
+      <Box
+        sx={{
+          background: "var(--background-light)",
+          padding: "16px",
+          borderRadius: "8px",
+        }}
+      >
+        <InsertDriveFileIcon
+          sx={{
+            fontSize: 30,
+            color: "var(--theme-color)",
+            marginLeft: "5%",
+            mb: 3,
+          }}
+        />
+        <CampaignIcon
+          sx={{
+            marginLeft: "50%",
+            fontSize: 33,
+            color: "var(--theme-color)",
+            mb: 3,
+          }}
+        />
+        {columns?.map((field, index) => (
+          <Box
+            key={index}
+            sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}
+          >
             <Typography sx={{ flex: 1 }}>{field}</Typography>
             <Select
               displayEmpty
@@ -115,45 +249,36 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
               sx={{
                 maxHeight: "40px",
                 minWidth: "60%",
-                background: "white",
+                background: "white!important",
                 borderRadius: "6px",
                 fontSize: "13px",
               }}
             >
-              <MenuItem value="first_name" sx={{ fontSize: "13px" }}>
-                First Name
-              </MenuItem>
-              <MenuItem value="last_name" sx={{ fontSize: "13px" }}>
-                Last Name
-              </MenuItem>
-              <MenuItem value="email" sx={{ fontSize: "13px" }}>
-                Email
-              </MenuItem>
-              <MenuItem value="phone_number" sx={{ fontSize: "13px" }}>
-                Phone Number
-              </MenuItem>
-              <MenuItem value="company_name" sx={{ fontSize: "13px" }}>
-                Company Name
-              </MenuItem>
-              <MenuItem value="website" sx={{ fontSize: "13px" }}>
-                Website
-              </MenuItem>
-              <MenuItem value="linkedin_profile" sx={{ fontSize: "13px" }}>
-                LinkedIn Profile
-              </MenuItem>
-              <MenuItem value="location" sx={{ fontSize: "13px" }}>
-                Location
-              </MenuItem>
-              <MenuItem value="custom_field" sx={{ fontSize: "13px" }}>
-                Custom Field
-              </MenuItem>
-              <MenuItem value="ignore_field" sx={{ fontSize: "13px" }}>
-                Ignore Field
-              </MenuItem>
+              {CSV_COLUMNS.map((column) => (
+                <MenuItem value={column.key} sx={{ fontSize: "13px" }}>
+                  {column.label}
+                </MenuItem>
+              ))}
             </Select>
           </Box>
         ))}
       </Box>
+      {isUplaodContacts && (
+        <Button2
+          onClick={handleUploadContacts}
+          color="white"
+          background="var(--theme-color)"
+        >
+          Save and Next
+        </Button2>
+      )}
+      {isCSVModalOpen && (
+        <CSVPreviewDialog
+          open={isCSVModalOpen}
+          onClose={() => setCSVModalOpen(false)}
+          csvData={csvData}
+        />
+      )}
     </Box>
   );
 };

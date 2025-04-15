@@ -1,0 +1,24 @@
+
+.data-grid-container {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .MuiDataGrid-root {
+    height: 100% !important;
+    border: none !important;
+    max-height: '4px';
+  }
+  
+  .MuiDataGrid-columnHeaders {
+    color: var(--text-primary);
+    font-weight: bold;
+  }
+  
+  .MuiDataGrid-cell {
+    max-height: '4px';
+    color: var(--text-secondary);
+  }
+  

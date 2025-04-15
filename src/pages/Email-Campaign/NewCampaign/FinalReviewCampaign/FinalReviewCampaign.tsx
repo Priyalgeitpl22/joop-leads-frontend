@@ -1,178 +1,262 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Box, Tab, Tabs, Typography } from "@mui/material";
 import { SidebarContainer } from "../../../../styles/layout.styled";
 import { Search } from "lucide-react";
 import React from "react";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../../redux/store/store";
+import {
+  fetchCampaignSequences,
+  getCampaignById,
+  searchContactsByCampaign,
+} from "../../../../redux/slice/emailCampaignSlice";
+import { IContacts } from "../interfaces";
+import {
+  Sequence,
+  SequenceVariant,
+} from "../SequenceCampaign/Sequences/interfaces";
+import {
+  EmailPreviewContainer,
+  FinalReviewContainer,
+  TabsHeader,
+} from "./finalReview.styled";
+import ReactQuill from "react-quill";
+import { modules } from "../SequenceCampaign/EmailTemplate/EmailTemplate";
 
-const contacts = [
-  { name: "Jennifer Wehrmaker", email: "jeremy@venturecatalyst.nyc" },
-  { name: "Hendrick Lee", email: "hendrick@palmdrivecap.com" },
-  { name: "Brian Yormak", email: "brian@storyventures.vc" },
-  { name: "Wendy Tsu", email: "wendy@alleycorp.com" },
-  { name: "Nathan Tien", email: "ntien@goodwatercap.com" },
-  { name: "Casey Hancock", email: "casey@eevo.com" },
-  { name: "Nick Demarco", email: "ndemarco@practichem.com" },
-];
+interface FinalReviewCampaignProps {
+  campaign_id: string;
+  setSelectedEmailTemplate:any
+}
 
-const FinalReviewCampaign = () => {
-  const [selectedContact, setSelectedContact] = useState(contacts[0]);
-  const [value, setValue] = React.useState("one");
+const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
+  campaign_id,
+  setSelectedEmailTemplate
+}) => {
+  const [selectedContact, setSelectedContact] = useState<IContacts>();
+  const [selectedVariant, setSelectedVariant] = React.useState(1);
+  const [selectedTemplate, setSelectedTemplate] =
+    React.useState<SequenceVariant | null>();
+  const [contacts, setContacts] = React.useState<IContacts[]>([]);
+  const [sequences, setSequences] = React.useState<Sequence[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
-  const handleChange = (event: any, newValue: React.SetStateAction<string>) => {
-    setValue(newValue);
+  const dispatch = useDispatch<AppDispatch>();
+  const quillRef = useRef<typeof ReactQuill | null>(null);
+
+  const handleChange = (event: any, newValue: number) => {
+    setSelectedVariant(newValue);
+    console.log("event",event)
+    setSelectedTemplate(
+      sequences.find((seq) => seq.seq_number === Number(newValue))
+        ?.seq_variants[0] || null
+    );
   };
 
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const campaignId = params.get("id");
+
+    if (campaignId) {
+      fetchCampaignDetails(campaignId);
+    } else {
+      fetchContactsAndSequences();
+    }
+  }, [dispatch]);
+
+  const fetchContactsAndSequences = async () => {
+    try {
+      const contacts = await dispatch(
+        searchContactsByCampaign({ campaign_id })
+      ).unwrap();
+      const sequences = await dispatch(
+        fetchCampaignSequences(campaign_id)
+      ).unwrap();
+
+      setContacts(contacts.data);
+      setSequences(sequences.data);
+      setSelectedVariant(sequences.data[0].seq_number);
+      setSelectedTemplate(sequences.data[0].seq_variants[0]);
+      setSelectedContact(contacts.data[0]);
+    } catch (error) {
+      console.error("Error fetching contacts or sequences:", error);
+    }
+  };
+
+  const fetchCampaignDetails = async (id: string) => {
+    try {
+      const response = await dispatch(getCampaignById(id)).unwrap();
+      const campaign = response.campaign;
+      setContacts(campaign.contacts);
+      setSequences(campaign.sequences);
+      setSelectedVariant(campaign.sequences[0].seq_number);
+      setSelectedTemplate(campaign.sequences[0].seq_variants[0]);
+      setSelectedContact(campaign.contacts[0]);
+      return response.campaign;
+    } catch (error) {
+      console.error("Error fetching campaign:", error);
+      return null;
+    }
+  };
+
+  // Handle search input and call API
+  const handleSearchChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+
+    try {
+      const response = await dispatch(
+        searchContactsByCampaign({ campaign_id, email: value })
+      ).unwrap();
+      setContacts(response.data);
+    } catch (error) {
+      console.error("Error searching contacts:", error);
+    }
+  };
+  setSelectedEmailTemplate(selectedTemplate);
   return (
-    <Box display="flex" sx={{ height: "80%" }}>
+    <FinalReviewContainer>
       <SidebarContainer
         style={{
-          width: "22%",
           padding: "16px",
-          borderRight: "1px solid #ddd",
-          paddingLeft: "2%",
-          paddingTop: "2%",
+          border: "1px solid var(--border-grey)",
           overflowY: "auto",
-          height: "90%",
-          backgroundColor: "#f8f9fc",
+          height: "100%",
+          backgroundColor: "white",
         }}
       >
-        <Typography fontSize={14} fontWeight="bold" mb={2}>
+        <Typography variant="h5" mb={2}>
           Review Your Mail Individually
         </Typography>
         <Box
           display="flex"
           alignItems="center"
           sx={{
-            backgroundColor: "#fff",
+            backgroundColor: "white",
             borderRadius: "8px",
             padding: "8px",
-            border: "1px solid #ddd",
+            border: "1px solid var(--border-grey)",
             boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
-            width: "85%",
           }}
         >
-          <Search size={20} color="#64748b" />
+          <Search size={20} />
           <input
-            placeholder="Search by name, email id..."
+            placeholder="Search by email..."
+            value={searchQuery}
+            onChange={handleSearchChange}
             style={{
               border: "none",
               outline: "none",
               fontSize: "14px",
               width: "100%",
-              background: "transparent",
             }}
           />
         </Box>
 
         <Box mt={2}>
-          {contacts.map((contact, index) => (
-            <Box
-              key={index}
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                padding: "12px 16px",
-                borderBottom: "1px solid #eee",
-                cursor: "pointer",
-                position: "relative",
-                borderRadius: "5px",
-                "&:hover": { backgroundColor: "#f3f3f3" },
-                backgroundColor:
-                  selectedContact?.email === contact.email
-                    ? "#e8e4fc"
-                    : "transparent",
-                border: selectedContact?.email == contact.email ? "1px solid grey" : ""
-              }}
-              onClick={() => setSelectedContact(contact)}
-            >
-              <Typography fontSize={14} fontWeight="bold" color="#333">
-                {contact.name}
-              </Typography>
-              <Typography fontSize={13} color="gray">
-                {contact.email}
-              </Typography>
-            </Box>
-          ))}
+          {contacts.length > 0 ? (
+            contacts.map((contact, index) => (
+              <Box
+                key={index}
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  padding: "12px 16px",
+                  borderBottom: "1px solid #eee",
+                  cursor: "pointer",
+                  position: "relative",
+                  borderRadius: "5px",
+                  "&:hover": { backgroundColor: "var(--background-light)" },
+                  backgroundColor:
+                    selectedContact?.email === contact.email
+                      ? "var(--background-light)"
+                      : "white",
+                }}
+                onClick={() => setSelectedContact(contact)}
+              >
+                <Typography fontSize={14} fontWeight="bold" color="#333">
+                  {contact.first_name} {contact?.last_name}
+                </Typography>
+                <Typography fontSize={13} color="gray">
+                  {contact.email}
+                </Typography>
+              </Box>
+            ))
+          ) : (
+            <Typography mt={2} color="gray" textAlign="center">
+              No contacts found
+            </Typography>
+          )}
         </Box>
       </SidebarContainer>
-      <Box sx={{ display: "flex", justifyContent: "center", margin: "auto" }}>
-        <Box
-          sx={{
-            width: "100%",
-            borderRadius: "10px",
-            backgroundColor: "#FFFFFF",
-            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-            maxWidth: "600px",
-            border: "1px solid #E0E0E0",
-            height: "92%",
-          }}
-        >
-          <Typography
-            sx={{
-              fontWeight: "bold",
-              fontSize: 14,
-              background: "#fff6d5",
-              padding: "15px",
-              borderRadius: "5px",
-              display: "block",
-              borderBottom: "1px solid #E0E0E0",
-            }}
-          >
-            This sequence has been sent. Select "scheduled" leads to see any
-            copy changes.
-          </Typography>
-          <Box sx={{ paddingLeft: "8px" }}>
-            <Typography mt={2} fontSize={14} color="gray">
-              <strong>Email:</strong> {selectedContact.email}
-            </Typography>
-            <Typography variant="body2" fontSize={14} color="gray" mt={1}>
-              <strong>Subject:</strong> Best Off-Shore resource for your hiring
-              needs
-            </Typography>
 
-            <Box mt={2} padding={2}>
-              <Typography fontSize={14}>Hi {selectedContact.name},</Typography>
-              <Typography fontSize={14} mt={2}>
-                I understand how critical it is to find the right tech talent
-                quickly, especially when you're racing to meet market demands.
-                At <strong>Golden Eagle</strong>, we specialize in seamlessly
-                filling high-priority roles for growing teams.
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          width: "100%",
+          height: "100%",
+          alignItems: "center",
+        }}
+      >
+        <EmailPreviewContainer>
+          <TabsHeader>
+            <Tabs
+              value={selectedVariant}
+              onChange={handleChange}
+              textColor="secondary"
+              indicatorColor="secondary"
+              aria-label="secondary tabs example"
+            >
+              {sequences.map((sequence) => (
+                <Tab
+                  key={sequence.seq_number}
+                  value={sequence.seq_number}
+                  label={`${sequence.seq_type} ${sequence.seq_number}`}
+                />
+              ))}
+            </Tabs>
+          </TabsHeader>
+
+          {selectedVariant && (
+            <Box
+              sx={{
+                padding: "8px",
+                width: "100%",
+                height: "92%",
+                border: "1px solid var(--border-grey)",
+              }}
+            >
+              <Typography
+                sx={{ margin: "12px 5px 0px 16px" }}
+                fontSize={14}
+                color="gray"
+              >
+                <strong>Email: </strong> {selectedContact?.email}
               </Typography>
-              <Typography fontSize={14} mt={2}>
-                Recently, we partnered with a client to onboard 10 GenAI & ML
-                Developers and 5 Front-end Developers within just 15
-                days—helping them meet tight deadlines without compromising on
-                quality.
+              <Typography
+                sx={{ margin: "12px 5px 0px 16px" }}
+                variant="body2"
+                fontSize={14}
+                color="gray"
+              >
+                <strong>Subject: </strong>
+                {selectedTemplate?.subject}
               </Typography>
-              <Typography fontSize={14} mt={3}>
-                Reply with "interested" if you'd like to schedule a quick chat.
-              </Typography>
-              <Typography fontSize={14} mb={2}>
-                We’d love to explore how we can help accelerate your goals.
-              </Typography>
-              Best regards
-              <br />
-              Andrew Growth
-              <br />
-              Consultant at Golden Eagle
+
+              <Box mt={2}>
+                <ReactQuill
+                  ref={quillRef}
+                  value={selectedTemplate?.emailBody}
+                  modules={modules}
+                  className="custom-quill-email"
+                />
+              </Box>
             </Box>
-          </Box>
-        </Box>
-        <Box>
-          <Tabs
-            value={value}
-            onChange={handleChange}
-            textColor="secondary"
-            indicatorColor="secondary"
-            aria-label="secondary tabs example"
-          >
-            <Tab value="one" label="Email 1" />
-            <Tab value="two" label="Email 2" />
-            <Tab value="three" label="Email 3" />
-          </Tabs>
-        </Box>
+          )}
+        </EmailPreviewContainer>
       </Box>
-    </Box>
+    </FinalReviewContainer>
   );
 };
 

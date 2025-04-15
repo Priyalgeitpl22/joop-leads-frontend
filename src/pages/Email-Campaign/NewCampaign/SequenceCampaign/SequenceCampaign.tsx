@@ -1,15 +1,22 @@
 import { useEffect, useState } from "react";
-import { Box, IconButton, Typography } from "@mui/material";
-import { SidebarContainer } from "../../../../styles/layout.styled";
-import EmailIcon from "@mui/icons-material/Email";
-import AssignmentIcon from "@mui/icons-material/Assignment";
+import { Box, Typography } from "@mui/material";
 import EmailTemplate from "./EmailTemplate/EmailTemplate";
-import AddIcon from "@mui/icons-material/Add";
 import EmailFollowUpStep from "./Sequences/EmailFollowUpStep";
-import { AddStepButton, StyledAssignmentIcon, StyledEmailIcon } from "./Sequences/sequences.styled";
+import {
+  AddStepButton,
+  AddStepButtonWrapper,
+  StyledAddIcon,
+  StyledAssignmentIcon,
+  StyledEmailIcon,
+} from "./Sequences/sequences.styled";
 import ManualFollowUp from "./Sequences/ManualFollowUp";
 import ManualTemplate from "./EmailTemplate/ManualTemplate";
-import { AddStepContainer, StyledIconButton, TemplateHeader } from "./sequenceCampaign.styled";
+import {
+  AddStepContainer,
+  SequenceSidebarContainer,
+  StyledIconButton,
+  TemplateHeader,
+} from "./sequenceCampaign.styled";
 import AbConfigurationDialog from "./Sequences/AbConfigurationDialog";
 import {
   Sequence,
@@ -17,21 +24,24 @@ import {
   SequenceVariant,
 } from "./Sequences/interfaces";
 import { SequenceType, variantDistributionType } from "./Sequences/enums";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../../redux/store/store";
+import { getCampaignById } from "../../../../redux/slice/emailCampaignSlice";
+import CircularLoader from "../../../../assets/Custom/circularProgress";
 
 interface ImportLeadsCampaignProps {
-  handleSequencesData: (data: any) => void;
+  campaign_id: string,
   handleEmailTemplateData: (data: any) => void;
   onClickEmailFollowUp: (data: any) => void;
   addSequence: (data: any) => void;
   updateSequences: (data: any) => void;
   updateSequenceData: (data: any) => void;
-  setVariants: (data: any) => void;
   sequences: Sequence[];
   selectedSequence?: Sequence;
 }
 
 const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
-  handleSequencesData,
+  campaign_id,
   handleEmailTemplateData,
   onClickEmailFollowUp,
   addSequence,
@@ -39,35 +49,78 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
   updateSequenceData,
   selectedSequence,
   sequences,
+
 }) => {
   const [showStepOptions, setShowStepOptions] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedVariant, setSelectedVariant] = useState<SequenceVariant>();
+  const dispatch = useDispatch<AppDispatch>();
+  const [isLoading, setIsLoading] = useState(true);
 
-  const handleAddStep = () => {
-    setShowStepOptions(!showStepOptions);
-  };
+  // const handleAddStep = () => {
+  //   setShowStepOptions(!showStepOptions);
+  // };
 
   useEffect(() => {
-    if (sequences.length === 0) {
-      const newSequence: Sequence = {
-        seq_number: sequences.length + 1,
-        seq_type: SequenceType.EMAIL,
-        seq_delay_details: { delay_in_days: 1 },
-        sequence_schedular_type: SequenceSchedularType.AUTOMATIC,
-        seq_variants: [
-          { subject: "Subject 1", emailBody: "", variantLabel: "A" },
-        ],
-        variant_distribution_type: variantDistributionType.MANUAL_EQUAL,
-      };
-      setSelectedVariant(newSequence.seq_variants[0]);
-      addSequence(newSequence);
+    const params = new URLSearchParams(location.search);
+    const campaignId = params.get("id");
+    console.log(selectedVariant);
+
+    if (campaignId || campaign_id) {
+      fetchCampaignDetails(campaignId || campaign_id);
+    } else {
+      if (sequences.length === 0) {
+        const newSequence: Sequence = {
+          seq_number: sequences.length + 1,
+          seq_type: SequenceType.EMAIL,
+          seq_delay_details: { delay_in_days: 1 },
+          sequence_schedular_type: SequenceSchedularType.AUTOMATIC,
+          seq_variants: [
+            { subject: "Subject 1", emailBody: "", variantLabel: "A" },
+          ],
+          variant_distribution_type: variantDistributionType.MANUAL_EQUAL,
+        };
+        setSelectedVariant(newSequence.seq_variants[0]);
+        addSequence(newSequence);
+        setIsLoading(false);
+      }
     }
-  }, [selectedVariant]);
+  }, []);
+
+  const fetchCampaignDetails = async (id: string) => {
+    try {
+      const response = await dispatch(getCampaignById(id)).unwrap();
+      const sequences = response.campaign.sequences;
+      if (sequences.length === 0) {
+        const newSequence: Sequence = {
+          seq_number: sequences.length + 1,
+          seq_type: SequenceType.EMAIL,
+          seq_delay_details: { delay_in_days: 1 },
+          sequence_schedular_type: SequenceSchedularType.AUTOMATIC,
+          seq_variants: [
+            { subject: "Subject 1", emailBody: "", variantLabel: "A" },
+          ],
+          variant_distribution_type: variantDistributionType.MANUAL_EQUAL,
+        };
+
+        setSelectedVariant(newSequence.seq_variants[0]);
+        addSequence(newSequence);
+        setIsLoading(false);
+      } else {
+        setSelectedVariant(sequences[0].seq_variants[0]);
+        updateSequences(sequences);
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Error fetching campaign:", error);
+      return null;
+    }
+  };
 
   const handleAddEmailStep = () => {
+    const sequenceCount = sequences.length;
     const newSequence: Sequence = {
-      seq_number: sequences.length + 1,
+      seq_number: sequenceCount + 1,
       seq_type: SequenceType.EMAIL,
       seq_delay_details: { delay_in_days: 1 },
       sequence_schedular_type: SequenceSchedularType.AUTOMATIC,
@@ -81,8 +134,9 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
   };
 
   const handleAddManualStep = () => {
+    const sequenceCount = sequences.length;
     const newSequence: Sequence = {
-      seq_number: sequences.length + 1,
+      seq_number: sequenceCount + 1,
       seq_type: SequenceType.MANUAL,
       seq_delay_details: { delay_in_days: 1 },
       sequence_schedular_type: SequenceSchedularType.MANUAL,
@@ -98,6 +152,7 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
     const renumberedSequences = updatedSequences.map((seq, i) => ({
       ...seq,
       seq_number: i + 1,
+      seq_variants: seq.seq_variants.map(variant => ({ ...variant }))
     }));
 
     updateSequences(renumberedSequences);
@@ -111,16 +166,9 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
   const closeAbConfigurationDialog = () => setIsDialogOpen(false);
 
   return (
-    <Box display="flex" sx={{ height: "80%" }}>
-      <SidebarContainer
-        style={{
-          borderRight: "1px solid #ddd",
-          paddingLeft: "2%",
-          overflow: "scroll",
-          width: "fit-content",
-          padding: "18px",
-        }}
-      >
+    <Box sx={{ height: "100%" }} display={"flex"}>
+      {isLoading && <CircularLoader />}
+      <SequenceSidebarContainer>
         {sequences.map((sequence, index) =>
           sequence.seq_type === SequenceType.EMAIL ? (
             <EmailFollowUpStep
@@ -130,13 +178,13 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
               updateSequenceData={updateSequenceData}
               onSelectVariant={onSelectVariant}
               openAbConfigurationDialog={openAbConfigurationDialog}
-              onAddStep={() => {}}
+              onAddStep={() => { }}
               onDelete={() => handleRemoveStep(index)}
               isFirstEmail={index === 0}
             />
           ) : (
             <ManualFollowUp
-              onAddStep={() => {}}
+              onAddStep={() => { }}
               key={sequence.seq_number}
               selectedSequence={sequence}
               updateSequenceData={updateSequenceData}
@@ -146,10 +194,10 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
           )
         )}
 
-        <AddStepButton onClick={handleAddStep}>
-          <AddIcon sx={{ fontSize: 20, color: "#6e58f1" }} />
-          <Typography fontSize={14}>Add step</Typography>
-        </AddStepButton>
+        <AddStepButtonWrapper>
+          <StyledAddIcon />
+          <AddStepButton onClick={handleAddEmailStep}>Add step</AddStepButton>
+        </AddStepButtonWrapper>
 
         {showStepOptions && (
           <AddStepContainer>
@@ -161,17 +209,17 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
             </StyledIconButton>
           </AddStepContainer>
         )}
-      </SidebarContainer>
+      </SequenceSidebarContainer>
 
-      <Box flex={1} padding="40px">
+      <Box flex={1} padding="12px 16px">
         <TemplateHeader>
-          <Typography fontSize={18}>
+          <Typography fontSize={18} fontWeight={500}>
             Stage {selectedSequence?.seq_number}:{" "}
             {selectedSequence?.seq_type === SequenceType.MANUAL
               ? "Manual Sequence"
               : "Email"}
           </Typography>
-          <Typography fontSize={14}>Manual</Typography>
+          {/* <Typography fontSize={14}>Manual</Typography> */}
         </TemplateHeader>
 
         {sequences.length > 0 &&

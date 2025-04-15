@@ -1,150 +1,182 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../redux/store/store";
 import {
-  ListItemAvatar,
-  Avatar,
-  ListItemText,
-  Box,
-  Typography,
-} from "@mui/material";
-import { AnimatePresence, motion } from "framer-motion";
+  getAllMailBox,
+  setSelectedAccount,
+  resetMailboxes,
+  setSelectedMailbox,
+  getAllAccountMailBox,
+  reloadAccountMailboxes,
+} from "../../../redux/slice/emailInboxSlice";
+import { Search } from "lucide-react";
 import {
   EmailInboxListContainer,
-  EmailInboxListHeader,
-  EmailInboxListItem,
-  ThreadList,
-  TimeStamp,
-  MessagePreview,
+  AccountList,
+  AccountItem,
+  AccountAvatar,
+  AccountDetails,
+  EmailInboxHeading,
+  SearchBar,
+  NoAccount,
+  RefreshRoundedbutton,
 } from "./EmailInboxList.styled";
-import { useSocket } from "../../../context/SocketContext";
-import { useDispatch } from "react-redux";
-import { getAllThreads, Thread } from "../../../redux/slice/threadSlice";
-import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
-import SortOutlinedIcon from "@mui/icons-material/SortOutlined";
-import { AppDispatch } from "../../../redux/store/store";
-import { formatTimestamp } from "../../../utils/utils";
-import { SearchBar } from "../../../components/Header/header.styled";
-import ReplayIcon from "@mui/icons-material/Replay";
-import { Search } from "lucide-react";
+import { fetchEmailAccount } from "../../../redux/slice/emailAccountSlice";
+import { EmailAccount } from "../../Email-Campaign/NewCampaign/SetupCampaign/Interface";
 
-const listItemVariants = {
-  hidden: { opacity: 0, x: -20 },
-  visible: { opacity: 1, x: 0 },
-};
-
-interface EmailInboxListProps {
-  threads: Thread[];
-  onSelectThread: (threadId: string) => void;
-  type: string;
-  selectedThreadId: string | null;
-}
-
-const MotionEmailInboxListItem = motion(EmailInboxListItem);
-
-const EmailInboxList: React.FC<EmailInboxListProps> = ({
-  threads,
-  onSelectThread,
-  type,
-  selectedThreadId,
-}) => {
-  const { socket } = useSocket();
+const EmailInboxList: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const accounts = useSelector((state: RootState) => state.emailInbox.accounts);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [rows, setRows] = useState<any[]>([]);
+  const [emailAccounts, setEmailAccounts] = useState<EmailAccount[]>([])
+  const { user } = useSelector((state: RootState) => state.user);
+  const selectedAccountId = useSelector(
+    (state: RootState) => state.emailInbox.selectedAccountId
+  );
 
   useEffect(() => {
-    if (!socket) return;
+    if (accounts.length > 0 && !selectedAccountId) {
+      const firstAccountId = accounts[0]._id;
+      dispatch(setSelectedAccount(firstAccountId));
+      dispatch(getAllMailBox(firstAccountId));
+    }
+  }, [accounts, selectedAccountId, dispatch]);
 
-    const handleEmailInboxStarted = (data: { threadId: string }) => {
-      console.log("New thread started with ID:", data.threadId);
-      dispatch(getAllThreads());
-      onSelectThread(data.threadId);
+  const handleAccountClick = async (accountId: string) => {
+    dispatch(resetMailboxes());
+    dispatch(setSelectedAccount(accountId));
+    const response = await dispatch(getAllMailBox(accountId)).unwrap();
+    if (response.length > 0) {
+      const firstMailbox = response[0];
+      dispatch(setSelectedMailbox(firstMailbox._id));
+      dispatch(
+        getAllAccountMailBox({
+          accountId,
+          mailBoxId: firstMailbox._id,
+          page: 1,
+          limit: 10,
+        })
+      );
+    }
+  };
+
+  useEffect(() => {
+    const getEmailAccounts = async () => {
+      await getAllEmailAccounts();
     };
 
-    socket.on("EmailInboxStarted", handleEmailInboxStarted);
-    return () => {
-      socket.off("EmailInboxStarted", handleEmailInboxStarted);
-    };
-  }, [socket, dispatch, onSelectThread, type]);
+    getEmailAccounts();
+  }, []);
 
+  const getAllEmailAccounts = async () => {
+    try {
+      const data = await dispatch(fetchEmailAccount({ orgId: user?.orgId || "" })).unwrap();
+      setEmailAccounts(data);
+      setRows(data);
+    } catch (error) {
+      console.error("Failed to fetch Account:", error);
+    }
+  };
+
+  const handleSearch = (query: string) => {
+    const trimmedQuery = query.trim().toLowerCase();
+
+    if (trimmedQuery === "") {
+      setRows(emailAccounts);
+      return;
+    }
+
+    const filteredData = emailAccounts.filter(
+      (account) =>
+        account.name.toLowerCase().includes(trimmedQuery) ||
+        account.email.toLowerCase().includes(trimmedQuery)
+    );
+
+    setRows(filteredData);
+  };
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const query = event.target.value;
+    setSearchQuery(query);
+    handleSearch(query);
+  };
+
+  const handleReload = async () => {
+    if (!emailAccounts || emailAccounts.length === 0 || !selectedAccountId)
+      return;
+
+    try {
+      const res = await dispatch(
+        reloadAccountMailboxes({ accountId: selectedAccountId })
+      ).unwrap();
+      console.log(res,"res")
+      // if (res) {
+      //   const fetchMessages = await dispatch(
+      //     reloadAccountMessages({ accountId: selectedAccountId })
+      //   );
+      //   console.log(fetchMessages);
+      // }
+
+      await getAllEmailAccounts();
+
+      dispatch(resetMailboxes());
+      const mailboxResponse = await dispatch(
+        getAllMailBox(selectedAccountId)
+      ).unwrap();
+
+      if (mailboxResponse.length > 0) {
+        const firstMailbox = mailboxResponse[0];
+        dispatch(setSelectedMailbox(firstMailbox._id));
+        dispatch(
+          getAllAccountMailBox({
+            accountId: selectedAccountId,
+            mailBoxId: firstMailbox._id,
+          })
+        );
+      }
+    } catch (error) {
+      console.error("❌ Error while reloading account mailboxes:", error);
+    }
+  };
+  
+  
   return (
     <EmailInboxListContainer>
-      <EmailInboxListHeader>
-        <Box sx={{display: "flex"}}>
-          <SearchBar style={{ width: "100%", marginRight: "10%"}}>
-            <Search size={20} color="#64748b" />
-            <input placeholder="Search leads..." />
-          </SearchBar>
-          <SortOutlinedIcon />
-        </Box>
-        <Box sx={{display: "flex", gap: "150px" }}>
-          <Typography
-            variant="h6"
-            sx={{ fontFamily: "cursive", fontWeight: 600 }}
-          >
-            Threads
-          </Typography>
-          <Box>
-            <ReplayIcon/>
-            <FilterAltOutlinedIcon/>
-          </Box>
-        </Box>
-      </EmailInboxListHeader>
-      <Box sx={{ overflowY: "auto", flex: 1 }}>
-        {threads && threads.length > 0 ? (
-          <AnimatePresence>
-            <ThreadList>
-              {threads.map((thread, index) => {
-                const isActive = thread.id === selectedThreadId;
+      <EmailInboxHeading>
+        {/* <EmailInboxListHeader>
+          <HeaderTitle>Accounts</HeaderTitle>
+        </EmailInboxListHeader> */}
+        <SearchBar>
+          <Search/>
+          <input
+            placeholder="Search Account"
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
+        </SearchBar>
+        <RefreshRoundedbutton onClick={handleReload} />
+      </EmailInboxHeading>
 
-                return (
-                  <MotionEmailInboxListItem
-                    key={thread.id}
-                    active={isActive}
-                    onClick={() => onSelectThread(thread.id)}
-                    variants={listItemVariants}
-                    initial="hidden"
-                    animate="visible"
-                    transition={{ delay: index * 0.1 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <ListItemAvatar>
-                      <Avatar
-                        sx={{
-                          bgcolor: "var(--theme-color)",
-                          width: 32,
-                          height: 32,
-                        }}
-                      >
-                        {thread.type[0]?.toUpperCase() || "?"}
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary="Unknown Visitor"
-                      secondary={
-                        <MessagePreview>Click to view messages</MessagePreview>
-                      }
-                      primaryTypographyProps={{
-                        variant: "body1",
-                        fontSize: "0.9rem",
-                      }}
-                    />
-                    <TimeStamp>{formatTimestamp(thread.createdAt)}</TimeStamp>
-                  </MotionEmailInboxListItem>
-                );
-              })}
-            </ThreadList>
-          </AnimatePresence>
+      <AccountList>
+        {rows.length > 0 ? (
+          rows.map((account) => (
+            <AccountItem
+              key={account._id}
+              onClick={() => handleAccountClick(account._id)}
+              data-selected={selectedAccountId === account._id}
+            >
+              <AccountAvatar>{account.name[0]?.toUpperCase()}</AccountAvatar>
+              <AccountDetails>
+                <strong>{account.name}</strong>
+                <div>{account.email}</div>
+              </AccountDetails>
+            </AccountItem>
+          ))
         ) : (
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "100%",
-            }}
-          >
-            <Typography variant="body1">No threads available</Typography>
-          </Box>
+          <NoAccount>No accounts found</NoAccount>
         )}
-      </Box>
+      </AccountList>
     </EmailInboxListContainer>
   );
 };

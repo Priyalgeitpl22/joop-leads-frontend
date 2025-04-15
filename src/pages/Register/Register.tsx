@@ -1,11 +1,18 @@
 import { useRef, useState } from "react";
-import { Typography } from "@mui/material";
-import { Facebook, Linkedin } from "lucide-react";
+import {
+  FormControl,
+  FormHelperText,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  Typography,
+} from "@mui/material";
 import { useDispatch } from "react-redux";
 import { registerUser } from "../../redux/slice/authSlice";
-import { useNavigate } from "react-router-dom";
-import { AppDispatch } from "../../redux/store/store"; 
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { AppDispatch } from "../../redux/store/store";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import industriesData from "../../components/Organization/Industry.json";
 import {
   PageContainer,
   RegisterCard,
@@ -13,14 +20,15 @@ import {
   FormSection,
   StyledTextField,
   StyledButton,
-  SocialButtonsContainer,
-  SocialButton,
   PreviewContainer,
   PreviewImage,
 } from "./register.styled";
-import { Link as RouterLink } from "react-router-dom";
-import Loader from "../../components/Loader"; 
+import Loader from "../../components/Loader";
 import toast, { Toaster } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import fieldValidation from "../../utils/Validation";
+import PasswordInput from "../../utils/PasswordInput";
+import { NavigateLink } from "../Login/login.styled";
 
 interface RegisterFormData {
   profilePicture: File | null;
@@ -33,20 +41,24 @@ interface RegisterFormData {
   password: string;
 }
 
-const formFields: { name: keyof Omit<RegisterFormData, "profilePicture">; label: string; type: string }[] = [
-  { name: "fullName", label: "Full Name", type: "text" },
-  { name: "email", label: "Email Address", type: "email" },
-  { name: "password", label: "Password", type: "text" },
-  { name: "orgName", label: "Company Name", type: "text" },
-  { name: "domain", label: "Company Domain", type: "text" },
-  // { name: "country", label: "Country", type: "text" },
-  // { name: "phone", label: "Phone Number", type: "tel" },
-];
+const formFields: {
+  name: keyof Omit<RegisterFormData, "profilePicture">;
+  label: string;
+  type: string;
+}[] = [
+    { name: "fullName", label: "Full Name", type: "text" },
+    { name: "email", label: "Email Address", type: "email" },
+    { name: "password", label: "Password", type: "text" },
+    { name: "orgName", label: "Company Name", type: "text" },
+    { name: "domain", label: "Industry", type: "text" },
+  ];
 
 const Register = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate(); 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [errors, setErrors] = useState<{
+    [key in keyof RegisterFormData]?: string;
+  }>({});
 
   const [formData, setFormData] = useState<RegisterFormData>({
     profilePicture: null,
@@ -63,24 +75,72 @@ const Register = () => {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   // State to control the full screen loader
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
-  // Handler for text input fields
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    if (name !== "profilePicture" && name !== "country") {
+      const error = getValidationError(
+        name as Exclude<keyof RegisterFormData, "profilePicture">,
+        value
+      );
+
+      setFormData((prev) => ({ ...prev, [name]: value }));
+      setErrors((prev) => ({ ...prev, [name]: error }));
+    }
   };
 
-  // Handler for file input (profile picture)
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setFormData({ ...formData, profilePicture: file });
-      // Create and set the preview URL for the selected file
       setPreviewImage(URL.createObjectURL(file));
     }
   };
 
+  const getValidationError = (
+    field: Exclude<keyof RegisterFormData, "profilePicture">,
+    value: string
+  ): string => {
+    const rules = fieldValidation[field];
+    if (!value.trim()) {
+      return rules?.required?.message || `${field} is required`;
+    }
+    if (rules?.minLength && value.length < rules.minLength.value) {
+      return rules.minLength.message;
+    }
+    if (rules?.pattern && !new RegExp(rules.pattern.value).test(value)) {
+      return rules.pattern.message;
+    }
+    return "";
+  };
+
+  const validateFormData = (): boolean => {
+    let isValid = true;
+    const newErrors: Partial<Record<keyof RegisterFormData, string>> = {};
+    (Object.keys(fieldValidation) as (keyof RegisterFormData)[]).forEach(
+      (field) => {
+        if (!(field in fieldValidation)) return;
+        if (field === "profilePicture") return;
+        const value = formData[field] as string;
+        const error = getValidationError(field, value);
+        if (error) {
+          newErrors[field] = error;
+          isValid = false;
+        }
+      }
+    );
+    setErrors(newErrors);
+
+
+    return isValid;
+  };
+
   // Handle submit by converting our state into FormData
   const handleSubmit = async () => {
+    if (!validateFormData()) return;
     setIsLoading(true);
     const payload = new FormData();
     payload.append("fullName", formData.fullName);
@@ -94,13 +154,18 @@ const Register = () => {
       payload.append("profilePicture", formData.profilePicture);
     }
     try {
-      const result = await dispatch(registerUser(payload)).unwrap();
-      console.log("Registration successful:", result);
-      toast.success("Registration successful!");
-      navigate("/verify-otp", { state: { email: formData.email } });
-    } catch (err) {
+      const response = await dispatch(registerUser(payload)).unwrap();
+
+      if (response?.code === 201) {
+        toast.success("Registration successful!");
+        navigate("/verify-otp", { state: { email: formData.email } });
+      }
+    } catch (err: any) {
       console.error("Registration failed:", err);
-      toast.error("Registration failed. Please try again.");
+
+      const errorMessage = err || "Registration failed. Please try again.";
+
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -110,19 +175,41 @@ const Register = () => {
     fileInputRef.current?.click();
   };
 
+  const handleSelectChange = (event: SelectChangeEvent<string>) => {
+    const { name, value } = event.target;
+
+    if (name !== "profilePicture") {
+      const error = getValidationError(
+        name as Exclude<keyof RegisterFormData, "profilePicture">,
+        value
+      );
+
+      setFormData((prev) => ({ ...prev, [name]: value }));
+      setErrors((prev) => ({ ...prev, [name]: error }));
+    }
+  };
+
   return (
     <PageContainer>
+      <Toaster position="top-right" />
       <RegisterCard>
-        <IllustrationSection>
+        {/* <IllustrationSection>
           <img
             src="https://cdn.dribbble.com/users/2058540/screenshots/8225403/media/bc617eec455a72c77feab587e09daa96.gif"
             alt="Auth illustration"
             style={{ maxWidth: "100%", height: "auto" }}
           />
+        </IllustrationSection> */}
+        <IllustrationSection>
+          <img
+            src="/great-learning.gif"
+            alt="Email illustration"
+            style={{ maxWidth: "75%", height: "auto"}}
+          />
         </IllustrationSection>
 
         <FormSection>
-          <Typography variant="h4" fontWeight="bold" mb={1}>
+          <Typography variant="h4" fontWeight="bold" mb={1} color="var(--border-color)">
             Create an Account
           </Typography>
           <Typography variant="body1" color="black" mb={2}>
@@ -132,10 +219,20 @@ const Register = () => {
           {/* Profile picture upload input */}
           <PreviewContainer>
             {previewImage ? (
-              <PreviewImage src={previewImage} alt="Profile preview" onClick={handleIconClick} style={{ cursor: 'pointer' }} />
+              <PreviewImage
+                src={previewImage}
+                alt="Profile preview"
+                onClick={handleIconClick}
+                style={{ cursor: "pointer" }}
+              />
             ) : (
               <AccountCircleIcon
-                style={{ fontSize: "50px", color: "var(--theme-color-dark)", marginBottom: "8px", cursor: 'pointer' }}
+                style={{
+                  fontSize: "50px",
+                  color: "var(--theme-color-dark)",
+                  marginBottom: "8px",
+                  cursor: "pointer",
+                }}
                 onClick={handleIconClick}
               />
             )}
@@ -144,58 +241,101 @@ const Register = () => {
               accept="image/*"
               onChange={handleFileChange}
               ref={fileInputRef}
-              style={{ display: 'none' }}
+              style={{ display: "none" }}
             />
           </PreviewContainer>
 
           {/* Render other text fields */}
-          {formFields.map(({ name, label, type }) => (
-            <StyledTextField
-              key={name}
-              name={name}
-              label={label}
-              type={type}
-              variant="outlined"
-              value={formData[name]}
-              onChange={handleChange}
-            />
-          ))}
+          {formFields.map(({ name, label, type }) => {
+            if (name === "domain") {
+              return (
+                <FormControl
+                  key={name}
+                  variant="outlined"
+                  fullWidth
+                  error={!!errors[name]}
+                  sx={{ mb: 2 }}
+                >
+                  <InputLabel id="domain-label">{label}</InputLabel>
+
+                  <Select
+                    labelId="domain-label"
+                    id="domain"
+                    name="domain"
+                    value={formData.domain}
+                    onChange={handleSelectChange}
+                    label={label}
+                    sx={{
+                      borderRadius: "10px",
+                      backgroundColor: "var(--text-white)",
+
+                      "& .MuiOutlinedInput-input": {
+                        backgroundColor: "var(--text-white)",
+                      },
+                    }}
+                  >
+                    {industriesData.industries.map((industry, index) => (
+                      <MenuItem key={index} value={industry}>
+                        {industry}
+                      </MenuItem>
+                    ))}
+                  </Select>
+
+                  {errors[name] && (
+                    <FormHelperText>{errors[name]}</FormHelperText>
+                  )}
+                </FormControl>
+              );
+            }
+            if (name === "password") {
+              return (
+                <PasswordInput
+                  key={name}
+                  name={name}
+                  label={label}
+                  value={formData[name]}
+                  onChange={handleChange}
+                  error={!!errors.password}
+                  helperText={errors.password}
+                />
+
+              );
+            }
+            return (
+              <StyledTextField
+                key={name}
+                name={name}
+                label={label}
+                type={type}
+                variant="outlined"
+                value={formData[name]}
+                error={!!errors[name]}
+                helperText={errors[name] || ""}
+                onChange={handleChange}
+                autoComplete="nope"
+              />
+            );
+          })}
 
           <StyledButton variant="contained" fullWidth onClick={handleSubmit}>
             REGISTER
           </StyledButton>
 
-          <Typography variant="body2" color="black" align="center" sx={{ my: 1 }}>
+          <Typography
+            variant="body2"
+            color="black"
+            align="center"
+            sx={{ my: 1 }}
+          >
             Already have an account?{" "}
-            <RouterLink to="/login" style={{ textDecoration: "none", color: "var(--theme-color-dark)" }}>
+            <NavigateLink onClick={() => window.location.assign("/login")}>
               Login
-            </RouterLink>
+            </NavigateLink>
           </Typography>
-
-          <Typography variant="body2" color="black" align="center">
-            OR REGISTER WITH
-          </Typography>
-
-          <SocialButtonsContainer>
-            <SocialButton>
-              <Facebook size={20} color="#4267B2" />
-            </SocialButton>
-            <SocialButton>
-              <img
-                src="https://www.google.com/images/branding/googleg/1x/googleg_standard_color_128dp.png"
-                alt="Google"
-                style={{ width: 20, height: 20 }}
-              />
-            </SocialButton>
-            <SocialButton>
-              <Linkedin size={20} color="#0077B5" />
-            </SocialButton>
-          </SocialButtonsContainer>
         </FormSection>
       </RegisterCard>
 
       {isLoading && <Loader />}
-      <Toaster />
     </PageContainer>
   );
 };

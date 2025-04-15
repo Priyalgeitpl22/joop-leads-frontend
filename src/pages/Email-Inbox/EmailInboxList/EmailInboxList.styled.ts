@@ -1,79 +1,270 @@
 import { styled } from "@mui/material/styles";
-import {
-  Box,
-  Typography,
-  ListItem,
-  TypographyProps,
-  List,
-} from "@mui/material";
-import { motion } from "framer-motion";
+import { Box, List, ListItem } from "@mui/material";
+import { RefreshRounded } from "@mui/icons-material";
 
 export const EmailInboxListContainer = styled(Box)({
-  width: 290,
-  borderRight: "1px solid rgba(0, 0, 0, 0.12)",
+  width: "28%",
+  minWidth: "250px",
+  borderRight: "1px solid #ddd",
+  padding: "0px 10px 10px 10px",
+  marginTop: "5px",
+  height: "100%",
+  overflowY: "auto",
+  backgroundColor: "var(--text-white)",
+  transition: "width 0.3s ease-in-out",
+
+  "@media (max-width: 1024px)": {
+    width: "35%",
+  },
+  "@media (max-width: 768px)": {
+    width: "45%",
+  },
+  "@media (max-width: 600px)": {
+    width: "100%",
+    borderRight: "none",
+    height: "auto",
+  },
+});
+
+export const EmailInboxHeading = styled(Box)({
   display: "flex",
-  flexDirection: "column",
-  padding: "10px",
+  position: "sticky",
+  top: 0,
+  paddingTop: "5px",
+  background: "var(--icon-light)",
+  zIndex: 10,
+  justifyContent: "space-between",
+  gap: "2%",
+  borderBottom: "1px solid #eee",
+});
+
+export const SearchBar = styled(Box)`
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  background-color: white;
+  border-radius: 5px;
+  flex-grow: 1;
+  margin-bottom: 10px;
+  width: 80%;
+  gap: 10px;
+  height: 35px;
+
+  input {
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--theme-color);
+    flex-grow: 1;
+    font-size: 14px;
+
+    &::placeholder {
+      color: #94a3b8;
+    }
+  }
+
+  svg {
+    color: var(--border-color);
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    display: block;
+
+    @media (max-width: 768px) {
+      width: 16px;
+      height: 16px;
+    }
+    @media (max-width: 480px) {
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    max-width: 270px;
+    height: 38px;
+  }
+
+  @media (max-width: 768px) {
+    max-width: 250px;
+    height: 35px;
+    padding: 8px 10px;
+  }
+
+  @media (max-width: 480px) {
+    max-width: 200px;
+    height: 32px;
+    padding: 6px 8px;
+    gap: 6px;
+  }
+`;
+
+export const SearchContainer = styled(Box)({
+  display: "flex",
+  alignItems: "center",
+  marginBottom: "15px",
+  padding: "8px",
+  borderRadius: "8px",
+  border: "1px solid var(--input-border)",
+  backgroundColor: "#f8f9fa",
+  width: "60%",
+});
+
+export const SearchInput = styled("input")({
+  border: "none",
+  outline: "none",
+  background: "transparent",
+  flex: 1,
+  fontSize: "14px",
+  padding: "5px",
+
+  "@media (max-width: 600px)": {
+    fontSize: "12px",
+  },
 });
 
 export const EmailInboxListHeader = styled(Box)({
-  padding: "10px",
-  borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
-  backgroundColor: "#fff",
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "center",
   alignItems: "center",
-  gap: "8px",
+
+  "@media (max-width: 600px)": {
+    flexDirection: "column",
+    alignItems: "flex-start",
+  },
 });
 
-export const ThreadList = styled(List)`
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  position: relative;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  gap: 5px;
-  display: flex;
-  flex-direction: column;
-`;
-interface EmailInboxListItemProps {
-  active?: boolean;
-}
+export const HeaderTitle = styled(Box)({
+  fontSize: "18px",
+  fontWeight: "bold",
 
-export const EmailInboxListItem = styled(motion.create(ListItem), {
-  shouldForwardProp: (prop) => prop !== "active",
-})<EmailInboxListItemProps>(({ active }) => ({
-  "&:hover": {
-    backgroundColor: "var(--theme-color)",
-    cursor: "pointer",
+  "@media (max-width: 600px)": {
+    fontSize: "16px",
   },
-  padding: "12px 16px",
-  backgroundColor: active ? "var(--theme-color)" : "transparent",
-  borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
-  borderRadius: "8px",
-}));
+});
 
-export const TimeStamp = styled(Typography)({
+export const HeaderIcons = styled(Box)({
+  display: "flex",
+  gap: "10px",
+
+  "& svg": {
+    cursor: "pointer",
+    color: "#777",
+  },
+
+  "@media (max-width: 600px)": {
+    gap: "5px",
+  },
+});
+
+export const AccountList = styled(List)({
+  padding: 0,
+  overflowY: "auto",
+  maxHeight: "calc(100vh - 120px)",
+  marginTop: "5px",
+});
+
+export const AccountItem = styled(ListItem)({
   display: "flex",
   flexDirection: "row",
-  fontSize: "0.75rem",
-  color: "rgba(0, 0, 0, 0.6)",
   alignItems: "center",
+  gap: "10px",
+  padding: "10px",
+  borderBottom: "1px solid #eee",
+  cursor: "pointer",
+  transition: "background 0.2s",
+  borderRadius: "8px",
+  marginBottom: "5px",
+  backgroundColor: "var(--icon-light)",
+  '&[data-selected="true"]': {
+    backgroundColor: "var(--background-hover)",
+    fontWeight: "bold",
+  },
+
+  "&:hover": {
+    backgroundColor: "var(--background-hover)",
+  },
+
+  "@media (max-width: 600px)": {
+    padding: "8px",
+    flexDirection: "row",
+    alignItems: "center",
+    textAlign: "left",
+  },
 });
 
-export const MessagePreview = styled(Typography)<TypographyProps>({
-  color: "rgba(0, 0, 0, 0.6)",
-  fontSize: "0.7rem",
+export const AccountAvatar = styled(Box)({
+  width: "35px",
+  height: "35px",
+  borderRadius: "50%",
+  backgroundColor: "rgb(9 16 115)",
+  color: "var(--icon-light)",
   display: "flex",
+  justifyContent: "center",
   alignItems: "center",
-  whiteSpace: "nowrap",
-  overflow: "hidden",
-  maxWidth: "22ch",
-  textOverflow: "clip",
+  fontWeight: "bold",
+  fontSize: "15px",
+  flexShrink: 0,
+
+  "@media (max-width: 600px)": {
+    width: "30px",
+    height: "30px",
+    fontSize: "13px",
+  },
 });
 
-MessagePreview.defaultProps = {
-  component: "span",
-};
+export const AccountDetails = styled(Box)({
+  display: "flex",
+  flexDirection: "column",
+
+  "& strong": {
+    fontSize: "15px",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    maxWidth: "200px",
+
+    "@media (max-width: 600px)": {
+      maxWidth: "150px",
+      fontSize: "14px",
+    },
+  },
+
+  "& div": {
+    fontSize: "14px",
+    color: "#777",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    maxWidth: "200px",
+
+    "@media (max-width: 600px)": {
+      maxWidth: "150px",
+      fontSize: "12px",
+    },
+  },
+});
+
+export const NoAccount = styled(Box)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: var(--icon-light);
+  color: #555;
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 20px;
+  height: 100%;
+  width: 100%;
+`;
+
+export const RefreshRoundedbutton = styled(RefreshRounded)`
+  cursor: pointer;
+  padding: 2px;
+  margin-left: 2px;
+  height: 2rem;
+  width: 2rem;
+  color: rgb(9 16 115);
+`;

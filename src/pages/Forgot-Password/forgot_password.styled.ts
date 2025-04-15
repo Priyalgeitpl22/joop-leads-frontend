@@ -5,17 +5,18 @@ export const PageContainer = styled(Box)`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  height: 100%;
 `;
 
 export const AuthCard = styled(Box)`
   background: white;
   border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-dark);
   width: 100%;
   max-width: 900px;
   display: flex;
   overflow: auto;
+  margin-top: 100px;
 `;
 
 export const IllustrationSection = styled(Box)`
@@ -54,7 +55,7 @@ export const StyledTextField = styled(TextField)`
   }
 
   .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
-    border: 1px solid #ddd;
+  border: 1px solid var(--border-dark);
   }
 
   .MuiOutlinedInput-input {
@@ -77,4 +78,32 @@ export const StyledButton = styled(Button)`
   }
 `;
 
+export const CancelButton = styled(Button)`
+  height: 40px;
+  border-radius: 8px;
+  font-weight: bold;
+  text-transform: none;
+  transition: 0.3s ease-in-out;
+  background:  red;
+  color: white;
+
+  &:hover {
+    background: var(--theme-color);
+    opacity: 0.9;
+  }
+`;
+
+export const ButtonWrapper = styled(Box)`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+`;
+
+export const NavigateLink = styled.span`
+color: #0066cc;
+font-weight: bold;
+cursor: pointer;
+text-decoration: none;
+`;
 

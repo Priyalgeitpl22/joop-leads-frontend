@@ -8,33 +8,25 @@ import {
 import { motion } from "framer-motion";
 
 export const EmailAccountsContainer = styled.div`
-  width: 98%;
-  height: 98%;
+  width: 100%;
+  height: 100%;
   display: flex;
-  // border-radius: 8px;
   overflow: auto;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   background: white;
   position: relative;
   flex-direction: column;
   background: var(--white-fade-gradient);
-  padding: 16px;
   border-radius: 8px;
 }
 `;
 export const EmailAccountHeader = styled.section`
-  width: 100%;
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  border-radius: 8px;
-`;
-
-export const SectionTitle = styled.h2`
-  font-size: 2rem;
-  font-weight: 600;
-  color: #35495c;
-  display: flex;
+  padding: 12px;
+  background: var(--background-secondary);
 `;
 
 export const CreateEmailAccount = styled(motion.button)`
@@ -43,7 +35,7 @@ export const CreateEmailAccount = styled(motion.button)`
   border: none;
   border-radius: 8px;
   background: linear-gradient(135deg, var(--theme-color), var(--theme-color));
-  color: #ffffff;
+  color: var(--background-light);
   cursor: pointer;
   transition: all 0.3s ease-in-out;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
@@ -64,6 +56,7 @@ export const CreateEmailAccount = styled(motion.button)`
 `;
 export const EmailAccountTable = styled.div`
   width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.4);
@@ -91,7 +84,7 @@ export const StyledTableContainer = styled(TableContainer)`
 `;
 
 export const StyledTableHead = styled(TableHead)`
-  background-color: transparent;
+  background-color: var(--background-color)
   position: sticky;
   top: 0;
   z-index: 1;
@@ -153,7 +146,11 @@ export const CustomForwardIcon = styled(IconButton)`
 `;
 
 export const FilterIcon = styled(IconButton)`
-  height: 2em;
+  height: 40px;
+  background: var(--background-color);
+  border-radius: 5px;
+  border: 1px solid var(--border-color);
+  padding: 5px;
 `;
 
 export const CustomDangerIcon = styled(IconButton)`

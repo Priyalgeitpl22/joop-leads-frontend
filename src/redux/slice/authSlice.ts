@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import {api} from "../../services/api";
+import { api } from "../../services/api";
 import Cookies from "js-cookie";
 
 interface AuthState {
@@ -51,8 +51,9 @@ export const registerUser = createAsyncThunk(
   async (formData: FormData, { rejectWithValue }) => {
     try {
       const response = await api.post("/auth/register", formData, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { "Content-Type": "mutlipart/form-data", Authorization: `Bearer ${token}` }
       });
+
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
@@ -94,6 +95,20 @@ export const verifyOtp = createAsyncThunk(
   }
 );
 
+export const resendOtp = createAsyncThunk(
+  "auth/resendOtp",
+  async (email: string, { rejectWithValue }) => {
+    try {
+      const response = await api.post("/auth/resend-otp", { email });
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Network error"
+      );
+    }
+  }
+);
+
 export const changePassword = createAsyncThunk(
   "auth/changePassword",
   async (data: ChangePasswordData, { rejectWithValue }) => {
@@ -106,11 +121,9 @@ export const changePassword = createAsyncThunk(
       if (response.status !== 200) {
         throw new Error(response.data?.message || "Failed to change password");
       }
-      return { success: true };
+      return response.data
     } catch (error: any) {
-      return rejectWithValue(
-        error.response?.data?.message || "Network error"
-      );
+      return rejectWithValue(error?.response?.data?.message || error.message);
     }
   }
 );
@@ -156,7 +169,13 @@ export const forgetPassword = createAsyncThunk(
       const response = await api.post(`/auth/forget-password`, data);
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data || "Failed to send forget password email");
+      const errorMessage =
+        error.response?.data?.message || "Failed to send forget password email";
+
+      return rejectWithValue({
+        code: error.response?.status,
+        message: errorMessage,
+      });
     }
   }
 );
@@ -168,7 +187,10 @@ export const resetPassword = createAsyncThunk(
       const response = await api.post(`/auth/reset-password`, data);
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data || "Failed to reset password");
+      const message = error?.response?.data?.message || error.message || "Failed to reset password";
+      return rejectWithValue(
+        message
+      );
     }
   }
 );

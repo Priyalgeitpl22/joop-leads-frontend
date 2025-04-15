@@ -7,22 +7,27 @@ import {
   AuthCard,
   IllustrationSection,
   FormSection,
-  StyledTextField,
   StyledButton,
 } from "./activateAccount.styled";
 import { AppDispatch, RootState } from "../../redux/store/store";
 import { activateAccount } from "../../redux/slice/authSlice";
+import { validatePassword } from "../../utils/Validation";
+import PasswordInput from "../../utils/PasswordInput";
 // import { activateAccount } from "../../redux/slice/authSlice";
+import { toast } from "react-hot-toast";
 
 const ActivateAccount = () => {
   const [password, setPassword] = useState("");
   const [token, setToken] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const dispatch = useDispatch<AppDispatch>();
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const { loading, error, success } = useSelector((state: RootState) => state.user);
+  // const { loading } = useSelector((state: RootState) => state.user);
+  const { success } = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
     const token = searchParams.get("token");
@@ -32,7 +37,7 @@ const ActivateAccount = () => {
       setToken(token);
       setEmail(email);
     } else {
-      navigate("/login");
+      navigate("/login")
     }
   }, [searchParams, navigate]);
 
@@ -42,26 +47,57 @@ const ActivateAccount = () => {
     }
   }, [success, navigate]);
 
-  const handleSubmitPassword = () => {
+  const handleSubmitPassword = async () => {
     if (!password || !token || !email) {
-      return;
-    }
+         setError("Password is required");
+         return;
+       }
+       if (!validatePassword(password)) {
+         setError(
+           "Password must be at least 8 characters, contain 1 uppercase, 1 lowercase, 1 number, and 1 special character."
+         );
+         return;
+       }
+       setError("");
+      
     
     const payload = {
       token, 
       password,
       email
     }
-    dispatch(activateAccount(payload)).unwrap();
+
+    try {
+      setLoading(true);
+      const response = await dispatch(activateAccount(payload)).unwrap();
+      if (response.code === 200) {
+        toast.success(
+          response.message|| "Account activated successfully. Please login to continue."
+        );
+        navigate("/login");
+      }
+    } catch (error: any) {
+      toast.error(error || "Something went wrong");
+      console.error("Error activating account:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <PageContainer>
       <AuthCard>
-        <IllustrationSection>
+        {/* <IllustrationSection>
           <img
             src="https://cdn.dribbble.com/users/2058540/screenshots/8225403/media/bc617eec455a72c77feab587e09daa96.gif"
             alt="Account Activation Illustration"
+          />
+        </IllustrationSection> */}
+        <IllustrationSection>
+          <img
+            src="/great-learning.gif"
+            alt="Email illustration"
+            style={{ width: "75%", height: "auto" }}
           />
         </IllustrationSection>
 
@@ -73,18 +109,19 @@ const ActivateAccount = () => {
             Enter your new password to activate your account.
           </Typography>
 
-          {error && <Typography color="error">{error}</Typography>}
-
-          <StyledTextField
-            label="New Password"
-            variant="outlined"
-            type="password"
+          <PasswordInput
+            label="New Password *"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            disabled={loading}
+            error={!!error}
+            helperText={error || ""}
           />
 
-          <StyledButton fullWidth onClick={handleSubmitPassword} disabled={loading}>
+          <StyledButton
+            fullWidth
+            onClick={handleSubmitPassword}
+            disabled={loading}
+          >
             {loading ? "Activating..." : "Activate Account"}
           </StyledButton>
         </FormSection>

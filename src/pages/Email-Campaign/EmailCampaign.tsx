@@ -1,445 +1,677 @@
-import { SetStateAction, useState } from "react";
-import { motion } from "framer-motion";
+import React, { useEffect, useState } from "react";
 import {
   Box,
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Button,
+  FormControl,
+  InputLabel,
   Link,
   Menu,
   MenuItem,
-  FormControl,
-  InputLabel,
   Select,
+  SelectChangeEvent,
+  Tabs,
+  Tooltip,
+  Typography,
 } from "@mui/material";
+import { motion } from "framer-motion";
 import {
-  Email,
-  Replay,
-  ErrorOutline,
-} from "@mui/icons-material";
-import { ContentContainer, CustomTab, CustomTabs, SectionTitle, EmailCampaignContainer } from "./EmailCampaign.styled";
-import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
+  ContentContainer,
+  SectionHeader,
+  EmailCampaignContainer,
+  SectionTitle,
+  FilterIcon,
+} from "./EmailCampaign.styled";
 import { SearchBar } from "../../components/Header/header.styled";
-import { FilterIcon } from "../Email-Account/EmailAccount.styled";
-import FolderOpenOutlinedIcon from "@mui/icons-material/FolderOpenOutlined";
-import EmailCampaignDialog from "./EmailCampaignDialog/AddEmailCampaignDialog";
 import { Search } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  DeleteEmailCampaign,
+  fetchEmailCampaigns,
+  filterCamapign,
+  SearchEmailCampaign,
+  UpdateCampaignStatus,
+} from "../../redux/slice/emailCampaignSlice";
+import { AppDispatch } from "../../redux/store/store";
+import { IEmailCampaign } from "./NewCampaign/interfaces";
+import { Button } from "../../styles/global.styled";
 import { Button2 } from "../../styles/layout.styled";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import ProgressBar from "../../assets/Custom/linearProgress";
+import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
+import toast from "react-hot-toast";
+import EmailCampaignDialog from "./EmailCampaignDialog/AddEmailCampaignDialog";
+import CampaignFolder from "./Folder/CampaignFolder";
+import MoveToFolderDialog from "./MoveToFolderDialog";
+import EmailCampaignTable from "./EmailCampaignTable";
+import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
+import { Dayjs } from "dayjs";
+import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { showFolders } from "../../redux/slice/emailCampaignFolderSlice";
+import FolderOpenOutlinedIcon from "@mui/icons-material/FolderOpenOutlined";
+import RenameEmailCampaignDialog from "./RenameEmailCampaignDialog";
 
+const EmailCampaign: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const location = useLocation();
+  const pathParts = location.pathname.split("/");
+  const tab = pathParts[2];
 
-const EmailCampaign = () => {
-  const [activeTab, setActiveTab] = useState("all_campaign");
+  const [campaigns, setCampaigns] = useState<IEmailCampaign[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [selectedCampaign, setSelectedCampaign] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState(tab);
   const [createFolder, setCreateFolder] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const navigate = useNavigate();
-  
+  const [filterOpen, setFilterOpen] = useState<null | HTMLElement>(null);
+  const [moveToFolderDialog, setMoveToFolderDialog] = useState(false);
+  const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
+  const [filters, setFilters] = useState({
+    status: "",
+  });
+  const [folderCampaignDelete,setFolderCampaignDelete] = useState<string | null>(null);
 
-  const handleTabChange = (_: any, newValue: SetStateAction<string>) => {
+  const filterOptions: Record<"status", string[]> = {
+    status: ["SCHEDULED", "RUNNING", "PAUSED", "DRAFT", "COMPLETED"],
+  };
+  const [renameDialogOpen, setRenameDialogOpen] = useState(false);
+  const [selectedRenameCampaignId, setSelectedRenameCampaignId] = useState<
+    string | null
+  >(null);
+  const [selectedRenameCampaignName, setSelectedRenameCampaignName] =
+    useState<string>("");
+
+  const [dateFilters, setDateFilters] = useState<{
+    startDate: Dayjs | null;
+    endDate: Dayjs | null;
+    [key: string]: string | Dayjs | null;
+  }>({
+    startDate: null,
+    endDate: null,
+  });
+  const isFilterOpen = Boolean(filterOpen);
+  const folders = useSelector((state: any) => state.folder.folders);
+  console.log("folderrr", folders.length);
+
+  useEffect(() => {
+    if (tab) {
+      setActiveTab(tab);
+    }
+    dispatch(showFolders());
+  }, [tab]);
+
+  useEffect(() => {
+    const getEmailCampaigns = async () => {
+      await getAllEmailCampaigns();
+    };
+
+    getEmailCampaigns();
+  }, []);
+
+  const handleTabChange = (_event: React.SyntheticEvent, newValue: string) => {
+    if (typeof newValue !== "string") {
+      return;
+    }
     setActiveTab(newValue);
-    if (newValue === "folder"){}
+
+    if (newValue === "all") {
+      setSelectedFolder(null);
+    } else if (newValue === "folders") {
+      setSelectedFolder(null);
+      navigate(`/email-campaign/folders`, { replace: true });
+      return;
+    }
+    navigate(`/email-campaign/${newValue}`, { replace: true });
   };
 
-  const handleCreateCampaign = () =>{
-    navigate('/email-campaign/new-campaign')
-  }
+  const handleFilterChange =
+    (field: keyof typeof filters) => (event: SelectChangeEvent<string>) => {
+      setFilters((prev) => ({
+        ...prev,
+        [field]: event.target.value,
+      }));
+    };
+  const handleDateChange =
+    (field: "startDate" | "endDate") => (value: Dayjs | null) => {
+      setDateFilters((prev) => ({
+        ...prev,
+        [field]: value,
+      }));
+    };
 
-  const handleCreateFolder = () => {
-    setCreateFolder(true);
+  const handleMenuOpen1 = (event: any) => {
+    setFilterOpen(event.currentTarget);
   };
 
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+  const handleMenuOpen = (
+    event: React.MouseEvent<HTMLElement>,
+    campaignId?: string
+  ) => {
     setAnchorEl(event.currentTarget);
+    setSelectedCampaign(campaignId || "");
   };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+    setSelectedCampaign(null);
   };
 
-  const isMenuOpen = Boolean(anchorEl);
+  // const handleRenameOpen = (campaignId: string) => {
+  //   setSelectedRenameCampaignId(campaignId);
+  //   setRenameDialogOpen(true);
+  //   handleMenuClose();
+  // };
 
-  const campaignData = [
-    {
-      progress: 31,
-      name: "Newly created - Siva",
-      createdAt: "22 Jan, 11:11 pm",
-      sequences: 4,
-      sent: 845,
-      opened: 200,
-      clicked: 0,
-      replied: 1,
-      positiveReply: true,
-      bounced: 53,
-    },
-    {
-      progress: 80,
-      name: "Dharmendra 500 Leads",
-      createdAt: "09 Jan, 11:40 pm",
-      sequences: 5,
-      sent: 666,
-      opened: "NA",
-      clicked: "NA",
-      replied: 7,
-      positiveReply: true,
-      bounced: 7,
-    },
-  ];
+  const handleRenameOpen = (campaignId: string, campaignName: string) => {
+    setSelectedRenameCampaignId(campaignId);
+    setSelectedRenameCampaignName(campaignName);
+    setRenameDialogOpen(true);
+    handleMenuClose();
+  };
 
+  const handleRenameClose = () => {
+    setRenameDialogOpen(false);
+  }
+
+  const handleFilterClose = () => {
+    setFilterOpen(null);
+  };
+  const handleCreateFolder = (event?: React.MouseEvent) => {
+    if (event) {
+      event.stopPropagation();
+    }
+    setCreateFolder(true);
+  };
+
+  const getAllEmailCampaigns = async () => {
+    try {
+      setLoading(true);
+      const response = await dispatch(fetchEmailCampaigns()).unwrap();
+      setTimeout(() => {
+        setLoading(false);
+        setCampaigns(response.data || []);
+      }, 1000);
+    } catch (error) {
+      setLoading(false);
+    }
+  };
+
+  const handleCreateCampaign = () => {
+    navigate("/email-campaign/new-campaign");
+  };
+
+  const handleSearch = async (query: string) => {
+    try {
+      const trimmedQuery = query.trim();
+      if (trimmedQuery === "") {
+        await getAllEmailCampaigns();
+      } else {
+        const filteredData = await dispatch(
+          SearchEmailCampaign({ campaign_name: trimmedQuery })
+        ).unwrap();
+        setCampaigns(filteredData.data);
+      }
+    } catch (error) {
+      console.error("Search failed:", error);
+    }
+  };
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const query = event.target.value;
+    setSearchQuery(query);
+    handleSearch(query);
+  };
+
+  const handleDetailCampaign = (id: string) => {
+    navigate(`/email-campaign/view-email-campaign?view&id=${id}`);
+  };
+
+  const handleEditCampaign = (id: string) => {
+    navigate(`/email-campaign/new-campaign?edit&id=${id}`);
+  };
+
+  const handleOpenDeleteDialog = (campaignId: string) => {
+    setSelectedCampaign(campaignId);
+    setOpenDeleteDialog(true);
+  };
+
+  const handleCloseDeleteDialog = () => {
+    setSelectedCampaign(null);
+    setOpenDeleteDialog(false);
+  };
+
+  const handleCampaignDelete = async () => {
+    if (!selectedCampaign) return;
+    try {
+      const response = await dispatch(
+        DeleteEmailCampaign(selectedCampaign)
+      ).unwrap();
+      if (response?.code === 200) {
+        setFolderCampaignDelete(selectedCampaign);
+        toast.success(
+          response?.message || "Contacts have been deactivated successfully."
+        );
+      } else {
+        toast.error("Failed to deactivate contacts.");
+      }
+      handleCloseDeleteDialog();
+      getAllEmailCampaigns();
+    } catch (error) {
+      console.error("Failed to delete campaign:", error);
+    }
+  };
+
+  const handlePause = async (campaignId: string) => {
+    setLoading(true);
+
+    const minLoadingTime = new Promise((resolve) => setTimeout(resolve, 1000));
+
+    try {
+      await dispatch(
+        UpdateCampaignStatus({ campaignId, status: "PAUSED" })
+      ).unwrap();
+      await getAllEmailCampaigns();
+      console.log("Campaign paused successfully");
+    } catch (error) {
+      console.error("Error pausing campaign:", error);
+    } finally {
+      await minLoadingTime;
+      setLoading(false);
+    }
+  };
+
+  const handleResume = async (campaignId: string) => {
+    setLoading(true);
+
+    const minLoadingTime = new Promise((resolve) => setTimeout(resolve, 1000));
+
+    try {
+      await dispatch(
+        UpdateCampaignStatus({ campaignId, status: "RUNNING" })
+      ).unwrap();
+      await getAllEmailCampaigns();
+      console.log("Campaign resumed successfully");
+    } catch (error) {
+      console.error("Error resuming campaign:", error);
+    } finally {
+      await minLoadingTime;
+      setLoading(false);
+    }
+  };
+
+  const handleMoveFolderOpen = (campaignId: string) => {
+    setSelectedCampaign(campaignId);
+    setMoveToFolderDialog(true);
+    setAnchorEl(null);
+  };
+
+  const handleMoveFolderClose = () => {
+    setMoveToFolderDialog(false);
+  };
+
+  const handleFolderChange = () => {
+    setSelectedFolder(null);
+    navigate(`/email-campaign/folders`);
+  };
+
+  const handleApplyFilters = async () => {
+    try {
+      const filterData = await dispatch(
+        filterCamapign({
+          status: filters.status,
+          startDate: dateFilters.startDate
+            ? dateFilters.startDate.format("YYYY-MM-DD")
+            : "",
+          endDate: dateFilters.endDate
+            ? dateFilters.endDate.format("YYYY-MM-DD")
+            : "",
+        })
+      );
+      setCampaigns(filterData.payload.data);
+      handleFilterClose();
+    } catch (error) {
+      console.error("Error applying filters:", error);
+    }
+  };
+  const handleClearFilters = () => {
+    setFilters({ status: "" });
+    setDateFilters({ startDate: null, endDate: null });
+    getAllEmailCampaigns();
+    handleFilterClose();
+  };
 
   return (
-    <ContentContainer>
-      <CustomTabs
-        value={activeTab}
-        onChange={handleTabChange}
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          borderBottom: 1,
-          borderColor: "divider",
-        }}
-      >
-        <CustomTab label="All Campaign" value="all_campaign" />
-        <CustomTab label="Folders" value="folder" />
-        {activeTab === "all_campaign" && (
-          <Box
-            sx={{
-              display: "flex",
-              gap: "15px",
-              alignItems: "center",
-              marginLeft: "auto",
-            }}
-          >
-            <FilterIcon onClick={handleMenuOpen}>
-              <FilterAltOutlinedIcon />
-            </FilterIcon>
-            <SearchBar>
-              <Search size={20} color="#64748b" />
-              <input placeholder="Search input..." />
-            </SearchBar>
-            <Button2
-              background="#6e58f1"
-              color="white"
-              style={{ height: "80%" }}
-              onClick={handleCreateCampaign}
-            >
-              Create Campaign
-            </Button2>
-          </Box>
-        )}
-        {activeTab === "folder" && (
-          <Box
-            sx={{
-              display: "flex",
-              gap: "15px",
-              alignItems: "center",
-              marginLeft: "auto",
-            }}
-          >
-            <EmailCampaignDialog
-              open={createFolder}
-              onClose={() => setCreateFolder(false)}
-            />
-            <Button2
-              background="#6e58f1"
-              color="white"
-              style={{ height: "90%" }}
-              onClick={handleCreateFolder}
-            >
-              Create Folder
-            </Button2>
-          </Box>
-        )}
-      </CustomTabs>
-      <Menu
-        anchorEl={anchorEl}
-        open={isMenuOpen}
-        onClose={handleMenuClose}
-        MenuListProps={{ "aria-labelledby": "profile-menu-button" }}
-        sx={{
-          "& .MuiMenu-paper": {
-            minWidth: "320px",
-            padding: "10px",
-            boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
-            borderRadius: "8px",
-          },
-        }}
-      >
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          mb={1}
-        >
-          <Typography fontWeight="bold">Filter</Typography>
-          <Link
-            href="#"
-            underline="hover"
-            sx={{ color: "#6e58f1", fontSize: "14px" }}
-          >
-            Clear all
-          </Link>
-        </Box>
-
-        {["Campaign Status", "Tag Name", "Team Member", "Client Name"].map(
-          (label) => (
-            <FormControl fullWidth sx={{ mt: 2 }}>
-              <InputLabel shrink={false}>{label}</InputLabel>
-              <Select>
-                <MenuItem value="">Select {label}</MenuItem>
-              </Select>
-            </FormControl>
-          )
-        )}
-
-        <Box display="flex" justifyContent="space-between" mt={2}>
-          <Button
-            variant="outlined"
-            sx={{
-              color: "black",
-              borderColor: "#ccc",
-              textTransform: "none",
-              borderRadius: "8px",
-              width: "45%",
-            }}
-            onClick={handleMenuClose}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: "#6e58f1",
-              color: "white",
-              textTransform: "none",
-              borderRadius: "8px",
-              width: "45%",
-            }}
-          >
-            Apply
-          </Button>
-        </Box>
-      </Menu>
-
-      {activeTab === "all_campaign" && (
-        <TableContainer
-          component={Paper}
-          sx={{ boxShadow: "none", borderRadius: "8px" }}
-        >
-          <Table>
-            <TableHead>
-              <TableRow sx={{ backgroundColor: "#f8f9fc" }}>
-                <TableCell sx={{ fontWeight: "bold", color: "#35495c" }}>
-                  Campaign Details
-                </TableCell>
-                <TableCell sx={{ fontWeight: "bold", color: "#35495c" }}>
-                  Report
-                </TableCell>
-              </TableRow>
-            </TableHead>
-
-            <TableBody>
-              {campaignData.map((campaign, index) => (
-                <TableRow key={index} sx={{ borderBottom: "1px solid #ddd" }}>
-                  <TableCell>
-                    <Box display="flex" alignItems="center">
-                      <Box
-                        sx={{
-                          width: "40px",
-                          height: "40px",
-                          borderRadius: "50%",
-                          background: `conic-gradient(#6e58f1 ${campaign.progress}%, #ddd ${campaign.progress}%)`,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          color: "#35495c",
-                          fontSize: "14px",
-                          fontWeight: "bold",
-                          mr: 1.5,
-                        }}
-                      >
-                        {campaign.progress}%
-                      </Box>
-
-                      <Box>
-                        <Link
-                          href="#"
-                          sx={{
-                            fontWeight: "bold",
-                            color: "#6e58f1",
-                            textDecoration: "none",
-                          }}
-                        >
-                          {campaign.name}
-                        </Link>
-                        <Typography variant="body2" sx={{ color: "#667085" }}>
-                          Paused | Created At: {campaign.createdAt} |{" "}
-                          {campaign.sequences} sequences
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </TableCell>
-
-                  <TableCell>
-                    <Box display="flex" alignItems="center">
-                      <Typography
-                        sx={{
-                          color: "#6e58f1",
-                          fontWeight: "bold",
-                          width: "50px",
-                        }}
-                      >
-                        {campaign.sent}
-                      </Typography>
-                      <Email
-                        sx={{
-                          fontSize: "18px",
-                          color: "#667085",
-                          marginLeft: "4px",
-                        }}
-                      />
-
-                      <Typography
-                        sx={{
-                          color: "#9b51e0",
-                          fontWeight: "bold",
-                          width: "50px",
-                          marginLeft: "16px",
-                        }}
-                      >
-                        {campaign.opened}
-                      </Typography>
-
-                      <Typography
-                        sx={{
-                          color: "#667085",
-                          fontWeight: "bold",
-                          width: "50px",
-                          marginLeft: "16px",
-                        }}
-                      >
-                        {campaign.clicked}
-                      </Typography>
-
-                      <Typography
-                        sx={{
-                          color: "#2db5a7",
-                          fontWeight: "bold",
-                          width: "50px",
-                          marginLeft: "16px",
-                        }}
-                      >
-                        {campaign.replied}
-                      </Typography>
-                      <Replay
-                        sx={{
-                          fontSize: "18px",
-                          color: "#2db5a7",
-                          marginLeft: "4px",
-                        }}
-                      />
-
-                      {campaign.positiveReply && (
-                        <Button
-                          size="small"
-                          sx={{
-                            textTransform: "none",
-                            backgroundColor: "#edf8f6",
-                            color: "#2db5a7",
-                            fontSize: "12px",
-                            ml: 2,
-                          }}
-                        >
-                          Go To Master Inbox
-                        </Button>
-                      )}
-
-                      <Typography
-                        sx={{
-                          color: "#e74c3c",
-                          fontWeight: "bold",
-                          width: "50px",
-                          marginLeft: "16px",
-                        }}
-                      >
-                        {campaign.bounced}
-                      </Typography>
-                      <ErrorOutline
-                        sx={{
-                          fontSize: "18px",
-                          color: "#e74c3c",
-                          marginLeft: "4px",
-                        }}
-                      />
-                    </Box>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
-
-      {activeTab === "folder" && (
-        <EmailCampaignContainer>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            style={{ width: "100%" }}
-          >
-            <SectionTitle>All Folders</SectionTitle>
-            <Box
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                padding: "60px 0px",
-                width: "100%",
+    <ContentContainer
+      style={{
+        height: activeTab === "all" || activeTab === "folders" ? "100%" : "0",
+        display:
+          activeTab === "all" || activeTab === "folders" ? "flex" : "none",
+      }}
+    >
+      {activeTab === "all" || activeTab === "folders" ? (
+        <>
+          <SectionHeader>
+            <Tabs
+              value={activeTab}
+              onChange={handleTabChange}
+              sx={{
+                "& .MuiTab-root": {
+                  fontSize: "14px",
+                  fontWeight: "600",
+                  color: "#35495c",
+                },
+                "& .MuiTab-root.Mui-selected": {
+                  color: "var(--theme-color)",
+                },
               }}
             >
-              <Box
-                style={{
-                  alignItems: "center",
-                  display: "flex",
-                  flexDirection: "column",
-                  maxWidth: "570px",
-                  width: "100%",
-                }}
-              >
-                <FolderOpenOutlinedIcon
-                  style={{ height: "20%", width: "20%" }}
-                />
-                <Typography style={{ textAlign: "center", fontWeight: "200" }}>
-                  Campaign Organization with Folders
-                </Typography>
-                Streamline Your Workflow by Grouping Campaigns into Folders 🚀.
-                <EmailCampaignDialog
-                  open={createFolder}
-                  onClose={() => setCreateFolder(false)}
-                />
-                <Button2
-                  background="#6e58f1"
-                  color="white"
-                  style={{
-                    width: "21%",
-                    height: "16%",
-                    marginTop: "10px",
-                    padding: "0px",
+              <SectionTitle label="All Campaign" value="all" />
+              <SectionTitle label="Folders" value="folders" />
+              {activeTab === "all" && (
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: "15px",
+                    width: "100%",
+                    alignItems: "center",
+                    paddingBottom: "12px",
+                    justifyContent: "flex-end",
                   }}
-                  onClick={handleCreateFolder}
                 >
-                  Create Folder
-                </Button2>
+                  <SearchBar>
+                    <Search size={20} />
+                    <input
+                      placeholder="Search by Campaign Name"
+                      value={searchQuery}
+                      onChange={handleSearchChange}
+                    />
+                  </SearchBar>
+                  <Tooltip title="Filter" arrow>
+                    <FilterIcon onClick={handleMenuOpen1}>
+                      <FilterAltOutlinedIcon />
+                    </FilterIcon>
+                  </Tooltip>
+                  <Button onClick={handleCreateCampaign}>
+                    Create Campaign
+                  </Button>
+                </Box>
+              )}
+              {activeTab === "folders" && (
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: "15px",
+                    alignItems: "center",
+                    paddingBottom: "12px",
+                    marginLeft: "auto",
+                  }}
+                >
+                  <EmailCampaignDialog
+                    open={createFolder}
+                    onClose={() => setCreateFolder(false)}
+                  />
+                  <Button2
+                    background="var(--theme-color)"
+                    color="white"
+                    style={{ height: "90%" }}
+                    onClick={(event) => handleCreateFolder(event)}
+                  >
+                    Create Folder
+                  </Button2>
+                </Box>
+              )}
+            </Tabs>
+          </SectionHeader>
+
+          {/* {loading && <ProgressBar />} */}
+          <Menu
+            anchorEl={filterOpen}
+            open={isFilterOpen}
+            onClose={handleFilterClose}
+            MenuListProps={{ "aria-labelledby": "profile-menu-button" }}
+            sx={{
+              "& .MuiMenu-paper": {
+                minWidth: "320px",
+                padding: "10px",
+                boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+                borderRadius: "8px",
+              },
+            }}
+          >
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              mb={1}
+            >
+              <Typography fontWeight="bold" fontSize={14}>
+                Filter
+              </Typography>
+              <Link
+                href="#"
+                underline="hover"
+                onClick={handleClearFilters}
+                sx={{ color: "var(--theme-color)", fontSize: "14px" }}
+              >
+                Clear all
+              </Link>
+            </Box>
+            <Box sx={{ mt: 2 }}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DesktopDatePicker
+                  label="Start Date *"
+                  value={dateFilters.startDate}
+                  onChange={handleDateChange("startDate")}
+                  sx={{ borderRadius: "8px" }}
+                />
+              </LocalizationProvider>
+
+              <Box sx={{ mt: 2 }}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DesktopDatePicker
+                    label="End Date *"
+                    value={dateFilters.endDate}
+                    onChange={handleDateChange("endDate")}
+                    sx={{ borderRadius: "8px" }} // Adding border-radius to the End Date picker
+                  />
+                </LocalizationProvider>
               </Box>
             </Box>
-          </motion.div>
-        </EmailCampaignContainer>
-      )}
+            {Object.keys(filterOptions).map((label) => (
+              <FormControl
+                key={label}
+                fullWidth
+                sx={{ mt: 2 }}
+                variant="outlined"
+              >
+                <InputLabel>{label}</InputLabel>
+                <Select
+                  value={
+                    filters[label.toLowerCase() as keyof typeof filters] || ""
+                  }
+                  onChange={handleFilterChange(
+                    label.toLowerCase() as keyof typeof filters
+                  )}
+                  label={label}
+                  sx={{
+                    borderRadius: "4px",
+                    backgroundColor: "var(--text-white)",
+
+                    "& .MuiOutlinedInput-input": {
+                      backgroundColor: "var(--text-white)",
+                    },
+                  }}
+                >
+                  {filterOptions[label as keyof typeof filterOptions]?.map(
+                    (option) => (
+                      <MenuItem key={option} value={option}>
+                        {option}
+                      </MenuItem>
+                    )
+                  )}
+                </Select>
+              </FormControl>
+            ))}
+
+            <Box display="flex" justifyContent="space-between" mt={2}>
+              <Button2 onClick={handleFilterClose} color={""} background={""}>
+                Cancel
+              </Button2>
+              <Button onClick={handleApplyFilters}>Apply</Button>
+            </Box>
+          </Menu>
+
+          {loading && <ProgressBar />}
+          {activeTab === "all" ? (
+            <EmailCampaignTable
+              campaigns={campaigns}
+              loading={loading}
+              handlePause={handlePause}
+              handleResume={handleResume}
+              handleEditCampaign={handleEditCampaign}
+              handleOpenDeleteDialog={handleOpenDeleteDialog}
+              handleMoveFolderOpen={handleMoveFolderOpen}
+              handleDetailCampaign={handleDetailCampaign}
+              handleMenuOpen={handleMenuOpen}
+              handleMenuClose={handleMenuClose}
+              handleRenameOpen={handleRenameOpen}
+              handleRenameClose={handleRenameClose}
+              anchorEl={anchorEl}
+              selectedCampaign={selectedCampaign}
+            />
+          ) : (
+            <EmailCampaignContainer>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                style={{ width: "100%" }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: 1,
+                    alignItems: "center",
+                    fontWeight: "bold",
+                    marginTop: "5px",
+                    // marginBottom: "10px",
+                    cursor: "pointer",
+                  }}
+                >
+                  <span
+                    onClick={handleFolderChange}
+                    style={{
+                      color: selectedFolder ? "grey" : "var(--theme-color)",
+                    }}
+                  >
+                    All Folders
+                  </span>
+                  {selectedFolder && (
+                    <>
+                      <span style={{ color: "var(--theme-color)" }}>{">"}</span>
+                      <span style={{ color: "var(--theme-color)" }}>
+                        {selectedFolder}
+                      </span>
+                    </>
+                  )}
+                </Box>
+                {/* <CampaignFolder  selectedFolder={selectedFolder}
+                        setSelectedFolder={setSelectedFolder}/> */}
+                {folders && folders.length > 0 ? (
+                  <CampaignFolder
+                    loading={loading}
+                    handlePause={handlePause}
+                    handleResume={handleResume}
+                    selectedFolder={selectedFolder}
+                    setSelectedFolder={setSelectedFolder}
+                    handleEditCampaign={handleEditCampaign}
+                    handleOpenDeleteDialog={handleOpenDeleteDialog}
+                    handleMoveFolderOpen={handleMoveFolderOpen}
+                    handleDetailCampaign={handleDetailCampaign}
+                    handleMenuOpen={handleMenuOpen}
+                    handleMenuClose={handleMenuClose}
+                    anchorEl={anchorEl}
+                    selectedCampaign={selectedCampaign}
+                    folderCampaignDel={folderCampaignDelete}
+                    handleRenameOpen={handleRenameOpen}
+                    handleRenameClose={handleRenameClose}
+                  />
+                ) : (
+                  <Box
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      padding: "60px 0px",
+                      width: "100%",
+                    }}
+                  >
+                    <Box
+                      style={{
+                        alignItems: "center",
+                        display: "flex",
+                        flexDirection: "column",
+                        maxWidth: "570px",
+                        width: "100%",
+                      }}
+                    >
+                      <FolderOpenOutlinedIcon
+                        style={{ height: "20%", width: "20%" }}
+                      />
+                      <Typography
+                        style={{ textAlign: "center", fontWeight: "200" }}
+                      >
+                        Campaign Organization with Folders
+                      </Typography>
+                      Streamline Your Workflow by Grouping Campaigns into
+                      Folders :rocket:.
+                      <EmailCampaignDialog
+                        open={createFolder}
+                        onClose={() => setCreateFolder(false)}
+                      />
+                      <Button2
+                        background="var(--theme-color)"
+                        color="white"
+                        style={{
+                          width: "25%",
+                          height: "25%",
+                          marginTop: "10px",
+                          padding: "0px",
+                        }}
+                        onClick={(event) => handleCreateFolder(event)}
+                      >
+                        Create Folder
+                      </Button2>
+                    </Box>
+                  </Box>
+                )}
+              </motion.div>
+            </EmailCampaignContainer>
+          )}
+        </>
+      ) : null}
+
+      <ConfirmDeleteDialog
+        open={openDeleteDialog}
+        onClose={handleCloseDeleteDialog}
+        onConfirm={handleCampaignDelete}
+        title="Delete Campaign?"
+        message="Are you sure you want to delete this campaign?"
+        confirmText="Delete"
+        cancelText="Cancel"
+      />
+      <MoveToFolderDialog
+        open={moveToFolderDialog}
+        onClose={handleMoveFolderClose}
+        campaignId={selectedCampaign}
+      />
+      <RenameEmailCampaignDialog
+        open={renameDialogOpen}
+        onClose={() => setRenameDialogOpen(false)}
+        campaignId={selectedRenameCampaignId}
+        campaignName={selectedRenameCampaignName}
+      />
     </ContentContainer>
   );
 };

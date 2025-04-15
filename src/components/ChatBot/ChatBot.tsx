@@ -51,7 +51,7 @@ function ChatBot({ settings }: any) {
               <span style={{ fontSize: '10px', color: '#6b7280', marginBlock: '0.5rem' }}>10:30 AM</span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-              <Message style={{ backgroundColor: settings.iconColor, color: '#fff' }}>
+              <Message style={{ backgroundColor: settings.iconColor, color: 'var(--background-light)' }}>
                 I need assistance with my order.
               </Message>
               <span style={{ fontSize: '10px', color: '#6b7280', marginBlock: '0.5rem' }}>10:31 AM</span>

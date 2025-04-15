@@ -45,7 +45,7 @@ const AddWebhookDialog: React.FC<AddWebhookDialogProps> = ({
       <DialogTitle sx={{ fontWeight: "bold" }}>Add Webhook</DialogTitle>
       <DialogContent sx={{ p: 3 }}>
         <Typography sx={{ mb: 1, cursor: "pointer" }}>
-          <a href="#" style={{ textDecoration: "none", color: "#6e58f1" }}>
+          <a href="#" style={{ textDecoration: "none", color: "var(--theme-color)" }}>
             Click here
           </a>{" "}
           to view the easy step by step guide
@@ -85,7 +85,7 @@ const AddWebhookDialog: React.FC<AddWebhookDialogProps> = ({
         </FormControl>
 
         <Typography sx={{ mb: 1, cursor: "pointer" }}>
-          <a href="#" style={{ textDecoration: "none", color: "#6e58f1" }}>
+          <a href="#" style={{ textDecoration: "none", color: "var(--theme-color)" }}>
             Click here
           </a>{" "}
           to view the JSON body sent
@@ -103,7 +103,7 @@ const AddWebhookDialog: React.FC<AddWebhookDialogProps> = ({
             variant="contained"
             fullWidth
             sx={{
-              backgroundColor: "#6e58f1",
+              backgroundColor: "var(--theme-color)",
               color: "white",
               fontSize: "16px",
               fontWeight: "bold",

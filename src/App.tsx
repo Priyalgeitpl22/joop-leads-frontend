@@ -1,58 +1,103 @@
-import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
-import Cookies from "js-cookie";
-import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { getUserDetails } from "./redux/slice/userSlice";
-import { AppDispatch } from "./redux/store/store";
-
-import ActivateAccount from "./components/ActivateAccount/ActivateAccount";
-import ChangePassword from "./components/Change-Password/ChangePassword";
-import Header from "./components/Header/Header";
+import * as React from "react";
+import { AppProvider, Router } from "@toolpad/core/AppProvider";
+import { DashboardLayout } from "@toolpad/core/DashboardLayout";
+import { PageContainer } from "@toolpad/core/PageContainer";
+import { NAVIGATION } from "./assets/Custom/customSideBar";
+import EmailCampaign from "./pages/Email-Campaign/EmailCampaign";
 import Chats from "./components/Chats/Chats";
 import Organization from "./components/Organization/Organization";
-import Agents from "./components/Settings/Agents/Agents";
-import Configuration from "./components/Settings/Configuration/Configuration";
+import EmailAccount from "./pages/Email-Account/EmailAccount";
+import EmailInboxs from "./pages/Email-Inbox/EmailInbox";
+import Leads from "./pages/Leads/Leads";
+import Home from "./pages/Home/Home";
+import NewCampaign from "./pages/Email-Campaign/NewCampaign/NewCampaign";
+import theme from "./styles/theme";
+import { CustomAppTitle } from "./assets/Custom/customAppTitle";
+import Cookies from "js-cookie";
+import { useDispatch, useSelector } from "react-redux";
+import { getUserDetails } from "./redux/slice/userSlice";
+import { AppDispatch, RootState } from "./redux/store/store";
+import { useNavigate } from "react-router-dom";
+import Login from "./pages/Login/Login";
+import Register from "./pages/Register/Register";
 import ForgotPassword from "./pages/Forgot-Password/ForgotPassword";
+import ActivateAccount from "./components/ActivateAccount/ActivateAccount";
+import ChangePassword from "./components/Change-Password/ChangePassword";
 import PasswordResetConfirmation from "./pages/Forgot-Password/PasswordResetConfirmation";
 import ResetPassword from "./pages/Forgot-Password/ResetPassword";
-import Register from "./pages/Register/Register";
 import VerifyOtp from "./pages/Verify-OTP/VerifyOtp";
-import { DashboardContainer, ContentArea } from "./styles/layout.styled";
-import Login from "./pages/Login/Login";
-import Sidebar from "./components/SideBar";
-import Home from "./pages/Home/Home";
-import { SocketProvider } from "./context/SocketContext";
+import UserProfileMenu from "./assets/Custom/customUserProfile";
+import ContactTable from "./pages/Contacts/ContactTable";
+import EditEmailAccount from "./pages/Email-Account/EditEmailAccount/EditEmailAccount";
+import ViewEmailCampaign from "./pages/Email-Campaign/ViewEmailCampaign/ViewEmailCampaign";
 import { Toaster } from "react-hot-toast";
-import EmailAccount from "./pages/Email-Account/EmailAccount";
-import Leads from "./pages/Leads/Leads";
-import EmailCampaign from "./pages/Email-Campaign/EmailCampaign";
-import EmailInboxs from "./pages/Email-Inbox/EmailInbox";
-import NewCampaign from "./pages/Email-Campaign/NewCampaign/NewCampaign";
+import Users from "./pages/Users/User";
+import Unsubscribe from "./pages/Unsubscribe/Unsubscribe";
 
-const AuthGuard = ({ children }: { children: JSX.Element }) => {
-  const token = Cookies.get("access_token");
-  return token ? children : <Navigate to="/login" replace />;
-};
-
-const publicRoutes = [
+const UNPROTECTED_ROUTES = [
   "/login",
-  "/register",
+  "/signup",
   "/forgot-password",
   "/reset-password",
   "/verify-otp",
   "/confirmation",
   "/change-password",
   "/activate-account",
+  "/unsubscribe",
 ];
 
-function AppRoutes() {
-  const dispatch = useDispatch<AppDispatch>();
+function useDemoRouter(initialPath: string): Router {
   const navigate = useNavigate();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  
-  useEffect(() => {
+  const [pathname, setPathname] = React.useState(
+    window.location.pathname || initialPath
+  );
+
+  React.useEffect(() => {
+    setPathname(window.location.pathname);
+  }, [window.location.pathname]);
+
+  return {
+    pathname,
+    searchParams: new URLSearchParams(window.location.search),
+    navigate: (path: any) => {
+      navigate(path);
+    },
+  };
+}
+
+export default function DashboardLayoutBasic() {
+  const dispatch = useDispatch<AppDispatch>();
+  const router = useDemoRouter("/");
+  const navigate = useNavigate();
+  const isNewCampaignPage = router.pathname === "/email-campaign/new-campaign";
+
+  const { user } = useSelector((state: RootState) => state.user);
+
+  React.useEffect(() => {
+    const hideChatWidget = () => {
+      const chatWidgetIframe = document.querySelector(
+        "iframe[src*='chat.jooper.ai']"
+      ) as HTMLElement;
+      const chatWidgetContainer = document.getElementById("chat-widget");
+
+      if (UNPROTECTED_ROUTES.includes(router.pathname)) {
+        if (chatWidgetIframe) chatWidgetIframe.style.display = "none";
+        if (chatWidgetContainer) chatWidgetContainer.style.display = "none";
+      } else {
+        if (chatWidgetIframe) chatWidgetIframe.style.display = "block";
+        if (chatWidgetContainer) chatWidgetContainer.style.display = "block";
+      }
+    };
+
+    hideChatWidget();
+    const delayHide = setTimeout(hideChatWidget, 1000);
+    return () => clearTimeout(delayHide);
+  }, [router.pathname]);
+
+  React.useEffect(() => {
     const token = Cookies.get("access_token");
-    if (!publicRoutes.includes(location.pathname)) {
+
+    if (!UNPROTECTED_ROUTES.includes(router.pathname)) {
       if (!token) {
         navigate("/login");
       } else {
@@ -64,59 +109,82 @@ function AppRoutes() {
           });
       }
     }
-  }, [dispatch]);
+  }, [dispatch, router.pathname, navigate]);
+
+  if (
+    UNPROTECTED_ROUTES.some((path) => router.pathname.startsWith(path)) ||
+    router.pathname.startsWith("/unsubscribe")
+  ) {
+    return (
+      <AppProvider router={router} theme={theme}>
+        <PageContainer>
+          {router.pathname === "/login" && <Login />}
+          {router.pathname === "/signup" && <Register />}
+          {router.pathname === "/forgot-password" && <ForgotPassword />}
+          {router.pathname === "/reset-password" && <ResetPassword />}
+          {router.pathname === "/verify-otp" && <VerifyOtp />}
+          {router.pathname === "/confirmation" && <PasswordResetConfirmation />}
+          {router.pathname === "/change-password" && <ChangePassword />}
+          {router.pathname === "/activate-account" && <ActivateAccount />}
+          {router.pathname.startsWith("/unsubscribe") && <Unsubscribe />}
+        </PageContainer>
+      </AppProvider>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
 
   return (
-    <SocketProvider>
-      <Toaster position="top-center" />
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/verify-otp" element={<VerifyOtp />} />
-        <Route path="/confirmation" element={<PasswordResetConfirmation />} />
-        <Route path="/change-password" element={<ChangePassword />} />
-        <Route path="/activate-account" element={<ActivateAccount />} />
-        <Route path="/email-campaign/new-campaign" element={<NewCampaign />} />
-
-        <Route
-          path="/*"
-          element={
-            <AuthGuard>
-              <DashboardContainer>
-                <Header
-                  toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
-                />
-                <ContentArea>
-                  {isSidebarOpen ? <Sidebar /> : null}
-                  <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/email-campaign" element={<EmailCampaign />} />
-                    <Route path="/email-account" element={<EmailAccount />} />
-                    <Route path="/email-inbox" element={<EmailInboxs />} />
-                    <Route path="/leads" element={<Leads />} />
-                    <Route path="/chats" element={<Chats />} />
-                    <Route path="/organization" element={<Organization />} />
-                    <Route
-                      path="/settings/configuration"
-                      element={<Configuration />}
-                    />
-                    <Route path="/settings/agents" element={<Agents />} />
-                    <Route
-                      path="/settings/configuration"
-                      element={<Configuration />}
-                    />
-                  </Routes>
-                </ContentArea>
-              </DashboardContainer>
-            </AuthGuard>
-          }
-        />
-      </Routes>
-    </SocketProvider>
+    <AppProvider navigation={NAVIGATION} router={router} theme={theme}>
+      <Toaster position="top-right" reverseOrder={false} />{" "}
+      {isNewCampaignPage ? (
+        <NewCampaign router={router} />
+      ) : (
+        <DashboardLayout
+          sx={{
+            background: "var(--background-light)",
+          }}
+          slots={{
+            appTitle: CustomAppTitle,
+            toolbarActions: () => (
+              <>
+                <UserProfileMenu />
+              </>
+            ),
+          }}
+        >
+          <PageContainer
+            maxWidth={false}
+            title=""
+            sx={{
+              marginTop: "0 !important",
+              "& .MuiTypography-root": { display: "none" },
+              "& a": { display: "none" },
+            }}
+          >
+            {router.pathname === "/" && <Home />}
+            {router.pathname.startsWith("/email-campaign") && <EmailCampaign />}
+            {/* {router.pathname === "/email-campaign/folders" && (
+              <CampaignFolder />
+            )} */}
+            {router.pathname === "/email-accounts" && <EmailAccount />}
+            {router.pathname.startsWith(
+              "/email-account/edit-email-account/"
+            ) && <EditEmailAccount id={router.pathname.split("/").pop()} />}
+            {router.pathname.startsWith(
+              "/email-campaign/view-email-campaign"
+            ) && <ViewEmailCampaign />}
+            {router.pathname === "/inbox" && <EmailInboxs />}
+            {router.pathname === "/user" && <Users />}
+            {router.pathname === "/leads" && <Leads />}
+            {router.pathname === "/chats" && <Chats />}
+            {router.pathname === "/all-leads" && <ContactTable />}
+            {router.pathname === "/organization" && <Organization />}
+          </PageContainer>
+        </DashboardLayout>
+      )}
+    </AppProvider>
   );
 }
-
-export default AppRoutes;

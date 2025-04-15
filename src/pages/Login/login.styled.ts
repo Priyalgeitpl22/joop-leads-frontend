@@ -5,17 +5,19 @@ export const PageContainer = styled(Box)`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  height: 100%;
 `;
 
 export const LoginCard = styled(Box)`
   background: white;
   border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  // box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-dark);
   width: 100%;
   max-width: 900px;
   display: flex;
   overflow: auto;
+  margin-top: 100px;
 `;
 
 export const IllustrationSection = styled(Box)`
@@ -50,7 +52,7 @@ export const StyledTextField = styled(TextField)`
 
 
   .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
-    border: 1px solid #ddd;
+  border: 1px solid var(--border-dark);
   }
   .MuiOutlinedInput-input {
     padding: 12px 10px !important; 
@@ -61,10 +63,11 @@ export const StyledButton = styled(Button)`
   height: 40px;
   border-radius: 8px;
   font-weight: bold;
+  margin-top: 5px;
   text-transform: none;
   transition: all 0.3s ease-in-out;
   background:  var(--theme-color);
-  color: black;
+  color: white;
 
   &:hover {
     background:  var(--theme-color);
@@ -82,12 +85,12 @@ export const SocialButtonsContainer = styled(Box)`
 `;
 
 export const SocialButton = styled(IconButton)`
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border-dark);
   padding: 12px;
   transition: all 0.3s ease-in-out;
   
   &:hover {
-    background-color: #ffffff;
+    background-color: var(--background-light);
     transform: scale(1.1);
   }
 `;
@@ -120,4 +123,11 @@ export const SignupLink = styled.a`
     color: #004a99;
     text-decoration: underline;
   }
+`;
+
+export const NavigateLink = styled.span`
+color: #0066cc;
+font-weight: 500;
+cursor: pointer;
+text-decoration: none;
 `;

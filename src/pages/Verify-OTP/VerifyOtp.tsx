@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from "react";
-import { Typography, Box } from "@mui/material";
+import { useState, useEffect, useRef, ChangeEvent, KeyboardEvent } from "react";
+import { Typography, Box, CircularProgress } from "@mui/material";
 import {
   PageContainer,
   VerifyCard,
@@ -8,41 +8,84 @@ import {
   StyledButton,
   TimerText,
   IllustrationSection,
-  FormSection
+  FormSection,
 } from "./VerifyOtp.styled";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { verifyOtp } from "../../redux/slice/authSlice";
+import { resendOtp, verifyOtp } from "../../redux/slice/authSlice";
 import { AppDispatch } from "../../redux/store/store";
 import Loader from "../../components/Loader";
 import toast, { Toaster } from "react-hot-toast";
 
 const VerifyOtp = () => {
   const { state } = useLocation();
-  const email = state?.email;  
+  const email = state?.email;
 
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [timer, setTimer] = useState(60);
-  const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const [isTimerRunning, setIsTimerRunning] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const [otpSubmitted, setOtpSubmitted] = useState<boolean>(false);
-  const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
-    if (isTimerRunning && timer > 0) {
-      const interval = setInterval(() => {
-        setTimer((prev) => prev - 1);
+    let interval: NodeJS.Timeout | null = null;
+    if (isTimerRunning) {
+      interval = setInterval(() => {
+        setTimer((prev) => {
+          if (prev <= 1) {
+            clearInterval(interval!);
+            setIsTimerRunning(false);
+            return 0;
+          }
+          return prev - 1;
+        });
       }, 1000);
-      return () => clearInterval(interval);
     }
-    if (timer === 0) {
-      setIsTimerRunning(false);
-    }
-  }, [isTimerRunning, timer]);
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isTimerRunning]);
 
-  const handleOtpChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+  const handleResendOtp = () => {
+    if (!email) return;
+    setIsLoading(true);
+    dispatch(resendOtp(email!))
+      .unwrap()
+      .then(() => {
+        toast.success("New OTP sent successfully!");
+        setTimer(60);
+        setIsTimerRunning(true);
+      })
+      .catch(() => {
+        toast.error("Failed to resend OTP. Please try again.");
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
+
+  const handleSaveButton = () => {
+    const otpString = otp.join("");
+    if (otpString.length === 6) {
+      setIsLoading(true);
+      dispatch(verifyOtp({ email, otp: otpString }))
+        .unwrap()
+        .then(() => {
+          toast.success("OTP Verified Successfully!");
+          navigate("/login");
+        })
+        .catch(() => {
+          toast.error("Invalid OTP. Please try again.");
+          setIsLoading(false);
+        });
+    } else {
+      toast.error("Please enter a valid 6-digit OTP.");
+    }
+  }
+
+  const handleKeyChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index: number) => {
     const value = e.target.value;
     if (/^\d{0,1}$/.test(value)) {
       setOtp((prevOtp) => {
@@ -54,70 +97,49 @@ const VerifyOtp = () => {
         otpRefs.current[index + 1]?.focus();
       }
     }
-  };
+  }
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
-    if (e.key === "Backspace") {
-      if (!otp[index] && index > 0) {
-        otpRefs.current[index - 1]?.focus();
-        setOtp((prevOtp) => {
-          const newOtp = [...prevOtp];
-          newOtp[index - 1] = "";
-          return newOtp;
-        });
-        e.preventDefault();
-      }
+  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>, index: number) => {
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
+      otpRefs.current[index - 1]?.focus();
+      setOtp((prevOtp) => {
+        const newOtp = [...prevOtp];
+        newOtp[index - 1] = "";
+        return newOtp;
+      });
+      e.preventDefault();
     }
-  };
-
-  const handleVerifyOtp = () => {
-    const otpString = otp.join("");
-    if (otpString.length === 6) {
-      setIsLoading(true);
-      setOtpSubmitted(true);
-    } else {
-      console.log("Please enter a valid OTP");
-    }
-  };
-
-  // Dispatch verifyOtp when otpSubmitted flag is set.
-  useEffect(() => {
-    if (otpSubmitted) {
-      const otpString = otp.join("");
-      dispatch(verifyOtp({ email: email!, otp: otpString }))
-        .unwrap()
-        .then(result => {
-          console.log("OTP verified successfully:", result);
-          toast.success("OTP verified successfully!");
-          navigate("/login");
-        })
-        .catch(err => {
-          console.error("OTP verification failed:", err);
-          toast.error("OTP verification failed. Please try again.");
-        })
-        .finally(() => {
-          setOtpSubmitted(false);
-          setIsLoading(false);
-        });
-    }
-  }, [otpSubmitted, dispatch, email, otp, navigate]);
+  }
 
   return (
     <PageContainer>
+      <Toaster position="top-right" />
       <VerifyCard>
-        <IllustrationSection>
+        {/* <IllustrationSection>
           <img
             src="https://cdn.dribbble.com/users/2058540/screenshots/8225403/media/bc617eec455a72c77feab587e09daa96.gif"
             alt="Auth illustration"
             style={{ maxWidth: "100%", height: "auto" }}
           />
+        </IllustrationSection> */}
+        <IllustrationSection>
+          <img
+            src="/great-learning.gif"
+            alt="Email illustration"
+            style={{ width: "75%", height: "auto"}}
+          />
         </IllustrationSection>
         <FormSection>
-          <Typography variant="h4" fontWeight="bold" mb={1}>
+          <Typography
+            variant="h4"
+            fontWeight="bold"
+            mb={1}
+            color="var(--border-color)"
+          >
             Verify OTP
           </Typography>
           <Typography variant="h6" sx={{ marginBottom: 2 }}>
-            Enter the OTP sent to your email
+            Enter the OTP sent to <b>{email}</b>
           </Typography>
 
           <OtpFieldsContainer>
@@ -125,32 +147,47 @@ const VerifyOtp = () => {
               <OtpField
                 key={index}
                 value={digit}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  handleOtpChange(e, index)
-                }
-                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) =>
-                  handleKeyDown(e, index)
-                }
+                onChange={(e) => handleKeyChange(e, index)}
+                onKeyDown={(e) => handleKeyDown(e, index)}
                 inputProps={{
                   maxLength: 1,
-                  ref: (el: HTMLInputElement | null) => (otpRefs.current[index] = el),
+                  ref: (el: HTMLInputElement | null) =>
+                    (otpRefs.current[index] = el),
                 }}
               />
             ))}
           </OtpFieldsContainer>
 
-          <StyledButton variant="contained" onClick={handleVerifyOtp}>
-            VERIFY OTP
+          <StyledButton
+            variant="contained"
+            onClick={handleSaveButton}
+            disabled={isLoading || !isTimerRunning}
+          >
+            {!isLoading &&
+              "VERIFY OTP"
+            }
           </StyledButton>
 
           <Box sx={{ marginTop: 2 }}>
-            {isTimerRunning && <TimerText>Time remaining: {timer}s</TimerText>}
+            {isTimerRunning ? (
+              <TimerText>Time remaining: {timer}s</TimerText>
+            ) : (
+              <StyledButton
+                variant="outlined"
+                onClick={handleResendOtp}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <CircularProgress size={24} color="inherit" />
+                ) : (
+                  "RESEND OTP"
+                )}
+              </StyledButton>
+            )}
           </Box>
         </FormSection>
       </VerifyCard>
-
       {isLoading && <Loader />}
-      <Toaster />
     </PageContainer>
   );
 };

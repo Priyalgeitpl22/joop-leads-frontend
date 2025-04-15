@@ -1,31 +1,35 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import Stepper from "@mui/material/Stepper";
-import Step from "@mui/material/Step";
-import Button from "@mui/material/Button";
-import { HeaderContainer } from "./NewCampaign.styled";
-import { SearchBar } from "../../../components/Header/header.styled";
-import WestOutlinedIcon from "@mui/icons-material/WestOutlined";
 import {
-  Sequence,
-} from "./SequenceCampaign/Sequences/interfaces";
-import Loader from "../../../components/Loader";
-import SendTestEmailDialog from './SendTestEmailDialog';
-import { StepButton } from '@mui/material';
-import SequenceCampaign from './SequenceCampaign/SequenceCampaign';
-import ImportLeadsCampaign from './ImportLeadsCampaign/ImportLeadsCampaign';
-import SetupCampaign from './SetupCampaign/SetupCampaign';
-import FinalReviewCampaign from './FinalReviewCampaign/FinalReviewCampaign';
-import { useNavigate } from 'react-router-dom';
-import { csvSettingsType } from '../Interfaces';
-import { useDispatch } from 'react-redux';
-import { AppDispatch } from '../../../redux/store/store';
-import { addLeadsToCampaign, addSequencesToCampaign } from '../../../redux/slice/emailCampaignSlice';
-import ImportCsvFileDialog from './ImportLeadsCampaign/ImportCsvFileDialog';
-import UploadLeadsDialog from './ImportLeadsCampaign/UploadLeadsDialog';
-
-const steps = ["Import Leads", "Sequences", "Setup", "Final Review"];
-
+  Container,
+  FooterContainer,
+  HeaderContainer,
+  MainContainer,
+} from "./NewCampaign.styled";
+import WestOutlinedIcon from "@mui/icons-material/WestOutlined";
+import SequenceCampaign from "./SequenceCampaign/SequenceCampaign";
+import ImportLeadsCampaign from "./ImportLeadsCampaign/ImportLeadsCampaign";
+import SetupCampaign from "./SetupCampaign/SetupCampaign";
+import FinalReviewCampaign from "./FinalReviewCampaign/FinalReviewCampaign";
+import { csvSettingsType } from "../Interfaces";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../redux/store/store";
+import {
+  addLeadsToCampaign,
+  addSequencesToCampaign,
+  addEmailCampaignSettings,
+  scheduleCampaign,
+  getCampaignById,
+} from "../../../redux/slice/emailCampaignSlice";
+import UploadLeadsDialog from "./ImportLeadsCampaign/UploadLeadsDialog";
+import { Sequence } from "./SequenceCampaign/Sequences/interfaces";
+import SendTestEmailDialog from "./SendTestEmailDialog";
+import { ILeadsCounts } from "./interfaces";
+import { CustomizedStepper } from "./stepper";
+import { Button, SecondaryButton } from "../../../styles/global.styled";
+import { Button2 } from "../../../styles/layout.styled";
+import { useLocation } from "react-router-dom";
+import CircularLoader from "../../../assets/Custom/circularProgress";
 export interface ImportedLeadsData {
   campaignName?: string;
   clientId?: string;
@@ -37,26 +41,98 @@ export interface ImportedLeadsData {
   fileName: string;
 }
 
-const NewCampaign = () => {
+interface NewCampaignProps {
+  router?: any;
+}
+
+const NewCampaign: React.FC<NewCampaignProps> = () => {
   const [activeStep, setActiveStep] = React.useState(0);
-  const [uploadCsv, setUploadCsv] = React.useState<boolean>(false);
-  const navigate = useNavigate();
   const [emailFieldsToBeAdded, setEmailFieldsToBeAdded] =
     React.useState<ImportedLeadsData>();
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
   const [CSVsettings, setCSVsettings] = React.useState<csvSettingsType>();
   const [uploadleads, setUploadLeads] = React.useState<boolean>(false);
-  const [uploadCount, setUploadCount] = React.useState<number>(0);
+  const [uploadCounts, setUploadCounts] = React.useState<ILeadsCounts>();
   const [sequences, setSequences] = React.useState<Sequence[]>([]);
   const [selectedSequence, setSelectedSequence] = React.useState<Sequence>();
-  const [campaignId, setCampaignId] = React.useState<Sequence>();
+  const [newSequnce, setSelectedNewSequnce] = React.useState("")
+  const [campaignId, setCampaignId] = React.useState<string>("");
   const [isLoading, setIsLoading] = React.useState(false);
   const [testEmailDialog, setTestEmailDialog] = React.useState(false);
+  const [dialogData, setDialogData] = React.useState({
+    senderAccount: {},
+    scheduleCampaign: {},
+    campaignSettings: {},
+  });
+  const [isScheduleValid, setIsScheduleValid] = React.useState(false);
+  const [isSettingValid, setIsSettingValid] = React.useState(false);
+  const [isSenderAccountValid, setIsSenderAccountValid] = React.useState(true);
+  const [isStep1Valid, setIsStep1Valid] = React.useState(true);
+  const [isEdit, setIsEdit] = React.useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
+  const location = useLocation();
 
   const handleFileChange = (file: File) => {
     setSelectedFile(file);
+  };
+
+  React.useEffect(() => {
+    if (activeStep == 2) {
+    }
+  }, []);
+
+  React.useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const campaignId = params.get("campaignId");
+
+    const fetchDataAndProceed = async (id: string) => {
+      try {
+        setIsLoading(true);
+        const campaign = await fetchCampaignDetails(id);
+
+        if (campaign) {
+          if (campaign.contacts.length === 0) {
+            setActiveStep(0);
+          } else if (campaign.sequences.length === 0) {
+            setActiveStep(1);
+          } else if (campaign.selectedAccounts === 0) {
+            setActiveStep(2);
+          } else {
+            setActiveStep(3);
+          }
+          setCampaignId(id);
+        }
+      } catch (error) {
+        console.error("Failed to fetch campaign details:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (campaignId) {
+      setActiveStep(1);
+      setCampaignId(campaignId);
+      setActiveStep(1);
+    } else {
+      const isEdit = params.has("edit");
+      const id = params.get("id");
+
+      if (isEdit && id) {
+        setIsEdit(true);
+        fetchDataAndProceed(id);
+      }
+    }
+  }, [location.search]);
+
+  const fetchCampaignDetails = async (id: string) => {
+    try {
+      const response = await dispatch(getCampaignById(id)).unwrap();
+      return response.campaign;
+    } catch (error) {
+      console.error("Error fetching campaign:", error);
+      return null;
+    }
   };
 
   const handleLeadsData = (data: ImportedLeadsData) => {
@@ -67,18 +143,14 @@ const NewCampaign = () => {
     console.log(data);
   };
 
-  const handleSequencesData = (data: any) => {
-    console.log(data);
-  };
-
   const saveCSVSetting = (settings: any) => {
     setCSVsettings(settings);
   };
 
   const handleImportLeads = async () => {
-    setUploadCsv(true);
     setIsLoading(true);
     const payload = {
+      campaignId,
       CSVsettings,
       csvFile: selectedFile,
       emailFieldsToBeAdded,
@@ -88,37 +160,55 @@ const NewCampaign = () => {
 
     if (response.payload.code === 200) {
       setIsLoading(false);
-      console.log(response);
-      setUploadCount(response.payload.contactsInserted);
+      setUploadCounts(response.payload.counts);
       setCampaignId(response.payload.campaignId);
-      setUploadCsv(false);
       setUploadLeads(true);
-      goToNextStep();
     }
   };
 
   const handleSequences = async () => {
+    setIsLoading(true);
     const payload = {
-      campaign_id: "0847453b-079e-408a-b4cd-abed26514e41",
+      campaign_id: campaignId,
       sequences,
     };
+    setIsLoading(true);
     const response = await dispatch(addSequencesToCampaign(payload));
-    console.log(response);
-  };
-
-  const handleSetup = () => {
-    console.log("Handling setup step");
-    goToNextStep();
-  };
-
-  const handleFinalReview = () => {
-    console.log("Handling final review step");
-    goToNextStep();
+    if (response.payload.code) {
+      setIsLoading(false);
+      if (response.payload.code == 200) {
+        setCampaignId(response.payload.data.campaign_id);
+      }
+    }
+    setIsLoading(false);
   };
 
   const goToNextStep = () => {
-    if (activeStep < steps.length - 1) {
+    if (activeStep < 3) {
       setActiveStep((prev) => prev + 1);
+    }
+  };
+
+  const handleFinalReview = async () => {
+    setIsLoading(true);
+    try {
+      setIsLoading(true);
+      const response = await dispatch(
+        scheduleCampaign({
+          campaignId: campaignId,
+          status: "SCHEDULED",
+        })
+      );
+      setIsLoading(true);
+      if (response) {
+        setIsLoading(false);
+        if (response.payload.code === 200) {
+          GoBack();
+        }
+      }
+    } catch (error) {
+      setIsLoading(false);
+      console.error("Error scheduling campaign:", error);
     }
   };
 
@@ -128,13 +218,16 @@ const NewCampaign = () => {
         await handleImportLeads();
         break;
       case 1:
-        handleSequences();
+        await handleSequences();
+        goToNextStep();
         break;
       case 2:
-        handleSetup();
+        await handleSetup();
+        goToNextStep();
         break;
       case 3:
-        handleFinalReview();
+        await handleFinalReview();
+        goToNextStep();
         break;
       default:
         console.warn("Unknown step:", activeStep);
@@ -147,8 +240,8 @@ const NewCampaign = () => {
     }
   };
 
-  const handleNavigate = () => {
-    navigate("/email-campaign");
+  const GoBack = () => {
+    window.location.assign("/email-campaign/all");
   };
 
   const onClickEmailFollowUp = (sequence: Sequence) => {
@@ -156,184 +249,267 @@ const NewCampaign = () => {
   };
 
   const addSequence = (sequence: Sequence) => {
-    setSelectedSequence(sequence);
-    setSequences([...sequences, sequence]);
+    setSelectedSequence({ ...sequence });
+
+    setSequences(prevSequences => {
+      const updatedSequences = [...prevSequences];
+      const newSequence = {
+        ...sequence,
+        seq_variants: sequence.seq_variants.map(variant => ({ ...variant }))
+      };
+      updatedSequences.push(newSequence);
+      return updatedSequences;
+    });
   };
 
   const updateSequences = (sequences: Sequence[]) => {
-    setSequences(sequences);
+    const deepCopiedSequences = sequences.map(sequence => ({
+      ...sequence,
+      seq_variants: sequence.seq_variants.map(variant => ({ ...variant }))
+    }));
+    setSequences(deepCopiedSequences);
   };
 
   const updateSequenceData = (sequence: Sequence) => {
-    console.log("Updated Sequence:", sequence);
-  
     setSelectedSequence((prevSequence) => {
       if (!prevSequence) return sequence;
       return {
         ...prevSequence,
         ...sequence,
-        seq_variants: [...sequence.seq_variants],
+        seq_variants: sequence.seq_variants.map(variant => ({ ...variant })),
       };
     });
-  
-    setSequences((prevSequences) =>
-      prevSequences.map((seq) =>
-        seq.seq_number === sequence.seq_number
-          ? { ...seq, ...sequence, seq_variants: [...sequence.seq_variants] }
-          : seq
-      )
-    );
 
-    console.log(sequences)
-  };  
-
-  const setVariants = (data: any) => {
-    console.log(data);
+    setSequences((prevSequences) => {
+      return prevSequences.map((seq) => {
+        if (seq.seq_number === sequence.seq_number) {
+          return {
+            ...seq,
+            ...sequence,
+            seq_variants: sequence.seq_variants.map(variant => ({ ...variant })),
+          };
+        }
+        return seq;
+      });
+    });
   };
 
-  if (isLoading) {
-    return <Loader />;
-  }
-  
   const handleTestEmail = () => {
     setTestEmailDialog(true);
-  }
+  };
+
+  const handleSenderAccountsUpdate = async (data: any) => {
+    setDialogData((prev) => ({ ...prev, senderAccount: data }));
+
+    try {
+      setIsLoading(true);
+      const response = await dispatch(
+        addEmailCampaignSettings({
+          ...data,
+          campaign_id: campaignId,
+        })
+      );
+      if (response) {
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Error updating sender account:", error);
+      setIsLoading(false);
+    }
+  };
+
+  const handleScheduleCampaignUpdate = async (data: any) => {
+    setDialogData((prev) => ({ ...prev, scheduleCampaign: data }));
+
+    try {
+      setIsLoading(true);
+      const response = await dispatch(
+        addEmailCampaignSettings({
+          ...data,
+          campaign_id: campaignId,
+        })
+      );
+      if (response) {
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Error updating schedule campaign:", error);
+      setIsLoading(false);
+    }
+  };
+
+  const handleCampaignSettingsUpdate = async (data: any) => {
+    setDialogData((prev) => ({ ...prev, campaignSettings: data }));
+
+    try {
+      setIsLoading(true);
+      const response = await dispatch(
+        addEmailCampaignSettings({
+          ...data,
+          campaign_id: campaignId,
+        })
+      );
+      if (response) {
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Error updating campaign settings:", error);
+      setIsLoading(false);
+    }
+  };
+
+  const handleSetup = async () => {
+    setIsLoading(true);
+    try {
+      const response = await dispatch(
+        addEmailCampaignSettings({
+          ...dialogData?.senderAccount,
+          ...dialogData?.scheduleCampaign,
+          ...dialogData?.campaignSettings,
+          campaign_id: campaignId,
+        })
+      );
+      if (response) {
+        setIsLoading(false);
+      }
+    } catch (error) {
+      setIsLoading(false);
+      console.error("Error setting up campaign:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const IsCampaignScheduleValid = (data: boolean) => {
+    setIsScheduleValid(data);
+  };
+
+  const IsCampaignSettingsValid = (data: boolean) => {
+    setIsSettingValid(data);
+  };
+
+  const IsCampaignSenderAccountValid = (data: boolean) => {
+    setIsSenderAccountValid(data);
+  };
+
+  const isNextDisabled = () => {
+    if (activeStep === 0) return isStep1Valid;
+    if (activeStep === 1) return !true;
+    if (activeStep === 2)
+      return !isScheduleValid || !isSettingValid || !isSenderAccountValid;
+    if (activeStep === 3) return true
+
+    return false;
+  };
 
   return (
-    <>
-      <HeaderContainer style={{ boxShadow: "0 0 4px rgba(0, 0, 0, 0.2)" }}>
-        <Box sx={{ width: "100%", display: "flex" }}>
+    <Container>
+      <HeaderContainer>
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            gap: "25%",
+          }}
+        >
           <WestOutlinedIcon
-            onClick={handleNavigate}
-            sx={{ cursor: "pointer", margin: "10px" }}
+            onClick={GoBack}
+            sx={{
+              color: "var(--theme-color-light)",
+              cursor: "pointer",
+              margin: "14px",
+              width: "35px",
+              height: "35px",
+              "&:hover": { color: "var(--theme-color-light)" },
+            }}
           />
-          <SearchBar style={{ width: "10%" }}>
-            <input placeholder="Untitled Campaign" />
-          </SearchBar>
-          <Stepper
-            nonLinear
+          <CustomizedStepper
             activeStep={activeStep}
-            style={{ width: "40%", marginLeft: "22%" }}
-          >
-            {steps.map((label, index) => (
-              <Step key={label}>
-                <StepButton
-                  color="inherit"
-                  onClick={() => setActiveStep(index)}
-                >
-                  {label}
-                </StepButton>
-              </Step>
-            ))}
-          </Stepper>
+            setActiveStep={setActiveStep}
+          />
           <UploadLeadsDialog
             open={uploadleads}
-            uploadCount={uploadCount}
-            onClose={() => setUploadLeads(false)}
+            // setIsNextDisabled={setIsStep1Valid}
+            uploadCounts={uploadCounts}
+            onClose={() => {
+              setUploadLeads(false);
+              if (
+                uploadCounts?.uploadedCount &&
+                uploadCounts?.uploadedCount > 0
+              )
+                goToNextStep();
+            }}
           />
         </Box>
       </HeaderContainer>
-
-      {activeStep === 0 && (
-        <ImportLeadsCampaign
-          handleLeadsData={handleLeadsData}
-          handleCSVUpload={handleFileChange}
-          saveCSVSetting={saveCSVSetting}
-        />
-      )}
-      {activeStep === 1 && (
-        <SequenceCampaign
-          onClickEmailFollowUp={onClickEmailFollowUp}
-          handleSequencesData={handleSequencesData}
-          handleEmailTemplateData={handleEmailTemplateData}
-          addSequence={addSequence}
-          updateSequences={updateSequences}
-          updateSequenceData={updateSequenceData}
-          setVariants={setVariants}
-          sequences={sequences}
-          selectedSequence={selectedSequence}
-        />
-      )}
-      {activeStep === 2 && <SetupCampaign />}
-      {activeStep === 3 && <FinalReviewCampaign />}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          padding: "16px 32px",
-          backgroundColor: "#f8f9fc",
-          position: "fixed",
-          bottom: 0,
-          left: 0,
-          width: "96%",
-          boxShadow: "0 -2px 4px rgba(0,0,0,0.1)",
-        }}
-      >
-        <Button
-          variant="contained"
-          onClick={handleBack}
-          disabled={activeStep === 0}
-          sx={{ background: "#6e58f1", color: "white" }}
-        >
-          Back
-        </Button>
-        {activeStep === 0 ? (
+      {isLoading && <CircularLoader />}
+      <MainContainer>
+        {activeStep === 0 && (
+          <ImportLeadsCampaign
+            isEdit={isEdit}
+            setIsStep1Valid={setIsStep1Valid}
+            handleLeadsData={handleLeadsData}
+            handleCSVUpload={handleFileChange}
+            saveCSVSetting={saveCSVSetting}
+          />
+        )}
+        {activeStep === 1 && (
+          <SequenceCampaign
+            campaign_id={campaignId}
+            onClickEmailFollowUp={onClickEmailFollowUp}
+            handleEmailTemplateData={handleEmailTemplateData}
+            addSequence={addSequence}
+            updateSequences={updateSequences}
+            updateSequenceData={updateSequenceData}
+            sequences={sequences}
+            selectedSequence={selectedSequence}
+          />
+        )}
+        {activeStep === 2 && (
+          <SetupCampaign
+            handleScheduleValid={IsCampaignScheduleValid}
+            handleSettingsValid={IsCampaignSettingsValid}
+            handleSenderAccountValid={IsCampaignSenderAccountValid}
+            campaign_id={campaignId}
+            handleSenderAccountsUpdate={handleSenderAccountsUpdate}
+            handleScheduleCampaignUpdate={handleScheduleCampaignUpdate}
+            handleCampaignSettingsUpdate={handleCampaignSettingsUpdate}
+          />
+        )}
+        {activeStep === 3 && <FinalReviewCampaign campaign_id={campaignId} setSelectedEmailTemplate={setSelectedNewSequnce} />}
+      </MainContainer>
+      <FooterContainer>
+        {activeStep !== 0 && (
+          <SecondaryButton onClick={handleBack} disabled={activeStep === 0 || activeStep === 1}>
+            Back
+          </SecondaryButton>
+        )}
+        {activeStep === 3 ? (
           <>
-            <ImportCsvFileDialog
-              open={uploadCsv}
-              onClose={() => setUploadCsv(false)}
+            <SendTestEmailDialog
+              open={testEmailDialog}
+              onClose={() => setTestEmailDialog(false)}
+              sequence={newSequnce}
             />
-            <Button
-              variant="contained"
-              disabled={activeStep === steps.length - 1}
-              onClick={handleNext}
-              sx={{ background: "#6e58f1", color: "white" }}
-            >
-              Save
-            </Button>
-          </>
-        ) : activeStep === 3 ? (
-          <>
-            <Box sx={{ display: "flex", gap: 3 }}>
-              <Button
-                variant="contained"
-                onClick={handleNext}
-                sx={{ background: "#ececee", color: "#6e58f1" }}
-              >
-                Run Spam Test
-              </Button>
-              <SendTestEmailDialog
-                open={testEmailDialog}
-                onClose={() => setTestEmailDialog(false)}
-                />
-              <Button
-                variant="contained"
-                onClick={handleTestEmail}
-                sx={{ background: "#ececee", color: "#6e58f1" }}
-              >
-                Send Test Email
-              </Button>
-              <Button
-                variant="contained"
-                onClick={handleNext}
-                sx={{ background: "#6e58f1", color: "white" }}
-              >
-                Schedule Campaign
-              </Button>
-            </Box>
+            <SecondaryButton onClick={handleTestEmail}>
+              Send Test Email
+            </SecondaryButton>
+            <Button onClick={handleNext}>Schedule Campaign</Button>
           </>
         ) : (
-          <Button
-            variant="contained"
+          <Button2
             onClick={handleNext}
-            disabled={activeStep === steps.length - 1}
-            sx={{ background: "#6e58f1", color: "white" }}
+            disabled={isNextDisabled()}
+            color={isNextDisabled() ? "lightgray" : "white"}
+            background={isNextDisabled() ? "#878484" : "var(--theme-color)"}
+            style={{ cursor: isNextDisabled() ? "not-allowed" : "pointer" }}
           >
             Save and Next
-          </Button>
+          </Button2>
         )}
-      </Box>
-    </>
+      </FooterContainer>
+    </Container>
   );
 };
 

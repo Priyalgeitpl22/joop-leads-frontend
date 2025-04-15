@@ -9,38 +9,56 @@ import {
   IconButton,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { useDispatch} from "react-redux";
-import { AppDispatch } from "../../../redux/store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../redux/store/store";
 import { addOuthEmailAccount } from "../../../redux/slice/emailAccountSlice";
+import EmailAccountOutlookDialog from "./EmailAccountOutlook";
 import EmailAccountSmtpDialog from "./EmailAccountSmtpDialog";
 
 interface EmailCampaignDialogProps {
   open: boolean;
   onClose: () => void;
+  handleSmtpDetail: () => void;
 }
 
 const EmailCampaignDialog: React.FC<EmailCampaignDialogProps> = ({
   open,
   onClose,
+  handleSmtpDetail,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
+  const [outlookDialogOpen, setOutlookDialogOpen] = useState<boolean>(false);
   const [smtpDialogOpen, setSmtpDialogOpen] = useState<boolean>(false);
+  const { user } = useSelector((state: RootState) => state.user);
 
-  const handleGoogleOuth = async () =>{
-    const response = await dispatch(addOuthEmailAccount()).unwrap();
-    if(response){
-    window.location.href=response}
-  }
+  const handleGoogleOuth = async () => {
+    if (!user?.orgId) {
+      console.error("Organization ID is missing");
+      return;
+    }
 
-  const handleSmtpDetail = async () =>{
-    setSmtpDialogOpen(true);
-  }
+    try {
+      const response = await dispatch(
+        addOuthEmailAccount({ orgId: user.orgId })
+      ).unwrap();
+
+      if (response) {
+        window.location.href = response;
+      }
+    } catch (error) {
+      console.error("Error fetching Google OAuth URL:", error);
+    }
+  };
+
+  const handleOutlook = async () => {
+    setOutlookDialogOpen(true);
+  };
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <IconButton
         onClick={onClose}
-        sx={{ position: "absolute", right: 16, top: 10 }}
+        sx={{ position: "absolute", right: 8, top: 2 }}
       >
         <CloseIcon />
       </IconButton>
@@ -93,8 +111,8 @@ const EmailCampaignDialog: React.FC<EmailCampaignDialogProps> = ({
           </Typography>
         </Box> */}
 
-        <Typography fontWeight="bold" mb={1}>
-          Connect Google/Gmail Account
+        <Typography fontWeight="500" mb={2} mt={2}>
+          Choose a Method to Connect Your Email
         </Typography>
 
         <Box display="flex" gap={2} mb={3}>
@@ -123,6 +141,10 @@ const EmailCampaignDialog: React.FC<EmailCampaignDialogProps> = ({
             </Typography>
             <Typography fontSize="12px">One Click Setup</Typography>
           </Button>
+          <EmailAccountOutlookDialog
+            open={outlookDialogOpen}
+            onClose={() => setOutlookDialogOpen(false)}
+          />
           <Button
             variant="contained"
             sx={{
@@ -135,6 +157,7 @@ const EmailCampaignDialog: React.FC<EmailCampaignDialogProps> = ({
               padding: 2,
               textTransform: "none",
             }}
+            onClick={handleOutlook}
           >
             <Box
               component="img"
@@ -173,6 +196,7 @@ const EmailCampaignDialog: React.FC<EmailCampaignDialogProps> = ({
             <Typography mt={1} fontWeight="bold">
               SMTP
             </Typography>
+            <Typography fontSize="12px">App Password</Typography>
           </Button>
 
           {/* <Button

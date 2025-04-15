@@ -1,52 +1,39 @@
-import { useState } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store/store";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../redux/store/store";
 import EmailInboxArea from "./EmailInboxArea/EmailInboxArea";
 import EmailInboxList from "./EmailInboxList/EmailInboxList";
 import EmailInboxSideBar from "./EmailInboxSidebar/EmailInboxSidebar";
-import { EmailInboxContainer } from "./EmailInboxSidebar/EmailInboxSidebar.styled";
-import { ThreadType } from "../../enums";
-import { PlaceholderContainer } from "./EmailInboxArea/EmailInboxArea.styled";
-import { Typography } from "@mui/material";
+import { EmailInboxContainer, EmailInboxHeader, EmailInbox } from "./EmailInboxSidebar/EmailInboxSidebar.styled";
+import { getAllChats } from "../../redux/slice/emailInboxSlice";
+import { SectionTitle } from "../../styles/layout.styled";
 
 export default function EmailInboxs() {
-  const { threads = [] } = useSelector((state: RootState) => state.thread);
+  const dispatch = useDispatch<AppDispatch>();
+  const { user } = useSelector((state: RootState) => state.user);
+  
 
-  const [selectedThreadId, setSelectedThreadId] = useState<string | null>(null);
-  const [selectedThreadType, setSelectedThreadType] = useState<string>(
-    ThreadType.UNASSIGNED
-  );
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      dispatch(getAllChats({ orgId: user?.orgId || "" }));
+    }, 1000);
+
+    return () => clearTimeout(timer);
+    
+  }, [dispatch]);
 
   return (
     <>
-      {threads.length > 0 ? (
+      <EmailInbox>
+        <EmailInboxHeader>
+          <SectionTitle>Email Inbox</SectionTitle>
+        </EmailInboxHeader>
         <EmailInboxContainer>
-          <EmailInboxSideBar
-            selectedType={selectedThreadType}
-            onSelectType={setSelectedThreadType}
-          />
-          <EmailInboxList
-            threads={threads.filter(
-              (thread) => thread.type === selectedThreadType
-            )}
-            onSelectThread={(newThreadId: string) =>
-              setSelectedThreadId(newThreadId)
-            }
-            type={selectedThreadType}
-            selectedThreadId={selectedThreadId}
-          />
-          <EmailInboxArea/>
+          <EmailInboxList />
+          <EmailInboxSideBar />
+          <EmailInboxArea />
         </EmailInboxContainer>
-      ) : (
-        <PlaceholderContainer>
-          <img
-            src="https://img.freepik.com/free-vector/cartoon-style-robot-vectorart_78370-4103.jpg"
-            alt="No conversation selected"
-            width="300"
-          />
-          <Typography sx={{ color: "#000000" }}>No EmailInboxs available.</Typography>
-        </PlaceholderContainer>
-      )}
+      </EmailInbox>
     </>
   );
 }

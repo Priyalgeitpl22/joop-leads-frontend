@@ -8,18 +8,14 @@ import {
 import { motion } from "framer-motion";
 
 export const LeadssContainer = styled.div`
-  width: 98%;
-  height: 98%;
+  width: 100%;
+  height: 100%;
   display: flex;
-  // border-radius: 8px;
   overflow: auto;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   background: white;
   position: relative;
   flex-direction: column;
-  background: var(--white-fade-gradient);
   padding: 16px;
-  border-radius: 8px;
 }
 `;
 export const LeadsHeader = styled.section`
@@ -30,15 +26,8 @@ export const LeadsHeader = styled.section`
   border-radius: 8px;
 `;
 
-export const SectionTitle = styled.h2`
-  font-size: 2rem;
-  font-weight: 600;
-  color: #35495c;
-  display: flex;
-`;
-
 // export const AccountButton = styled(motion.button)`
-//   background: #6e58f1;
+//   background: var(--theme-color);
 //   border-radius: 3px;
 //   color: white;
 // `;
@@ -49,7 +38,7 @@ export const CreateLeads = styled(motion.button)`
   border: none;
   border-radius: 8px;
   background: linear-gradient(135deg, var(--theme-color), var(--theme-color));
-  color: #ffffff;
+  color: var(--background-light);
   cursor: pointer;
   transition: all 0.3s ease-in-out;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
@@ -73,6 +62,7 @@ export const LeadsTable = styled.div`
   display: flex;
   flex-direction: column;
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.4);
+  margin-top: 16px;
 `;
 
 export const StyledTableContainer = styled(TableContainer)`
@@ -108,7 +98,7 @@ export const StyledTableHeadCell = styled(TableCell)`
   color: #282828;
   font-weight: 600;
   font-size: 16px;
-  background-color: #fafafa;
+  background-color: var(--background-color)
 `;
 export const StyledTableCell = styled(TableCell)`
   color: #222222;

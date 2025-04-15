@@ -1,155 +1,105 @@
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../redux/store/store";
 import {
-  ListItemText,
-  ListItemIcon,
-  Typography,
-  Box,
-  Divider,
-} from "@mui/material";
-import {
-  Users,
-  UserCheck,
-  MessageSquare,
-} from "lucide-react";
+  getAllAccountMailBox,
+  getAllChats,
+  setSelectedMailbox,
+} from "../../../redux/slice/emailInboxSlice";
 import {
   SidebarContainer,
-  Count,
-  EmailInboxList,
-  SidebarItem,
+  SidebarHeader,
+  StyledDivider,
+  StyledList,
+  StyledListItem,
+  NoMailboxMessage,
+  EmailInboxListHeader
 } from "./EmailInboxSidebar.styled";
-import { useDispatch, useSelector } from "react-redux";
-import { getAllThreads } from "../../../redux/slice/threadSlice";
-import { AppDispatch, RootState } from "../../../redux/store/store";
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 
-interface MenuItem {
-  text: string;
-  icon: JSX.Element;
-  count?: number;
-  threadType: string;
-}
-
-const MotionSidebarItem = motion.create(SidebarItem);
-
-interface EmailInboxSideBarProps {
-  selectedType: string;
-  onSelectType: (type: string) => void;
-}
-
-const EmailInboxSideBar = ({ selectedType, onSelectType }: EmailInboxSideBarProps) => {
+const EmailInboxSideBar = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const threads = useSelector((state: RootState) => state.thread);
-  const [threadCounts, setThreadCounts] = useState<Record<string, number>>({});
+  const { user } = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
-    const fetchThreads = async () => {
-      const response = await dispatch(getAllThreads()).unwrap();
+    const timer = setTimeout(() => {
+      dispatch(getAllChats({ orgId: user?.orgId || "" }));
+    }, 1000);
 
-      if (response) {
-        const groupedCounts = response.reduce(
-          (acc: Record<string, number>, thread: { type: string }) => {
-            acc[thread.type] = (acc[thread.type] || 0) + 1;
-            return acc;
-          },
-          {}
-        );
-        setThreadCounts(groupedCounts);
-      }
-    };
-
-    fetchThreads();
+    return () => clearTimeout(timer);
   }, [dispatch]);
 
-  const menuItems: MenuItem[] = [
-    {
-      text: "Inbox",
-      icon: <Users size={20} />,
-      count: threadCounts["inbox"] || 0,
-      threadType: "inbox",
-    },
-    {
-      text: "Unread Replies",
-      icon: <Users size={20} />,
-      count: threadCounts["unread"] || 0,
-      threadType: "unread",
-    },
-    {
-      text: "Assigned to me",
-      icon: <UserCheck size={20} />,
-      count: threadCounts["assigned"] || 0,
-      threadType: "assigned",
-    },
-    {
-      text: "Sent",
-      icon: <Users size={20} />,
-      count: threadCounts["sent"] || 0,
-      threadType: "sent",
-    },
-    {
-      text: "Important",
-      icon: <Users size={20} />,
-      count: threadCounts["important"] || 0,
-      threadType: "important",
-    },
-    {
-      text: "All open",
-      icon: <MessageSquare size={20} />,
-      count: threadCounts["open"] || 0,
-      threadType: "open",
-    },
-  ];
+  const selectedAccountId = useSelector(
+    (state: RootState) => state.emailInbox.selectedAccountId
+  );
+
+  const handleMailboxClick = (mailbox: { _id: string }) => {
+    if (!selectedAccountId) return;
+    dispatch(setSelectedMailbox(mailbox._id));
+    dispatch(
+      getAllAccountMailBox({
+        accountId: selectedAccountId,
+        mailBoxId: mailbox._id,
+        page: 1,
+        limit: 10,
+      })
+    );
+  };
+
+  const selectedMailboxId = useSelector(
+    (state: RootState) => state.emailInbox.selectedMailboxId
+  );
+
+  const mailboxes = useSelector(
+    (state: RootState) => state.emailInbox.mailboxes
+  );
+
+  const uniqueMailboxes = mailboxes.filter(
+    (mailbox, index, self) =>
+      index === self.findIndex((m) => m.name === mailbox.name)
+  );
+
+  // const truncateText = (text: string, maxLength: number) => {
+  //   return text.length > maxLength
+  //     ? `${text.substring(0, maxLength)}...`
+  //     : text;
+  // };
+
+  useEffect(() => {
+    if (uniqueMailboxes.length > 0 && selectedAccountId && !selectedMailboxId) {
+      const firstMailbox = uniqueMailboxes[0];
+      dispatch(setSelectedMailbox(firstMailbox._id));
+      dispatch(
+        getAllAccountMailBox({
+          accountId: selectedAccountId,
+          mailBoxId: firstMailbox._id,
+         
+        })
+      );
+    }
+  }, [uniqueMailboxes, selectedMailboxId, selectedAccountId, dispatch]);
 
   return (
-    <>
-      {threads && threads.threads?.length > 0 ? (
-        <SidebarContainer>
-          <Box
-            sx={{ padding: "10px", borderRadius: "8px" }}
-            display="flex"
-            alignItems="center"
-            flexDirection={"column"}
-          >
-            <Typography
-              variant="h6"
-              sx={{ fontFamily: "cursive", fontWeight: 600 }}
+    <SidebarContainer>
+      <EmailInboxListHeader>
+        <SidebarHeader>Mailbox</SidebarHeader>
+      </EmailInboxListHeader>
+      <StyledDivider />
+      <StyledList>
+        {uniqueMailboxes.length > 0 ? (
+          uniqueMailboxes.map((mailbox) => (
+            <StyledListItem
+              key={mailbox._id}
+              onClick={() => handleMailboxClick(mailbox)}
+              active={selectedMailboxId === mailbox._id}
             >
-              Inbox
-            </Typography>
-          </Box>
-          <Divider />
-          <EmailInboxList>
-            {menuItems.map((item) => {
-              const isActive = selectedType === item.threadType;
-              return (
-                <MotionSidebarItem
-                  key={item.text}
-                  active={isActive}
-                  onClick={() => onSelectType(item.threadType)}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <ListItemIcon sx={{ minWidth: 40 }}>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.text} />
-                  {typeof item.count === "number" && (
-                    <Count variant="body2">{item.count}</Count>
-                  )}
-                </MotionSidebarItem>
-              );
-            })}
-          </EmailInboxList>
-        </SidebarContainer>
-      ) : (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100%",
-          }}
-        >
-          <Typography variant="body1">No EmailInboxs available</Typography>
-        </Box>
-      )}
-    </>
+              {mailbox.name}
+            </StyledListItem>
+          ))
+        ) : (
+          <NoMailboxMessage>No mailboxes available</NoMailboxMessage>
+        )}
+      </StyledList>
+    </SidebarContainer>
   );
 };
 

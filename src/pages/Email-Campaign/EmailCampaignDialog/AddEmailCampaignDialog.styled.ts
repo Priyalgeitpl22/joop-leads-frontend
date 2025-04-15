@@ -8,8 +8,6 @@ import {
 import { motion } from "framer-motion";
 
 export const EmailCampaignsContainer = styled.div`
-  width: 98%;
-  height: 98%;
   display: flex;
   // border-radius: 8px;
   overflow: auto;
@@ -30,15 +28,8 @@ export const EmailCampaignHeader = styled.section`
   border-radius: 8px;
 `;
 
-export const SectionTitle = styled.h2`
-  font-size: 2rem;
-  font-weight: 600;
-  color: #35495c;
-  display: flex;
-`;
-
 // export const AccountButton = styled(motion.button)`
-//   background: #6e58f1;
+//   background: var(--theme-color);
 //   border-radius: 3px;
 //   color: white;
 // `;
@@ -49,7 +40,7 @@ export const CreateEmailCampaign = styled(motion.button)`
   border: none;
   border-radius: 8px;
   background: linear-gradient(135deg, var(--theme-color), var(--theme-color));
-  color: #ffffff;
+  color: var(--background-light);
   cursor: pointer;
   transition: all 0.3s ease-in-out;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);

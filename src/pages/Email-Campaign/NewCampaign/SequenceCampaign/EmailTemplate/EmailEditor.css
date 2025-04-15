@@ -1,20 +1,24 @@
   .custom-quill-email {
-    background-color: #fff;
+    background-color: white;
     border-radius: 8px;
     font-size: 16px;
   }
   
   .custom-quill-email .ql-toolbar {
-    background-color: #fff;
+    background-color: white;
     border-bottom: 1px solid #ebebeb !important;
     border: 0;
   }
   
   .custom-quill-email .ql-container {
-    min-height: 200px;
+    min-height: 240px;
+    max-height: 240px;
     font-size: 16px;
+    overflow-y: auto !important; /* Ensure vertical scrolling */
+    overflow-x: hidden !important; /* Prevent horizontal scrolling */
     border-radius: 0px !important;
     border: 0 !important;
+    word-break: break-word;
   }
   
   .custom-quill-email .ql-editor {
@@ -22,7 +26,12 @@
     overflow-wrap: break-word !important; /* Ensures long words break */
     word-wrap: break-word !important; /* Alternative for compatibility */
     line-height: 1.5; /* Improves text readability */
-  }  
+    min-height: 250px; /* Ensure enough space */
+    max-height: 380px; /* Control max height */
+    overflow-y: auto !important; /* Enable scrolling inside the editor */
+    padding-bottom: 10px;
+    font-size: 14px;
+  }
   
   .ql-toolbar .ql-stroke {
     stroke: #9d9ba7 !important;
@@ -49,5 +58,19 @@
   
   .custom-insert-variable:hover {
     opacity: 0.8;
+  }
+  
+  .ql-variables {
+    color: #6c5ce7;
+    font-weight: bold;
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 5px 8px;
+    margin-left: 5px;
+  }
+  
+  .ql-variables:hover {
+    color: #6c5ce7 !important;
   }
   

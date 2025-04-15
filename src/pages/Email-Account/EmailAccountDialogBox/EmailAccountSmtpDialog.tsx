@@ -9,6 +9,8 @@ import {
   FormControlLabel,
   Radio,
   Checkbox,
+  CircularProgress,
+
 } from "@mui/material";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CloseIcon from "@mui/icons-material/Close";
@@ -21,8 +23,10 @@ import {
   verifyEmailAccount,
   VerifyEmailAccountPayload,
 } from "../../../redux/slice/emailAccountSlice";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../redux/store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../redux/store/store";
+import { validateEmail } from "../../../utils/Validation";
+import toast, { Toaster } from "react-hot-toast";
 
 interface EmailAccountSmtpDialogProps {
   open: boolean;
@@ -41,17 +45,17 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
     userName: "",
     password: "",
     smtpHost: "",
-    smtpPort: 0,
+    smtpPort: "",
     security: false,
-    messagePerDay: "",
-    timeGap: "",
+    msg_per_day: "",
+    time_gap: "",
     replyToAddressChecked: false,
     replyToAddress: "",
     imapChecked: false,
     imapUserName: "",
     imapPassword: "",
     imapHost: "",
-    imapPort: 0,
+    imapPort: "",
     imapSecurity: false,
     bccEmail: "",
     trackingDomainChecked: false,
@@ -60,8 +64,25 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
     signature: "",
   });
 
+
   const [isSaveDisabled, setIsSaveDisabled] = useState(true);
   const [isVerified, setIsVerified] = useState(false);
+  const [verificationFailed, setVerificationFailed] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [verificationInProgress, setVerificationInProgress] = useState(false);
+  const { user } = useSelector((state: RootState) => state.user);
+  const [errors, setErrors] = useState({
+    fromName: "",
+    fromEmail: "",
+    userName: "",
+    password: "",
+    smtpHost: "",
+    smtpPort: "",
+    msg_per_day: "",
+    time_gap: "",
+    imapHost: "",
+    imapPort: "",
+  });
 
   useEffect(() => {
     if (!formData.replyToAddressChecked) {
@@ -73,20 +94,18 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
     }
   }, [formData.replyToAddressChecked, formData.userName, formData.password]);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
+
     setFormData((prev) => ({
       ...prev,
-      [name]:
-        type === "checkbox"
-          ? (e.target as HTMLInputElement).checked
-          : name === "smtpPort" || name === "imapPort"
-          ? Number(value)
-          : value,
+      [name]: type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
     }));
+
+
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
   };
+
 
   const handleSelectChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -97,6 +116,10 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
   };
 
   const handleVerifyAccount = () => {
+    if (!validateFields()) return;
+    setVerificationInProgress(true);
+    setVerificationFailed(false);
+
     const payload: VerifyEmailAccountPayload = {
       type: "smtp",
       imap: {
@@ -123,22 +146,30 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
 
     dispatch(verifyEmailAccount(payload))
       .unwrap()
-      .then((url: any) => {
+      .then(() => {
+        setVerificationInProgress(false);
         setIsVerified(true);
         setIsSaveDisabled(false);
       })
-      .catch((error: any) => {
+      .catch(() => {
+        setVerificationInProgress(false);
         setIsVerified(false);
+        setVerificationFailed(true);
         setIsSaveDisabled(true);
       });
   };
 
   const handleCreateAccount = () => {
+    setLoading(true);
     const payload: CreateEmailAccountPayload = {
       account: "smtp",
       name: formData.fromName,
       state: "init",
+      type: "imap",
+      orgId: user?.orgId as string,
       email: formData.fromEmail,
+      msg_per_day: Number(formData.msg_per_day),
+      time_gap: Number(formData.time_gap),
       imap: {
         host: formData.imapHost,
         port: formData.imapPort,
@@ -160,18 +191,90 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
       proxy: null,
       smtpEhloName: "localhost",
     };
-
+  
     dispatch(CreateEmailAccount(payload))
       .unwrap()
-      .then((url: any) => {
+      .then((response) => {
+        toast.success(response || "Email account created successfully!");
+        setLoading(false);
         onClose();
       })
-      .catch((error: any) => {
+      .catch((error) => {
+        toast.error(error || "Failed to create email account!");
+        setLoading(false);
       });
   };
+  const validateFields = () => {
+    let newErrors: any = {};
+
+    if (!formData.fromName.trim()) newErrors.fromName = "From Name is required";
+    if (!formData.fromEmail.trim()) {
+      newErrors.fromEmail = "From Email is required";
+    } else if (!validateEmail(formData.fromEmail)) {
+      newErrors.fromEmail = "Enter a valid email address";
+    }
+    if (!formData.userName.trim()) newErrors.userName = "User Name is required";
+    if (!formData.password.trim()) newErrors.password = "Password is required";
+    if (!formData.smtpHost.trim()) newErrors.smtpHost = "SMTP Host is required";
+
+    if (formData.smtpPort === null || formData.smtpPort === "") {
+      newErrors.smtpPort = "SMTP Port is required";
+    }
+
+    if (!formData.msg_per_day || isNaN(Number(formData.msg_per_day)) || Number(formData.msg_per_day) <= 0) {
+      newErrors.msg_per_day = "Message per day must be a positive number";
+    }
+    if (!formData.time_gap || isNaN(Number(formData.time_gap)) || Number(formData.time_gap) <= 0) {
+      newErrors.time_gap = "Minimum time gap must be a positive number";
+    }
+
+    if (!formData.imapHost.trim()) newErrors.imapHost = "IMAP Host is required";
+
+    if (formData.imapPort === null || formData.imapPort === "") {
+      newErrors.imapPort = "Imap port is required";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
+  useEffect(() => {
+    if (open) {
+      setFormData({
+        fromName: "",
+        fromEmail: "",
+        userName: "",
+        password: "",
+        smtpHost: "",
+        smtpPort: "",
+        security: false,
+        msg_per_day: "",
+        time_gap: "",
+        replyToAddressChecked: false,
+        replyToAddress: "",
+        imapChecked: false,
+        imapUserName: "",
+        imapPassword: "",
+        imapHost: "",
+        imapPort: "",
+        imapSecurity: false,
+        bccEmail: "",
+        trackingDomainChecked: false,
+        tags: "",
+        clients: "",
+        signature: "",
+      });
+      setIsVerified(false);
+      setVerificationFailed(false);
+      setIsSaveDisabled(true);
+    }
+  }, [open]);
+
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
+    <Dialog open={open} onClose={onClose} maxWidth="md">
+      <Toaster position="top-right" />
       <IconButton
         onClick={onClose}
         sx={{ position: "absolute", right: 16, top: 12 }}
@@ -198,15 +301,22 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
         <Typography fontWeight="bold" mt={2} mb={2}>
           SMTP Settings (sending emails)
         </Typography>
-        <Grid2 container spacing={2}>
+        <Grid2 container spacing={2} sx={{ justifyContent: "flex-end" }}>
           <Grid2 size={{ xs: 6, sm: 6 }}>
+
             <InputLabel>From Name</InputLabel>
             <TextField
               fullWidth
               name="fromName"
               value={formData.fromName}
               onChange={handleChange}
+              error={!!errors.fromName}
+              autoComplete="off"
             />
+            {errors.fromName && <Typography color="red" variant="caption">
+              {errors.fromName}
+            </Typography>
+            }
           </Grid2>
           <Grid2 size={{ xs: 6, sm: 6 }}>
             <InputLabel>From Email</InputLabel>
@@ -215,7 +325,14 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
               name="fromEmail"
               value={formData.fromEmail}
               onChange={handleChange}
+              error={!!errors.fromEmail}
+              autoComplete="off"
             />
+            {errors.fromEmail && <Typography color="red" variant="caption">
+              {errors.fromEmail}
+            </Typography>
+            }
+
           </Grid2>
           <Grid2 size={{ xs: 6, sm: 6 }}>
             <InputLabel>User Name</InputLabel>
@@ -224,7 +341,10 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
               name="userName"
               value={formData.userName}
               onChange={handleChange}
+              error={!!errors.userName}
+              autoComplete="off"
             />
+            {errors.userName && <Typography color="red" variant="caption">{errors.userName}</Typography>}
           </Grid2>
           <Grid2 size={{ xs: 6, sm: 6 }}>
             <InputLabel>Password</InputLabel>
@@ -233,7 +353,10 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
               name="password"
               value={formData.password}
               onChange={handleChange}
+              error={!!errors.password}
+              autoComplete="off"
             />
+            {errors.password && <Typography color="red" variant="caption">{errors.password}</Typography>}
           </Grid2>
           <Grid2 size={{ xs: 6, sm: 6 }}>
             <InputLabel>SMTP host</InputLabel>
@@ -242,7 +365,11 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
               name="smtpHost"
               value={formData.smtpHost}
               onChange={handleChange}
+              error={!!errors.smtpHost}
+              autoComplete="off"
+
             />
+            {errors.smtpHost && <Typography color="red" variant="caption">{errors.smtpHost}</Typography>}
           </Grid2>
           <Grid2 size={{ xs: 3, sm: 3 }}>
             <InputLabel>SMTP Port</InputLabel>
@@ -251,7 +378,12 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
               name="smtpPort"
               value={formData.smtpPort}
               onChange={handleChange}
+              error={!!errors.smtpPort}
+              autoComplete="off"
+
             />
+            {errors.smtpPort && <Typography color="red" variant="caption">{errors.smtpPort}</Typography>}
+
           </Grid2>
           <Grid2 size={{ xs: 3, sm: 3 }}>
             <RadioGroup
@@ -267,19 +399,27 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
             <InputLabel>Message Per Day (Warmups not included)</InputLabel>
             <TextField
               fullWidth
-              name="messagePerDay"
-              value={formData.messagePerDay}
+              name="msg_per_day"
+              value={formData.msg_per_day}
               onChange={handleChange}
+              error={!!errors.msg_per_day}
+              autoComplete="off"
             />
+            {errors.msg_per_day && <Typography color="red" variant="caption">{errors.msg_per_day}</Typography>}
+
           </Grid2>
           <Grid2 size={{ xs: 6, sm: 6 }}>
             <InputLabel>Minimum time gap (min)</InputLabel>
             <TextField
               fullWidth
-              name="timeGap"
-              value={formData.timeGap}
+              name="time_gap"
+              value={formData.time_gap}
               onChange={handleChange}
+              error={!!errors.time_gap}
+              autoComplete="off"
             />
+            {errors.time_gap && <Typography color="red" variant="caption">{errors.time_gap}</Typography>}
+
           </Grid2>
           <Grid2 size={{ xs: 12, sm: 12 }}>
             <FormControlLabel
@@ -299,6 +439,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
                   name="replyToAddress"
                   value={formData.replyToAddress}
                   onChange={handleChange}
+                  autoComplete="off"
                 />
               </Grid2>
             )}
@@ -328,6 +469,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
                   name="imapUserName"
                   value={formData.imapUserName}
                   onChange={handleChange}
+                  autoComplete="off"
                 />
               </Grid2>
               <Grid2 size={{ xs: 6, sm: 6 }}>
@@ -337,6 +479,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
                   name="imapPassword"
                   value={formData.imapPassword}
                   onChange={handleChange}
+                  autoComplete="off"
                 />
               </Grid2>
             </>
@@ -349,7 +492,11 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
               name="imapHost"
               value={formData.imapHost}
               onChange={handleChange}
+              error={!!errors.imapHost}
+              autoComplete="off"
             />
+            {errors.imapHost && <Typography color="red" variant="caption">{errors.imapHost}</Typography>}
+
           </Grid2>
           <Grid2 size={{ xs: 3, sm: 3 }}>
             <InputLabel>IMAP Port</InputLabel>
@@ -358,7 +505,11 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
               name="imapPort"
               value={formData.imapPort}
               onChange={handleChange}
+              error={!!errors.imapPort}
+              autoComplete="off"
             />
+            {errors.imapPort && <Typography color="red" variant="caption">{errors.imapPort}</Typography>}
+
           </Grid2>
           <Grid2 size={{ xs: 3, sm: 3 }}>
             <RadioGroup
@@ -374,10 +525,14 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
           <Button2
             onClick={handleVerifyAccount}
             color={"white"}
-            background={"#6e58f1"}
-            style={{ cursor: "pointer" }}
+            background={"var(--theme-color)"}
+            style={{ width: "100%", cursor: "pointer" }}
           >
-            Verify Email Account
+            {verificationInProgress ? (
+              <CircularProgress size={24} sx={{ color: "white" }} />
+            ) : (
+              "Verify Email Account"
+            )}
           </Button2>
           {isVerified && (
             <Grid2
@@ -390,8 +545,19 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
               </Typography>
             </Grid2>
           )}
-          <Typography fontWeight="bold">Signature</Typography>
+          {verificationFailed && (
+            <Grid2
+              size={{ xs: 12, sm: 12 }}
+              sx={{ display: "flex", gap: "10px" }}
+            >
+              <Typography color="error.main">
+                Email account verification failed. Please check your credentials
+                and try again.
+              </Typography>
+            </Grid2>
+          )}
           <Grid2 size={{ xs: 12, sm: 12 }}>
+            <Typography fontWeight="bold">Signature</Typography>
             <Typography>
               Enter your email signature below (manually or by copy-pasting it
               from your email client).
@@ -410,13 +576,17 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
             disabled={isSaveDisabled}
             onClick={handleCreateAccount}
             color={isSaveDisabled ? "black" : "white"}
-            background={isSaveDisabled ? "#d3d3d3" : "#6e58f1"}
+            background={isSaveDisabled ? "#d3d3d3" : "var(--theme-color)"}
             style={{
               width: "10%",
               cursor: isSaveDisabled ? "not-allowed" : "pointer",
             }}
           >
-            Save
+            {loading ? (
+              <CircularProgress size={24} sx={{ color: "white" }} />
+            ) : (
+              "Save"
+            )}
           </Button2>
         </Grid2>
       </DialogContent>

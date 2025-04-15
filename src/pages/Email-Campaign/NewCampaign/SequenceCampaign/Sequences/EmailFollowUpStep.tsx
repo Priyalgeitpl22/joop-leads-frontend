@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Box, IconButton, Typography } from "@mui/material";
-import MailOutlineIcon from "@mui/icons-material/MailOutline";
-import CloseIcon from "@mui/icons-material/Close";
+import { Box, Typography } from "@mui/material";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import HourglassBottomIcon from "@mui/icons-material/HourglassBottom";
 import {
   AbConfiguration,
-  AddVarientButton,
   BorderConatiner,
   EmailFollowUp,
   EmailFollowUpContainer,
   LeftDashedBorder,
   LeftDashedBorderLine,
+  StyledMailIcon,
+  StyledWaitIcon,
   VariantWrapper,
 } from "./sequences.styled";
 import { Sequence, SequenceVariant } from "./interfaces";
@@ -39,46 +37,42 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({
   const [variants, setVariants] = useState<SequenceVariant[]>(
     selectedSequence?.seq_variants || []
   );
-  const [waitDays, setWaitDays] = useState(1);
+  const [waitDays, setWaitDays] = useState(
+    selectedSequence?.seq_delay_details?.delay_in_days || 1
+  );
 
   useEffect(() => {
     if (selectedSequence) {
-      updateSequenceData({
-        ...selectedSequence,
-        seq_variants: variants,
-      });
+      setVariants(selectedSequence.seq_variants.map(variant => ({ ...variant })));
+      setWaitDays(selectedSequence.seq_delay_details?.delay_in_days || 1);
     }
-  }, [variants]);
+  }, [selectedSequence]);
 
-  const getNextVariantLabel = (variants: SequenceVariant[]) => {
-    if (variants.length === 0) return "A";
+  // const getNextVariantLabel = (variants: SequenceVariant[]) => {
+  //   if (variants.length === 0) return "A";
 
-    const lastLabel = variants[variants.length - 1].variantLabel ?? "A";
-    return String.fromCharCode(lastLabel.charCodeAt(0) + 1);
-  };
+  //   const lastLabel = variants[variants.length - 1].variantLabel ?? "A";
+  //   return String.fromCharCode(lastLabel.charCodeAt(0) + 1);
+  // };
 
-  const handleAddVariant = () => {
-    const newVariant: SequenceVariant = {
-      subject: `Subject ${variants.length + 1}`,
-      emailBody: "",
-      variantLabel: getNextVariantLabel(variants),
-    };
+  // const handleAddVariant = () => {
+  //   const newVariant: SequenceVariant = {
+  //     subject: `Subject ${variants.length + 1}`,
+  //     emailBody: "",
+  //     variantLabel: getNextVariantLabel(variants),
+  //   };
 
-    setVariants([...variants, newVariant]);
+  //   setVariants([...variants, newVariant]);
 
-    if (selectedSequence) {
-      const updatedSequence: Sequence = {
-        ...selectedSequence,
-        seq_variants: [...selectedSequence.seq_variants, newVariant],
-      };
+  //   if (selectedSequence) {
+  //     const updatedSequence: Sequence = {
+  //       ...selectedSequence,
+  //       seq_variants: [...selectedSequence.seq_variants, newVariant],
+  //     };
 
-      updateSequenceData(updatedSequence);
-    }
-  };
-
-  const handleRemoveVariant = (index: number) => {
-    setVariants((prevVariants) => prevVariants.filter((_, i) => i !== index));
-  };
+  //     updateSequenceData(updatedSequence);
+  //   }
+  // };
 
   const handleWaitDaysChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newWaitDays = Number(e.target.value);
@@ -88,20 +82,12 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({
       const updatedSequence: Sequence = {
         ...selectedSequence,
         seq_delay_details: { delay_in_days: newWaitDays },
+        seq_variants: selectedSequence.seq_variants.map(variant => ({ ...variant }))
       };
 
       updateSequenceData(updatedSequence);
     }
   };
-
-  const colors = [
-    "#6e58f1",
-    "#ff6b6b",
-    "#ffb400",
-    "#4caf50",
-    "#2196f3",
-    "#9c27b0",
-  ];
 
   return (
     <>
@@ -110,7 +96,9 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({
           onClick={() => onClickEmailFollowUp(selectedSequence!)}
         >
           <BorderConatiner>
-            <HourglassBottomIcon sx={{ fontSize: 20, color: "#6e58f1" }} />
+            <StyledWaitIcon
+              sx={{ fontSize: 20, color: "var(--theme-color)" }}
+            />
             <LeftDashedBorderLine />
           </BorderConatiner>
           <div style={{ display: "flex", flexDirection: "column" }}>
@@ -121,10 +109,12 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({
                 // value={waitDays}
                 onChange={handleWaitDaysChange}
                 style={{
-                  width: "40px",
                   textAlign: "center",
-                  border: "1px solid grey",
-                  borderBottom: "1px solid black",
+                  border: "1px solid var(--icon-color)",
+                  borderRadius: '4px',
+                  padding: '0 12px',
+                  height: '24px',
+                  width: '47px',
                 }}
               />{" "}
               day{waitDays > 1 ? "s" : ""} then
@@ -136,12 +126,12 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({
         onClick={() => onClickEmailFollowUp(selectedSequence!)}
       >
         <BorderConatiner>
-          <MailOutlineIcon sx={{ fontSize: 20, color: "#6e58f1" }} />
+          <StyledMailIcon />
           <LeftDashedBorder />
         </BorderConatiner>
         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
           <div style={{ display: "flex", flexDirection: "row", gap: "58px" }}>
-            <Typography fontWeight="bold" sx={{ marginLeft: "8px" }}>
+            <Typography fontWeight="bold">
               Email follow-up
             </Typography>
             {variants.length > 1 && (
@@ -161,6 +151,7 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({
             >
               <Typography fontSize={14}>Email</Typography>
               <DeleteOutlineIcon
+                sx={{ color: "var(--icon-color)", cursor: "pointer" }}
                 onClick={() => onDelete(selectedSequence?.seq_number!)}
               />
             </div>
@@ -188,7 +179,10 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({
                     >
                       {String.fromCharCode(65 + index)}
                     </Box> */}
-                    <Typography fontSize={14}>{'Subject: '}{selectedSequence?.seq_variants[0].subject}</Typography>
+                    <Typography fontSize={14}>
+                      {"Subject: "}
+                      {selectedSequence?.seq_variants[0].subject}
+                    </Typography>
                   </Box>
 
                   {/* <IconButton

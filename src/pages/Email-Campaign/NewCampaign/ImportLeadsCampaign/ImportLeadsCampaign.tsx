@@ -1,19 +1,33 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Box, Typography, Dialog } from "@mui/material";
 import UploadFileOutlinedIcon from "@mui/icons-material/UploadFileOutlined";
 import ImportLeadsDetail from "./ImportLeadsDetail";
 import ImportSettingsDialog from "./ImportSettingDialog";
 import Papa from "papaparse";
 import { ImportedLeadsData } from "../NewCampaign";
-import { csvSettingsType } from "../../Interfaces";
+import { CustomDialogFooter } from "../../../../styles/global.styled";
+import { FileUploadContainer } from "./importLeads.styled";
+import ViewImportedCsvFile from "./ViewImportedCsvFile";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../../redux/store/store";
+import { getCampaignById } from "../../../../redux/slice/emailCampaignSlice";
+import toast from "react-hot-toast";
 
 interface ImportLeadsCampaignProps {
+  isEdit: boolean;
   handleLeadsData: (data: ImportedLeadsData) => void;
   handleCSVUpload: (data: any) => void;
   saveCSVSetting: (data: any) => void;
+  setIsStep1Valid: (status: boolean) => void;
 }
 
-const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({ handleLeadsData, handleCSVUpload, saveCSVSetting }) => {
+const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
+  handleLeadsData,
+  handleCSVUpload,
+  saveCSVSetting,
+  setIsStep1Valid,
+  isEdit
+}) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [error, setError] = useState("");
   const [showDetail, setShowDetail] = useState(false);
@@ -21,37 +35,97 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({ handleLeadsDa
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [columns, setColumns] = useState<string[]>([]);
   const [csvData, setCSVData] = useState<any[]>([]);
-  const [mappedData, setMappedData] = useState<any[]>([]);
-  const [CSVsettings, setCSVsettings] = useState<csvSettingsType>();
-  const [csvFile, selectedCSVFile] = useState<string>("");
-  const [fileName, setFileName] = useState<string>("");
+  const [csvFileDetails, setCsvFileDetails] = useState<any[]>([]);
+
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const campaignId = params.get("id");
+
+    if (campaignId) {
+      fetchCampaignDetails(campaignId);
+    }
+  }, [dispatch]);
+
+  const fetchCampaignDetails = async (id: string) => {
+    try {
+      const response = await dispatch(getCampaignById(id)).unwrap();
+      const campaign = response.campaign;
+      setCsvFileDetails(campaign?.csv_file);
+      return response.campaign;
+
+    } catch (error) {
+      console.error("Error fetching campaign:", error);
+      return null;
+    }
+  };
+
+  const processFile = (file: File) => {
+    if (file.type === "text/csv") {
+      setSelectedFile(file);
+      setError("");
+      handleCSVUpload(file);
+      console.log("csvData", csvData);
+      Papa.parse(file, {
+        complete: (result) => {
+          const firstRow = result.data[0] as string[];
+          const data = result.data as any[];
+          if (!data.length || data.every(row => row.every((cell: String) => cell === ""))) {
+            setError("Cannot upload an empty CSV file.");
+            toast.error("Cannot upload an empty CSV file.");
+            setSelectedFile(null);
+            setShowDetail(false);
+            setOpenDialog(false);
+            return;
+          }
+          setColumns(firstRow);
+          setCSVData(data);
+        },
+        skipEmptyLines: true,
+      });
+
+      setShowDetail(true);
+      setOpenDialog(true);
+    } else {
+      setError("Please upload a valid CSV file.");
+      setSelectedFile(null);
+    }
+  };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      if (file.type === "text/csv") {
-        setSelectedFile(file);
-        setError("");
-        handleCSVUpload(file);
-  
-        Papa.parse(file, {
-          complete: (result) => {
-            const firstRow = result.data[0] as string[];
-            const data = result.data as any[];
-            setColumns(firstRow);
-            setCSVData(data);
-          },
-          skipEmptyLines: true,
-        });
-  
-        setShowDetail(true);
-        setOpenDialog(true);
-      } else {
-        setError("Please upload a valid CSV file.");
-        setSelectedFile(null);
-      }
-    }
+    if (file) processFile(file);
   };
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const file = event.dataTransfer.files[0];
+    if (file) processFile(file);
+  };
+
+  useEffect(() => {
+    const handleDragOver = (event: DragEvent) => {
+      event.preventDefault();
+    };
+  
+    const handleDropAnywhere = (event: DragEvent) => {
+      event.preventDefault();
+  
+      const file = event.dataTransfer?.files?.[0];
+      if (file) processFile(file);
+    };
+  
+    window.addEventListener("dragover", handleDragOver);
+    window.addEventListener("drop", handleDropAnywhere);
+  
+    return () => {
+      window.removeEventListener("dragover", handleDragOver);
+      window.removeEventListener("drop", handleDropAnywhere);
+    };
+  }, []);
   
 
   return (
@@ -63,14 +137,18 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({ handleLeadsDa
         flexDirection: "column",
         width: "100%",
         padding: "2px 0",
+        paddingTop: "50px",
       }}
     >
       {showDetail ? (
         <ImportLeadsDetail
+          isUplaodContacts={false}
           onEmailFieldsChange={handleLeadsData}
           columns={columns}
           file={selectedFile}
           onFileChange={handleFileChange}
+          onDeleteFile={() => setSelectedFile(null)}
+          setIsStep1Valid={setIsStep1Valid}
         />
       ) : (
         <>
@@ -81,26 +159,26 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({ handleLeadsDa
             How would you like to get contacts into your list?
           </Typography>
 
-          <Box
-            sx={{
-              width: "80%",
-              maxWidth: "300px",
-              textAlign: "center",
-              padding: "40px",
-              borderRadius: "10px",
-              backgroundColor: "#F8F9FC",
-              boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-              cursor: "pointer",
-            }}
+          <FileUploadContainer
             onClick={() => fileInputRef.current?.click()}
+            onDragOver={(event) => event.preventDefault()}
+            onDrop={handleDrop}
           >
-            <UploadFileOutlinedIcon
-              sx={{ fontSize: 50, color: "#6e58f1", marginBottom: "10px" }}
-            />
             <Typography variant="h6" fontWeight="600" mt={2}>
               Upload CSV File
             </Typography>
-            <Typography variant="body2" color="gray">
+            <UploadFileOutlinedIcon
+              sx={{
+                fontSize: 80,
+                color: "var(--icon-color)",
+                marginBottom: "10px",
+              }}
+            />
+            <Typography
+              variant="body2"
+              color="gray"
+              sx={{ textAlign: "center" }}
+            >
               Select a CSV file to import <br /> or <br /> Drag & Drop CSV file
               here
             </Typography>
@@ -118,11 +196,19 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({ handleLeadsDa
               </Typography>
             )}
             {error && (
-              <Typography variant="body2" color="red" mt={1}>
+              <Typography
+                variant="body2"
+                color="var(--background-light)"
+                mt={1}
+              >
                 {error}
               </Typography>
             )}
-          </Box>
+            <CustomDialogFooter>
+              Upload your CSV files to import leads.
+            </CustomDialogFooter>
+          </FileUploadContainer>
+          {isEdit && <ViewImportedCsvFile csvFileDetails={csvFileDetails} />}
         </>
       )}
 
@@ -131,7 +217,11 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({ handleLeadsDa
         onClose={() => setOpenDialog(false)}
         fullWidth
         maxWidth="sm"
-        ><ImportSettingsDialog open={openDialog} onClose={() => setOpenDialog(false)} onSave={saveCSVSetting} 
+      >
+        <ImportSettingsDialog
+          open={openDialog}
+          onClose={() => setOpenDialog(false)}
+          onSave={saveCSVSetting}
         />
       </Dialog>
     </Box>

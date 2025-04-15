@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import {
   BorderConatiner,
   EmailFollowUp,
-  EmailFollowUpContainer,
   LeftDashedBorder,
   LeftDashedBorderLine,
   ManualFollowUpContainer,
@@ -36,6 +35,7 @@ const ManualFollowUp: React.FC<ManualFollowUpProps> = ({
     if (selectedSequence) {
       setVariants(selectedSequence.seq_variants);
       setWaitDays(selectedSequence.seq_delay_details?.delay_in_days || 1);
+      console.log(variants);
     }
   }, [selectedSequence]);
 
@@ -57,7 +57,9 @@ const ManualFollowUp: React.FC<ManualFollowUpProps> = ({
     <>
       <ManualFollowUpContainer>
         <BorderConatiner>
-          <HourglassBottomIcon sx={{ fontSize: 20, color: "#6e58f1" }} />
+          <HourglassBottomIcon
+            sx={{ fontSize: 20, color: "var(--theme-color)" }}
+          />
           <LeftDashedBorderLine />
         </BorderConatiner>
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -68,10 +70,12 @@ const ManualFollowUp: React.FC<ManualFollowUpProps> = ({
               // value={waitDays}
               onChange={handleWaitDaysChange}
               style={{
-                width: "40px",
                 textAlign: "center",
-                border: "1px solid grey",
-                borderBottom: "1px solid black",
+                border: "1px solid var(--icon-color)",
+                borderRadius: '4px',
+                padding: '0 12px',
+                height: '24px',
+                width: '47px',
               }}
             />{" "}
             day{waitDays > 1 ? "s" : ""} then
@@ -83,19 +87,25 @@ const ManualFollowUp: React.FC<ManualFollowUpProps> = ({
         onClick={() => onClickEmailFollowUp(selectedSequence)}
       >
         <BorderConatiner>
-          <ContentCopyIcon sx={{ fontSize: 20, color: "#6e58f1" }} />
+          <ContentCopyIcon sx={{ fontSize: 20, color: "var(--theme-color)" }} />
           <LeftDashedBorder />
         </BorderConatiner>
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div style={{ display: "flex", flexDirection: "row", gap: "58px" }}>
-            <Typography fontWeight="bold" sx={{ marginLeft: "8px", marginBottom: "8px" }}>
+            <Typography
+              fontWeight="bold"
+              sx={{ marginLeft: "8px", marginBottom: "8px" }}
+            >
               Manual follow-up
             </Typography>
           </div>
           <EmailFollowUp>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <Typography fontSize={14}>Manual</Typography>
-              <DeleteOutlineIcon onClick={() => onDelete(selectedSequence)} />
+              <DeleteOutlineIcon
+                sx={{ color: "var(--icon-color)", cursor: "pointer" }}
+                onClick={() => onDelete(selectedSequence)}
+              />
             </div>
             <Typography fontSize={14}>
               Title : {selectedSequence?.seq_variants[0].subject}

@@ -1,22 +1,15 @@
 import {
   Box,
   Checkbox,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
   Table,
   TableBody,
   TableRow,
   Typography,
-  Link,
   Menu,
-  Button,
 } from "@mui/material";
 import {
   LeadssContainer,
   LeadsHeader,
-  SectionTitle,
   StyledTableContainer,
   StyledTableHeadCell,
   LeadsTable,
@@ -34,11 +27,12 @@ import SortIcon from "@mui/icons-material/Sort";
 import { SearchBar } from "../../components/Header/header.styled";
 import MailOutlineSharpIcon from "@mui/icons-material/MailOutlineSharp";
 import { Search } from "lucide-react";
+import { SectionTitle } from "../../styles/layout.styled";
 
 const Leads: React.FC = () => {
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  
+
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -53,9 +47,9 @@ const Leads: React.FC = () => {
     <LeadssContainer>
       <LeadsHeader>
         <SectionTitle>All Leads</SectionTitle>
-        <Box sx={{ display: "flex", gap: "20px" }}>
+        <Box sx={{ display: "flex", gap: "20px", width: "100%" }}>
           <SearchBar>
-            <Search size={20} color="#64748b" />
+            <Search size={20} />
             <input placeholder="Search input..." />
           </SearchBar>
           <FilterIcon>
@@ -91,7 +85,6 @@ const Leads: React.FC = () => {
         >
           <Typography fontWeight="bold">Sort By</Typography>
         </Box>
-
       </Menu>
       <LeadsTable>
         <StyledTableContainer>
@@ -107,7 +100,7 @@ const Leads: React.FC = () => {
                 <StyledTableHeadCell>Type</StyledTableHeadCell>
               </TableRow>
             </StyledTableHead>
-            <TableBody style={{ background: "#ffff" }}>
+            <TableBody style={{ background: "var(--background-light)f" }}>
               <TableRow>
                 <StyledTableCheckbox>
                   <Checkbox {...label} />

@@ -10,11 +10,12 @@ export const PageContainer = styled(Box)`
 export const RegisterCard = styled(Box)`
   background: white;
   border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-dark);
   width: 100%;
   max-width: 900px;
   display: flex;
   overflow: auto;
+  margin-top: 50px;
 `;
 
 export const IllustrationSection = styled(Box)`
@@ -47,7 +48,7 @@ export const PreviewImage = styled('img')`
   height: 50px;
   object-fit: cover;
   border-radius: 50%;
-  border: 2px solid var(--theme-color-dark);
+  border: 1px solid var(--border-dark);
   margin-bottom: 8px;
 `;
 
@@ -61,7 +62,7 @@ export const StyledTextField = styled(TextField)`
 
 
   .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
-    border: 1px solid #ddd;
+  border: 1px solid var(--border-dark);
   }
   .MuiOutlinedInput-input {
     padding: 12px 10px !important; 
@@ -75,7 +76,7 @@ export const StyledButton = styled(Button)`
   text-transform: none;
   transition: all 0.3s ease-in-out;
   background: var(--theme-color);
-  color: black;
+  color: white;
 
   &:hover {
     background: var(--theme-color);
@@ -93,12 +94,12 @@ export const SocialButtonsContainer = styled(Box)`
 `;
 
 export const SocialButton = styled(IconButton)`
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border-dark);
   padding: 12px;
   transition: all 0.3s ease-in-out;
   
   &:hover {
-    background-color: #ffffff;
+    background-color: var(--background-light);
     transform: scale(1.1);
   }
 `;

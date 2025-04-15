@@ -1,8 +1,8 @@
 export interface CampaignSettingsPayload {
   campaign_id: string;
-  auto_warm_up: boolean;
-  sender_accounts: EmailAccounts[];
-  schedule_settings: {
+  auto_warm_up?: boolean;
+  sender_accounts?: EmailAccounts;
+  schedule_settings?: {
     time_zone: string;
     send_these_days: number[];
     time_sequences: {
@@ -13,7 +13,7 @@ export interface CampaignSettingsPayload {
     start_date: string;
     max_leads_per_day: number;
   };
-  campaign_settings: {
+  campaign_settings?: {
     campaign_name: string;
     stop_message_on_lead: string;
     email_delivery_optimization: boolean;
@@ -59,6 +59,40 @@ export interface CampaignSettings {
   };
 }
 
-export interface EmailAccounts {
-  account_id: string
+export interface EmailAccount {
+  name?: any;
+  email?: any;
+  account_id: string;
+  user?: string;
+  pass?: string;
+  oauth2?: any;
 }
+
+export interface Account {
+  oauth2?: any;
+  email: string
+  type: string,
+  imap: {
+    host: string;
+    port: string;
+    secure: string;
+    auth: {
+      user: string;
+      pass: string;
+    },
+  },
+  smtp: {
+    host: string;
+    port: string;
+    secure: string;
+    auth: {
+      user: string;
+      pass: string;
+    },
+  },
+  proxy: null,
+  smtpEhloName: "localhost",
+}
+
+
+export type EmailAccounts = EmailAccount[];

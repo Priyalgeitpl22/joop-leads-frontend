@@ -96,7 +96,7 @@ const PreviewMailDialog: React.FC<PreviewEmailDialogProps> = ({
             sx={{
               backgroundColor: "#E4D9FF",
               color: "white",
-              background: "#6e58f1",
+              background: "var(--theme-color)",
               marginTop: "40px",
               marginBottom: "20px",
             }}

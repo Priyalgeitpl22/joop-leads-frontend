@@ -43,7 +43,7 @@ const ImportCsvFileDialog: React.FC<ImportCsvFileDialogProps> = ({
           It will take some time to import your file. Please wait. Take a break
           if it's a large CSV file (grater than 20, 000 leads)
         </Typography>
-        {/* <Button2 color={"white"} background={"#6e58f1"} style={{marginTop: "20px"}} onClick={handleUploadLeads}>
+        {/* <Button2 color={"white"} background={"var(--theme-color)"} style={{marginTop: "20px"}} onClick={handleUploadLeads}>
           Save
         </Button2> */}
       </DialogContent>

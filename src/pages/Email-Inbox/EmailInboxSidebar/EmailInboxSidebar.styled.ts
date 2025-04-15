@@ -1,92 +1,116 @@
 import { styled } from "@mui/material/styles";
-import { Box, ListItem, List, Typography } from "@mui/material";
+import { Box, List, ListItem, Divider } from "@mui/material";
 
 interface SidebarItemProps {
   active?: boolean;
-  online?: boolean;
 }
 
-export const SidebarContainer = styled(Box)({
-  width: 230,
-  height: "95%",
-  backgroundColor: "#ffffff",
-  borderRight: "1px solid #e0e0e0",
-  overflowY: "auto",
-  padding: "10px",
-  borderRadius: "10px",
-});
-
-export const StatusIndicator = styled("div", {
-  shouldForwardProp: (prop) => prop !== "online",
-})<SidebarItemProps>(({ online }) => ({
-  width: 8,
-  height: 8,
-  borderRadius: "50%",
-  backgroundColor: online ? "#4caf50" : "red",
-}));
-
-export const SidebarItem = styled(ListItem, {
-  shouldForwardProp: (prop) => prop !== "active",
-})<SidebarItemProps>(({ active }) => ({
-  "&:hover": {
-    backgroundColor: "var(--theme-color)",
-    cursor: "pointer",
-  },
-  backgroundColor: active ? "var(--theme-color)" : "transparent",
-  position: "relative",
-  padding: "8px 16px",
-  borderRadius: "8px",
-}));
-
-// export const ActiveIndicator = styled(motion.div)({
-//   position: "absolute",
-//   left: 0,
-//   top: 0,
-//   bottom: 0,
-//   width: 4,
-//   backgroundColor: "var(--theme-color)",
-//   borderRadius: "0 4px 4px 0",
-// });
-
-export const Count = styled(Typography)(`
-  marginLeft: 'auto';
-  color: '#757575';
-  background: var(--theme-color);
-  border-radius: 12px;
-  width: 18px;
-  height: 24px;
-  align-items: center;
+export const SidebarContainer = styled(Box)`
+  width: 210px;
+  height: 100%;
   display: flex;
-  justify-content: center;
-`);
-
-// export const CountBadge = styled(motion.div)({
-//   color: "#757575",
-//   backgroundColor: "#7dd1e3",
-//   width: "18px",
-//   height: "20px",
-//   borderRadius: "10px",
-// });
+  flex-direction: column;
+  overflow: hidden;
+  padding: 10px;
+  background-color: var(--text-white);
+  border-right: 1px solid #ddd;
+`;
 
 export const EmailInboxContainer = styled(Box)`
   width: 100%;
+  height: 80vh;
+  display: flex;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background: var(--icon-light);
+  position: relative;
+  flex-direction: row;
+  overflow: hidden;
+`;
+;
+
+export const SidebarHeader = styled(Box)`
+  font-size: 18px;
+  font-weight: bold;
+  // margin-bottom: 8px;
+`;
+
+export const EmailInboxListHeader = styled(Box)({
+  alignItems: "center",
+  color: "var(--active-color)",
+  textAlign: "center",
+  marginTop: "5px",
+  marginBottom: "8px",
+  paddingBottom: "5px",
+  position: "sticky",
+  top: 0,
+  backgroundColor: "var(--text-white)",
+  "@media (max-width: 600px)": {
+    flexDirection: "column",
+    alignItems: "flex-start",
+  },
+});
+
+export const StyledDivider = styled(Divider)`
+  margin-bottom: 10px;
+`;
+export const StyledList = styled(List)({
+  maxHeight: "calc(100vh - 80px)",
+  overflowY: "auto",
+  overflowX: "auto",
+  whiteSpace: "nowrap",
+});
+
+export const StyledListItem = styled(ListItem, {
+  shouldForwardProp: (prop) => prop !== "active",
+})<SidebarItemProps>(({ active }) => ({
+  flex: "0 0 auto",
+  marginRight: "8px",
+  padding: "8px 15px",
+  borderRadius: "8px",
+  cursor: "pointer",
+  fontSize: "13px",
+  border: "1px solid #eee",
+  backgroundColor: active ? "var(--background-hover)" : "transparent",
+  color: active ? "rgb(9 16 115)" : "var(--input-text)",
+  fontWeight: active ? "bold" : "normal",
+  transition: "background 0.2s",
+  whiteSpace: "nowrap",
+
+  "&:hover": {
+    backgroundColor: "var(--background-hover)",
+  },
+}));
+
+export const NoMailboxMessage = styled(Box)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: var(--icon-light);
+  color: #555;
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 20px;
+  height: 100%;
+  width: 100%;
+`;
+
+export const EmailInbox = styled(Box)`
+  width: 100%;
   height: 100%;
   display: flex;
-  border-radius: 8px;
+  overflow: auto;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   background: white;
   position: relative;
-  flex-direction: row;
+  flex-direction: column;
+  background: var(--white-fade-gradient);
+  border-radius: 8px;
 `;
 
-export const EmailInboxList = styled(List)`
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  position: relative;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  gap: 5px;
-  display: flex;
-  flex-direction: column;
+export const EmailInboxHeader = styled(Box)`
+  background: var(--background-secondary);
+  padding: 16px;
 `;

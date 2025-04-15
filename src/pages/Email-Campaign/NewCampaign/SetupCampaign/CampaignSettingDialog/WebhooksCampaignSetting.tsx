@@ -33,7 +33,7 @@ const WebhooksCampaignSetting = () => {
         }}
       >
         <WebhookIcon
-          style={{ height: "40%", width: "40%", color: "#6e58f1" }}
+          style={{ height: "40%", width: "40%", color: "var(--theme-color)" }}
         />
         <Typography style={{ textAlign: "center", fontWeight: "200" }}>
           No Webhooks Yet
@@ -45,7 +45,7 @@ const WebhooksCampaignSetting = () => {
           onClose={() => setAddWebhook(false)}
         />
         <Button2
-          background="#6e58f1"
+          background="var(--theme-color)"
           color="white"
           style={{
             width: "21%",

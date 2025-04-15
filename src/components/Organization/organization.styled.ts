@@ -4,7 +4,7 @@ import { Box, Typography, TextField, Button } from '@mui/material';
 export const FormContainer = styled(Box)(`
   width: min-content;
   min-width: 960px;
-  height: 98%;
+  height: 100%;
   padding: 20px;
   border-radius: 8px;
   overflow: auto;
@@ -22,7 +22,7 @@ export const FormTitle = styled(Typography)({
 export const StyledTextField = styled(TextField)({
   '& .MuiOutlinedInput-root': {
     borderRadius: '12px',
-    background: '#ffffff',
+    background: 'var(--background-light)',
     transition: 'all 0.3s ease',
     '&:hover': {
       boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
@@ -39,7 +39,7 @@ export const StyledButton = styled(Button)({
   borderRadius: '30px',
   padding: '12px 24px',
   background: `linear-gradient(135deg, var(--theme-color), var(--theme-color))`,
-  color: '#ffffff',
+  color: 'var(--background-light)',
   fontWeight: 700,
   textTransform: 'none',
   boxShadow: '0 3px 5px rgba(0,0,0,0.2)',
