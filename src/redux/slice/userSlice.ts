@@ -57,7 +57,7 @@ export const updateUserDetails = createAsyncThunk(
       const response = await api.put("/user", userData, {
         headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` },
       });
-      return response.data.user;
+      return response.data;
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to update user details"
