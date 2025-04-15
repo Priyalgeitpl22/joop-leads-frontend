@@ -21,6 +21,7 @@ import { TableItem } from "../../styles/layout.styled";
 import { GridDeleteIcon } from "@mui/x-data-grid";
 import PauseIcon from "@mui/icons-material/Pause";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import PeopleIcon from '@mui/icons-material/People';
 import DoneIcon from "@mui/icons-material/Done";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { FolderMenu } from "./Folder/CampaignFolder.styled";
@@ -62,6 +63,14 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
 }) => {
   const { user } = useSelector((state: RootState) => state.user);
   const tableData = [
+    {
+      count: 0,
+      icon: PeopleIcon,
+      label: "Leads",
+      color: "#6e58f1",
+      countType: "custom",
+      getCount: (campaign: any) => campaign.emailCampaigns?.length || 0,
+    },
     {
       count: 0,
       icon: ForwardToInboxOutlinedIcon,
@@ -106,7 +115,7 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
         <TableHead sx={{ backgroundColor: "#f8f9fc" }}>
           <TableRow>
             <TableCellHead>Campaign Details</TableCellHead>
-            <TableCellHead colSpan={4}>Report</TableCellHead>
+            <TableCellHead colSpan={5}>Report</TableCellHead>
             {user?.role === "Admin" && 
             <TableCellHead>Action</TableCellHead>
             }
@@ -203,16 +212,16 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
                     <item.icon sx={{ fontSize: "20px", color: item.color }} />
                     <p>
                       {item.label}:{" "}
-                      {
-                        campaign?.analytics_count[
-                          item.count_label as keyof typeof campaign.analytics_count
-                        ]
-                      }
+                      {item.countType === "custom"
+                        ? item.getCount?.(campaign)
+                        : (campaign?.analytics_count?.[
+                            item.count_label as keyof typeof campaign.analytics_count
+                          ] ?? 0)}
                     </p>
                   </TableItem>
                 </CustomTableCell>
               ))}
-              { user?.role === "Admin" &&
+              {user?.role === "admin" && (
                 <CustomTableCell sx={{ display: "flex" }}>
                   <Tooltip title="Delete">
                     <GridDeleteIcon
@@ -220,7 +229,7 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
                     />
                   </Tooltip>
                 </CustomTableCell>
-              }
+              )}
               <CustomTableCell>
                 <IconButton
                   size="small"
