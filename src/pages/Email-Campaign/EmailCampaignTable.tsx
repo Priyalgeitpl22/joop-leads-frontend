@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableContainer,
@@ -28,6 +28,7 @@ import { FolderMenu } from "./Folder/CampaignFolder.styled";
 import { CustomTableBody, CustomTableCell, CustomTableRow, TableCellHead } from "./EmailCampaign.styled";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store/store";
+import TablePagination from "@mui/material/TablePagination";
 
 export interface EmailCampaignTableProps {
   campaigns: IEmailCampaign[];
@@ -45,6 +46,8 @@ export interface EmailCampaignTableProps {
     campaignId: string
   ) => void;
   handleMenuClose: () => void;
+  handleRenameOpen: (campaignId: string, campaignName: string) => void;
+  handleRenameClose: () => void;
 }
 
 const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
@@ -60,8 +63,31 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
   selectedCampaign,
   handleMenuOpen,
   handleMenuClose,
+  handleRenameOpen,
 }) => {
   const { user } = useSelector((state: RootState) => state.user);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const paginatedCampaigns = campaigns.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
+
+  const handleChangePage = (
+    _event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number
+  ) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   const tableData = [
     {
       count: 0,
@@ -109,6 +135,7 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
         borderRadius: "8px",
         overflowY: "auto",
         height: "calc(100vh - 150px)",
+        paddingBottom: "4%",
       }}
     >
       <Table stickyHeader sx={{ position: "sticky" }}>
@@ -122,7 +149,7 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
             <TableCellHead></TableCellHead>
           </TableRow>
         </TableHead>
-        {campaigns.map((campaign) => (
+        {paginatedCampaigns.map((campaign) => (
           <CustomTableBody key={campaign.id}>
             <CustomTableRow>
               <CustomTableCell
@@ -221,7 +248,7 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
                   </TableItem>
                 </CustomTableCell>
               ))}
-              {user?.role === "admin" && (
+              {user?.role === "Admin" && (
                 <CustomTableCell sx={{ display: "flex" }}>
                   <Tooltip title="Delete">
                     <GridDeleteIcon
@@ -245,6 +272,13 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
                   <MenuItem onClick={() => handleMoveFolderOpen(campaign.id)}>
                     Move to folder
                   </MenuItem>
+                  <MenuItem
+                    onClick={() =>
+                      handleRenameOpen(campaign.id, campaign.campaignName)
+                    }
+                  >
+                    Rename
+                  </MenuItem>
                   <MenuItem onClick={handleMenuClose}>Details</MenuItem>
                 </FolderMenu>
               </CustomTableCell>
@@ -252,6 +286,24 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
           </CustomTableBody>
         ))}
       </Table>
+      <TablePagination
+        component="div"
+        count={campaigns.length}
+        page={page}
+        onPageChange={handleChangePage}
+        rowsPerPage={rowsPerPage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+        rowsPerPageOptions={[5, 10, 25, 50]}
+        sx={{
+          position: "absolute",
+          bottom: 0,
+          width: "100%",
+          borderTop: "1px solid #e0e0e0",
+          backgroundColor: "#fff",
+          zIndex: 1,
+        }}
+      />
+
       {campaigns.length === 0 && (
         <div style={{ padding: "20px", textAlign: "center", color: "#888" }}>
           No campaigns found

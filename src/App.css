@@ -136,7 +136,7 @@ span, div, a, textarea {
 }
 
 p {
-  color: var(--selected-color);
+  color: var(--selected-color) !important;
   font-family: inherit;
 }
 

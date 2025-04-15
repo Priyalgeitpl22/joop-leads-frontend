@@ -39,6 +39,8 @@ const CampaignFolder = ({
   handleDetailCampaign,
   handleMenuOpen,
   handleMenuClose,
+  handleRenameOpen,
+  handleRenameClose,
   anchorEl,
   selectedCampaign,
   folderCampaignDel,
@@ -57,9 +59,11 @@ const CampaignFolder = ({
     campaignId: string
   ) => void;
   handleMenuClose: () => void;
+  handleRenameOpen: (campaignId: string, campaignName: string) => void;
+  handleRenameClose: () => void;
   anchorEl: null | HTMLElement;
   selectedCampaign: string | null;
-  folderCampaignDel: string | null ;
+  folderCampaignDel: string | null;
 }) => {
   const [anchorEl1, setAnchorEl1] = useState<null | HTMLElement>(null);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -203,6 +207,8 @@ const CampaignFolder = ({
           handleDetailCampaign={handleDetailCampaign}
           handleMenuOpen={handleMenuOpen}
           handleMenuClose={handleMenuClose}
+          handleRenameOpen={handleRenameOpen}
+          handleRenameClose={handleRenameClose}
           anchorEl={anchorEl}
           selectedCampaign={selectedCampaign}
         />
