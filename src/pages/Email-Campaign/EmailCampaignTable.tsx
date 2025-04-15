@@ -221,7 +221,7 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
                   </TableItem>
                 </CustomTableCell>
               ))}
-              {user?.role === "Admin" && (
+              {user?.role === "admin" && (
                 <CustomTableCell sx={{ display: "flex" }}>
                   <Tooltip title="Delete">
                     <GridDeleteIcon
