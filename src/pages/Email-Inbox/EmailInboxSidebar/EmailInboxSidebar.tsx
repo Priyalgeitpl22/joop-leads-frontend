@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../redux/store/store";
 import {
@@ -13,38 +13,18 @@ import {
   StyledList,
   StyledListItem,
   NoMailboxMessage,
-  EmailInboxListHeader
+  EmailInboxListHeader,
 } from "./EmailInboxSidebar.styled";
+import CircularLoader from "../../../assets/Custom/circularProgress";
 
 const EmailInboxSideBar = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.user);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      dispatch(getAllChats({ orgId: user?.orgId || "" }));
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, [dispatch]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const selectedAccountId = useSelector(
     (state: RootState) => state.emailInbox.selectedAccountId
   );
-
-  const handleMailboxClick = (mailbox: { _id: string }) => {
-    if (!selectedAccountId) return;
-    dispatch(setSelectedMailbox(mailbox._id));
-    dispatch(
-      getAllAccountMailBox({
-        accountId: selectedAccountId,
-        mailBoxId: mailbox._id,
-        page: 1,
-        limit: 10,
-      })
-    );
-  };
-
   const selectedMailboxId = useSelector(
     (state: RootState) => state.emailInbox.selectedMailboxId
   );
@@ -58,25 +38,47 @@ const EmailInboxSideBar = () => {
       index === self.findIndex((m) => m.name === mailbox.name)
   );
 
-  // const truncateText = (text: string, maxLength: number) => {
-  //   return text.length > maxLength
-  //     ? `${text.substring(0, maxLength)}...`
-  //     : text;
-  // };
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      dispatch(getAllChats({ orgId: user?.orgId || "" }));
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [dispatch, user?.orgId]);
 
   useEffect(() => {
-    if (uniqueMailboxes.length > 0 && selectedAccountId && !selectedMailboxId) {
-      const firstMailbox = uniqueMailboxes[0];
-      dispatch(setSelectedMailbox(firstMailbox._id));
-      dispatch(
-        getAllAccountMailBox({
-          accountId: selectedAccountId,
-          mailBoxId: firstMailbox._id,
-         
-        })
-      );
-    }
+    const fetchInitialMailbox = async () => {
+      setLoading(true);
+      if (uniqueMailboxes.length > 0 && selectedAccountId && !selectedMailboxId) {
+        const firstMailbox = uniqueMailboxes[0];
+        dispatch(setSelectedMailbox(firstMailbox._id));
+        await dispatch(
+          getAllAccountMailBox({
+            accountId: selectedAccountId,
+            mailBoxId: firstMailbox._id,
+          })
+        );
+      }
+      setLoading(false);
+    };
+
+    fetchInitialMailbox();
   }, [uniqueMailboxes, selectedMailboxId, selectedAccountId, dispatch]);
+
+  const handleMailboxClick = async (mailbox: { _id: string }) => {
+    if (!selectedAccountId) return;
+    setLoading(true);
+    dispatch(setSelectedMailbox(mailbox._id));
+    await dispatch(
+      getAllAccountMailBox({
+        accountId: selectedAccountId,
+        mailBoxId: mailbox._id,
+        page: 1,
+        limit: 10,
+      })
+    );
+    setLoading(false);
+  };
 
   return (
     <SidebarContainer>
@@ -85,7 +87,9 @@ const EmailInboxSideBar = () => {
       </EmailInboxListHeader>
       <StyledDivider />
       <StyledList>
-        {uniqueMailboxes.length > 0 ? (
+        {loading ? (
+          <CircularLoader />
+        ) : uniqueMailboxes.length > 0 ? (
           uniqueMailboxes.map((mailbox) => (
             <StyledListItem
               key={mailbox._id}
