@@ -127,19 +127,37 @@ const EmailTemplate: React.FC<EmailTemplateProps> = ({
   };
 
   const insertVariable = (variable: string) => {
+    let newSubject = subject;
+    let newEmailBody = emailBody;
     if (variableTarget === "subject") {
-      setSubject((prev) => prev + ` {{${variable}}}`);
+      newSubject = subject + ` {{${variable}}}`;
+      setSubject(newSubject);
     } else if (variableTarget === "emailBody" && quillRef.current) {
       const quill = quillRef.current.getEditor();
       const range = quill.getSelection();
-  
+
       if (range) {
         quill.insertText(range.index, ` {{${variable}}} `, "user");
         quill.setSelection(range.index + ` {{${variable}}} `.length);
       } else {
         quill.insertText(quill.getLength(), ` {{${variable}}} `, "user");
       }
+
+      newEmailBody = quill.root.innerHTML;
+      setEmailBody(newEmailBody);
     }
+
+    handleEmailTemplateData({ subject: newSubject, emailBody: newEmailBody });
+
+    if (selectedSequence) {
+      const updatedSequence = JSON.parse(JSON.stringify(selectedSequence));
+      if (updatedSequence.seq_variants && updatedSequence.seq_variants.length > 0) {
+        updatedSequence.seq_variants[0].subject = newSubject;
+        updatedSequence.seq_variants[0].emailBody = newEmailBody;
+      }
+      updateSequenceData(updatedSequence);
+    }
+
     handleCloseMenu();
   };
 
@@ -150,16 +168,11 @@ const EmailTemplate: React.FC<EmailTemplateProps> = ({
     handleEmailTemplateData({ subject: newSubject, emailBody: newEmailBody });
 
     if (selectedSequence) {
-      const updatedVariants = selectedSequence.seq_variants.map((variant) =>
-        variant.variantLabel === selectedSequence.seq_variants[0]?.variantLabel
-          ? { ...variant, subject: newSubject, emailBody: newEmailBody }
-          : variant
-      );
-
-      const updatedSequence: Sequence = {
-        ...selectedSequence,
-        seq_variants: updatedVariants,
-      };
+      const updatedSequence = JSON.parse(JSON.stringify(selectedSequence));
+      if (updatedSequence.seq_variants && updatedSequence.seq_variants.length > 0) {
+        updatedSequence.seq_variants[0].subject = newSubject;
+        updatedSequence.seq_variants[0].emailBody = newEmailBody;
+      }
 
       updateSequenceData(updatedSequence);
     }
@@ -186,7 +199,7 @@ const EmailTemplate: React.FC<EmailTemplateProps> = ({
       toolbar.insertBefore(button, toolbar.firstChild);
     }
   };
-  
+
 
   return (
     <EmailTemplateWrapper>

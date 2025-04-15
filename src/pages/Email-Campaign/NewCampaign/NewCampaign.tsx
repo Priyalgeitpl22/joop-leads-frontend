@@ -55,7 +55,7 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
   const [uploadCounts, setUploadCounts] = React.useState<ILeadsCounts>();
   const [sequences, setSequences] = React.useState<Sequence[]>([]);
   const [selectedSequence, setSelectedSequence] = React.useState<Sequence>();
-  const [newSequnce,setSelectedNewSequnce]=React.useState("")
+  const [newSequnce, setSelectedNewSequnce] = React.useState("")
   const [campaignId, setCampaignId] = React.useState<string>("");
   const [isLoading, setIsLoading] = React.useState(false);
   const [testEmailDialog, setTestEmailDialog] = React.useState(false);
@@ -249,12 +249,25 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
   };
 
   const addSequence = (sequence: Sequence) => {
-    setSelectedSequence(sequence);
-    setSequences([...sequences, sequence]);
+    setSelectedSequence({ ...sequence });
+
+    setSequences(prevSequences => {
+      const updatedSequences = [...prevSequences];
+      const newSequence = {
+        ...sequence,
+        seq_variants: sequence.seq_variants.map(variant => ({ ...variant }))
+      };
+      updatedSequences.push(newSequence);
+      return updatedSequences;
+    });
   };
 
   const updateSequences = (sequences: Sequence[]) => {
-    setSequences(sequences);
+    const deepCopiedSequences = sequences.map(sequence => ({
+      ...sequence,
+      seq_variants: sequence.seq_variants.map(variant => ({ ...variant }))
+    }));
+    setSequences(deepCopiedSequences);
   };
 
   const updateSequenceData = (sequence: Sequence) => {
@@ -263,17 +276,22 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
       return {
         ...prevSequence,
         ...sequence,
-        seq_variants: [...sequence.seq_variants],
+        seq_variants: sequence.seq_variants.map(variant => ({ ...variant })),
       };
     });
 
-    setSequences((prevSequences) =>
-      prevSequences.map((seq) =>
-        seq.seq_number === sequence.seq_number
-          ? { ...seq, ...sequence, seq_variants: [...sequence.seq_variants] }
-          : seq
-      )
-    );
+    setSequences((prevSequences) => {
+      return prevSequences.map((seq) => {
+        if (seq.seq_number === sequence.seq_number) {
+          return {
+            ...seq,
+            ...sequence,
+            seq_variants: sequence.seq_variants.map(variant => ({ ...variant })),
+          };
+        }
+        return seq;
+      });
+    });
   };
 
   const handleTestEmail = () => {
@@ -377,9 +395,9 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
   const isNextDisabled = () => {
     if (activeStep === 0) return isStep1Valid;
     if (activeStep === 1) return !true;
-    if (activeStep === 2) 
+    if (activeStep === 2)
       return !isScheduleValid || !isSettingValid || !isSenderAccountValid;
-    if(activeStep === 3) return true
+    if (activeStep === 3) return true
 
     return false;
   };
@@ -459,7 +477,7 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
             handleCampaignSettingsUpdate={handleCampaignSettingsUpdate}
           />
         )}
-        {activeStep === 3 && <FinalReviewCampaign campaign_id={campaignId}  setSelectedEmailTemplate={setSelectedNewSequnce}/>}
+        {activeStep === 3 && <FinalReviewCampaign campaign_id={campaignId} setSelectedEmailTemplate={setSelectedNewSequnce} />}
       </MainContainer>
       <FooterContainer>
         {activeStep !== 0 && (

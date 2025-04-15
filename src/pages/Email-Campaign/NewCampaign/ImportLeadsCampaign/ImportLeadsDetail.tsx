@@ -57,7 +57,6 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
     console.log("emailFieldAdded", emailFieldsAdded);
 
     setEmailFieldAdded((prev) => {
-
       const updatedFields = {
         ...prev,
         [field]: column,
@@ -124,7 +123,6 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
         padding: "20px",
         background: "#FAFBFF",
         overflowY: "auto",
-        height: "462px",
         display: "flex",
         flexDirection: "column",
         gap: "10px",

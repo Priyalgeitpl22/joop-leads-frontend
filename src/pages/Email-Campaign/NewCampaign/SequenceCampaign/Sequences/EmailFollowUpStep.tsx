@@ -37,17 +37,16 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({
   const [variants, setVariants] = useState<SequenceVariant[]>(
     selectedSequence?.seq_variants || []
   );
-  const [waitDays, setWaitDays] = useState(1);
+  const [waitDays, setWaitDays] = useState(
+    selectedSequence?.seq_delay_details?.delay_in_days || 1
+  );
 
   useEffect(() => {
     if (selectedSequence) {
-      setVariants(selectedSequence?.seq_variants);
-      updateSequenceData({
-        ...selectedSequence,
-        seq_variants: variants,
-      });
+      setVariants(selectedSequence.seq_variants.map(variant => ({ ...variant })));
+      setWaitDays(selectedSequence.seq_delay_details?.delay_in_days || 1);
     }
-  }, [variants]);
+  }, [selectedSequence]);
 
   // const getNextVariantLabel = (variants: SequenceVariant[]) => {
   //   if (variants.length === 0) return "A";
@@ -83,6 +82,7 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({
       const updatedSequence: Sequence = {
         ...selectedSequence,
         seq_delay_details: { delay_in_days: newWaitDays },
+        seq_variants: selectedSequence.seq_variants.map(variant => ({ ...variant }))
       };
 
       updateSequenceData(updatedSequence);
