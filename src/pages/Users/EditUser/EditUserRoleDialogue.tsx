@@ -3,7 +3,6 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogTitle,
   TextField,
   CircularProgress,
   InputLabel,
@@ -13,7 +12,8 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 import { Button2 } from "../../../styles/layout.styled";
-import toast, { Toaster } from "react-hot-toast";
+import { GridCloseIcon } from "@mui/x-data-grid";
+import { CloseIconButton, StyledDialogTitle } from "./EditUser.styled";
 
 interface EditUserDialogProps {
   open: boolean;
@@ -68,14 +68,19 @@ const EditUserDialog: React.FC<EditUserDialogProps> = ({
       email,
       role: filters.role || role,
     });
-    toast.success("User updated successfully!");
-    onClose();
   };
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <Toaster position="top-right" />
-      <DialogTitle>Edit User</DialogTitle>
+      <CloseIconButton
+        onClick={onClose}
+      >
+        <GridCloseIcon />
+      </CloseIconButton>
+      <StyledDialogTitle
+      >
+        Edit User Role
+        </StyledDialogTitle>
       <DialogContent>
         {loading ? (
           <CircularProgress />
@@ -107,7 +112,7 @@ const EditUserDialog: React.FC<EditUserDialogProps> = ({
                   onChange={handleFilterChange(
                     label.toLowerCase() as keyof typeof filters
                   )}
-                  sx={{ background: "white!important" }}
+                  sx={{ background: "white!important", borderRadius: "4px" }}
                   label={label}
                 >
                   {filterOptions[label as keyof typeof filterOptions]?.map(

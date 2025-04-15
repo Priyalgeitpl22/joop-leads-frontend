@@ -76,39 +76,41 @@ const Users = () => {
    
       const [openEditDialog, setOpenEditDialog] = useState(false);
       const [editUserData, setEditUserData] = useState<any>(null);
-      // const [isSavingEdit, setIsSavingEdit] = useState(false); // New saving s
+      
 
-      const handleOpenEditDialog = (userData: any) => {
-        setEditUserData(userData);
-        setOpenEditDialog(true);
-      };
-      const handleSaveEdit = async (updatedUserData: {
-        id: string;
-        role: string;
-      }) => {
-        try {
-          const formData = new FormData();
-          formData.append("id", updatedUserData.id);
-          formData.append("role", updatedUserData.role);
+  const handleOpenEditDialog = (userData: any) => {
+    setEditUserData(userData);
+    setOpenEditDialog(true);
+  };
+      
+  const handleSaveEdit = async (updatedUserData: {
+    id: string;
+    role: string;
+  }) => {
+    try {
+      const formData = new FormData();
+      formData.append("id", updatedUserData.id);
+      formData.append("role", updatedUserData.role);
 
-          const response = await dispatch(
-            updateUserDetails({ userData: formData })
-          ).unwrap();
+      const response = await dispatch(
+        updateUserDetails({ userData: formData })
+      ).unwrap();
 
-          if (response?.code === 200) {
-            toast.success("User details updated successfully!");
-          }
-        } catch (err: any) {
-          toast.error(err?.message || "Failed to update user details.");
-        } finally {
-          setOpenEditDialog(false);
-        }
-      };
+      if (response?.code === 200) {
+        toast.success(response?.message ||"User details updated successfully!");
+        handleCloseEditDialog()
+      }
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to update user details.");
+    } finally {
+      setOpenEditDialog(false);
+    }
+  };
 
-      const handleCloseEditDialog = () => {
-        setOpenEditDialog(false);
-        setEditUserData(null);
-      };
+  const handleCloseEditDialog = () => {
+    setOpenEditDialog(false);
+    setEditUserData(null);
+  };
             
   const handleFilterChange =
     (field: keyof typeof filters) => (event: SelectChangeEvent<string>) => {
