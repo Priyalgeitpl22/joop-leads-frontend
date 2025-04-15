@@ -48,6 +48,7 @@ import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { showFolders } from "../../redux/slice/emailCampaignFolderSlice";
 import FolderOpenOutlinedIcon from "@mui/icons-material/FolderOpenOutlined";
+import RenameEmailCampaignDialog from "./RenameEmailCampaignDialog";
 
 const EmailCampaign: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -75,6 +76,12 @@ const EmailCampaign: React.FC = () => {
   const filterOptions: Record<"status", string[]> = {
     status: ["SCHEDULED", "RUNNING", "PAUSED", "DRAFT", "COMPLETED"],
   };
+  const [renameDialogOpen, setRenameDialogOpen] = useState(false);
+  const [selectedRenameCampaignId, setSelectedRenameCampaignId] = useState<
+    string | null
+  >(null);
+  const [selectedRenameCampaignName, setSelectedRenameCampaignName] =
+    useState<string>("");
 
   const [dateFilters, setDateFilters] = useState<{
     startDate: Dayjs | null;
@@ -150,6 +157,24 @@ const EmailCampaign: React.FC = () => {
     setAnchorEl(null);
     setSelectedCampaign(null);
   };
+
+  // const handleRenameOpen = (campaignId: string) => {
+  //   setSelectedRenameCampaignId(campaignId);
+  //   setRenameDialogOpen(true);
+  //   handleMenuClose();
+  // };
+
+  const handleRenameOpen = (campaignId: string, campaignName: string) => {
+    setSelectedRenameCampaignId(campaignId);
+    setSelectedRenameCampaignName(campaignName);
+    setRenameDialogOpen(true);
+    handleMenuClose();
+  };
+
+  const handleRenameClose = () => {
+    setRenameDialogOpen(false);
+  }
+
   const handleFilterClose = () => {
     setFilterOpen(null);
   };
@@ -511,6 +536,8 @@ const EmailCampaign: React.FC = () => {
               handleDetailCampaign={handleDetailCampaign}
               handleMenuOpen={handleMenuOpen}
               handleMenuClose={handleMenuClose}
+              handleRenameOpen={handleRenameOpen}
+              handleRenameClose={handleRenameClose}
               anchorEl={anchorEl}
               selectedCampaign={selectedCampaign}
             />
@@ -528,8 +555,8 @@ const EmailCampaign: React.FC = () => {
                     gap: 1,
                     alignItems: "center",
                     fontWeight: "bold",
-                    marginTop: "10px",
-                    marginBottom: "10px",
+                    marginTop: "5px",
+                    // marginBottom: "10px",
                     cursor: "pointer",
                   }}
                 >
@@ -568,6 +595,8 @@ const EmailCampaign: React.FC = () => {
                     anchorEl={anchorEl}
                     selectedCampaign={selectedCampaign}
                     folderCampaignDel={folderCampaignDelete}
+                    handleRenameOpen={handleRenameOpen}
+                    handleRenameClose={handleRenameClose}
                   />
                 ) : (
                   <Box
@@ -636,6 +665,12 @@ const EmailCampaign: React.FC = () => {
         open={moveToFolderDialog}
         onClose={handleMoveFolderClose}
         campaignId={selectedCampaign}
+      />
+      <RenameEmailCampaignDialog
+        open={renameDialogOpen}
+        onClose={() => setRenameDialogOpen(false)}
+        campaignId={selectedRenameCampaignId}
+        campaignName={selectedRenameCampaignName}
       />
     </ContentContainer>
   );

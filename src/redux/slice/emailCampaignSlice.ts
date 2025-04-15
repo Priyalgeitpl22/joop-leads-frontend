@@ -279,6 +279,27 @@ export const searchContactsByCampaign = createAsyncThunk(
   }
 );
 
+export const updateCampaignName = createAsyncThunk<
+  any,
+  { campaignId: string; newName: string },
+  { rejectValue: string }
+>(
+  "emailCampaigns/updateCampaignName",
+  async ({ campaignId, newName }, { rejectWithValue }) => {
+    try {
+      const response = await api.put(
+        `${BASE_URL}/${campaignId}/rename`,
+        { newName }
+      );
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to rename campaign"
+      );
+    }
+  }
+);
+
 export const DeleteEmailCampaign = createAsyncThunk<
   any,
   string,
@@ -327,8 +348,17 @@ const emailCampaignSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(fetchEmailCampaigns.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(fetchEmailCampaigns.fulfilled, (state, action) => {
+        state.loading = false;
         state.campaigns = action.payload;
+      })
+      .addCase(fetchEmailCampaigns.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       })
       .addCase(DeleteEmailCampaign.pending, (state) => {
         state.loading = true;
@@ -344,6 +374,13 @@ const emailCampaignSlice = createSlice({
       .addCase(DeleteEmailCampaign.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+      .addCase(updateCampaignName.fulfilled, (state, action) => {
+        const { campaignId, newName } = action.meta.arg;
+        const campaign = state.campaigns.find((c) => c.id === campaignId);
+        if (campaign) {
+          campaign.name = newName;
+        }
       });
   },
 });

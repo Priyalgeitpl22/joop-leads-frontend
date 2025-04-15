@@ -4,8 +4,11 @@ import { MuiColorInput } from "mui-color-input";
 
 export const EmailCampaignContainer = styled.div`
   display: flex;
-  padding: 10px 20px;
-  justify-content: space-between;
+  flex-direction: column;
+  padding: 10px 20px 0px 10px;
+  // height: calc(100vh - 150px);
+  // position: relative;
+  // overflow: hidden;
 `;
 
 export const Section = styled.section`

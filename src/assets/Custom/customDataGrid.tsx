@@ -68,6 +68,13 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
               {
                 outline: "none",
               },
+            "& .MuiDataGrid-footerContainer .MuiTablePagination-selectLabel, \
+            & .MuiDataGrid-footerContainer .MuiTablePagination-displayedRows, \
+            & .MuiDataGrid-footerContainer .MuiSelect-select, \
+            & .MuiDataGrid-footerContainer .MuiSvgIcon-root":
+            {
+              color: "black !important",
+            },
             "& .MuiDataGrid-virtualScrollerContent": {
               // width: "100% !important",
               flexBasis: "0px !important",
