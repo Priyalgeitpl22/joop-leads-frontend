@@ -95,7 +95,7 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
       label: "Leads",
       color: "#6e58f1",
       countType: "custom",
-      getCount: (campaign: any) => campaign.emailCampaigns?.length || 0,
+      getCount: (campaign: any) => campaign.emailCampaigns?.length || campaign.contact_count,
     },
     {
       count: 0,
