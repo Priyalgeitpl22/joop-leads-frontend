@@ -9,6 +9,7 @@ import {
   StyledAssignmentIcon,
   StyledEmailIcon,
 } from "./Sequences/sequences.styled";
+import PlayArrowSharpIcon from '@mui/icons-material/PlayArrowSharp';
 import ManualFollowUp from "./Sequences/ManualFollowUp";
 import ManualTemplate from "./EmailTemplate/ManualTemplate";
 import {
@@ -28,6 +29,8 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../redux/store/store";
 import { getCampaignById } from "../../../../redux/slice/emailCampaignSlice";
 import CircularLoader from "../../../../assets/Custom/circularProgress";
+import PreviewSequenceDialogue from "./Sequences/Preview/PreviewSequenceDialogue";
+import { Button2 } from "../../../../styles/layout.styled";
 
 interface ImportLeadsCampaignProps {
   campaign_id: string,
@@ -56,6 +59,7 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
   const [selectedVariant, setSelectedVariant] = useState<SequenceVariant>();
   const dispatch = useDispatch<AppDispatch>();
   const [isLoading, setIsLoading] = useState(true);
+  const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false);
 
   // const handleAddStep = () => {
   //   setShowStepOptions(!showStepOptions);
@@ -165,6 +169,15 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
   const openAbConfigurationDialog = () => setIsDialogOpen(true);
   const closeAbConfigurationDialog = () => setIsDialogOpen(false);
 
+  const openPreviewDialog = () => {
+    setIsPreviewDialogOpen(true);
+  };
+
+  // Close the preview dialog
+  const closePreviewDialog = () => {
+    setIsPreviewDialogOpen(false);
+  };
+
   return (
     <Box sx={{ height: "100%" }} display={"flex"}>
       {isLoading && <CircularLoader />}
@@ -178,13 +191,13 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
               updateSequenceData={updateSequenceData}
               onSelectVariant={onSelectVariant}
               openAbConfigurationDialog={openAbConfigurationDialog}
-              onAddStep={() => { }}
+              onAddStep={() => {}}
               onDelete={() => handleRemoveStep(index)}
               isFirstEmail={index === 0}
             />
           ) : (
             <ManualFollowUp
-              onAddStep={() => { }}
+              onAddStep={() => {}}
               key={sequence.seq_number}
               selectedSequence={sequence}
               updateSequenceData={updateSequenceData}
@@ -219,6 +232,13 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
               ? "Manual Sequence"
               : "Email"}
           </Typography>
+
+          <Button2 onClick={openPreviewDialog} color={""} background={""}>
+            <Typography sx={{ display: "inline-flex", alignItems: "center" }}>
+              <PlayArrowSharpIcon sx={{ margin: "-4px", marginRight: "4px" }} />
+              Preview
+            </Typography>
+          </Button2>
           {/* <Typography fontSize={14}>Manual</Typography> */}
         </TemplateHeader>
 
@@ -244,6 +264,13 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
           onClose={closeAbConfigurationDialog}
         />
       )}
+
+      <PreviewSequenceDialogue
+        onClose={closePreviewDialog}
+        open={isPreviewDialogOpen}
+        user={null}
+        loading={false}
+      />
     </Box>
   );
 };

@@ -148,7 +148,7 @@ const EmailInboxList: React.FC = () => {
           <HeaderTitle>Accounts</HeaderTitle>
         </EmailInboxListHeader> */}
         <SearchBar>
-          <Search/>
+          <Search />
           <input
             placeholder="Search Account"
             value={searchQuery}
