@@ -31,6 +31,8 @@ const EmailInboxList: React.FC = () => {
   const [rows, setRows] = useState<any[]>([]);
   const [emailAccounts, setEmailAccounts] = useState<EmailAccount[]>([])
   const { user } = useSelector((state: RootState) => state.user);
+  const [loading, setLoading] = useState<boolean>(false);
+
   const selectedAccountId = useSelector(
     (state: RootState) => state.emailInbox.selectedAccountId
   );
@@ -65,17 +67,22 @@ const EmailInboxList: React.FC = () => {
     const getEmailAccounts = async () => {
       await getAllEmailAccounts();
     };
-
+    console.log(loading);
     getEmailAccounts();
   }, []);
 
   const getAllEmailAccounts = async () => {
     try {
-      const data = await dispatch(fetchEmailAccount({ orgId: user?.orgId || "" })).unwrap();
+      setLoading(true);
+      const data = await dispatch(
+        fetchEmailAccount({ orgId: user?.orgId || "" })
+      ).unwrap();
       setEmailAccounts(data);
       setRows(data);
     } catch (error) {
       console.error("Failed to fetch Account:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -107,36 +114,21 @@ const EmailInboxList: React.FC = () => {
       return;
 
     try {
+      setLoading(true);
       const res = await dispatch(
         reloadAccountMailboxes({ accountId: selectedAccountId })
       ).unwrap();
-      console.log(res,"res")
+      console.log(res, "res");
       // if (res) {
       //   const fetchMessages = await dispatch(
       //     reloadAccountMessages({ accountId: selectedAccountId })
       //   );
       //   console.log(fetchMessages);
       // }
-
-      await getAllEmailAccounts();
-
-      dispatch(resetMailboxes());
-      const mailboxResponse = await dispatch(
-        getAllMailBox(selectedAccountId)
-      ).unwrap();
-
-      if (mailboxResponse.length > 0) {
-        const firstMailbox = mailboxResponse[0];
-        dispatch(setSelectedMailbox(firstMailbox._id));
-        dispatch(
-          getAllAccountMailBox({
-            accountId: selectedAccountId,
-            mailBoxId: firstMailbox._id,
-          })
-        );
-      }
     } catch (error) {
       console.error("❌ Error while reloading account mailboxes:", error);
+    } finally {
+      setLoading(false);
     }
   };
   
@@ -158,25 +150,26 @@ const EmailInboxList: React.FC = () => {
         <RefreshRoundedbutton onClick={handleReload} />
       </EmailInboxHeading>
 
-      <AccountList>
-        {rows.length > 0 ? (
-          rows.map((account) => (
-            <AccountItem
-              key={account._id}
-              onClick={() => handleAccountClick(account._id)}
-              data-selected={selectedAccountId === account._id}
-            >
-              <AccountAvatar>{account.name[0]?.toUpperCase()}</AccountAvatar>
-              <AccountDetails>
-                <strong>{account.name}</strong>
-                <div>{account.email}</div>
-              </AccountDetails>
-            </AccountItem>
-          ))
-        ) : (
-          <NoAccount>No accounts found</NoAccount>
-        )}
-      </AccountList>
+        <AccountList>
+          {rows.length > 0 ? (
+            rows.map((account) => (
+              <AccountItem
+                key={account._id}
+                onClick={() => handleAccountClick(account._id)}
+                data-selected={selectedAccountId === account._id}
+              >
+                <AccountAvatar>{account.name[0]?.toUpperCase()}</AccountAvatar>
+                <AccountDetails>
+                  <strong>{account.name}</strong>
+                  <div>{account.email}</div>
+                </AccountDetails>
+              </AccountItem>
+            ))
+          ) : (
+            <NoAccount>No accounts found</NoAccount>
+          )}
+        </AccountList>
+    
     </EmailInboxListContainer>
   );
 };
