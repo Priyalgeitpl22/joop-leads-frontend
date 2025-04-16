@@ -21,6 +21,7 @@ import {
   setCurrentPage,
 } from "../../../redux/slice/emailInboxSlice";
 import { Search } from "lucide-react";
+import EmailInboxAreaDialog from "./EmailInboxAreaDialog";
 
 const EmailInboxArea: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -28,6 +29,8 @@ const EmailInboxArea: React.FC = () => {
   const [expandedMessageId, setExpandedMessageId] = useState<string | null>(
     null
   );
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedMessage, setSelectedMessage] = useState<any>(null);
 
   const selectedMailboxId = useSelector(
     (state: RootState) => state.emailInbox.selectedMailboxId
@@ -55,10 +58,11 @@ const EmailInboxArea: React.FC = () => {
   const messagesPerPage = 10;
   const totalPages = Math.ceil(totalMessages / messagesPerPage);
 
-  const toggleMessageBody = (messageId: string) => {
-    setExpandedMessageId(expandedMessageId === messageId ? null : messageId);
-  };
+  // const toggleMessageBody = (messageId: string) => {
+  //   setExpandedMessageId(expandedMessageId === messageId ? null : messageId);
+  // };
 
+  console.log("setExpandedMessageId", setExpandedMessageId);
   const handlePageChange = (
     _event: React.ChangeEvent<unknown>,
     page: number
@@ -110,6 +114,11 @@ const EmailInboxArea: React.FC = () => {
     :  mailboxMessages
       ;
 
+  const handleMessageClick = (message: any) => {
+    setSelectedMessage(message);
+    setOpenDialog(true);
+  };
+
   return (
     <EmailInboxMessagesContainer>
       {loading && searchTerm.trim().length === 0 ? (
@@ -157,7 +166,10 @@ const EmailInboxArea: React.FC = () => {
               {messagesToShow.map((message: any) => {
                 const isExpanded = expandedMessageId === message._id;
                 return (
-                  <EmailInboxMessagesHeading key={message._id}>
+                  <EmailInboxMessagesHeading
+                    key={message._id}
+                    onClick={() => handleMessageClick(message)}
+                  >
                     <div
                       style={{
                         display: "flex",
@@ -215,11 +227,7 @@ const EmailInboxArea: React.FC = () => {
                       To: <strong>{message.to?.[0]?.name}</strong> (
                       {message.to?.[0]?.address || "No Email"})
                     </div>
-
-                    <InboxMessageBody
-                      isExpanded={isExpanded}
-                      onClick={() => toggleMessageBody(message._id)}
-                    >
+                    <InboxMessageBody isExpanded={isExpanded}>
                       {isExpanded
                         ? message.body
                         : message.body.split("\n").slice(0, 10).join("\n") +
@@ -262,6 +270,13 @@ const EmailInboxArea: React.FC = () => {
               )}
           </TotalPageCount>
         </div>
+      )}
+      {selectedMessage && (
+        <EmailInboxAreaDialog
+          open={openDialog}
+          onClose={() => setOpenDialog(false)}
+          message={selectedMessage}
+        />
       )}
     </EmailInboxMessagesContainer>
   );
