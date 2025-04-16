@@ -29,7 +29,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../redux/store/store";
 import { getCampaignById } from "../../../../redux/slice/emailCampaignSlice";
 import CircularLoader from "../../../../assets/Custom/circularProgress";
-import PreviewSequenceDialogue from "./Sequences/Preview/PreviewSequenceDialogue";
+import PreviewSequenceDialogue from "./Preview/PreviewSequenceDialogue";
 import { Button2 } from "../../../../styles/layout.styled";
 
 interface ImportLeadsCampaignProps {
@@ -270,6 +270,7 @@ const SequenceCampaign: React.FC<ImportLeadsCampaignProps> = ({
         open={isPreviewDialogOpen}
         user={null}
         loading={false}
+        selectedSequence={selectedSequence}
       />
     </Box>
   );
