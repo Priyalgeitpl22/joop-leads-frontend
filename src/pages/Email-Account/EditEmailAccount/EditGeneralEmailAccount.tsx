@@ -241,7 +241,7 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
       payload = {
         name: formData.fromName,
         email: formData.fromEmail,
-        msg_per_day: formData.msg_per_day,
+        limit: formData.msg_per_day,
         time_gap: formData.time_gap,
         type: formData.type,
       };
@@ -277,7 +277,7 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
         tags: formData.tags,
         clients: formData.clients,
         signature: formData.signature,
-        msg_per_day: formData.msg_per_day,
+        limit: formData.msg_per_day,
         time_gap: formData.time_gap,
         type: formData.type,
       };
