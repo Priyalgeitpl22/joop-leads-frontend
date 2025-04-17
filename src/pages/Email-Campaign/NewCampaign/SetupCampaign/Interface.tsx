@@ -92,6 +92,7 @@ export interface Account {
   },
   proxy: null,
   smtpEhloName: "localhost",
+  limit:string
 }
 
 

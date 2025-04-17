@@ -171,6 +171,7 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
         user: account.type === "imap" ? account.smtp.auth.user : undefined,
         pass: account.type === "imap" ? account.smtp.auth.pass : undefined,
         oauth2: account.type !== "imap" ? account.oauth2 : undefined,
+        limit:account.limit
       };
     });
 
