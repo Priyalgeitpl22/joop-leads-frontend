@@ -55,6 +55,7 @@ export const CustomMuiColorInput = styled(MuiColorInput)({
 export const TableCellHead = styled(TableCell)({
   fontWeight: "bold",
   color: "#35495c",
+  padding: "5px 16px"
 });
 
 export const CheckAccessibility = styled.button`

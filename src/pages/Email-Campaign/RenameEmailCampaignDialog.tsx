@@ -11,7 +11,7 @@ import { Button2 } from "../../styles/layout.styled";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../redux/store/store";
-import { fetchEmailCampaigns, updateCampaignName } from "../../redux/slice/emailCampaignSlice";
+import { updateCampaignName } from "../../redux/slice/emailCampaignSlice";
 import toast from 'react-hot-toast';
 
 
@@ -20,6 +20,7 @@ interface RenameEmailCampaignDialogProps {
   onClose: () => void;
   campaignId: string | null;
   campaignName: string;
+  fetchEmailCampaign: ()=> void;
 }
 
 const RenameEmailCampaignDialog: React.FC<RenameEmailCampaignDialogProps> = ({
@@ -27,6 +28,7 @@ const RenameEmailCampaignDialog: React.FC<RenameEmailCampaignDialogProps> = ({
   onClose,
   campaignId,
   campaignName,
+  fetchEmailCampaign
 }) => {
   const [newName, setNewName] = useState(campaignName);
   const dispatch = useDispatch<AppDispatch>();
@@ -34,8 +36,8 @@ const RenameEmailCampaignDialog: React.FC<RenameEmailCampaignDialogProps> = ({
 
   useEffect(() => {
     setNewName(campaignName);
-    dispatch(fetchEmailCampaigns());
   }, [campaignName]);
+
 
   const handleSaveName = () => {
     if (campaignId) {
@@ -43,7 +45,7 @@ const RenameEmailCampaignDialog: React.FC<RenameEmailCampaignDialogProps> = ({
         .unwrap()
         .then((response) => {
           if (response?.message) {
-            dispatch(fetchEmailCampaigns());
+            fetchEmailCampaign()
             toast.success(response.message);
           }
           onClose();
@@ -53,7 +55,6 @@ const RenameEmailCampaignDialog: React.FC<RenameEmailCampaignDialogProps> = ({
         });
     }
   };
-
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth>
