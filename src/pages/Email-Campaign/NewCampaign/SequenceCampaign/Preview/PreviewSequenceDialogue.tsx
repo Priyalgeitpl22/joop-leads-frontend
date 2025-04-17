@@ -79,31 +79,17 @@ const PreviewSequenceDialogue: React.FC<EditUserDialogProps> = ({
   };
 
   useEffect(() => {
-    if (selectedSequence) {
-      console.log("Selected sequence changed:", selectedSequence);
-      console.log("Sequence variants:", selectedSequence.seq_variants);
-    }
-  }, [selectedSequence]);
-
-  useEffect(() => {
     if (selectedSequence?.campaign_id) {
       fetchCampaignDetails(selectedSequence.campaign_id);
     }
-  }, [selectedSequence?.campaign_id]);
+  }, [selectedSequence?.campaign_id,selectedSequence]);
+
 
   useEffect(() => {
-    if (selectedSequence?.campaign_id) {
-      fetchCampaignDetails(selectedSequence.campaign_id);
-    }
-  }, [selectedSequence?.campaign_id]);
-
-  useEffect(() => {
-    debugger;
     if (campaign?.contacts?.length > 0 && selectedContactId) {
       const contact = campaign?.contacts.find(
         (c: any) => c.id === selectedContactId
       );
-      console.log("Selected Contact:", contact);
       setSelectedContactId(contact.id);
     }
   }, [selectedContactId, campaign]);
@@ -129,7 +115,6 @@ const PreviewSequenceDialogue: React.FC<EditUserDialogProps> = ({
     return div.textContent || div.innerText || "";
   };
   const replacePlaceholders = (text: string, contact: any): string => {
-    debugger;
     if (!text || !contact) return text;
     return text.replace(/{{\s*([^}]+)\s*}}/g, (_, key) => {
       const value = contact[key.trim()];
@@ -208,7 +193,6 @@ const PreviewSequenceDialogue: React.FC<EditUserDialogProps> = ({
           <Divider />
 
           <PreviewRow>
-            {/* <PreviewLabel>Body:</PreviewLabel> */}
             <Typography>
               {stripHtmlTags(
                 selectedSequence?.seq_variants[0]?.emailBody || ""
