@@ -169,6 +169,7 @@ const CampaignFolder = ({
               clicked_count: campaign?.clicked_count,
               sent_count: campaign?.sent_count,
             },
+            contact_count:campaign?.contact_count,
             campaignStats: campaign?.campaignStats || {},
           })
         );

@@ -65,6 +65,7 @@ export const showFolderDetail = createAsyncThunk<
         status: campaign?.campaign?.status,
         analytics: campaign?.campaign?.CampaignAnalytics?.[0] || {},
         sequence_count: folder?.sequence_count,
+        contact_count:campaign?.contact_count
       })) || [];
 
     const folderAnalytics = campaigns.length > 0 ? campaigns[0].analytics : {};
