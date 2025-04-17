@@ -49,6 +49,8 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { showFolders } from "../../redux/slice/emailCampaignFolderSlice";
 import FolderOpenOutlinedIcon from "@mui/icons-material/FolderOpenOutlined";
 import RenameEmailCampaignDialog from "./RenameEmailCampaignDialog";
+import ColumnVisibilitySelect from "../../assets/Custom/customVisibilitySeletc";
+
 
 const EmailCampaign: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -91,6 +93,22 @@ const EmailCampaign: React.FC = () => {
     startDate: null,
     endDate: null,
   });
+
+  const [visibleColumns, setVisibleColumns] = useState<{
+    Leads: boolean;
+    Sent: boolean;
+    Opened: boolean;
+    Clicked: boolean;
+    Bounced: boolean;
+  }>({
+    Leads: true,
+    Sent: true,
+    Opened: true,
+    Clicked: true,
+    Bounced: true,
+  });
+
+  const columnOptions = ["Leads", "Sent", "Opened", "Clicked", "Bounced"];
   const isFilterOpen = Boolean(filterOpen);
   const folders = useSelector((state: any) => state.folder.folders);
   console.log("folderrr", folders.length);
@@ -110,6 +128,10 @@ const EmailCampaign: React.FC = () => {
     getEmailCampaigns();
   }, []);
 
+  const handleColumnVisibilityChange = (newVisibleColumns: any) => {
+    setVisibleColumns(newVisibleColumns);
+  };
+  
   const handleTabChange = (_event: React.SyntheticEvent, newValue: string) => {
     if (typeof newValue !== "string") {
       return;
@@ -380,6 +402,15 @@ const EmailCampaign: React.FC = () => {
                     justifyContent: "flex-end",
                   }}
                 >
+                  <ColumnVisibilitySelect
+                    visibleColumns={visibleColumns}
+                    handleColumnVisibilityChange={handleColumnVisibilityChange}
+                    columns={columnOptions}
+                    labelId="column-visibility-label"
+                    label="Customize Columns"
+                    sx={{ m: 1, width: 200 }}
+                  />
+                  
                   <SearchBar>
                     <Search size={20} />
                     <input
@@ -540,6 +571,7 @@ const EmailCampaign: React.FC = () => {
               handleRenameClose={handleRenameClose}
               anchorEl={anchorEl}
               selectedCampaign={selectedCampaign}
+              visibleColumns={visibleColumns}
             />
           ) : (
             <EmailCampaignContainer>
