@@ -154,8 +154,6 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
               Report
             </TableCellHead>
 
-            <TableCellHead colSpan={5}>Report</TableCellHead>
-
             {user?.role === "Admin" && <TableCellHead>Action</TableCellHead>}
             <TableCellHead></TableCellHead>
           </TableRow>
