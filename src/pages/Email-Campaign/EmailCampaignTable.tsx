@@ -48,6 +48,7 @@ export interface EmailCampaignTableProps {
   handleMenuClose: () => void;
   handleRenameOpen: (campaignId: string, campaign_name: string) => void;
   handleRenameClose: () => void;
+  visibleColumns?: Record<string, boolean>;
 }
 
 const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
@@ -64,6 +65,7 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
   handleMenuOpen,
   handleMenuClose,
   handleRenameOpen,
+  visibleColumns,
 }) => {
   const { user } = useSelector((state: RootState) => state.user);
   const [page, setPage] = useState(0);
@@ -90,40 +92,40 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
 
   const tableData = [
     {
-      count: 0,
-      icon: PeopleIcon,
       label: "Leads",
+      icon: PeopleIcon,
       color: "#6e58f1",
       countType: "custom",
       getCount: (campaign: any) => campaign.emailCampaigns?.length || campaign.contact_count,
+      visibleKey: "Leads",
     },
     {
-      count: 0,
-      icon: ForwardToInboxOutlinedIcon,
       label: "Sent",
-      count_label: "sent_count",
+      icon: ForwardToInboxOutlinedIcon,
       color: "#6e58f1",
+      count_label: "sent_count",
+      visibleKey: "Sent",
     },
     {
-      count: 2,
-      icon: DraftsOutlinedIcon,
       label: "Opened",
+      icon: DraftsOutlinedIcon,
       color: "#bf51c1",
       count_label: "opened_count",
+      visibleKey: "Opened",
     },
     {
-      count: 4,
-      icon: AdsClickOutlinedIcon,
-      count_label: "clicked_count",
       label: "Clicked",
+      icon: AdsClickOutlinedIcon,
       color: "#efba2f",
+      count_label: "clicked_count",
+      visibleKey: "Clicked",
     },
     {
-      count: 1,
-      icon: ErrorOutlinedIcon,
-      count_label: "bounced_count",
       label: "Bounced",
+      icon: ErrorOutlinedIcon,
       color: "var(--error-color)",
+      count_label: "bounced_count",
+      visibleKey: "Bounced",
     },
   ];
 
@@ -142,7 +144,18 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
         <TableHead sx={{ backgroundColor: "#f8f9fc" }}>
           <TableRow>
             <TableCellHead>Campaign Details</TableCellHead>
+
+            <TableCellHead
+              colSpan={
+                tableData.filter((item) => visibleColumns?.[item.visibleKey])
+                  .length
+              }
+            >
+              Report
+            </TableCellHead>
+
             <TableCellHead colSpan={5}>Report</TableCellHead>
+
             {user?.role === "Admin" && <TableCellHead>Action</TableCellHead>}
             <TableCellHead></TableCellHead>
           </TableRow>
@@ -231,21 +244,27 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
                 </div>
               </CustomTableCell>
 
-              {tableData.map((item, index) => (
-                <CustomTableCell key={index}>
-                  <TableItem>
-                    <item.icon sx={{ fontSize: "20px", color: item.color }} />
-                    <p>
-                      {item.label}:{" "}
-                      {item.countType === "custom"
-                        ? item.getCount?.(campaign)
-                        : (campaign?.analytics_count?.[
-                            item.count_label as keyof typeof campaign.analytics_count
-                          ] ?? 0)}
-                    </p>
-                  </TableItem>
-                </CustomTableCell>
-              ))}
+              {tableData.map((item) => {
+                const isVisible = visibleColumns
+                  ? visibleColumns[item.visibleKey]
+                  : true;
+                return isVisible ? (
+                  <CustomTableCell key={item.label}>
+                    <TableItem>
+                      <item.icon sx={{ fontSize: "20px", color: item.color }} />
+                      <p>
+                        {item.label}:{" "}
+                        {item.countType === "custom"
+                          ? item.getCount?.(campaign)
+                          : (campaign?.analytics_count?.[
+                              item.count_label as keyof typeof campaign.analytics_count
+                            ] ?? 0)}
+                      </p>
+                    </TableItem>
+                  </CustomTableCell>
+                ) : null;
+              })}
+
               {user?.role === "Admin" && (
                 <CustomTableCell sx={{ display: "flex" }}>
                   <Tooltip title="Delete">
