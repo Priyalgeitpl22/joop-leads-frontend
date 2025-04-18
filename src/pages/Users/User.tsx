@@ -45,6 +45,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Dayjs } from "dayjs";
 import EditUserDialog from "./EditUser/EditUserRoleDialogue";
 import { ModeEditOutlineOutlined } from "@mui/icons-material";
+import ActiveFilters from "../Email-Campaign/ActiveFilters";
 
 
 const Users = () => {
@@ -155,6 +156,15 @@ const Users = () => {
 
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [appliedFilters, setAppliedFilters] = useState<{
+      status: string;
+      startDate: string | null;
+      endDate: string | null;
+    }>({
+      status: "",
+      startDate: null,
+      endDate: null,
+    });
 
   useEffect(() => {
     dispatch(getAllUsers())
@@ -222,23 +232,36 @@ const Users = () => {
 
   const handleApplyFilter = async () => {
     try {
-    const filterData = await dispatch(
-            filterUsers({
-              query: filters.role,
-              startDate: dateFilters.startDate
-                ? dateFilters.startDate.format("YYYY-MM-DD")
-                : "",
-              endDate: dateFilters.endDate
-                ? dateFilters.endDate.format("YYYY-MM-DD")
-                : "",
-            })
-          );
+      const roleStatus = filters.role;
+
+      const startDateForApi = dateFilters.startDate
+        ? dateFilters.startDate.format("YYYY-MM-DD")
+        : "";
+      const endDateForApi = dateFilters.endDate
+        ? dateFilters.endDate.format("YYYY-MM-DD")
+        : "";
+
+      const filterData = await dispatch(
+        filterUsers({
+          query: roleStatus,
+          startDate: startDateForApi,
+          endDate: endDateForApi,
+        })
+      );
+
+      setAppliedFilters({
+        status: roleStatus,
+        startDate: startDateForApi || null,
+        endDate: endDateForApi || null,
+      });
+
       setFilteredRows(filterData.payload.data);
       handleMenuClose();
     } catch (error) {
       console.error("Error applying filter:", error);
     }
   };
+
   const columns: GridColDef[] = useMemo(() => {
     const baseColumns: GridColDef[] = [
       {
@@ -340,6 +363,74 @@ const Users = () => {
     return baseColumns;
   }, [user?.role, handleOpenEditDialog, handleOpenDeleteDialog]);
 
+  const activeFilters = useMemo(
+    () => ({
+      status: appliedFilters.status,
+      startDate: appliedFilters.startDate,
+      endDate: appliedFilters.endDate,
+    }),
+    [appliedFilters]
+  );
+  
+  const handleRemoveFilter = (key: keyof typeof activeFilters) => {
+    let newRole = filters.role;
+    let newStartDate = dateFilters.startDate;
+    let newEndDate = dateFilters.endDate;
+
+    switch (key) {
+      case "status":
+        newRole = "";
+        setFilters((prev) => ({ ...prev, role: "" }));
+        break;
+
+      case "startDate":
+      case "endDate":
+        newStartDate = null;
+        newEndDate = null;
+        setDateFilters({ startDate: null, endDate: null });
+        break;
+
+      default:
+        break;
+    }
+
+    const startDateForApi = newStartDate
+      ? newStartDate.format("YYYY-MM-DD")
+      : "";
+    const endDateForApi = newEndDate ? newEndDate.format("YYYY-MM-DD") : "";
+
+    const statusForApi = newRole;
+
+    setAppliedFilters({
+      status: newRole,
+      startDate: startDateForApi || null,
+      endDate: endDateForApi || null,
+    });
+
+    const allCleared = !newRole && !startDateForApi && !endDateForApi;
+
+    if (allCleared) {
+      dispatch(getAllUsers())
+        .unwrap()
+        .then((res) => {
+          setRows(res.data);
+          setFilteredRows(res.data);
+        });
+    } else {
+      dispatch(
+        filterUsers({
+          query: statusForApi,
+          startDate: startDateForApi,
+          endDate: endDateForApi,
+        })
+      )
+        .unwrap()
+        .then((res) => {
+          setFilteredRows(res.data);
+        });
+    }
+  };
+
   return (
     <UsersContainer>
       <UserHeader>
@@ -390,7 +481,9 @@ const Users = () => {
           alignItems="center"
           mb={1}
         >
-          <Typography fontWeight="bold" fontSize={14}>Filter</Typography>
+          <Typography fontWeight="bold" fontSize={14}>
+            Filter
+          </Typography>
           <Link
             href="#"
             underline="hover"
@@ -449,6 +542,13 @@ const Users = () => {
           <Button onClick={handleApplyFilter}>Apply</Button>
         </Box>
       </Menu>
+      <Box sx={{ padding: "15px 0px 0px 8px", background: "var(--input-bg)" }}>
+        <ActiveFilters
+          filters={activeFilters}
+          onRemove={handleRemoveFilter}
+          statusLabel="Role"
+        />
+      </Box>
 
       <Box sx={{ height: "100%", overflow: "auto" }}>
         {loading ? (
@@ -485,8 +585,9 @@ const Users = () => {
         open={openEditDialog}
         onClose={handleCloseEditDialog}
         user={editUserData}
-        loading={loading} 
-        onSave={handleSaveEdit}       />
+        loading={loading}
+        onSave={handleSaveEdit}
+      />
     </UsersContainer>
   );
 };

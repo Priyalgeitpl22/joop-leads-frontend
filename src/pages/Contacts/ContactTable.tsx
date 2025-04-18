@@ -29,6 +29,7 @@ import {
   getCampaignListById,
   SearchContacts,
   VerifyViewContactPayload,
+  fetchContacts,
 } from "../../redux/slice/contactSlice";
 import { AppDispatch, RootState } from "../../redux/store/store";
 import { SearchBar } from "../../components/Header/header.styled";
@@ -38,7 +39,6 @@ import { GridColDef } from "@mui/x-data-grid";
 import {  formatDateTime } from "../../utils/utils";
 import { Button, IconsButton } from "../../styles/global.styled";
 import ProgressBar from "../../assets/Custom/linearProgress";
-import { fetchContacts } from "../../redux/slice/contactSlice";
 import ContactsAccountDialogBox from "./ContactsAccountDialogBox/ContactsAccountDialogBox";
 import ViewDrawer from "./View-Drawer/ViewDrawer";
 import UploadContactCsvDialog from "./UploadContactCsvDialog/UploadContactCsvDialog";
@@ -52,7 +52,6 @@ import PersonOffIcon from "@mui/icons-material/PersonOff";
 import HowToRegIcon from '@mui/icons-material/HowToReg'
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
-
 import toast, { Toaster } from 'react-hot-toast';
 import { Button2, SectionTitle } from "../../styles/layout.styled";
 import { DeleteIcon } from "./ContactTable.styled";
@@ -61,6 +60,7 @@ import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Dayjs } from "dayjs";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
+import ActiveFilters from "../Email-Campaign/ActiveFilters";
 
 
 
@@ -86,8 +86,7 @@ const ContactTable: React.FC = () => {
   });
 
   const filterOptions: Record<"status", string[]> = {
-    status: ["Active", "InActive"],
- 
+    status: ["Active", "Inactive"],
   };
 
   const [emailFieldsToBeAdded, setEmailFieldsToBeAdded] =
@@ -117,6 +116,15 @@ const ContactTable: React.FC = () => {
     startDate: null,
     endDate: null,
 
+  });
+  const [appliedFilters, setAppliedFilters] = useState<{
+    status: string;
+    startDate: string | null;
+    endDate: string | null;
+  }>({
+    status: "",
+    startDate: null,
+    endDate: null,
   });
 
   const saveCSVSetting = (settings: any) => {
@@ -474,28 +482,32 @@ const ContactTable: React.FC = () => {
 
   const handleApplyFilter = async () => {
     try {
-      let statusFilter = filters.status;
-  
-      if (statusFilter === "Active") {
-        statusFilter = "true";
-      } else if (statusFilter === "Inactive") {
-        statusFilter = "false";
-      }
-  
-      const updatedFilters = { status: statusFilter };
-  
-       const filterData = await dispatch(
-         filterContacts({
-           status: updatedFilters.status,
-           startDate: dateFilters.startDate
-             ? dateFilters.startDate.format("YYYY-MM-DD")
-             : "",
-           endDate: dateFilters.endDate
-             ? dateFilters.endDate.format("YYYY-MM-DD")
-             : "",
-         })
-       );
-       setRows(filterData.payload.data);
+      const status =
+        filters.status === "Active"
+          ? "true"
+          : filters.status === "Inactive"
+            ? "false"
+            : "";
+
+      const filterPayload = {
+        status,
+        startDate: dateFilters.startDate
+          ? dateFilters.startDate.format("YYYY-MM-DD")
+          : "",
+        endDate: dateFilters.endDate
+          ? dateFilters.endDate.format("YYYY-MM-DD")
+          : "",
+      };
+
+      const filterData = await dispatch(filterContacts(filterPayload));
+      setRows(filterData.payload.data);
+
+      setAppliedFilters({
+        status: filters.status,
+        startDate: filterPayload.startDate || null,
+        endDate: filterPayload.endDate || null,
+      });
+
       handleMenuClose();
     } catch (error) {
       console.error("Error applying filter:", error);
@@ -503,6 +515,71 @@ const ContactTable: React.FC = () => {
   };
   const goToNextStep = () => {
     navigate(`/email-campaign/new-campaign?campaignId=${campaignId}`);
+  };
+
+  const activeFilters = useMemo(
+    () => ({
+      status: appliedFilters.status,
+      startDate: appliedFilters.startDate,
+      endDate: appliedFilters.endDate,
+    }),
+    [appliedFilters]
+  );
+
+  const handleRemoveFilter = (key: keyof typeof activeFilters) => {
+    const updatedFilters = {
+      status: appliedFilters.status,
+      startDate: appliedFilters.startDate,
+      endDate: appliedFilters.endDate,
+    };
+
+    switch (key) {
+      case "status":
+        updatedFilters.status = "";
+        setFilters((prev) => ({ ...prev, status: "" }));
+        break;
+      case "startDate":
+      case "endDate":
+        updatedFilters.startDate = null;
+        updatedFilters.endDate = null;
+        setDateFilters({ startDate: null, endDate: null });
+        break;
+      default:
+        break;
+    }
+
+    setAppliedFilters(updatedFilters);
+
+    const statusForApi =
+      updatedFilters.status === "Active"
+        ? "true"
+        : updatedFilters.status === "Inactive"
+          ? "false"
+          : "";
+
+    const filterPayload: any = {};
+
+    if (statusForApi) {
+      filterPayload.status = statusForApi;
+    }
+
+    if (updatedFilters.startDate) {
+      filterPayload.startDate = updatedFilters.startDate;
+    }
+
+    if (updatedFilters.endDate) {
+      filterPayload.endDate = updatedFilters.endDate;
+    }
+
+    const allCleared = Object.keys(filterPayload).length === 0;
+
+    if (allCleared) {
+      getFetchAllContacts();
+    } else {
+      dispatch(filterContacts(filterPayload)).then((res: any) => {
+        setRows(res.payload.data);
+      });
+    }
   };
 
   return (
@@ -674,6 +751,12 @@ const ContactTable: React.FC = () => {
           overflow: "auto",
         }}
       >
+        <Box sx={{ padding: "15px 0px 0px 8px", background: "var(--input-bg)" }}>
+          <ActiveFilters
+            filters={activeFilters}
+            onRemove={handleRemoveFilter}
+          />
+        </Box>
         <CustomDataTable
           columns={columns}
           rows={rows}
@@ -716,7 +799,6 @@ const ContactTable: React.FC = () => {
         onClose={() => setOpen(false)}
         selectedId={selectedId}
       />
-
     </ContactsContainer>
   );
 };

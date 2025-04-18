@@ -46,7 +46,7 @@ export interface EmailCampaignTableProps {
     campaignId: string
   ) => void;
   handleMenuClose: () => void;
-  handleRenameOpen: (campaignId: string, campaignName: string) => void;
+  handleRenameOpen: (campaignId: string, campaign_name: string) => void;
   handleRenameClose: () => void;
 }
 
@@ -143,9 +143,7 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
           <TableRow>
             <TableCellHead>Campaign Details</TableCellHead>
             <TableCellHead colSpan={5}>Report</TableCellHead>
-            {user?.role === "Admin" && 
-            <TableCellHead>Action</TableCellHead>
-            }
+            {user?.role === "Admin" && <TableCellHead>Action</TableCellHead>}
             <TableCellHead></TableCellHead>
           </TableRow>
         </TableHead>
@@ -274,7 +272,10 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
                   </MenuItem>
                   <MenuItem
                     onClick={() =>
-                      handleRenameOpen(campaign.id, campaign.campaignName)
+                      handleRenameOpen(
+                        campaign.id,
+                        campaign.campaignName ?? campaign.campaign_name ?? ""
+                      )
                     }
                   >
                     Rename

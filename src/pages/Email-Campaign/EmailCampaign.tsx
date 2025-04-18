@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Box,
   FormControl,
@@ -28,6 +28,7 @@ import {
   fetchEmailCampaigns,
   filterCamapign,
   SearchEmailCampaign,
+  updateCampaignName,
   UpdateCampaignStatus,
 } from "../../redux/slice/emailCampaignSlice";
 import { AppDispatch } from "../../redux/store/store";
@@ -49,6 +50,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { showFolders } from "../../redux/slice/emailCampaignFolderSlice";
 import FolderOpenOutlinedIcon from "@mui/icons-material/FolderOpenOutlined";
 import RenameEmailCampaignDialog from "./RenameEmailCampaignDialog";
+import ActiveFilters from "./ActiveFilters";
 
 const EmailCampaign: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -91,6 +93,16 @@ const EmailCampaign: React.FC = () => {
     startDate: null,
     endDate: null,
   });
+  const [appliedFilters, setAppliedFilters] = useState<{
+    status: string;
+    startDate: string | null;
+    endDate: string | null;
+  }>({
+    status: "",
+    startDate: null,
+    endDate: null,
+  });
+
   const isFilterOpen = Boolean(filterOpen);
   const folders = useSelector((state: any) => state.folder.folders);
   console.log("folderrr", folders.length);
@@ -158,12 +170,6 @@ const EmailCampaign: React.FC = () => {
     setSelectedCampaign(null);
   };
 
-  // const handleRenameOpen = (campaignId: string) => {
-  //   setSelectedRenameCampaignId(campaignId);
-  //   setRenameDialogOpen(true);
-  //   handleMenuClose();
-  // };
-
   const handleRenameOpen = (campaignId: string, campaignName: string) => {
     setSelectedRenameCampaignId(campaignId);
     setSelectedRenameCampaignName(campaignName);
@@ -171,8 +177,21 @@ const EmailCampaign: React.FC = () => {
     handleMenuClose();
   };
 
-  const handleRenameClose = () => {
-    setRenameDialogOpen(false);
+  const handleRenameClose = async() => {
+    if (!selectedRenameCampaignId) return;
+    try {
+      await dispatch(
+        updateCampaignName({
+          campaignId: selectedRenameCampaignId,
+          newName: selectedRenameCampaignName,
+        })
+      );
+
+    await getAllEmailCampaigns();
+      setRenameDialogOpen(false);
+    } catch (error) {
+      console.error("Failed to update campaign name:", error);
+    }
   }
 
   const handleFilterClose = () => {
@@ -318,18 +337,19 @@ const EmailCampaign: React.FC = () => {
 
   const handleApplyFilters = async () => {
     try {
-      const filterData = await dispatch(
-        filterCamapign({
-          status: filters.status,
-          startDate: dateFilters.startDate
-            ? dateFilters.startDate.format("YYYY-MM-DD")
-            : "",
-          endDate: dateFilters.endDate
-            ? dateFilters.endDate.format("YYYY-MM-DD")
-            : "",
-        })
-      );
+      const filterPayload = {
+        status: filters.status,
+        startDate: dateFilters.startDate
+          ? dateFilters.startDate.format("YYYY-MM-DD")
+          : "",
+        endDate: dateFilters.endDate
+          ? dateFilters.endDate.format("YYYY-MM-DD")
+          : "",
+      };
+
+      const filterData = await dispatch(filterCamapign(filterPayload));
       setCampaigns(filterData.payload.data);
+      setAppliedFilters(filterPayload);
       handleFilterClose();
     } catch (error) {
       console.error("Error applying filters:", error);
@@ -340,6 +360,69 @@ const EmailCampaign: React.FC = () => {
     setDateFilters({ startDate: null, endDate: null });
     getAllEmailCampaigns();
     handleFilterClose();
+  };
+
+  const activeFilters = useMemo(
+    () => ({
+      status: appliedFilters.status,
+      startDate: appliedFilters.startDate,
+      endDate: appliedFilters.endDate,
+    }),
+    [appliedFilters]
+  );
+
+  const handleRemoveFilter = (key: keyof typeof activeFilters) => {
+    const updatedFilters = {
+      ...filters,
+      startDate: dateFilters.startDate
+        ? dateFilters.startDate.format("YYYY-MM-DD")
+        : null,
+      endDate: dateFilters.endDate
+        ? dateFilters.endDate.format("YYYY-MM-DD")
+        : null,
+    };
+
+    switch (key) {
+      case "status":
+        setFilters((prev) => ({ ...prev, status: "" }));
+        updatedFilters.status = "";
+        break;
+
+      case "startDate":
+      case "endDate":
+        setDateFilters({ startDate: null, endDate: null });
+        updatedFilters.startDate = null;
+        updatedFilters.endDate = null;
+        break;
+
+      default:
+        break;
+    }
+
+    setAppliedFilters({
+      status: updatedFilters.status || "",
+      startDate: updatedFilters.startDate,
+      endDate: updatedFilters.endDate,
+    });
+
+    const allCleared =
+      !updatedFilters.status &&
+      !updatedFilters.startDate &&
+      !updatedFilters.endDate;
+
+    if (allCleared) {
+      getAllEmailCampaigns();
+    } else {
+      dispatch(
+        filterCamapign({
+          status: updatedFilters.status,
+          startDate: updatedFilters.startDate || "",
+          endDate: updatedFilters.endDate || "",
+        })
+      ).then((res: any) => {
+        setCampaigns(res.payload.data);
+      });
+    }
   };
 
   return (
@@ -522,8 +605,13 @@ const EmailCampaign: React.FC = () => {
               <Button onClick={handleApplyFilters}>Apply</Button>
             </Box>
           </Menu>
-
           {loading && <ProgressBar />}
+          <Box sx={{ padding: "15px 0px 0px 8px" }}>
+            <ActiveFilters
+              filters={activeFilters}
+              onRemove={handleRemoveFilter}
+            />
+          </Box>
           {activeTab === "all" ? (
             <EmailCampaignTable
               campaigns={campaigns}
@@ -671,6 +759,7 @@ const EmailCampaign: React.FC = () => {
         onClose={() => setRenameDialogOpen(false)}
         campaignId={selectedRenameCampaignId}
         campaignName={selectedRenameCampaignName}
+        fetchEmailCampaign={getAllEmailCampaigns}
       />
     </ContentContainer>
   );
