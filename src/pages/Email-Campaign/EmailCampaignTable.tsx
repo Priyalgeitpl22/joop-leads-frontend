@@ -46,7 +46,7 @@ export interface EmailCampaignTableProps {
     campaignId: string
   ) => void;
   handleMenuClose: () => void;
-  handleRenameOpen: (campaignId: string, campaignName: string) => void;
+  handleRenameOpen: (campaignId: string, campaign_name: string) => void;
   handleRenameClose: () => void;
   visibleColumns?: Record<string, boolean>;
 }
@@ -144,6 +144,7 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
         <TableHead sx={{ backgroundColor: "#f8f9fc" }}>
           <TableRow>
             <TableCellHead>Campaign Details</TableCellHead>
+
             <TableCellHead
               colSpan={
                 tableData.filter((item) => visibleColumns?.[item.visibleKey])
@@ -152,6 +153,9 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
             >
               Report
             </TableCellHead>
+
+            <TableCellHead colSpan={5}>Report</TableCellHead>
+
             {user?.role === "Admin" && <TableCellHead>Action</TableCellHead>}
             <TableCellHead></TableCellHead>
           </TableRow>
@@ -287,7 +291,10 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
                   </MenuItem>
                   <MenuItem
                     onClick={() =>
-                      handleRenameOpen(campaign.id, campaign.campaignName)
+                      handleRenameOpen(
+                        campaign.id,
+                        campaign.campaignName ?? campaign.campaign_name ?? ""
+                      )
                     }
                   >
                     Rename
