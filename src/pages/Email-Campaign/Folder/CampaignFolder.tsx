@@ -214,7 +214,7 @@ const CampaignFolder = ({
           selectedCampaign={selectedCampaign}
         />
       ) : (
-        <Grid2 container spacing={3}>
+        <Grid2 container spacing={3} sx={{margin: "15px 0px 0px 15px"}}>
           {folders.map((folder: any) => (
             <Grid2 size={{ xs: 12, sm: 4, md: 3 }} key={folder.id}>
               <CampaignsFolder>
