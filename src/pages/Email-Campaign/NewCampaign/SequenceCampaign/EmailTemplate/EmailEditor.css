@@ -33,6 +33,10 @@
     font-size: 14px;
   }
   
+  .ql-editor p {
+    color: black !important;
+  }
+
   .ql-toolbar .ql-stroke {
     stroke: #9d9ba7 !important;
   }

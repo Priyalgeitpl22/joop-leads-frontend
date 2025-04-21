@@ -679,7 +679,8 @@ const EmailCampaign: React.FC = () => {
                     gap: 1,
                     alignItems: "center",
                     fontWeight: "bold",
-                    marginTop: "5px",
+                    margin: "0px 0px 6px 12px",
+                    // marginTop: "5px",
                     // marginBottom: "10px",
                     cursor: "pointer",
                   }}
