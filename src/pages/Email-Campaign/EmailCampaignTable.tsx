@@ -319,6 +319,12 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
           borderTop: "1px solid #e0e0e0",
           backgroundColor: "#fff",
           zIndex: 1,
+          "& .MuiTablePagination-selectLabel, \
+            & .MuiTablePagination-displayedRows, \
+            & .MuiSelect-select, \
+            & .MuiSvgIcon-root": {
+            color: "black !important",
+          },
         }}
       />
 
