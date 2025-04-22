@@ -311,17 +311,6 @@ const theme = createTheme({
         },
       },
     },
-    MuiDrawer: {
-      styleOverrides: {
-        paper: {
-          width: "240px",
-          backgroundColor: "#fff",
-          color: "#FFFFFF",
-          padding: "10px",
-          justifyContent: "center",
-        },
-      },
-    },
     MuiListItem: {
       styleOverrides: {
         root: {
