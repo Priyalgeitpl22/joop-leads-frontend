@@ -1,7 +1,6 @@
 import React from "react";
 import {
   FormControl,
-  InputLabel,
   MenuItem,
   ListItemText,
   Checkbox,
@@ -46,47 +45,37 @@ const ColumnVisibilitySelect: React.FC<ColumnVisibilitySelectProps> = ({
   };
 
   return (
-    <FormControl sx={sx} variant="outlined" className="column-visibility-form-control">
-      <InputLabel id={labelId}>{label}</InputLabel> 
+    <FormControl sx={{ ...sx,  }}> {/* Remove margin and padding */}
       <Select
         labelId={labelId}
         id="column-visibility"
         multiple
         value={columns.filter((column) => visibleColumns[column])}
         onChange={handleChange}
-        className="column-visibility-select"
-        label={label}
+        inputProps={{ "aria-label": label }}  
         sx={{
           background: "white !important",
-          "&:hover": {
-            borderColor: "gray",
-          },
           padding: "0px",
-          height: "42px",
-          borderRadius: "6px",
+          height: "40px",
+          borderRadius: "4px",
+          "&.Mui-focused": {
+            borderRadius: "4px",
+            border: "none !important",
+          },
+        
           ...selectSx,
         }}
         renderValue={(selected) => selected.join(", ")}
-        MenuProps={{
-          PaperProps: {
-            className: "column-visibility-menu-paper",
-            style: {},
-          },
-        }}
       >
-        <Typography className="column-visibility-menu-label" sx={{ px: 2, py: 1, fontWeight: 'bold', color: 'text.secondary' }}>
+        <Typography sx={{ px: 2, py: 0, fontWeight: "bold", color: "text.secondary" }}>
           {label}
         </Typography>
-        <Divider className="column-visibility-menu-divider" />
+        <Divider />
         {columns.map((column) => (
           <MenuItem
             key={column}
             value={column}
-            className="column-visibility-menu-item"
             sx={{
-              "&:hover": {
-                backgroundColor: "white !important",
-              },
               background: "white !important",
               marginTop: "0px",
               marginBottom: "0px",
