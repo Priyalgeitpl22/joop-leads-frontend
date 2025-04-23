@@ -13,6 +13,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../redux/store/store";
 import { updateCampaignName } from "../../redux/slice/emailCampaignSlice";
 import toast from 'react-hot-toast';
+import { showFolderDetail } from "../../redux/slice/emailCampaignFolderSlice";
 
 
 interface RenameEmailCampaignDialogProps {
@@ -21,6 +22,7 @@ interface RenameEmailCampaignDialogProps {
   campaignId: string | null;
   campaignName: string;
   fetchEmailCampaign: ()=> void;
+  folderId: string | null;
 }
 
 const RenameEmailCampaignDialog: React.FC<RenameEmailCampaignDialogProps> = ({
@@ -28,7 +30,8 @@ const RenameEmailCampaignDialog: React.FC<RenameEmailCampaignDialogProps> = ({
   onClose,
   campaignId,
   campaignName,
-  fetchEmailCampaign
+  fetchEmailCampaign,
+  folderId,
 }) => {
   const [newName, setNewName] = useState(campaignName);
   const dispatch = useDispatch<AppDispatch>();
@@ -46,6 +49,9 @@ const RenameEmailCampaignDialog: React.FC<RenameEmailCampaignDialogProps> = ({
         .then((response) => {
           if (response?.message) {
             fetchEmailCampaign()
+            if(folderId){
+              dispatch(showFolderDetail(folderId))
+            }
             toast.success(response.message);
           }
           onClose();
