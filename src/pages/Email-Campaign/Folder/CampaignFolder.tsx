@@ -44,6 +44,7 @@ const CampaignFolder = ({
   anchorEl,
   selectedCampaign,
   folderCampaignDel,
+  setFolderId,
 }: {
   loading: boolean;
   handlePause: (campaignId: string) => Promise<void>;
@@ -64,6 +65,7 @@ const CampaignFolder = ({
   anchorEl: null | HTMLElement;
   selectedCampaign: string | null;
   folderCampaignDel: string | null;
+  setFolderId: (folderId: string) => void;
 }) => {
   const [anchorEl1, setAnchorEl1] = useState<null | HTMLElement>(null);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -79,6 +81,8 @@ const CampaignFolder = ({
   console.log(loadingCampaigns);
 
   const folders = useSelector((state: any) => state.folder.folders);
+  const folderDetail = useSelector((state:any)=> state.folder.folderDetail)
+  console.log("folderDetail", folderDetail?.campaigns);
 
   useEffect(() => {
     if (folderCampaignDel && selectedFolderId) {
@@ -91,6 +95,45 @@ const CampaignFolder = ({
   // useEffect(() => {
   //   dispatch(showFolders());
   // }, [dispatch]);
+  useEffect(() => {
+    if (selectedFolderId) {
+      dispatch(showFolderDetail(selectedFolderId));
+    }
+  }, [selectedFolderId, dispatch]);
+
+  useEffect(() => {
+    if (folderDetail && Array.isArray(folderDetail.campaigns)) {
+      const transformedCampaigns: IEmailCampaign[] = folderDetail.campaigns.map(
+        (campaign: any) => ({
+          id: campaign?.analytics?.campaignId,
+          sequence_count: campaign?.sequence_count,
+          campaignName: campaign?.campaignName,
+          created_at: campaign?.createdAt || "",
+          campaign_status: campaign?.status || "Unknown",
+          campaign_name: campaign?.name || "",
+          status: campaign?.status,
+          contacts: campaign?.contacts || [],
+          sequences: campaign?.sequences || [],
+          createdAt: campaign?.createdAt || "",
+          analytics_count: campaign?.analytics || {
+            campaignId: campaign?.id,
+            bounced_count: campaign?.bounced_count,
+            opened_count: campaign?.opened_count,
+            clicked_count: campaign?.clicked_count,
+            sent_count: campaign?.sent_count,
+          },
+          contact_count: campaign?.contact_count,
+          campaignStats: campaign?.campaignStats || {},
+        })
+      );
+
+      setFolderCampaigns(transformedCampaigns);
+      setLoadingCampaigns(false);
+      navigate(`/email-campaign/folders/${selectedFolderId}/view`);
+    } else {
+      setFolderCampaigns([]);
+    }
+  }, [folderDetail, selectedFolderId, navigate]);
 
   const handleMenuOpenbox = (
     event: React.MouseEvent<HTMLButtonElement>,
@@ -142,52 +185,13 @@ const CampaignFolder = ({
     }
   };
 
-  const handleFolderClick = async (folderId: string, folderName: string) => {
+  const handleFolderClick = (folderId: string, folderName: string) => {
     setSelectedFolder(folderName);
     setSelectedFolderId(folderId);
-    setLoadingCampaigns(true);
-    try {
-      const response = await dispatch(showFolderDetail(folderId)).unwrap();
-
-      if (response && Array.isArray(response.campaigns)) {
-        const transformedCampaigns: IEmailCampaign[] = response.campaigns.map(
-          (campaign: any) => ({
-            id: campaign?.analytics?.campaignId,
-            sequence_count: campaign?.sequence_count,
-            campaignName: campaign?.campaignName,
-            created_at: campaign?.createdAt || "",
-            campaign_status: campaign?.status || "Unknown",
-            campaign_name: campaign?.name || "",
-            status: campaign?.status,
-            contacts: campaign?.contacts || [],
-            sequences: campaign?.sequences || [],
-            createdAt: campaign?.createdAt || "",
-            analytics_count: campaign?.analytics || {
-              campaignId: campaign?.id,
-              bounced_count: campaign?.bounced_count,
-              opened_count: campaign?.opened_count,
-              clicked_count: campaign?.clicked_count,
-              sent_count: campaign?.sent_count,
-            },
-            contact_count:campaign?.contact_count,
-            campaignStats: campaign?.campaignStats || {},
-          })
-        );
-
-        setFolderCampaigns(transformedCampaigns);
-        navigate(`/email-campaign/folders/${folderId}/view`);
-      } else {
-        setFolderCampaigns([]);
-        console.error("Invalid campaigns data received", response);
-      }
-    } catch (error) {
-      console.error("Error fetching folder campaigns:", error);
-      setFolderCampaigns([]);
-    } finally {
-      setLoadingCampaigns(false);
-    }
+    setFolderId(folderId);
   };
 
+  
   const handleViewClick = () => {
     if (!selectedFolderId) return;
     setOpenViewDialog(true);

@@ -75,6 +75,7 @@ const EmailCampaign: React.FC = () => {
   const [filterOpen, setFilterOpen] = useState<null | HTMLElement>(null);
   const [moveToFolderDialog, setMoveToFolderDialog] = useState(false);
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
+  const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
   const [filters, setFilters] = useState({
     status: "",
   });
@@ -497,7 +498,7 @@ const EmailCampaign: React.FC = () => {
                     label="Customize Columns"
                     sx={{  width: 200 }}
                   />
-                  
+
                   <SearchBar>
                     <Search size={20} />
                     <input
@@ -711,6 +712,7 @@ const EmailCampaign: React.FC = () => {
                     handleResume={handleResume}
                     selectedFolder={selectedFolder}
                     setSelectedFolder={setSelectedFolder}
+                    setFolderId={setSelectedFolderId}
                     handleEditCampaign={handleEditCampaign}
                     handleOpenDeleteDialog={handleOpenDeleteDialog}
                     handleMoveFolderOpen={handleMoveFolderOpen}
@@ -797,6 +799,7 @@ const EmailCampaign: React.FC = () => {
         campaignId={selectedRenameCampaignId}
         campaignName={selectedRenameCampaignName}
         fetchEmailCampaign={getAllEmailCampaigns}
+        folderId={selectedFolderId}
       />
     </ContentContainer>
   );
