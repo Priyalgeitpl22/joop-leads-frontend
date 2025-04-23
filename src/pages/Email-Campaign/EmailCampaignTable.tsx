@@ -147,8 +147,12 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
 
             <TableCellHead
               colSpan={
-                tableData.filter((item) => visibleColumns?.[item.visibleKey])
-                  .length
+                tableData?.filter((item) => visibleColumns?.[item.visibleKey])
+                  .length > 0
+                  ? tableData.filter(
+                      (item) => visibleColumns?.[item.visibleKey]
+                    ).length
+                  : 5
               }
             >
               Report
@@ -264,7 +268,7 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
               })}
 
               {user?.role === "Admin" && (
-                <CustomTableCell sx={{ display: "flex" }}>
+                <CustomTableCell sx={{ display: "flex",height:"85px !important" }}>
                   <Tooltip title="Delete">
                     <GridDeleteIcon
                       onClick={() => handleOpenDeleteDialog(campaign.id)}
@@ -297,7 +301,7 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
                   >
                     Rename
                   </MenuItem>
-                  <MenuItem onClick={handleMenuClose}>Details</MenuItem>
+                  {/* <MenuItem onClick={handleMenuClose}>Details</MenuItem> */}
                 </FolderMenu>
               </CustomTableCell>
             </CustomTableRow>

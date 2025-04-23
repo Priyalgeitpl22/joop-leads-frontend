@@ -495,7 +495,7 @@ const EmailCampaign: React.FC = () => {
                     columns={columnOptions}
                     labelId="column-visibility-label"
                     label="Customize Columns"
-                    sx={{ m: 1, width: 200 }}
+                    sx={{  width: 200 }}
                   />
                   
                   <SearchBar>
