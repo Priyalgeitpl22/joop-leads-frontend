@@ -498,7 +498,6 @@ const EmailCampaign: React.FC = () => {
                     label="Customize Columns"
                     sx={{  width: 200 }}
                   />
-
                   <SearchBar>
                     <Search size={20} />
                     <input

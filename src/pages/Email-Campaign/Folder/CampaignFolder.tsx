@@ -82,7 +82,6 @@ const CampaignFolder = ({
 
   const folders = useSelector((state: any) => state.folder.folders);
   const folderDetail = useSelector((state:any)=> state.folder.folderDetail)
-  console.log("folderDetail", folderDetail?.campaigns);
 
   useEffect(() => {
     if (folderCampaignDel && selectedFolderId) {
@@ -191,7 +190,6 @@ const CampaignFolder = ({
     setFolderId(folderId);
   };
 
-  
   const handleViewClick = () => {
     if (!selectedFolderId) return;
     setOpenViewDialog(true);
