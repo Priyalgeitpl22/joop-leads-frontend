@@ -20,10 +20,11 @@ export const DialogContentBox = styled(DialogContent)(({}) => ({
 }));
 
 export const DialogBody = styled(Box)(({}) => ({
-  backgroundColor: "#f9f9f9",
+  // backgroundColor: "#f9f9f9",
+  marginTop: "auto",
   borderRadius: "8px",
   padding: "16px",
-  boxShadow: "inset 0 0 4px rgba(0,0,0,0.05)",
+  // boxShadow: "inset 0 0 4px rgba(0,0,0,0.05)",
   maxHeight: "500px",
   overflowY: "auto",
   color: "#333",
@@ -43,8 +44,7 @@ export const DialogBody = styled(Box)(({}) => ({
     display: 'block',
   },
   '& th, & td': {
-    border: '1px solid #ddd',
-    padding: '8px',
+    padding: '10px',
   }
 }))
 
