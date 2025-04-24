@@ -23,6 +23,65 @@ import {
 import { Search } from "lucide-react";
 import EmailInboxAreaDialog from "./EmailInboxAreaDialog";
 
+const extractPreviewText = (htmlContent: string): string => {
+  if (!htmlContent) return "";
+  
+  try {
+    let cleanedHtml = htmlContent
+      .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
+      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
+      .replace(/<[^>]*>/g, "");
+    
+    cleanedHtml = cleanedHtml
+      .replace(/&nbsp;/g, " ")
+      .replace(/&amp;/g, "&")
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'");
+    
+    cleanedHtml = cleanedHtml.replace(/&#(\d+);/g, (_match, dec) => {
+      if (dec >= 32 && dec <= 126) {
+        return String.fromCharCode(dec);
+      }
+      return "";
+    });
+
+    cleanedHtml = cleanedHtml
+      .replace(/&[a-zA-Z0-9]+;/g, "") 
+      .replace(/[\u200B-\u200F\u2028-\u202F\u205F-\u206F\u3000\uFEFF]/g, "") 
+      .replace(/\s+/g, " ") 
+      .trim();
+    
+    if (cleanedHtml.includes("{") && cleanedHtml.includes("}") && 
+        (cleanedHtml.includes(":") || cleanedHtml.includes(";") || cleanedHtml.includes("!important"))) {
+      const textParts = htmlContent.match(/>([^<]{5,})</g);
+      if (textParts && textParts.length > 0) {
+        cleanedHtml = textParts
+          .map(part => part.slice(1, -1).trim())
+          .join(" ")
+          .replace(/[\u200B-\u200F\u2028-\u202F\u205F-\u206F\u3000\uFEFF]/g, "") 
+          .replace(/\s+/g, " ")
+          .trim();
+      }
+    }
+    
+    const words = cleanedHtml.split(/\s+/).filter(word => {
+      return !(
+        /^\d+$/.test(word) || 
+        /^\d+px$/.test(word) || 
+        /^#[0-9a-f]{3,6}$/i.test(word) || 
+        /^rgba?\(.*\)$/.test(word) 
+      );
+    });
+    
+    return words.slice(0, 30).join(" ") + "...";
+  } catch (e) {
+    console.error("Error extracting preview text:", e);
+    return "Unable to generate preview...";
+  }
+};
+
 const EmailInboxArea: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [searchTerm, setSearchTerm] = useState("");
@@ -231,7 +290,7 @@ const EmailInboxArea: React.FC = () => {
                       {isExpanded ? (
                         <div dangerouslySetInnerHTML={{ __html: message.body }} />
                       ) : (
-                        message.body.replace(/<[^>]*>/g, '').split("\n").slice(0, 3).join("\n") + " ..."
+                        extractPreviewText(message.body)
                       )}
                     </InboxMessageBody>
                   </EmailInboxMessagesHeading>
