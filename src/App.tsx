@@ -46,6 +46,40 @@ const UNPROTECTED_ROUTES = [
   "/unsubscribe",
 ];
 
+function ResponsiveDashboardLayout({ 
+  router, 
+  children 
+}: { 
+  router: Router; 
+  children: React.ReactNode;
+}) {
+  const [key, setKey] = React.useState(0);
+  
+  React.useEffect(() => {
+    setKey(prev => prev + 1);
+  }, [router.pathname === "/inbox"]);
+  
+  return (
+    <DashboardLayout
+      key={key}
+      defaultSidebarCollapsed={router.pathname === "/inbox"}
+      sx={{
+        background: "var(--background-light)",
+      }}
+      slots={{
+        appTitle: CustomAppTitle,
+        toolbarActions: () => (
+          <>
+            <UserProfileMenu />
+          </>
+        ),
+      }}
+    >
+      {children}
+    </DashboardLayout>
+  );
+}
+
 function useDemoRouter(initialPath: string): Router {
   const navigate = useNavigate();
   const [pathname, setPathname] = React.useState(
@@ -142,19 +176,7 @@ export default function DashboardLayoutBasic() {
       {isNewCampaignPage ? (
         <NewCampaign router={router} />
       ) : (
-        <DashboardLayout
-          sx={{
-            background: "var(--background-light)",
-          }}
-          slots={{
-            appTitle: CustomAppTitle,
-            toolbarActions: () => (
-              <>
-                <UserProfileMenu />
-              </>
-            ),
-          }}
-        >
+        <ResponsiveDashboardLayout router={router}>
           <PageContainer
             maxWidth={false}
             title=""
@@ -183,7 +205,7 @@ export default function DashboardLayoutBasic() {
             {router.pathname === "/all-leads" && <ContactTable />}
             {router.pathname === "/organization" && <Organization />}
           </PageContainer>
-        </DashboardLayout>
+        </ResponsiveDashboardLayout>
       )}
     </AppProvider>
   );
