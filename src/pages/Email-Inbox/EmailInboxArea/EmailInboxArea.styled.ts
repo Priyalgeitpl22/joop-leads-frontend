@@ -157,11 +157,21 @@ export const InboxMessageBody = styled(Box)<{ isExpanded: boolean }>(
   ({ isExpanded }) => ({
     marginTop: "10px",
     cursor: "pointer",
-    whiteSpace: isExpanded ? "normal" : "nowrap",
     overflow: "hidden",
-    textOverflow: "ellipsis",
     color: isExpanded ? "black" : "#444343",
     fontSize: "15px",
+    maxHeight: isExpanded ? "none" : "100px",
+    '& img': {
+      maxWidth: '100%',
+      height: 'auto',
+    },
+    '& a': {
+      color: '#0066cc',
+      textDecoration: 'underline',
+    },
+    '& div': {
+      whiteSpace: 'normal'
+    }
   })
 );
 

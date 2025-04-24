@@ -89,7 +89,7 @@ const EmailInboxAreaDialog: React.FC<EmailInboxAreaDialogProps> = ({
 
         <Divider sx={{ mb: 2 }} />
 
-        <DialogBody>{message.body || "No content available."}</DialogBody>
+        <DialogBody dangerouslySetInnerHTML={{ __html: message.body || "No content available." }} />
       </DialogContentBox>
     </Dialog>
   );

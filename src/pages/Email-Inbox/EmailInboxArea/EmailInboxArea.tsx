@@ -228,10 +228,11 @@ const EmailInboxArea: React.FC = () => {
                       {message.to?.[0]?.address || "No Email"})
                     </div>
                     <InboxMessageBody isExpanded={isExpanded}>
-                      {isExpanded
-                        ? message.body
-                        : message.body.split("\n").slice(0, 10).join("\n") +
-                          " ..."}
+                      {isExpanded ? (
+                        <div dangerouslySetInnerHTML={{ __html: message.body }} />
+                      ) : (
+                        message.body.replace(/<[^>]*>/g, '').split("\n").slice(0, 3).join("\n") + " ..."
+                      )}
                     </InboxMessageBody>
                   </EmailInboxMessagesHeading>
                 );
