@@ -35,7 +35,7 @@ const EmailInboxAreaDialog: React.FC<EmailInboxAreaDialogProps> = ({
       }}
     >
       <DialogSubject>
-        <Typography variant="h6" sx={{ fontWeight: 600, fontSize: "20px" }}>
+        <Typography variant="h6" sx={{ fontWeight: 600, fontSize: "17px" }}>
           {message.subject || "No Subject"}
         </Typography>
         <IconButton
@@ -57,7 +57,7 @@ const EmailInboxAreaDialog: React.FC<EmailInboxAreaDialogProps> = ({
               <Typography
                 variant="subtitle1"
                 fontWeight={600}
-                sx={{ fontSize: "18px" }}
+                sx={{ fontSize: "16px" }}
               >
                 {message.from?.[0]?.name || "Unknown Sender"}
               </Typography>
@@ -89,7 +89,7 @@ const EmailInboxAreaDialog: React.FC<EmailInboxAreaDialogProps> = ({
 
         <Divider sx={{ mb: 2 }} />
 
-        <DialogBody>{message.body || "No content available."}</DialogBody>
+        <DialogBody dangerouslySetInnerHTML={{ __html: message.body || "No content available." }} />
       </DialogContentBox>
     </Dialog>
   );
