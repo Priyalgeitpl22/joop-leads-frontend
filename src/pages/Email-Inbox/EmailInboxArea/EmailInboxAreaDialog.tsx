@@ -83,8 +83,8 @@ const EmailInboxAreaDialog: React.FC<EmailInboxAreaDialogProps> = ({
           variant="body2"
           sx={{ mb: 2, color: "text.secondary", fontSize: "14px" }}
         >
-          To: {message.to?.[0]?.name || "Unknown"} (
-          {message.to?.[0]?.address || "No Email"})
+          To: {message.to?.[0]?.name} (
+          {message.to?.[0]?.address})
         </Typography>
 
         <Divider sx={{ mb: 2 }} />

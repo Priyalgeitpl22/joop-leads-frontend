@@ -8,6 +8,7 @@ import {
   setSelectedMailbox,
   getAllAccountMailBox,
   reloadAccountMailboxes,
+  reloadAccountMessages,
 } from "../../../redux/slice/emailInboxSlice";
 import { Search } from "lucide-react";
 import {
@@ -119,12 +120,12 @@ const EmailInboxList: React.FC = () => {
         reloadAccountMailboxes({ accountId: selectedAccountId })
       ).unwrap();
       console.log(res, "res");
-      // if (res) {
-      //   const fetchMessages = await dispatch(
-      //     reloadAccountMessages({ accountId: selectedAccountId })
-      //   );
-      //   console.log(fetchMessages);
-      // }
+      if (res) {
+        const fetchMessages = await dispatch(
+          reloadAccountMessages({ accountId: selectedAccountId })
+        );
+        console.log(fetchMessages);
+      }
     } catch (error) {
       console.error("❌ Error while reloading account mailboxes:", error);
     } finally {

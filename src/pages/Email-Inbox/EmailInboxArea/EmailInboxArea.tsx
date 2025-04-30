@@ -14,67 +14,48 @@ import {
   SearchBar,
 } from "./EmailInboxArea.styled";
 import { Avatar, CircularProgress } from "@mui/material";
-import { Reply, ReplyAll, Trash2 } from "lucide-react";
+import { Reply, ReplyAll, Trash2, Search } from "lucide-react";
 import {
   getAllAccountMailBox,
   searchEmails,
   setCurrentPage,
 } from "../../../redux/slice/emailInboxSlice";
-import { Search } from "lucide-react";
 import EmailInboxAreaDialog from "./EmailInboxAreaDialog";
 
 const extractPreviewText = (htmlContent: string): string => {
   if (!htmlContent) return "";
-  
+
   try {
     let cleanedHtml = htmlContent
       .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
       .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
-      .replace(/<[^>]*>/g, "");
-    
-    cleanedHtml = cleanedHtml
+      .replace(/<[^>]*>/g, "")
       .replace(/&nbsp;/g, " ")
       .replace(/&amp;/g, "&")
       .replace(/&lt;/g, "<")
       .replace(/&gt;/g, ">")
       .replace(/&quot;/g, '"')
-      .replace(/&#39;/g, "'");
-    
-    cleanedHtml = cleanedHtml.replace(/&#(\d+);/g, (_match, dec) => {
-      if (dec >= 32 && dec <= 126) {
-        return String.fromCharCode(dec);
-      }
-      return "";
-    });
-
-    cleanedHtml = cleanedHtml
-      .replace(/&[a-zA-Z0-9]+;/g, "") 
-      .replace(/[\u200B-\u200F\u2028-\u202F\u205F-\u206F\u3000\uFEFF]/g, "") 
-      .replace(/\s+/g, " ") 
+      .replace(/&#39;/g, "'")
+      .replace(/&#(\d+);/g, (_match, dec) => {
+        if (dec >= 32 && dec <= 126) {
+          return String.fromCharCode(dec);
+        }
+        return "";
+      })
+      .replace(/&[a-zA-Z0-9]+;/g, "")
+      .replace(/[\u200B-\u200F\u2028-\u202F\u205F-\u206F\u3000\uFEFF]/g, "")
+      .replace(/\s+/g, " ")
       .trim();
-    
-    if (cleanedHtml.includes("{") && cleanedHtml.includes("}") && 
-        (cleanedHtml.includes(":") || cleanedHtml.includes(";") || cleanedHtml.includes("!important"))) {
-      const textParts = htmlContent.match(/>([^<]{5,})</g);
-      if (textParts && textParts.length > 0) {
-        cleanedHtml = textParts
-          .map(part => part.slice(1, -1).trim())
-          .join(" ")
-          .replace(/[\u200B-\u200F\u2028-\u202F\u205F-\u206F\u3000\uFEFF]/g, "") 
-          .replace(/\s+/g, " ")
-          .trim();
-      }
-    }
-    
-    const words = cleanedHtml.split(/\s+/).filter(word => {
+
+    const words = cleanedHtml.split(/\s+/).filter((word) => {
       return !(
-        /^\d+$/.test(word) || 
-        /^\d+px$/.test(word) || 
-        /^#[0-9a-f]{3,6}$/i.test(word) || 
-        /^rgba?\(.*\)$/.test(word) 
+        /^\d+$/.test(word) ||
+        /^\d+px$/.test(word) ||
+        /^#[0-9a-f]{3,6}$/i.test(word) ||
+        /^rgba?\(.*\)$/.test(word)
       );
     });
-    
+
     return words.slice(0, 30).join(" ") + "...";
   } catch (e) {
     console.error("Error extracting preview text:", e);
@@ -113,6 +94,11 @@ const EmailInboxArea: React.FC = () => {
   const searchResults = useSelector(
     (state: RootState) => state.emailInbox.searchResults
   );
+  const lastFetchTimestamp = useSelector(
+    (state: RootState) => state.emailInbox.lastFetchTimestamp
+  );
+
+  console.log("lastFetchTimestamp--->>>>", lastFetchTimestamp);
 
   const messagesPerPage = 10;
   const totalPages = Math.ceil(totalMessages / messagesPerPage);
@@ -167,11 +153,7 @@ const EmailInboxArea: React.FC = () => {
 
   const showSearchResults = searchTerm.trim().length > 0;
   const isSearchDone = showSearchResults && !searchLoading;
-
-  const messagesToShow = isSearchDone
-    ? searchResults
-    :  mailboxMessages
-      ;
+  const messagesToShow = isSearchDone ? searchResults : mailboxMessages;
 
   const handleMessageClick = (message: any) => {
     setSelectedMessage(message);
@@ -184,20 +166,29 @@ const EmailInboxArea: React.FC = () => {
         <EmailInboxMessagesBox>
           <CircularProgress />
         </EmailInboxMessagesBox>
-      ) : messagesToShow.length === 0 && searchTerm.trim().length === 0 ? (
-        <NoMailboxMessage>
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/2748/2748558.png"
-            alt="No Messages"
-            style={{
-              width: "80px",
-              height: "80px",
-              marginBottom: "10px",
-              opacity: 0.6,
-            }}
-          />
-          No mail found.
-        </NoMailboxMessage>
+      ) : messagesToShow.length === 0 && !searchTerm.trim() ? (
+        <>
+          {Array.isArray(lastFetchTimestamp) &&
+          lastFetchTimestamp.length === 0 ? (
+            <EmailInboxMessagesBox>
+              <div style={{ fontSize: "18px" }}>Fetching...</div>
+            </EmailInboxMessagesBox>
+          ) : (
+            <NoMailboxMessage>
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/2748/2748558.png"
+                alt="No Messages"
+                style={{
+                  width: "80px",
+                  height: "80px",
+                  marginBottom: "10px",
+                  opacity: 0.6,
+                }}
+              />
+              No mail found.
+            </NoMailboxMessage>
+          )}
+        </>
       ) : (
         <div
           style={{
@@ -220,98 +211,82 @@ const EmailInboxArea: React.FC = () => {
 
           <StyledDivider />
 
-          {messagesToShow.length > 0 ? (
-            <div style={{ flex: 1, overflowY: "auto", paddingRight: "10px" }}>
-              {messagesToShow.map((message: any) => {
-                const isExpanded = expandedMessageId === message._id;
-                return (
-                  <EmailInboxMessagesHeading
-                    key={message._id}
-                    onClick={() => handleMessageClick(message)}
+          <div style={{ flex: 1, overflowY: "auto", paddingRight: "10px" }}>
+            {messagesToShow.map((message: any) => {
+              const isExpanded = expandedMessageId === message._id;
+              return (
+                <EmailInboxMessagesHeading
+                  key={message._id}
+                  onClick={() => handleMessageClick(message)}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      marginBottom: "12px",
+                    }}
+                  >
+                    <h4>{message.subject || "No Subject"}</h4>
+                    <div style={{ display: "flex", gap: "15px" }}>
+                      <Reply />
+                      <ReplyAll />
+                      <Trash2 />
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      marginBottom: "10px",
+                    }}
                   >
                     <div
                       style={{
                         display: "flex",
-                        justifyContent: "space-between",
-                        marginBottom: "12px",
+                        alignItems: "center",
+                        gap: "10px",
                       }}
                     >
-                      <h4>{message.subject || "No Subject"}</h4>
-                      <div style={{ display: "flex", gap: "15px" }}>
-                        <Reply />
-                        <ReplyAll />
-                        <Trash2 />
-                      </div>
-                    </div>
-
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        marginBottom: "10px",
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "10px",
-                        }}
-                      >
-                        <Avatar src="https://ssl.gstatic.com/ui/v1/icons/mail/profile_placeholder.png" />
-                        <div>
-                          <strong>{message.from?.[0]?.name}</strong>
-                          <div style={{ fontSize: "15px", color: "#555" }}>
-                            {message.from?.[0]?.address || "No Email"}
-                          </div>
+                      <Avatar src="https://ssl.gstatic.com/ui/v1/icons/mail/profile_placeholder.png" />
+                      <div>
+                        <strong>{message.from?.[0]?.name}</strong>
+                        <div style={{ fontSize: "15px", color: "#555" }}>
+                          {message.from?.[0]?.address || "No Email"}
                         </div>
-                      </div>
-                      <div
-                        style={{
-                          fontSize: "15px",
-                          color: "#777",
-                          marginTop: "5px",
-                        }}
-                      >
-                        Date: {new Date(message.date).toLocaleString()}
                       </div>
                     </div>
                     <div
                       style={{
                         fontSize: "15px",
                         color: "#777",
-                        marginBottom: "20px",
+                        marginTop: "5px",
                       }}
                     >
-                      To: <strong>{message.to?.[0]?.name}</strong> (
-                      {message.to?.[0]?.address || "No Email"})
+                      Date: {new Date(message.date).toLocaleString()}
                     </div>
-                    <InboxMessageBody isExpanded={isExpanded}>
-                      {isExpanded ? (
-                        <div dangerouslySetInnerHTML={{ __html: message.body }} />
-                      ) : (
-                        extractPreviewText(message.body)
-                      )}
-                    </InboxMessageBody>
-                  </EmailInboxMessagesHeading>
-                );
-              })}
-            </div>
-          ) : (
-            <NoMailboxMessage>
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/2748/2748558.png"
-                alt="No Messages"
-                style={{
-                  width: "80px",
-                  height: "80px",
-                  marginBottom: "10px",
-                  opacity: 0.6,
-                }}
-              />
-              No mail found.
-            </NoMailboxMessage>
-          )}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: "15px",
+                      color: "#777",
+                      marginBottom: "20px",
+                    }}
+                  >
+                    To: <strong>{message.to?.[0]?.name}</strong> (
+                    {message.to?.[0]?.address || "No Email"})
+                  </div>
+                  <InboxMessageBody isExpanded={isExpanded}>
+                    {isExpanded ? (
+                      <div dangerouslySetInnerHTML={{ __html: message.body }} />
+                    ) : (
+                      extractPreviewText(message.body)
+                    )}
+                  </InboxMessageBody>
+                </EmailInboxMessagesHeading>
+              );
+            })}
+          </div>
 
           <TotalPageCount>
             <div>
@@ -320,14 +295,13 @@ const EmailInboxArea: React.FC = () => {
                 ? searchResults.length
                 : totalMessages}
             </div>
-            {searchTerm.trim().length === 0 &&
-              totalMessages > messagesPerPage && (
-                <EmailPagination
-                  count={totalPages}
-                  page={currentPage}
-                  onChange={handlePageChange}
-                />
-              )}
+            {!searchTerm.trim() && totalMessages > messagesPerPage && (
+              <EmailPagination
+                count={totalPages}
+                page={currentPage}
+                onChange={handlePageChange}
+              />
+            )}
           </TotalPageCount>
         </div>
       )}

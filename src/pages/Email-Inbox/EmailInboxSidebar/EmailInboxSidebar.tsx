@@ -80,6 +80,10 @@ const EmailInboxSideBar = () => {
     setLoading(false);
   };
 
+  // const lastFetchTimestamp = useSelector(
+  //   (state: RootState) => state.emailInbox.lastFetchTimestamp
+  // );
+
   return (
     <SidebarContainer>
       <EmailInboxListHeader>
@@ -87,6 +91,8 @@ const EmailInboxSideBar = () => {
       </EmailInboxListHeader>
       <StyledDivider />
       <StyledList>
+        {/* {loading || lastFetchTimestamp === null ? (
+          <NoMailboxMessage>Fetching...</NoMailboxMessage> */}
         {loading ? (
           <CircularLoader />
         ) : uniqueMailboxes.length > 0 ? (

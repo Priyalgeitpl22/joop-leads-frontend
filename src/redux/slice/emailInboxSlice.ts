@@ -23,6 +23,7 @@ export interface Message {
 }
 
 interface EmailInboxState {
+  lastFetchTimestamp: any;
   searchResults: any;
   mailboxMessages: Message[];
   accounts: Account[];
@@ -38,6 +39,7 @@ interface EmailInboxState {
 }
 
 const initialState: EmailInboxState = {
+  lastFetchTimestamp: null,
   searchResults: [],
   accounts: [],
   mailboxes: [],
@@ -202,9 +204,13 @@ const emailInboxSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
+      // .addCase(getAllChats.fulfilled, (state, action) => {
+      //   state.loading = false;
+      //   state.accounts = action.payload;
+      // })
       .addCase(getAllChats.fulfilled, (state, action) => {
-        state.loading = false;
         state.accounts = action.payload;
+        state.lastFetchTimestamp = Date.now();
       })
       .addCase(getAllChats.rejected, (state, action) => {
         state.loading = false;
