@@ -4,7 +4,10 @@ import { AppDispatch, RootState } from "../../../redux/store/store";
 import {
   getAllAccountMailBox,
   getAllChats,
+  getAccountThreads,
   setSelectedMailbox,
+  setSelectedThread,
+  setViewMode,
 } from "../../../redux/slice/emailInboxSlice";
 import {
   SidebarContainer,
@@ -16,6 +19,26 @@ import {
   EmailInboxListHeader,
 } from "./EmailInboxSidebar.styled";
 import CircularLoader from "../../../assets/Custom/circularProgress";
+import { Box, Tab, Tabs, Typography } from "@mui/material";
+import { MessageSquare, MessagesSquare } from "lucide-react";
+import styled from "styled-components";
+
+const ViewTabs = styled(Tabs)({
+  marginBottom: '10px',
+  '& .MuiTabs-indicator': {
+    backgroundColor: 'var(--theme-color)',
+  },
+});
+
+const ViewTab = styled(Tab)({
+  minWidth: '50%',
+  textTransform: 'none',
+  fontSize: '14px',
+  fontWeight: 500,
+  '&.Mui-selected': {
+    color: 'var(--theme-color)',
+  },
+});
 
 const EmailInboxSideBar = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -27,6 +50,9 @@ const EmailInboxSideBar = () => {
   );
   const selectedMailboxId = useSelector(
     (state: RootState) => state.emailInbox.selectedMailboxId
+  );
+  const viewMode = useSelector(
+    (state: RootState) => state.emailInbox.viewMode
   );
 
   const mailboxes = useSelector(
@@ -69,15 +95,57 @@ const EmailInboxSideBar = () => {
     if (!selectedAccountId) return;
     setLoading(true);
     dispatch(setSelectedMailbox(mailbox._id));
-    await dispatch(
-      getAllAccountMailBox({
-        accountId: selectedAccountId,
-        mailBoxId: mailbox._id,
-        page: 1,
-        limit: 10,
-      })
-    );
+    
+    if (viewMode === 'messages') {
+      await dispatch(
+        getAllAccountMailBox({
+          accountId: selectedAccountId,
+          mailBoxId: mailbox._id,
+          page: 1,
+          limit: 10,
+        })
+      );
+    } else {
+      // In thread view, load threads for the selected mailbox
+      dispatch(setSelectedThread(null));
+      await dispatch(
+        getAccountThreads({
+          accountId: selectedAccountId,
+          mailboxId: mailbox._id,
+          page: 1,
+          limit: 10,
+        })
+      );
+    }
+    
     setLoading(false);
+  };
+
+  const handleViewChange = (_event: React.SyntheticEvent, newValue: 'messages' | 'threads') => {
+    dispatch(setViewMode(newValue));
+    
+    if (selectedAccountId && selectedMailboxId) {
+      if (newValue === 'threads') {
+        dispatch(setSelectedThread(null));
+        dispatch(
+          getAccountThreads({
+            accountId: selectedAccountId,
+            mailboxId: selectedMailboxId,
+            page: 1,
+            limit: 10,
+          })
+        );
+      } else {
+        dispatch(
+          getAllAccountMailBox({
+            accountId: selectedAccountId,
+            mailBoxId: selectedMailboxId,
+            page: 1,
+            limit: 10,
+          })
+        );
+      }
+    }
   };
 
   return (
@@ -86,6 +154,28 @@ const EmailInboxSideBar = () => {
         <SidebarHeader>Mailbox</SidebarHeader>
       </EmailInboxListHeader>
       <StyledDivider />
+      
+      <Box sx={{ borderBottom: 1, borderColor: 'divider', mx: 1, mt: 2 }}>
+        <ViewTabs 
+          value={viewMode} 
+          onChange={handleViewChange as any}
+          variant="fullWidth"
+        >
+          <ViewTab 
+            value="messages" 
+            label="Messages" 
+            icon={<MessageSquare size={16} />} 
+            iconPosition="start"
+          />
+          <ViewTab 
+            value="threads" 
+            label="Threads" 
+            icon={<MessagesSquare size={16} />} 
+            iconPosition="start"
+          />
+        </ViewTabs>
+      </Box>
+      
       <StyledList>
         {loading ? (
           <CircularLoader />

@@ -22,19 +22,51 @@ export interface Message {
   sender: string;
 }
 
+export interface Thread {
+  threadId: string;
+  messageCount: number;
+  latestMessage: {
+    _id: string;
+    subject: string;
+    from: { name: string; address: string }[];
+    to: { name: string; address: string }[];
+    date: string;
+    body: string;
+    html?: string;
+  };
+}
+
+export interface ThreadMessage {
+  _id: string;
+  subject: string;
+  from: { name: string; address: string }[];
+  to: { name: string; address: string }[];
+  date: string;
+  body: string;
+  html?: string;
+  threadId: string;
+}
+
 interface EmailInboxState {
   searchResults: any;
   mailboxMessages: Message[];
   accounts: Account[];
   mailboxes: Mailbox[];
+  threads: Thread[];
+  threadMessages: ThreadMessage[];
   selectedAccountId: string | null;
   selectedMailboxId: string | null;
+  selectedThreadId: string | null;
   currentPage: number;
   totalMessages: number;
+  totalThreads: number;
   loading: boolean;
+  threadsLoading: boolean;
+  threadMessagesLoading: boolean;
   error: string | null;
   searchLoading: boolean;
   results: Message[];
+  viewMode: 'messages' | 'threads';
 }
 
 const initialState: EmailInboxState = {
@@ -42,14 +74,21 @@ const initialState: EmailInboxState = {
   accounts: [],
   mailboxes: [],
   mailboxMessages: [],
+  threads: [],
+  threadMessages: [],
   selectedAccountId: null,
   selectedMailboxId: null,
+  selectedThreadId: null,
   currentPage: 1,
   totalMessages: 0,
+  totalThreads: 0,
   loading: false,
+  threadsLoading: false,
+  threadMessagesLoading: false,
   error: null,
   searchLoading: false,
   results: [],
+  viewMode: 'messages',
 };
 
 export const getAllChats = createAsyncThunk(
@@ -171,6 +210,74 @@ export const searchEmails = createAsyncThunk(
   }
 );
 
+// Get all threads for an account
+export const getAccountThreads = createAsyncThunk(
+  "emailInbox/getAccountThreads",
+  async (
+    {
+      accountId,
+      mailboxId = null,
+      page = 1,
+      limit = 10,
+      search = "",
+    }: { accountId: string; mailboxId?: string | null; page?: number; limit?: number; search?: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      let url = `/accounts/${accountId}/threads?page=${page}&limit=${limit}`;
+      
+      if (search) {
+        url += `&search=${search}`;
+      }
+      
+      if (mailboxId) {
+        url += `&mailbox=${mailboxId}`;
+      }
+      
+      const response = await emailApi.get(url);
+
+      return {
+        threads: response.data?.data?.threads || [],
+        totalThreads: response.data?.data?.totalThreads || 0,
+        currentPage: Number(response.data?.data?.currentPage) || 1,
+      };
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Network error");
+    }
+  }
+);
+
+// Get messages for a thread
+export const getThreadMessages = createAsyncThunk(
+  "emailInbox/getThreadMessages",
+  async (
+    {
+      accountId,
+      threadId,
+      mailboxId = null,
+    }: { accountId: string; threadId: string; mailboxId?: string | null },
+    { rejectWithValue }
+  ) => {
+    try {
+      let url = `/accounts/${accountId}/thread/${threadId}`;
+      
+      if (mailboxId) {
+        url += `?mailbox=${mailboxId}`;
+      }
+      
+      const response = await emailApi.get(url);
+
+      return {
+        messages: response.data?.data?.messages || [],
+        threadId: response.data?.data?.threadId,
+        count: response.data?.data?.count || 0,
+      };
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Network error");
+    }
+  }
+);
+
 const emailInboxSlice = createSlice({
   name: "emailInbox",
   initialState,
@@ -180,6 +287,8 @@ const emailInboxSlice = createSlice({
       state.selectedAccountId = action.payload;
       state.mailboxes = [];
       state.mailboxMessages = [];
+      state.threads = [];
+      state.threadMessages = [];
     },
     setCurrentPage: (state, action: PayloadAction<number>) => {
       state.currentPage = action.payload;
@@ -193,6 +302,14 @@ const emailInboxSlice = createSlice({
     resetMailboxes: (state) => {
       state.mailboxes = [];
       state.mailboxMessages = [];
+      state.threads = [];
+      state.threadMessages = [];
+    },
+    setSelectedThread: (state, action: PayloadAction<string | null>) => {
+      state.selectedThreadId = action.payload;
+    },
+    setViewMode: (state, action: PayloadAction<'messages' | 'threads'>) => {
+      state.viewMode = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -249,7 +366,44 @@ const emailInboxSlice = createSlice({
       .addCase(searchEmails.rejected, (state) => {
         state.searchLoading = false;
         state.searchResults = [];
-      });
+      })
+
+      // Thread APIs
+      .addCase(getAccountThreads.pending, (state) => {
+        state.threadsLoading = true;
+        state.error = null;
+      })
+      .addCase(getAccountThreads.fulfilled, (state, action) => {
+        state.threadsLoading = false;
+        // Ensure we only store valid threads
+        state.threads = Array.isArray(action.payload.threads) ? 
+          action.payload.threads.filter(thread => thread && thread.latestMessage) : 
+          [];
+        state.totalThreads = action.payload.totalThreads || 0;
+        state.currentPage = action.payload.currentPage || 1;
+      })
+      .addCase(getAccountThreads.rejected, (state, action) => {
+        state.threadsLoading = false;
+        state.error = action.payload as string;
+        state.threads = [];
+      })
+
+      // Thread Messages
+      .addCase(getThreadMessages.pending, (state) => {
+        state.threadMessagesLoading = true;
+        state.error = null;
+      })
+      .addCase(getThreadMessages.fulfilled, (state, action) => {
+        state.threadMessagesLoading = false;
+        // Ensure we only store valid messages
+        state.threadMessages = Array.isArray(action.payload.messages) ? 
+          action.payload.messages : [];
+      })
+      .addCase(getThreadMessages.rejected, (state, action) => {
+        state.threadMessagesLoading = false;
+        state.error = action.payload as string;
+        state.threadMessages = [];
+      })
   },
 });
 
@@ -258,6 +412,8 @@ const emailInboxSlice = createSlice({
     setSelectedMailbox,
     resetMailboxes,
     setCurrentPage,
+    setSelectedThread,
+    setViewMode,
   } = emailInboxSlice.actions;
 
 export default emailInboxSlice.reducer;
