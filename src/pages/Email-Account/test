@@ -1,0 +1,40 @@
+Testing Email Tracking and Email Warmup Functionality
+Email Tracking Testing
+Add/Configure an Email Account:
+Navigate to Email Accounts page
+Click "Add Account" and set up a new email account (or use an existing one)
+Send Test Emails:
+Create a test email campaign with tracking enabled
+Send emails to test recipients (preferably accounts you control)
+Monitor Analytics:
+Click on the Analytics icon (chart icon) in the action column for the email account
+In the Email Analytics dialog, select the "Email Tracking" tab
+Verify that tracking data appears when emails are opened/replied to
+Check that metrics show up in the dashboard (open rate, reply rate, inbox placement)
+Test Email Events:
+Have recipients open the emails to trigger open events
+Reply to some emails to trigger reply events
+Check if some emails land in spam to test spam detection
+Email Warmup Testing
+Enable Warmup for an Account:
+Click on the Analytics icon for an email account
+Switch to the "Warmup Settings" tab
+Toggle "Enable Email Warmup" to ON
+Set an appropriate daily email limit (e.g., 20-50)
+Click "Save Settings"
+Verify Warmup Status:
+Check that the "Warmup Enabled" column shows "Yes" for the account on the main screen
+Verify the configured daily limit is correct
+Monitor Warmup Progress:
+After the warmup process runs (typically scheduled daily):
+Return to the warmup settings to check "Warmup Statistics" section
+Verify "Total Sent" and "Current Daily Count" are incrementing
+Verify "Total Replied" is tracking auto-replies from the system
+Check Warmup Emails:
+Log in to the email account directly
+Verify warmup emails are being received and sent
+Check that emails have appropriate natural-looking content
+Test Warmup Configuration Changes:
+Try modifying the daily limit
+Test disabling and re-enabling the warmup process
+Remember that email warmup is a gradual process that builds up over time, so you'll need to monitor it over several days to see meaningful progress in the statistics and deliverability improvements.

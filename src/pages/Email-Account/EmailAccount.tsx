@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import {
   Box,
   Tooltip,
+  Button as MuiButton
 } from "@mui/material";
 import {
   EmailAccountsContainer,
@@ -11,6 +12,7 @@ import {
 import EmailAccountDialog from "./EmailAccountDialogBox/EmailAccountDialog";
 import AdvancedSettingDialog from "./AdvancedSettingDialogBox/AdvancedSettingDialog";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
+import AssessmentIcon from '@mui/icons-material/Assessment';
 import { useDispatch, useSelector } from "react-redux";
 import {
   deleteEmailAccount,
@@ -25,13 +27,17 @@ import { Search } from "lucide-react";
 import { CustomDataTable } from "../../assets/Custom/customDataGrid";
 import { GridColDef, GridDeleteIcon } from "@mui/x-data-grid";
 import { formatDate } from "../../utils/utils";
-import { Button } from "../../styles/global.styled";
-import { CustomTableCell } from "../Email-Campaign/EmailCampaign.styled";
+
 import { useNavigate } from "react-router-dom";
 import ProgressBar from "../../assets/Custom/linearProgress";
 import { SectionTitle } from "../../styles/layout.styled";
 import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
 import EmailAccountSmtpDialog from "./EmailAccountDialogBox/EmailAccountSmtpDialog";
+import EmailAnalyticsDialog from "./EmailAnalyticsDialog";
+import {
+  getWarmupSettings,
+  setupEmailWarmup
+} from "../../services/emailWarmupService";
 import toast, { Toaster } from "react-hot-toast";
 // import ProgressBar from "../../assets/Custom/linearProgress";
 
@@ -49,8 +55,14 @@ const EmailAccounts: React.FC = () => {
   const [selectedEmailAccount, setSelectedEmailAccount] = useState<
     string | null
   >(null);
-
   const [smtpDialogOpen, setSmtpDialogOpen] = useState<boolean>(false);
+  const [analyticsDialogOpen, setAnalyticsDialogOpen] = useState<boolean>(false);
+  const [selectedAccountForAnalytics, setSelectedAccountForAnalytics] = useState<{
+    id: string;
+    name: string;
+    email: string;
+  } | null>(null);
+  const [warmupEnabledMap, setWarmupEnabledMap] = useState<Record<string, boolean>>({});
 
   const columns: GridColDef[] = useMemo(() => {
     const baseColumns: GridColDef[] = [
@@ -89,10 +101,12 @@ const EmailAccounts: React.FC = () => {
         },
       },
       {
-        field: "warm_up",
+        field: "enableWarmup",
         headerName: "Warmup Enabled",
         width: 150,
-        renderCell: () => <Box>Yes</Box>,
+        renderCell: (params) => (
+          <Box>{warmupEnabledMap[params.row.id] ? "Yes" : "No"}</Box>
+        ),
       },
       {
         field: "msg_per_day",
@@ -101,47 +115,45 @@ const EmailAccounts: React.FC = () => {
         valueGetter: (params: any) => (params ?? "N/A"),
       },
       {
-        field: "reputation",
-        headerName: "Reputation",
-        width: 110,
-        renderCell: () => <Box>100%</Box>,
-      },
-      {
         field: "createdAt",
         headerName: "Created At",
         width: 160,
         valueGetter: (params: any) => (params ? formatDate(params) : null),
       },
       {
-        field: "edit",
+        field: "action",
         headerName: "Action",
-        width: 100,
+        width: 140,
         sortable: false,
         renderCell: (params) => (
-          <CustomTableCell>
-            <Box display="flex" alignItems="center" gap={1.5}>
-              <Tooltip title="Edit Email Account" arrow>
-                <ModeEditOutlineOutlinedIcon
-                  onClick={() => handleEditEmailAccount(params.row.id)}
+          <Box display="flex" alignItems="center" gap={1.5}>
+            <Tooltip title="Email Analytics" arrow>
+              <AssessmentIcon
+                onClick={() => handleOpenAnalyticsDialog(params.row)}
+                sx={{ cursor: "pointer" }}
+              />
+            </Tooltip>
+            <Tooltip title="Edit Email Account" arrow>
+              <ModeEditOutlineOutlinedIcon
+                onClick={() => handleEditEmailAccount(params.row.id)}
+                sx={{ cursor: "pointer" }}
+              />
+            </Tooltip>
+
+            {user?.role === "Admin" && (
+              <Tooltip title="Delete Email Account" arrow>
+                <GridDeleteIcon
                   sx={{ cursor: "pointer" }}
+                  onClick={() => handleOpenDeleteDialog(params.row.id)}
                 />
               </Tooltip>
-
-              {user?.role === "Admin" && (
-                <Tooltip title="Delete Email Account" arrow>
-                  <GridDeleteIcon
-                    sx={{ cursor: "pointer" }}
-                    onClick={() => handleOpenDeleteDialog(params.row.id)}
-                  />
-                </Tooltip>
-              )}
-            </Box>
-          </CustomTableCell>
+            )}
+          </Box>
         ),
       },
     ];
     return baseColumns;
-  }, [user?.role]);
+  }, [user?.role, warmupEnabledMap]);
 
   useEffect(() => {
     const getEmailAccounts = async () => {
@@ -153,7 +165,54 @@ const EmailAccounts: React.FC = () => {
 
   useEffect(() => {
     getAllEmailAccounts();
-  }, [smtpDialogOpen])
+  }, [smtpDialogOpen]);
+
+  useEffect(() => {
+    // Fetch warmup settings for each account
+    const fetchWarmupSettings = async () => {
+      const enabledMap: Record<string, boolean> = {};
+      
+      if (rows.length > 0) {
+        for (const row of rows) {
+          try {
+            // First try to get existing warmup settings
+            console.log(`Checking warmup settings for account ${row.id}`);
+            const response = await getWarmupSettings(row.id);
+            
+            if (!response.success) {
+              // If settings don't exist, set up default warmup settings
+              console.log(`No settings exist, setting up default warmup for account ${row.id}`);
+              const setupResponse = await setupEmailWarmup(row.id, false, 50);
+              
+              if (setupResponse.success) {
+                console.log(`Successfully set up warmup for ${row.id}`);
+                // Wait a moment to ensure settings are created on the server
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Verify the settings were created
+                const verifyResponse = await getWarmupSettings(row.id);
+                enabledMap[row.id] = verifyResponse.success && verifyResponse.data?.isEnabled || false;
+              } else {
+                console.error(`Failed to set up warmup for ${row.id}:`, setupResponse.error);
+                enabledMap[row.id] = false;
+              }
+            } else {
+              // Use existing settings
+              console.log(`Found existing warmup settings for ${row.id}:`, response.data?.isEnabled);
+              enabledMap[row.id] = response.data?.isEnabled || false;
+            }
+          } catch (error) {
+            console.error(`Error handling warmup settings for ${row.id}:`, error);
+            enabledMap[row.id] = false;
+          }
+        }
+        
+        setWarmupEnabledMap(enabledMap);
+      }
+    };
+    
+    fetchWarmupSettings();
+  }, [rows]);
 
   const getAllEmailAccounts = async () => {
     try {
@@ -200,17 +259,21 @@ const EmailAccounts: React.FC = () => {
     setIsDialogOpen(true);
   };
 
-  // const handleSettingDialog = () => {
-  //   setIsSettingOpen(true);
-  // };
+  const handleCloseDialog = () => {
+    getAllEmailAccounts();
+    setIsDialogOpen(false);
+  };
+
+  const handleOpenSettingDialog = () => {
+    setIsSettingOpen(true);
+  };
+
+  const handleCloseSettingDialog = () => {
+    setIsSettingOpen(false);
+  };
 
   const handleEditEmailAccount = (id: string) => {
-    if (!id) {
-      console.warn("No ID found for this email account");
-      return;
-    }
-    navigate(`/email-account/edit-email-account/${id}`);
-    console.log("Navigating to:", `/email-account/edit-email-account/${id}`);
+    navigate(`/email-account/edit/${id}`);
   };
 
   const handleOpenDeleteDialog = (id: string) => {
@@ -222,115 +285,134 @@ const EmailAccounts: React.FC = () => {
     setSelectedEmailAccount(null);
     setOpenDeleteDialog(false);
   };
+
   const handleDeleteEmailAccount = async () => {
-    if (!selectedEmailAccount) return;
-    try {
-      await dispatch(deleteEmailAccount(selectedEmailAccount)).unwrap();
-      toast.success("Email account deleted successfully!");
-      setRows((prevRows) =>
-        prevRows.filter((row) => row.id !== selectedEmailAccount)
-      );
-      setEmailAccounts((prevAccounts) =>
-        prevAccounts.filter((account) => account._id !== selectedEmailAccount)
-      );
-      handleCloseDeleteDialog();
-    } catch (error) {
-      console.error("Failed to delete email account:", error);
+    if (selectedEmailAccount) {
+      try {
+        await dispatch(deleteEmailAccount(selectedEmailAccount)).unwrap();
+        await getAllEmailAccounts();
+        toast.success("Email account deleted successfully!");
+      } catch (error) {
+        console.error("Delete failed:", error);
+        toast.error("Failed to delete email account");
+      } finally {
+        setOpenDeleteDialog(false);
+        setSelectedEmailAccount(null);
+      }
     }
+  };
+
+  const handleOpenAnalyticsDialog = (account: any) => {
+    setSelectedAccountForAnalytics({
+      id: account.id,
+      name: account.name,
+      email: account.email
+    });
+    setAnalyticsDialogOpen(true);
+  };
+
+  const handleCloseAnalyticsDialog = () => {
+    setSelectedAccountForAnalytics(null);
+    setAnalyticsDialogOpen(false);
+    getAllEmailAccounts(); // Refresh list to show updated warmup status
   };
 
   const CustomIcon = () => (
     <svg
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
       fill="none"
-      viewBox="0 0 16 16"
-      height="22"
-      width="22"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path
-        d="M0 6.61829L16 3.08496L12.3964 13.5072L6.79537 9.88496L5.70399 14.085L4.75676 9.01829L0 6.61829Z"
-        fill="#5F63CB"
-      ></path>
-      <path
-        d="M5.84857 12.3289L6.30159 9.64006L14.559 3.95117L5.14844 8.64006L5.84857 12.3289Z"
-        fill="#9297EC"
-      ></path>
-      <path
-        d="M9.30771 11.5067L5.7041 14.0845L6.79548 9.8623L9.30771 11.5067Z"
-        fill="var(--theme-color)"
-      ></path>
+      <circle cx="10" cy="10" r="8" fill="#6B7280" />
+      <text
+        x="10"
+        y="10"
+        textAnchor="middle"
+        dy=".3em"
+        fill="white"
+        fontSize="12"
+        fontWeight="bold"
+      >
+        I
+      </text>
     </svg>
   );
 
   const handleSmtpDetail = async () => {
-    setIsDialogOpen(false);
     setSmtpDialogOpen(true);
   };
 
   return (
-    <EmailAccountsContainer>
-      <Toaster position="top-right" />
-      <EmailAccountHeader>
-        <SectionTitle>Email Accounts</SectionTitle>
-        <Box
-          sx={{
-            display: "flex",
-            gap: "15px",
-            width: "100%",
-            alignItems: "center",
-            justifyContent: "flex-end"
-          }}
-        >
-
-          <SearchBar>
-            <Search size={20} />
-            <input
-              placeholder="Search by Email or Name"
-              value={searchQuery}
-              onChange={handleSearchChange}
-            />
-          </SearchBar>
-          <EmailAccountSmtpDialog
-            open={smtpDialogOpen}
-            onClose={() => setSmtpDialogOpen(false)}
-          />
-          <EmailAccountDialog
-            handleSmtpDetail={handleSmtpDetail}
-            open={isDialogOpen}
-            onClose={() => setIsDialogOpen(false)}
-          />
-          <AdvancedSettingDialog
-            open={isSettingOpen}
-            onClose={() => setIsSettingOpen(false)}
-          />
-          {/* <SecondaryButton onClick={handleSettingDialog}>
-            Advanced Settings
-          </SecondaryButton> */}
-          <Button onClick={handleOpenDialog}>Add Account</Button>
-        </Box>
-      </EmailAccountHeader>
-      {loading && <ProgressBar />}
-      <Box sx={{ height: "100%", overflow: "auto" }}>
+    <>
+      <EmailAccountsContainer>
+        <EmailAccountHeader>
+          <SectionTitle>Email Accounts</SectionTitle>
+          <Box display="flex" alignItems="center" gap={2}>
+            <SearchBar>
+              <Search size={18} />
+              <input
+                type="text"
+                placeholder="Search email account..."
+                value={searchQuery}
+                onChange={handleSearchChange}
+              />
+            </SearchBar>
+            <MuiButton
+              onClick={handleOpenDialog}
+              variant="contained"
+              size="medium"
+            >
+              Add Account
+            </MuiButton>
+          </Box>
+        </EmailAccountHeader>
         <EmailAccountTable>
-          <CustomDataTable
-            columns={columns}
-            rows={rows}
-            pageSizeOptions={[15, 10, 5]}
-            enableCheckboxSelection={false}
-          />
+          {loading ? (
+            <ProgressBar />
+          ) : (
+            <CustomDataTable
+              rows={rows}
+              columns={columns}
+            />
+          )}
         </EmailAccountTable>
-      </Box>
+      </EmailAccountsContainer>
+
+      <EmailAccountDialog
+        open={isDialogOpen}
+        onClose={handleCloseDialog}
+        handleSmtpDetail={handleSmtpDetail}
+      />
+      <AdvancedSettingDialog
+        open={isSettingOpen}
+        onClose={handleCloseSettingDialog}
+      />
       <ConfirmDeleteDialog
         open={openDeleteDialog}
         onClose={handleCloseDeleteDialog}
         onConfirm={handleDeleteEmailAccount}
-        title="Delete Email Account?"
-        message="Are you sure you want to delete this email account?"
-        confirmText="Delete"
-        cancelText="Cancel"
+        title="Delete Email Account"
+        message="Are you sure you want to delete this email account? This action cannot be undone."
       />
 
-    </EmailAccountsContainer>
+      <EmailAccountSmtpDialog
+        open={smtpDialogOpen}
+        onClose={() => setSmtpDialogOpen(false)}
+      />
+
+      {selectedAccountForAnalytics && (
+        <EmailAnalyticsDialog
+          open={analyticsDialogOpen}
+          onClose={handleCloseAnalyticsDialog}
+          accountId={selectedAccountForAnalytics.id}
+          accountName={selectedAccountForAnalytics.name}
+          accountEmail={selectedAccountForAnalytics.email}
+        />
+      )}
+      <Toaster position="top-center" />
+    </>
   );
 };
 
