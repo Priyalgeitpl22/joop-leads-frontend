@@ -17,6 +17,17 @@ export interface WarmupSettings {
   updatedAt: string;
 }
 
+export interface WarmupConfig {
+  _id: string;
+  account: string;
+  subject: string;
+  body: string;
+  isDefault: boolean;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface WarmupParticipant {
   id: string;
   name: string;
@@ -31,6 +42,13 @@ export interface WarmupResponse {
   error?: string;
 }
 
+export interface WarmupConfigResponse {
+  success: boolean;
+  message?: string;
+  data?: WarmupConfig;
+  error?: string;
+}
+
 export interface ParticipantsResponse {
   success: boolean;
   data: WarmupParticipant[];
@@ -40,16 +58,24 @@ export interface ParticipantsResponse {
 export const setupEmailWarmup = async (
   accountId: string,
   isEnabled: boolean = true,
-  dailyLimit: number = 50
+  dailyLimit: number = 50,
+  subject?: string,
+  body?: string
 ): Promise<WarmupResponse> => {
   try {
     console.log(`Setting up warmup for account ${accountId}, enabled: ${isEnabled}, limit: ${dailyLimit}`);
     const response = await emailApi.post(`/warmup/setup/${accountId}`, {
       isEnabled,
-      dailyLimit
+      dailyLimit,
+      subject,
+      body
     });
     console.log('Warmup setup response:', response.data);
-    return response.data;
+    return {
+      success: response.data.success,
+      data: response.data.data,
+      message: response.data.message
+    };
   } catch (error: any) {
     console.error('Error in setupEmailWarmup:', error.response?.status, error.response?.data || error.message);
     return {
@@ -63,7 +89,11 @@ export const setupEmailWarmup = async (
 export const getWarmupSettings = async (accountId: string): Promise<WarmupResponse> => {
   try {
     const response = await emailApi.get(`/warmup/settings/${accountId}`);
-    return response.data;
+    return {
+      success: response.data.success,
+      data: response.data.data,
+      message: response.data.message
+    };
   } catch (error: any) {
     if (error.response && error.response.status === 404) {
       console.log(`No warmup settings found for account ${accountId}, need to create default settings`);
@@ -165,6 +195,51 @@ export const getWarmupStats = async (): Promise<{
     return {
       success: false,
       error: error.response?.data?.message || 'Failed to get warmup stats'
+    };
+  }
+};
+
+// Get warmup config for an account
+export const getWarmupConfig = async (accountId: string): Promise<WarmupConfigResponse> => {
+  try {
+    const response = await emailApi.get(`/warmup/config/${accountId}`);
+    // Transform API response to expected frontend format
+    return {
+      success: response.data.code === 200,
+      data: response.data.data,
+      message: response.data.message
+    };
+  } catch (error: any) {
+    console.error('Error in getWarmupConfig:', error.response?.status, error.response?.data || error.message);
+    return {
+      success: false,
+      error: error.response?.data?.message || 'Error fetching warmup configuration'
+    };
+  }
+};
+
+// Update warmup config
+export const updateWarmupConfig = async (
+  accountId: string,
+  config: {
+    subject?: string;
+    body?: string;
+    isActive?: boolean;
+  }
+): Promise<WarmupConfigResponse> => {
+  try {
+    const response = await emailApi.put(`/warmup/config/${accountId}`, config);
+    // Transform API response to expected frontend format
+    return {
+      success: response.data.code === 200,
+      data: response.data.data,
+      message: response.data.message
+    };
+  } catch (error: any) {
+    console.error('Error in updateWarmupConfig:', error.response?.status, error.response?.data || error.message);
+    return {
+      success: false,
+      error: error.response?.data?.message || 'Error updating warmup configuration'
     };
   }
 }; 
