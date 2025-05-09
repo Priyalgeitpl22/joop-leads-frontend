@@ -85,7 +85,7 @@ const EmailAnalyticsDialog: React.FC<EmailAnalyticsDialogProps> = ({
 
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={tabValue} onChange={handleTabChange} aria-label="email analytics tabs">
-          <Tab label="Warmup Tracking" id="email-analytics-tab-0" aria-controls="email-analytics-tabpanel-0" />
+          <Tab label="Email Tracking" id="email-analytics-tab-0" aria-controls="email-analytics-tabpanel-0" />
           <Tab label="Warmup Settings" id="email-analytics-tab-1" aria-controls="email-analytics-tabpanel-1" />
         </Tabs>
       </Box>
