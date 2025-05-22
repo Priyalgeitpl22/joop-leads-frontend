@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { api } from "../../services/api";
+import Cookies from "js-cookie";
 
 interface DashboardState {
   dashboardData: any | null;
@@ -13,7 +14,12 @@ export const DashboardDetails = createAsyncThunk<
   { rejectValue: string }
 >("dashboard/getDetails", async (_, { rejectWithValue }) => {
   try {
-    const response = await api.get("/email-campaign/dashboard/data");
+    const token = Cookies.get("access_token");
+
+    const response = await api.get("/email-campaign/dashboard/data", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
     return response.data.data;
   } catch (error: any) {
     return rejectWithValue(
