@@ -13,7 +13,7 @@ export function CustomAppTitle() {
     <IconButton onClick={handleOnClick} sx={{ p: 0 }}>
     <Stack direction="row" alignItems="center" spacing={2}>
       <CampaignIcon sx={{ color: "#ffff", fontSize: "40px" }} />
-      <Typography variant="h3">Jooper.ai</Typography>
+      <Typography variant="h3">JooperLead.ai</Typography>
     </Stack>
     </IconButton>
   );
