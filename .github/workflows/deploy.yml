@@ -3,7 +3,7 @@ name: Deploy Frontend to Jooper Server
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   deploy:
