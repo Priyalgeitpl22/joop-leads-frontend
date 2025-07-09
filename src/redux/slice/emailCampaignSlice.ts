@@ -11,6 +11,15 @@ interface Campaign {
   name: string;
 }
 
+interface EmailTemplatePayload {
+  email: string | string[];
+  toEmail: string;
+  emailTemplate: {
+    subject: string;
+    emailBody: string;
+    variantLabel: string;
+  };
+}
 
 export const fetchEmailCampaigns = createAsyncThunk(
   "emailCampaign/fetchAll",
@@ -175,14 +184,14 @@ export const fetchCampaignSequences = createAsyncThunk(
 
 export const SendTestEmail = createAsyncThunk(
   "accounts/send-test-email",
-  async (data: { email: string | string[], toEmail: string ,sequence:string}, { rejectWithValue }) => {
+  async (data: EmailTemplatePayload, { rejectWithValue }) => {
     try {
       const response = await emailApi.post(
         `/accounts/send-test-email`,
         {
           email: data.email,
           toEmail: data.toEmail,
-          emailTemplate: data.sequence,
+          emailTemplate: data.emailTemplate,
         },
         {
           headers: { Authorization: `Bearer ${token}` },

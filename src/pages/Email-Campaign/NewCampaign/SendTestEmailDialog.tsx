@@ -23,7 +23,11 @@ import toast from "react-hot-toast";
 interface SendTestEmailDialogProps {
   open: boolean;
   onClose: () => void;
-  sequence: string;
+  sequence: {
+    compiledSubject: string;
+    compiledBody: string;
+    variantLabel: string;
+  } | null;
 }
 
 const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
@@ -61,15 +65,20 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
 
   const sendTestEmail = async () => {
     setLoading(true);
-    if (!selectedEmailAccount) {
-      console.error("No email account selected.");
+    if (!selectedEmailAccount || !toEmail || !sequence) {
+      toast.error("Missing required fields.");
+      setLoading(false);
       return;
     }
 
     const payload = {
       email: selectedEmailAccount,
       toEmail,
-      sequence,  
+      emailTemplate: {
+        subject: sequence.compiledSubject,
+        emailBody: sequence.compiledBody,
+        variantLabel: sequence.variantLabel,
+      },
     };
     try {
       setIsLoading(true);

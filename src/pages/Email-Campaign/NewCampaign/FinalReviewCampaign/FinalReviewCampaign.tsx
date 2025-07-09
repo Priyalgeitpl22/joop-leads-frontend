@@ -25,7 +25,11 @@ import { modules } from "../SequenceCampaign/EmailTemplate/EmailTemplate";
 
 interface FinalReviewCampaignProps {
   campaign_id: string;
-  setSelectedEmailTemplate:any
+  setSelectedEmailTemplate: (template: {
+    compiledSubject: string;
+    compiledBody: string;
+    variantLabel: string;
+  }) => void;
 }
 
 const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
@@ -39,6 +43,8 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
   const [contacts, setContacts] = React.useState<IContacts[]>([]);
   const [sequences, setSequences] = React.useState<Sequence[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [compiledSubject, setCompiledSubject] = useState<string>("");
+  const [compiledBody, setCompiledBody] = useState<string>("");
 
   const dispatch = useDispatch<AppDispatch>();
   const quillRef = useRef<typeof ReactQuill | null>(null);
@@ -51,6 +57,42 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
         ?.seq_variants[0] || null
     );
   };
+
+  const compileTemplate = (
+    template: string,
+    data: Record<string, string | undefined>
+  ): string => {
+    return template.replace(/{{\s*([\w.]+)\s*}}/g, (_, key) => data[key] || "");
+  };
+
+  useEffect(() => {
+    if (!selectedContact || !selectedTemplate) return;
+
+    const vars = {
+      first_name: selectedContact?.first_name,
+      last_name: selectedContact?.last_name,
+      email: selectedContact?.email,
+      website: selectedContact?.website,
+    };
+
+    const compiledSubject = compileTemplate(
+      selectedTemplate.subject ?? "",
+      vars
+    );
+    const compiledBody = compileTemplate(
+      selectedTemplate.emailBody ?? "",
+      vars
+    );
+
+    setCompiledSubject(compiledSubject);
+    setCompiledBody(compiledBody);
+
+    setSelectedEmailTemplate({
+      compiledSubject,
+      compiledBody,
+      variantLabel: selectedTemplate.variantLabel ?? "",
+    });
+  }, [selectedContact, selectedTemplate]);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -112,7 +154,7 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
       console.error("Error searching contacts:", error);
     }
   };
-  setSelectedEmailTemplate(selectedTemplate);
+
   return (
     <FinalReviewContainer>
       <SidebarContainer
@@ -241,13 +283,14 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
                 color="gray"
               >
                 <strong>Subject: </strong>
-                {selectedTemplate?.subject}
+                {compiledSubject}
               </Typography>
 
               <Box mt={2}>
                 <ReactQuill
                   ref={quillRef}
-                  value={selectedTemplate?.emailBody}
+                  value={compiledBody}
+                  readOnly
                   modules={modules}
                   className="custom-quill-email"
                 />

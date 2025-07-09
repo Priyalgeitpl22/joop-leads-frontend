@@ -32,8 +32,8 @@ const variableOptions = [
   "last_name",
   "email",
   "website",
-  "day of week",
-  "time of day",
+  // "day of week",
+  // "time of day",
 ];
 interface EmailTemplateProps {
   handleEmailTemplateData: (data: {
