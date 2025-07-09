@@ -55,7 +55,11 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
   const [uploadCounts, setUploadCounts] = React.useState<ILeadsCounts>();
   const [sequences, setSequences] = React.useState<Sequence[]>([]);
   const [selectedSequence, setSelectedSequence] = React.useState<Sequence>();
-  const [newSequnce, setSelectedNewSequnce] = React.useState("")
+  const [newSequnce, setSelectedNewSequnce] = React.useState<{
+    compiledSubject: string;
+    compiledBody: string;
+    variantLabel: string;
+  } | null>(null);
   const [campaignId, setCampaignId] = React.useState<string>("");
   const [isLoading, setIsLoading] = React.useState(false);
   const [testEmailDialog, setTestEmailDialog] = React.useState(false);

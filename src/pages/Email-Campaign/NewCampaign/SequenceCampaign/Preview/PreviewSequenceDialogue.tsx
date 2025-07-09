@@ -52,7 +52,11 @@ const PreviewSequenceDialogue: React.FC<EditUserDialogProps> = ({
   onClose,
   selectedSequence,
 }) => {
-  const [newSequnce, setSelectedNewSequnce] = React.useState("");
+  const [newSequnce, setSelectedNewSequnce] = React.useState<{
+    compiledSubject: string;
+    compiledBody: string;
+    variantLabel: string;
+  } | null>(null);
   console.log(setSelectedNewSequnce);
   const [campaign, setCampaign] = useState<IEmailCampaign | null>(null);
   const [testEmailDialog, setTestEmailDialog] = React.useState(false);

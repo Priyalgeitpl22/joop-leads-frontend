@@ -140,7 +140,7 @@ const ImportSettingDialog: React.FC<ImportSettingDialogProps> = ({
             }}
             onClick={handleSave}
           >
-            Save
+            Proceed
           </Button>
         </Box>
       </DialogContent>

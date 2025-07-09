@@ -78,7 +78,7 @@ const UploadLeadsDialog: React.FC<UploadCsvDialogProps> = ({
             display: "flex",
           }}
         >
-          Uploaded Leads
+          Uploaded Contacts
           <Typography variant="h5" fontWeight="bold">
             {uploadCounts?.uploadedCount}
           </Typography>

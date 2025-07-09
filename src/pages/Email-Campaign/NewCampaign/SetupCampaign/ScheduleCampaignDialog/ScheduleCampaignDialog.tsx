@@ -11,6 +11,7 @@ import {
   IconButton,
   Grid,
   FormHelperText,
+  Autocomplete,
 } from "@mui/material";
 import {
   LocalizationProvider,
@@ -28,11 +29,10 @@ import {
   CustomDialogFooter,
   CustomDialogHeader,
 } from "../../../../../styles/global.styled";
-import MultiSelectDropdown from "../../../../../assets/Custom/cutomSelectOption";
-import timeZones from "../../../../../constants";
 import { getCampaignById } from "../../../../../redux/slice/emailCampaignSlice";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../../redux/store/store";
+import moment from "moment-timezone";
 
 interface ScheduleCampaignProps {
   open: boolean;
@@ -54,7 +54,7 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
   const dispatch = useDispatch<AppDispatch>();
 
   const [formData, setFormData] = useState<{
-    timeZone: [];
+    timeZone: "";
     selectedDays: number[];
     startTime: Dayjs;
     endTime: Dayjs;
@@ -63,7 +63,7 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
     maxLeads: number;
     selectedEmailAccounts: EmailAccounts[];
   }>({
-    timeZone: [],
+    timeZone: "",
     selectedDays: [],
     startTime: dayjs().hour(9).minute(0),
     endTime: dayjs().hour(18).minute(0),
@@ -225,6 +225,23 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
     }
   };
 
+  const getTimeZoneOptions = () => {
+    return moment.tz.names().map((tz: any) => {
+      const offset = moment.tz(tz).utcOffset();
+      const hours = Math.floor(offset / 60);
+      const minutes = offset % 60;
+      const sign = offset >= 0 ? "+" : "-";
+      const formattedOffset = `UTC${sign}${String(Math.abs(hours)).padStart(2, "0")}:${String(Math.abs(minutes)).padStart(2, "0")}`;
+
+      return {
+        label: `${tz} (${formattedOffset})`,
+        value: tz,
+      };
+    });
+  };
+
+  const timeZoneOptions = getTimeZoneOptions();
+
   return (
     <Dialog
       open={open}
@@ -254,13 +271,27 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
             sx={{ textAlign: "left" }}
             error={!!errors.timeZone}
           >
-            <MultiSelectDropdown
-              width="100%"
-              label="Select Time Zone *"
-              options={timeZones}
-              selectedValues={formData.timeZone}
-              onChange={handleTimeZoneChange}
-              multiple={false}
+            <Autocomplete
+              fullWidth
+              disablePortal
+              options={timeZoneOptions}
+              getOptionLabel={(option) => option.label}
+              value={
+                timeZoneOptions.find(
+                  (tz: any) => tz.value === formData.timeZone
+                ) || null
+              }
+              onChange={(_event, newValue) =>
+                handleTimeZoneChange(newValue?.value || "")
+              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Select Time Zone *"
+                  variant="outlined"
+                  error={!!errors.timeZone}
+                />
+              )}
             />
             {errors.timeZone && (
               <FormHelperText>{errors.timeZone}</FormHelperText>
@@ -339,7 +370,9 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
             <Grid container spacing={2} sx={{ width: "100%" }}>
               <Grid item xs={6}>
                 <FormControl fullWidth error={!!errors.startDate}>
-                  <Typography>Set Campaign Start Date *</Typography>
+                  <Typography sx={{ textAlign: "justify" }}>
+                    Set Campaign Start Date *
+                  </Typography>
                   <DesktopDatePicker
                     value={formData.startDate}
                     onChange={(value) => handleChange("startDate", value)}
@@ -355,7 +388,9 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
 
               <Grid item xs={6}>
                 <FormControl fullWidth error={!!errors.maxLeads}>
-                  <Typography>Max Number Of New Leads Per Day *</Typography>
+                  <Typography sx={{ textAlign: "justify" }}>
+                    Max Number Of New Leads Per Day *
+                  </Typography>
                   <TextField
                     type="number"
                     value={formData.maxLeads}
