@@ -54,13 +54,7 @@ const Home = () => {
     },
   ];
 
-  const data = [
-    { name: "1", today: 10, yesterday: 5 },
-    { name: "5", today: 30, yesterday: 20 },
-    { name: "10", today: 50, yesterday: 30 },
-    { name: "15", today: 40, yesterday: 45 },
-    { name: "20", today: 60, yesterday: 50 },
-  ];
+  const data = dashboardData?.graph_data || [];
 
   return (
     <ContentContainer>
@@ -96,7 +90,7 @@ const Home = () => {
                 <ResponsiveContainer width="100%" height={330}>
                   <AreaChart data={data}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
+                    <XAxis dataKey="date" />
                     <YAxis />
                     <ChartTooltip />
                     <Area
