@@ -40,7 +40,7 @@ export const StyledMenuItem = styled(MenuItem)`
 export const StyledTableContainer = styled(TableContainer)`
   max-width: 100%;
   overflow-y: auto;
-  background-color: white;
+  background-color: var(--table-bg, white);
 
   /* Hide scrollbar */
   scrollbar-width: none;
@@ -52,7 +52,7 @@ export const StyledTableContainer = styled(TableContainer)`
 `;
 
 export const StyledTableHead = styled(TableHead)`
-  background-color: white;
+  background-color: var(--table-bg, white);
   position: sticky;
   top: 0;
   z-index: 10;
@@ -62,16 +62,20 @@ export const StyledTableHead = styled(TableHead)`
 export const StyledTableHeadCell = styled(TableCell)`
   font-weight: 600;
   font-size: 16px;
-  background-color: var(--background-color);
+  background-color: var(--table-bg, white);
+  color: var(--table-text, #000);
   height: 50px; /* Adjust the height of header cells */
   padding: 12px; /* Adjust padding */
 `;
 
 export const StyledTableRow = styled(TableRow)`
   height: 10px; /* Adjust row height */
+  background-color: var(--table-bg, white);
 `;
 
 export const StyledTableCell = styled(TableCell)`
   padding: 10px; /* Adjust padding inside cells */
   font-size: 14px;
+  color: var(--table-text, #000);
+  background-color: transparent;
 `;

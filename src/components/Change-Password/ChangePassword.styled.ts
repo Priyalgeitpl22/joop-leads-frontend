@@ -5,12 +5,13 @@ export const PageContainer = styled(Box)`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
+  height: 100vh;
 `;
 
 export const ChangePasswordCard = styled(Card)`
   display: flex;
   flex-direction: row;
+  border-radius: 20px;
   border: 1px solid var(--border-dark);
   width: 80%;
   max-width: 800px;

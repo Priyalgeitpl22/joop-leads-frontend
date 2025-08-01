@@ -58,13 +58,19 @@ export const StyledList = styled(List)({
   overflowY: "auto",
   overflowX: "auto",
   whiteSpace: "nowrap",
+  "&::-webkit-scrollbar": {
+    display: "none",
+  },
+  scrollbarWidth: "none", 
+  msOverflowStyle: "none",
+  
 });
 
 export const StyledListItem = styled(ListItem, {
   shouldForwardProp: (prop) => prop !== "active",
 })<SidebarItemProps>(({ active }) => ({
   flex: "0 0 auto",
-  marginRight: "8px",
+  marginBottom: "10px",
   padding: "8px 15px",
   borderRadius: "8px",
   cursor: "pointer",

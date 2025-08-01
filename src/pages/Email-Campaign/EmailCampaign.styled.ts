@@ -55,7 +55,8 @@ export const CustomMuiColorInput = styled(MuiColorInput)({
 export const TableCellHead = styled(TableCell)({
   fontWeight: "bold",
   color: "#35495c",
-  padding: "5px 16px"
+  padding: "8px 16px !important",
+  borderBottom:"1px solid var(--border-dark) !important"
 });
 
 export const CheckAccessibility = styled.button`
@@ -277,7 +278,7 @@ export const CustomTableCell = styled(TableCell)(({ }) => ({
   },
 
   "&:last-of-type": {
-    textAlign: "right",
+    textAlign: "start",
   },
 
   "&.MuiTableCell-root": {

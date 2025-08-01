@@ -30,7 +30,7 @@ export const CustomTableCell = styled(TableCell)`
 
 export const HeaderCell = styled(TableCell)`
   font-weight: bold;
-  color: var(--text-secondary);
+  color: var(--text-white);
   background: var(--theme-color-light);
   padding: 14px;
   text-transform: uppercase;

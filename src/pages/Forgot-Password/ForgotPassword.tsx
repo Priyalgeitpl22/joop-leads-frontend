@@ -91,7 +91,7 @@ const ForgotPassword = () => {
           <Typography
             onClick={() => window.location.assign("/forgot-password")}
             variant="h4"
-            color="var(--border-color)"
+            color="var(--text-black)"
             fontWeight="600"
             mb={1}
           >

@@ -420,12 +420,12 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
           <WestOutlinedIcon
             onClick={GoBack}
             sx={{
-              color: "var(--theme-color-light)",
+              color: "var(--text-white)",
               cursor: "pointer",
               margin: "14px",
               width: "35px",
               height: "35px",
-              "&:hover": { color: "var(--theme-color-light)" },
+              "&:hover": { color: "var(--hover-color)" },
             }}
           />
           <CustomizedStepper

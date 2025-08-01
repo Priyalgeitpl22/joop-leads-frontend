@@ -583,7 +583,15 @@ const ContactTable: React.FC = () => {
   };
 
   return (
-    <ContactsContainer>
+    <ContactsContainer style={{
+      overflow: "auto",
+        minWidth: 600,
+        maxWidth: '100%',
+        width: '100%',
+        minHeight: "calc(100vh - 400px)", 
+        position: 'relative',
+        backgroundColor: "white !important",
+    }}>
       <Toaster position="top-right" />
       <ContactsHeader>
         <SectionTitle>All Leads</SectionTitle>
@@ -748,7 +756,7 @@ const ContactTable: React.FC = () => {
       <Box
         sx={{
           height: "100%",
-          overflow: "auto",
+          overflow: "hidden",
         }}
       >
         <Box sx={{ padding: "15px 0px 0px 8px", background: "var(--input-bg)" }}>

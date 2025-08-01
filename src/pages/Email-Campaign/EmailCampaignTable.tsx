@@ -18,7 +18,6 @@ import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutl
 import { IEmailCampaign } from "./NewCampaign/interfaces";
 import { formatDateTime } from "../../utils/utils";
 import { TableItem } from "../../styles/layout.styled";
-import { GridDeleteIcon } from "@mui/x-data-grid";
 import PauseIcon from "@mui/icons-material/Pause";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import PeopleIcon from '@mui/icons-material/People';
@@ -37,7 +36,7 @@ export interface EmailCampaignTableProps {
   handleResume: (campaignId: string) => Promise<void>;
   handleEditCampaign: (id: string) => void;
   handleOpenDeleteDialog: (campaignId: string) => void;
-  handleMoveFolderOpen: (campaignId: string) => void;
+  // handleMoveFolderOpen: (campaignId: string) => void;
   handleDetailCampaign: (campaignId: string) => void;
   anchorEl: null | HTMLElement;
   selectedCampaign: string | null;
@@ -58,7 +57,7 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
   handleResume,
   handleEditCampaign,
   handleOpenDeleteDialog,
-  handleMoveFolderOpen,
+  // handleMoveFolderOpen,
   handleDetailCampaign,
   anchorEl,
   selectedCampaign,
@@ -83,6 +82,12 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
     setPage(newPage);
   };
 
+  const structureName = (name:string):string=>{
+    const tempName  = name.split(" ") 
+    const nameArray=tempName.map((elem)=>elem.charAt(0).toUpperCase()+elem.slice(1)) 
+    const result:string  = nameArray.join(" ") 
+    return result; 
+  }
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -141,29 +146,22 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
       }}
     >
       <Table stickyHeader sx={{ position: "sticky" }}>
-        <TableHead sx={{ backgroundColor: "#f8f9fc" }}>
+        <TableHead>
           <TableRow>
             <TableCellHead>Campaign Details</TableCellHead>
 
-            <TableCellHead
-              colSpan={
-                tableData?.filter((item) => visibleColumns?.[item.visibleKey])
-                  .length > 0
-                  ? tableData.filter(
-                      (item) => visibleColumns?.[item.visibleKey]
-                    ).length
-                  : 5
-              }
-            >
-              Report
-            </TableCellHead>
+            <TableCellHead>Leads</TableCellHead>
+            <TableCellHead>sent</TableCellHead>
+            <TableCellHead>Opened</TableCellHead>
+            <TableCellHead>Clicked</TableCellHead>
+            <TableCellHead>Bounced</TableCellHead>
 
             {user?.role === "Admin" && <TableCellHead>Action</TableCellHead>}
             <TableCellHead></TableCellHead>
           </TableRow>
         </TableHead>
         {paginatedCampaigns.map((campaign) => (
-          <CustomTableBody key={campaign.id}>
+          <CustomTableBody key={campaign.id} >
             <CustomTableRow>
               <CustomTableCell
                 style={{
@@ -172,6 +170,7 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
                   justifyContent: "flex-start",
                   gap: "12px",
                 }}
+                onClick={(event) => {event.stopPropagation(); handleDetailCampaign(campaign.id)}}
               >
                 <IconButton
                   sx={{
@@ -232,12 +231,13 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
                 </IconButton>
 
                 <div>
-                  <h6 onClick={() => handleDetailCampaign(campaign.id)}>
-                    {campaign?.campaignName}
+                  <h6>
+                    {structureName(campaign?.campaignName)}
                     {campaign?.campaign_name}
                   </h6>
                   <p>
-                    {campaign.status} | {formatDateTime(campaign.createdAt)} |{" "}
+                  {campaign.status==="COMPLETED"?`✅ ${campaign.status}`:campaign.status==="SCHEDULED"?`⏳ ${campaign.status}`:campaign.status==="DRAFT"?`⏳ ${campaign.status}`:campaign.status === "RUNNING"?`▶️ ${campaign.status}`:campaign.status} 
+                  | {`${formatDateTime(campaign.createdAt).split(",")[0]}, ${formatDateTime(campaign.createdAt).split(",")[1]}`} |{" "}
                     {campaign.sequences && campaign.sequences.length > 0
                       ? campaign.sequences.length
                       : campaign.sequence_count}{" "}
@@ -255,7 +255,7 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
                     <TableItem>
                       <item.icon sx={{ fontSize: "20px", color: item.color }} />
                       <p>
-                        {item.label}:{" "}
+                        {/* {item.label}:{" "} */}
                         {item.countType === "custom"
                           ? item.getCount?.(campaign)
                           : (campaign?.analytics_count?.[
@@ -267,7 +267,7 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
                 ) : null;
               })}
 
-              {user?.role === "Admin" && (
+              {/* {user?.role === "Admin" && (
                 <CustomTableCell sx={{ display: "flex",height:"85px !important" }}>
                   <Tooltip title="Delete">
                     <GridDeleteIcon
@@ -275,11 +275,13 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
                     />
                   </Tooltip>
                 </CustomTableCell>
-              )}
+              )} */}
               <CustomTableCell>
                 <IconButton
-                  size="small"
-                  onClick={(event) => handleMenuOpen(event, campaign.id)}
+                  size="large"
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    handleMenuOpen(event, campaign.id)}}
                 >
                   <MoreVertIcon fontSize="small" />
                 </IconButton>
@@ -287,21 +289,38 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
                   anchorEl={selectedCampaign === campaign.id ? anchorEl : null}
                   open={Boolean(anchorEl && selectedCampaign === campaign.id)}
                   onClose={handleMenuClose}
-                >
-                  <MenuItem onClick={() => handleMoveFolderOpen(campaign.id)}>
+                >{user?.role === "Admin"&&(<MenuItem onClick={(event) => {
+                  event.stopPropagation()
+                  handleOpenDeleteDialog(campaign.id)}}>
+                    Delete
+                  </MenuItem>)}
+                  {/* <MenuItem onClick={() => handleMoveFolderOpen(campaign.id)}>
                     Move to folder
-                  </MenuItem>
+                  </MenuItem> */}
                   <MenuItem
-                    onClick={() =>
+                    onClick={(event) =>{
+                      event.stopPropagation()
                       handleRenameOpen(
                         campaign.id,
                         campaign.campaignName ?? campaign.campaign_name ?? ""
                       )
-                    }
+                    }}
                   >
-                    Rename
+                    Edit
                   </MenuItem>
                   {/* <MenuItem onClick={handleMenuClose}>Details</MenuItem> */}
+                  <MenuItem
+                    onClick={(event) =>{
+                      event.stopPropagation()
+                      handleDetailCampaign(campaign.id)}}
+                  >
+                    View
+                  </MenuItem>
+                  <MenuItem onClick={(event)=>{
+                    event.stopPropagation()
+                    handleMenuClose()
+                  }
+                    }>Details</MenuItem>
                 </FolderMenu>
               </CustomTableCell>
             </CustomTableRow>
