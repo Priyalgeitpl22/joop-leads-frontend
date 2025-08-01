@@ -33,8 +33,8 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
         height: "100%",
         display: "flex",
         flexDirection: "column",
-      }}
-    >
+        overflow: 'scroll',
+      }}>
       <Paper
         className="data-grid-container"
         sx={{
@@ -56,7 +56,12 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
           slots={{
             noRowsOverlay: () => (
               <div
-                style={{ padding: "20px", textAlign: "center", color: "#888" }}
+                style={{ 
+                  padding: "20px", 
+                  textAlign: "center", 
+                  color: "black !important",
+                  backgroundColor: "white !important"
+                }}
               >
                 No data found
               </div>
@@ -64,6 +69,41 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
           }}
           sx={{
             cursor: "pointer",
+            backgroundColor: "white !important",
+            color: "black !important",
+            "& .MuiDataGrid-root": {
+              backgroundColor: "white !important",
+              color: "black !important",
+            },
+            "& .MuiDataGrid-columnHeaders": {
+              backgroundColor: "white !important",
+              color: "black !important",
+              borderBottom: "1px solid black !important",
+            },
+            "& .MuiDataGrid-cell": {
+              backgroundColor: "white !important",
+              color: "black !important",
+            },
+            "& .MuiDataGrid-row": {
+              backgroundColor: "white !important",
+              color: "black !important",
+              "&:hover": {
+                backgroundColor: "#f5f5f5 !important",
+              },
+            },
+            "& .MuiDataGrid-footerContainer": {
+              backgroundColor: "white !important",
+              color: "black !important",
+              borderTop: "1px solid #e0e0e0",
+            },
+            "& .MuiDataGrid-panel": {
+              backgroundColor: "white !important",
+              color: "black !important",
+            },
+            "& .MuiDataGrid-toolbarContainer": {
+              backgroundColor: "white !important",
+              color: "black !important",
+            },
             "& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within":
               {
                 outline: "none",
@@ -76,11 +116,15 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
               color: "black !important",
             },
             "& .MuiDataGrid-virtualScrollerContent": {
-              // width: "100% !important",
               flexBasis: "0px !important",
-              // flexShrink: "1 !important",
             },
-          }}
+            "& .MuiDataGrid-scrollbar": {
+            scrollbarWidth: "none",         // Firefox
+            msOverflowStyle: "none",        // IE and Edge
+            "&::-webkit-scrollbar": {
+              display: "none",              // Chrome, Safari
+            },
+          }}}
         />
       </Paper>
     </Box>

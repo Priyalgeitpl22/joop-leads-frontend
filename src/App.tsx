@@ -1,8 +1,5 @@
 import * as React from "react";
-import { AppProvider, Router } from "@toolpad/core/AppProvider";
-import { DashboardLayout } from "@toolpad/core/DashboardLayout";
-import { PageContainer } from "@toolpad/core/PageContainer";
-import { NAVIGATION } from "./assets/Custom/customSideBar";
+import { Router } from "@toolpad/core/AppProvider";
 import EmailCampaign from "./pages/Email-Campaign/EmailCampaign";
 import Chats from "./components/Chats/Chats";
 import Organization from "./components/Organization/Organization";
@@ -11,8 +8,6 @@ import EmailInboxs from "./pages/Email-Inbox/EmailInbox";
 import Leads from "./pages/Leads/Leads";
 import Home from "./pages/Home/Home";
 import NewCampaign from "./pages/Email-Campaign/NewCampaign/NewCampaign";
-import theme from "./styles/theme";
-import { CustomAppTitle } from "./assets/Custom/customAppTitle";
 import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserDetails } from "./redux/slice/userSlice";
@@ -26,13 +21,14 @@ import ChangePassword from "./components/Change-Password/ChangePassword";
 import PasswordResetConfirmation from "./pages/Forgot-Password/PasswordResetConfirmation";
 import ResetPassword from "./pages/Forgot-Password/ResetPassword";
 import VerifyOtp from "./pages/Verify-OTP/VerifyOtp";
-import UserProfileMenu from "./assets/Custom/customUserProfile";
 import ContactTable from "./pages/Contacts/ContactTable";
 import EditEmailAccount from "./pages/Email-Account/EditEmailAccount/EditEmailAccount";
 import ViewEmailCampaign from "./pages/Email-Campaign/ViewEmailCampaign/ViewEmailCampaign";
 import { Toaster } from "react-hot-toast";
 import Users from "./pages/Users/User";
 import Unsubscribe from "./pages/Unsubscribe/Unsubscribe";
+import MiniDrawer from "./components/Layout/MiniDrawer";
+import { useTheme } from "./context/ThemeContext";
 
 const UNPROTECTED_ROUTES = [
   "/login",
@@ -45,40 +41,6 @@ const UNPROTECTED_ROUTES = [
   "/activate-account",
   "/unsubscribe",
 ];
-
-function ResponsiveDashboardLayout({ 
-  router, 
-  children 
-}: { 
-  router: Router; 
-  children: React.ReactNode;
-}) {
-  const [key, setKey] = React.useState(0);
-  
-  React.useEffect(() => {
-    setKey(prev => prev + 1);
-  }, [router.pathname === "/inbox"]);
-  
-  return (
-    <DashboardLayout
-      key={key}
-      defaultSidebarCollapsed={router.pathname === "/inbox"}
-      sx={{
-        background: "var(--background-light)",
-      }}
-      slots={{
-        appTitle: CustomAppTitle,
-        toolbarActions: () => (
-          <>
-            <UserProfileMenu />
-          </>
-        ),
-      }}
-    >
-      {children}
-    </DashboardLayout>
-  );
-}
 
 function useDemoRouter(initialPath: string): Router {
   const navigate = useNavigate();
@@ -99,13 +61,13 @@ function useDemoRouter(initialPath: string): Router {
   };
 }
 
-export default function DashboardLayoutBasic() {
+const App=() => {
   const dispatch = useDispatch<AppDispatch>();
   const router = useDemoRouter("/");
   const navigate = useNavigate();
   const isNewCampaignPage = router.pathname === "/email-campaign/new-campaign";
-
   const { user } = useSelector((state: RootState) => state.user);
+  const { isDarkMode, toggleTheme } = useTheme();
 
   React.useEffect(() => {
     const hideChatWidget = () => {
@@ -150,8 +112,7 @@ export default function DashboardLayoutBasic() {
     router.pathname.startsWith("/unsubscribe")
   ) {
     return (
-      <AppProvider router={router} theme={theme}>
-        <PageContainer>
+      <div>
           {router.pathname === "/login" && <Login />}
           {router.pathname === "/signup" && <Register />}
           {router.pathname === "/forgot-password" && <ForgotPassword />}
@@ -161,8 +122,7 @@ export default function DashboardLayoutBasic() {
           {router.pathname === "/change-password" && <ChangePassword />}
           {router.pathname === "/activate-account" && <ActivateAccount />}
           {router.pathname.startsWith("/unsubscribe") && <Unsubscribe />}
-        </PageContainer>
-      </AppProvider>
+      </div>
     );
   }
 
@@ -171,26 +131,17 @@ export default function DashboardLayoutBasic() {
   }
 
   return (
-    <AppProvider navigation={NAVIGATION} router={router} theme={theme}>
-      <Toaster position="top-right" reverseOrder={false} />{" "}
+    <>
+      <Toaster position="top-right" reverseOrder={false} />
       {isNewCampaignPage ? (
         <NewCampaign router={router} />
       ) : (
-        <ResponsiveDashboardLayout router={router}>
-          <PageContainer
-            maxWidth={false}
-            title=""
-            sx={{
-              marginTop: "0 !important",
-              "& .MuiTypography-root": { display: "none" },
-              "& a": { display: "none" },
-            }}
+        <MiniDrawer 
+          onThemeToggle={toggleTheme}
+          isDarkMode={isDarkMode}
           >
             {router.pathname === "/" && <Home />}
             {router.pathname.startsWith("/email-campaign") && <EmailCampaign />}
-            {/* {router.pathname === "/email-campaign/folders" && (
-              <CampaignFolder />
-            )} */}
             {router.pathname === "/email-accounts" && <EmailAccount />}
             {router.pathname.startsWith(
               "/email-account/edit-email-account/"
@@ -204,9 +155,10 @@ export default function DashboardLayoutBasic() {
             {router.pathname === "/chats" && <Chats />}
             {router.pathname === "/all-leads" && <ContactTable />}
             {router.pathname === "/organization" && <Organization />}
-          </PageContainer>
-        </ResponsiveDashboardLayout>
+        </MiniDrawer>
       )}
-    </AppProvider>
+    </>
   );
 }
+
+export default App;

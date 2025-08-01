@@ -347,11 +347,11 @@ const EmailCampaign: React.FC = () => {
     }
   };
 
-  const handleMoveFolderOpen = (campaignId: string) => {
-    setSelectedCampaign(campaignId);
-    setMoveToFolderDialog(true);
-    setAnchorEl(null);
-  };
+  // const handleMoveFolderOpen = (campaignId: string) => {
+  //   setSelectedCampaign(campaignId);
+  //   setMoveToFolderDialog(true);
+  //   setAnchorEl(null);
+  // };
 
   const handleMoveFolderClose = () => {
     setMoveToFolderDialog(false);
@@ -477,8 +477,8 @@ const EmailCampaign: React.FC = () => {
                 },
               }}
             >
-              <SectionTitle label="All Campaign" value="all" />
-              <SectionTitle label="Folders" value="folders" />
+              <SectionTitle label="Campaigns" value="all" />
+              {/* <SectionTitle label="Folders" value="folders" /> */}
               {activeTab === "all" && (
                 <Box
                   sx={{
@@ -496,7 +496,7 @@ const EmailCampaign: React.FC = () => {
                     columns={columnOptions}
                     labelId="column-visibility-label"
                     label="Customize Columns"
-                    sx={{  width: 200 }}
+                    sx={{  width: 200, borderRadius: "4px" }}
                   />
                   <SearchBar>
                     <Search size={20} />
@@ -655,7 +655,7 @@ const EmailCampaign: React.FC = () => {
               handleResume={handleResume}
               handleEditCampaign={handleEditCampaign}
               handleOpenDeleteDialog={handleOpenDeleteDialog}
-              handleMoveFolderOpen={handleMoveFolderOpen}
+              // handleMoveFolderOpen={handleMoveFolderOpen}
               handleDetailCampaign={handleDetailCampaign}
               handleMenuOpen={handleMenuOpen}
               handleMenuClose={handleMenuClose}
@@ -714,7 +714,7 @@ const EmailCampaign: React.FC = () => {
                     setFolderId={setSelectedFolderId}
                     handleEditCampaign={handleEditCampaign}
                     handleOpenDeleteDialog={handleOpenDeleteDialog}
-                    handleMoveFolderOpen={handleMoveFolderOpen}
+                    // handleMoveFolderOpen={handleMoveFolderOpen}
                     handleDetailCampaign={handleDetailCampaign}
                     handleMenuOpen={handleMenuOpen}
                     handleMenuClose={handleMenuClose}

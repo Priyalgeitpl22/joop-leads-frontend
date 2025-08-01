@@ -81,12 +81,11 @@ export const EmailInboxMessagesContainer = styled(Box)`
   > div {
     flex: 1;
     overflow-y: auto;
-    padding-right: 10px; /* Ensures spacing from scrollbar */
-    scrollbar-width: thin;
+    scrollbar-width: 2px;
     scrollbar-color: #c1c1c1 transparent;
 
     &::-webkit-scrollbar {
-      width: 8px;
+      width: 2px;
     }
 
     &::-webkit-scrollbar-thumb {

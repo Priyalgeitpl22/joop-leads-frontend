@@ -221,7 +221,7 @@ const EmailInboxArea: React.FC = () => {
           <StyledDivider />
 
           {messagesToShow.length > 0 ? (
-            <div style={{ flex: 1, overflowY: "auto", paddingRight: "10px" }}>
+            <div style={{ flex: 1, overflowY: "auto"}}>
               {messagesToShow.map((message: any) => {
                 const isExpanded = expandedMessageId === message._id;
                 return (

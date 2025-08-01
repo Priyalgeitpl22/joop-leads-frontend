@@ -26,7 +26,7 @@ const PasswordResetConfirmation = () => {
             variant="h4"
             fontWeight="bold"
             mb={1}
-            color="var(--border-color)"
+            color="var(--text-black)"
           >
             Check Your Email
           </Typography>

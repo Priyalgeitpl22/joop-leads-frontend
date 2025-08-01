@@ -1,89 +1,104 @@
 #root {
   max-width: 100vw;
   height: 100vh;
-  background: var(--white-fade-gradient);
+  background: var(--background-color);
+  font-family: 'Inter', sans-serif;
 }
 
 body {
   margin: 0 !important;
+  font-family: 'Inter', sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-primary);
 }
 
 ::-webkit-scrollbar {
-  display: none;
+  width: 1px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
 }
 
 :root {
-  /* 🌟 Primary Theme Colors */
-  --theme-color: #26155b; /* Base Primary */
-  --theme-color-light: #eff0ff; /* Light Variant */
-  --theme-color-dark: #291D48; /* Darker Primary Variant */
+  /* 🌟 Black & White Theme Colors */
+  --theme-color: #000000; /* Black for primary elements */
+  --theme-color-light: #333333; /* Dark gray */
+  --theme-color-dark: #000000; /* Pure black */
 
   /* 🎨 Background & Grayscale */
-  --background-color: #eff0ff; /* Light Mode Background */
-  --background-light: #f1f3fd; /* Light Mode Background */
-  --background-dark: #130830; /* Dark Mode Background */
-  --background-darker: #030426; /* Even Darker Background */
-  --background-secondary: #d2d4f3;
-  --background-hover:  #f1f3f5;
+  --background-color: #ffffff; /* Pure white background */
+  --background-light: #ffffff; /* Pure white */
+  --background-dark: #000000; /* Pure black */
+  --background-darker: #1a1a1a; /* Very dark gray */
+  --background-secondary: #e0e0e0;
+  --background-hover: #f5f5f5;
   --background-head: #f8f9fc;
 
   /* 🌈 Accent & Highlights */
-  --accent-color: #9E8BD0; /* Accent Color */
-  --accent-light: #ECEDFE; /* Light Accent */
-  --hover-color: #4D3687; /* Hover Effect */
-  --active-color: #291D48; /* Active State */
-  --selected-color: #130830; /* Selected State */
-  --selected: #795dc0; /* Hover Effect */
+  --accent-color: #ff9800; /* Orange for badges and accents */
+  --accent-light: #ffb74d; /* Light orange */
+  --hover-color: #f5f5f5; /* Light gray hover */
+  --active-color: #000000; /* Black for active states */
+  --selected-color: #e8e8e8; /* Light gray for selected */
+  --selected: #000000; /* Black for selected items */
 
   /* 🔤 Text Colors */
-  --text-color: #212121de;
-  --text-primary: #341093; /* Primary Text */
-  --text-secondary: #291D48; /* Secondary Text */
-  --text-light: #747474; /* Lightest Text */
-  --text-white: #ffffff; /* Lightest Text */
-  --text-black: #000;
-  --text-muted: #9E8BD0; /* Muted Text */
-  --primary-color: #341093;
-  --secondary-color: #6c757d;
+  --text-color: #000000; /* Black text */
+  --text-primary: #000000; /* Primary text */
+  --text-secondary: #666666; /* Secondary text */
+  --text-light: #999999; /* Light text */
+  --text-white: #ffffff; /* White text */
+  --text-black: #000000; /* Black text */
+  --text-muted: #666666; /* Muted text */
+  --primary-color: #000000;
+  --secondary-color: #666666;
   --error-color: #dc3545;
-  --warning-color: #ffc107;
+  --warning-color: #ff9800;
   --success-color: #4CAF50;
-  --info-color: #a1a1a1;
+  --info-color: #000000;
   --text-disabled: #adb5bd;
-  --title-color: #7057c1;
-  --title-color-secondary: #8b7af2;
+  --title-color: #000000;
+  --title-color-secondary: #666666;
 
   /* 🖍️ Borders & Shadows */
-  --border-color: #4D3687; /* Border Default */
-  --border-dark: #291D48; /* Darker Border */
-  --border-light: "1px solid #6e58f1";
-  --border-grey: #e8e8e8;
-  --border-color-sec: #e9e1ff;
+  --border-color: #e0e0e0; /* Light gray borders */
+  --border-dark: #333333; /* Dark gray borders */
+  --border-light: "1px solid #e0e0e0";
+  --border-grey: #e0e0e0;
+  --border-color-sec: #e0e0e0;
 
-  --shadow-color: rgba(64, 45, 112, 0.2); /* Default Shadow */
-  --shadow-dark: rgba(19, 8, 48, 0.3); /* Darker Shadow */
+  --shadow-color: rgba(0, 0, 0, 0.1); /* Light shadow */
+  --shadow-dark: rgba(0, 0, 0, 0.2); /* Darker shadow */
   
-  --icon-color: #9c82df;
-  --icon-primary: #2E2445;
-  --icon-hover: #46386A;
-  --icon-selected: rgb(255, 0, 238);
-  --icon-focused: yellow;
-  --icon-light: #fff;
+  --icon-color: #666666;
+  --icon-primary: #000000;
+  --icon-hover: #000000;
+  --icon-selected: #000000;
+  --icon-focused: #000000;
+  --icon-light: #ffffff;
   
-  --disable-color: #6e6e6e;
+  --disable-color: #999999;
 
   /* Input */
   --input-bg: #ffffff;
-  --input-border: #ccc;
-  --input-border-hover: #666;
-  --input-border-focus: #28a745;
-  --input-text: #333;
-  --input-placeholder: #aaa;
+  --input-border: #e0e0e0;
+  --input-border-hover: #666666;
+  --input-border-focus: #000000;
+  --input-text: #000000;
+  --input-placeholder: #999999;
   --input-disabled-bg: #f5f5f5;
-  --input-disabled-text: #bbb;
+  --input-disabled-text: #999999;
 
   /* 🖋️ Global Font */
   --font-family: 'Inter', sans-serif;
+  --table-bg: #fff;
+  --table-text: #000;
 }
 
 * {
@@ -102,42 +117,34 @@ body {
   
   /* Prevent horizontal overflow */
   overflow-x: hidden;
-
-  /* Custom scrollbar styling (Optional) */
-  &::-webkit-scrollbar {
-    width: 6px; /* Make it thin instead of hiding */
-  }
-  &::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2); /* Light scrollbar */
-    border-radius: 10px;
-  }
 }
 
 /* 🌙 Dark Mode */
 .dark-mode {
   background: var(--background-dark);
-  color: var(--text-secondary);
+  color: var(--text-white);
 }
 
 /* 🎨 Headings */
 h1, h2, h3, h4, h5, h6 {
   color: var(--theme-color);
   font-weight: bold;
+  font-family: var(--font-family);
 }
 
 /* ✏️ Paragraphs & Text */
 span, div, a, textarea {
-  color: var(--background-darker);
-  font-family: inherit;
+  color: var(--text-primary);
+  font-family: var(--font-family);
 }
 
 .input {
-  color: var(--background-darker);
+  color: var(--text-primary);
 }
 
 p {
-  color: var(--selected-color);
-  font-family: inherit;
+  color: var(--text-primary);
+  font-family: var(--font-family);
 }
 
 /* 🔗 Links */
@@ -147,7 +154,7 @@ a {
 }
 
 a:hover {
-  color: var(--hover-color);
+  color: var(--icon-hover);
 }
 
 /* 🟦 Buttons */
@@ -163,13 +170,39 @@ a:hover {
 
 /* 🏞️ Cards */
 .card {
-  background: var(--background-color);
+  background: var(--background-light);
   box-shadow: 0px 4px 10px var(--shadow-color);
-  border: 1px solid var(--border-dark);
+  border: 1px solid var(--border-color);
   padding: 20px;
   border-radius: 10px;
 }
 
+/* Responsive Design */
+@media (max-width: 768px) {
+  .card {
+    padding: 15px;
+    margin: 10px;
+  }
+  
+  .button {
+    padding: 8px 20px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 10px;
+    margin: 5px;
+  }
+  
+  .button {
+    padding: 6px 15px;
+    font-size: 12px;
+  }
+}
+
+/* MUI Component Overrides */
 .MuiDrawer-root.MuiDrawer-anchorLeft.MuiDrawer-docked.css-16lpbd6-MuiDrawer-docked {
   width: 230px;
 }
@@ -198,4 +231,184 @@ input:-webkit-autofill {
 @keyframes rotate {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+/* Theme Transition */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Consistent Component Styling */
+.MuiAppBar-root {
+  height: 80px !important;
+}
+
+.MuiToolbar-root {
+  padding: 0 16px !important;
+}
+
+.MuiDrawer-paper {
+  border-radius: 0 !important;
+  margin: 0 !important;
+  height: 100% !important;
+  box-shadow: none !important;
+}
+
+.MuiListItemButton-root {
+  min-height: 48px !important;
+  border-radius: 8px !important;
+  margin: 4px 8px !important;
+}
+
+.MuiListItemIcon-root {
+  min-width: 24px !important;
+}
+
+.MuiIconButton-root {
+  padding: 8px !important;
+}
+
+/* Dark Mode Specific Styles - Only for Sidebar and Header */
+[data-mui-color-scheme="dark"] {
+  --text-color: #ffffff;
+  --text-primary: #ffffff;
+  --text-secondary: #e0e0e0;
+  --text-light: #cccccc;
+  --text-muted: #e0e0e0;
+  --title-color: #ffffff;
+  --title-color-secondary: #e0e0e0;
+  --icon-color: #ffffff;
+  --icon-primary: #ffffff;
+  --icon-hover: #ffffff;
+  --icon-selected: #ffffff;
+  --icon-focused: #ffffff;
+  --input-text: #000000; /* Input text is black on white body */
+  --input-placeholder: #999999;
+  --background-color: #ffffff; /* Body background */
+  --table-bg: #fff; /* Keep white in dark mode too */
+  --table-text: #000;
+  --input-bg: #222222;
+  --input-text: #fff;
+}
+
+/* Dark Mode - Only Sidebar and Header */
+[data-mui-color-scheme="dark"] body {
+  color: #ffffff; /* Text in sidebar/header */
+  background-color: #ffffff; /* Body background */
+}
+
+[data-mui-color-scheme="dark"] h1,
+[data-mui-color-scheme="dark"] h2,
+[data-mui-color-scheme="dark"] h3,
+[data-mui-color-scheme="dark"] h4,
+[data-mui-color-scheme="dark"] h5,
+[data-mui-color-scheme="dark"] h6 {
+  color: #000000; /* Main content headings stay black */
+}
+
+[data-mui-color-scheme="dark"] span,
+[data-mui-color-scheme="dark"] div,
+[data-mui-color-scheme="dark"] a,
+[data-mui-color-scheme="dark"] textarea,
+[data-mui-color-scheme="dark"] p {
+  color: #000000; /* Main content text stays black */
+}
+
+/* Dark Mode Header Background - Only Header */
+[data-mui-color-scheme="dark"] .MuiAppBar-root {
+  /* background-color: #1a1a1a !important; */
+}
+
+/* Dark Mode Icon Colors - Only Sidebar/Header */
+[data-mui-color-scheme="dark"] .MuiDrawer-paper .MuiListItemIcon-root {
+  color: #ffffff !important;
+}
+
+[data-mui-color-scheme="dark"] .MuiDrawer-paper .MuiIconButton-root {
+  color: #ffffff !important;
+}
+
+[data-mui-color-scheme="dark"] .MuiDrawer-paper .MuiSvgIcon-root {
+  color: #ffffff !important;
+}
+
+/* Dark Mode Body Background - Keep White */
+[data-mui-color-scheme="dark"] #root {
+  background-color: #ffffff !important;
+}
+
+[data-mui-color-scheme="dark"] .MuiBox-root {
+  background-color: #ffffff !important;
+}
+
+/* Main Content - Always Light Mode Colors */
+[data-mui-color-scheme="dark"] .MuiTypography-root {
+  color: #000000 !important;
+}
+
+[data-mui-color-scheme="dark"] .MuiBox-root .MuiTypography-root {
+  color: #000000 !important;
+}
+
+/* Tables - Always Light Mode */
+[data-mui-color-scheme="dark"] .MuiTableContainer-root,
+[data-mui-color-scheme="dark"] .MuiTable-root,
+[data-mui-color-scheme="dark"] .MuiTableHead-root,
+[data-mui-color-scheme="dark"] .MuiTableBody-root,
+[data-mui-color-scheme="dark"] .MuiTableCell-root,
+[data-mui-color-scheme="dark"] .MuiTableRow-root {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* Forms and Inputs - Always Light Mode */
+[data-mui-color-scheme="dark"] .MuiTextField-root,
+[data-mui-color-scheme="dark"] .MuiInputBase-root,
+[data-mui-color-scheme="dark"] .MuiOutlinedInput-root,
+[data-mui-color-scheme="dark"] .MuiSelect-root {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* Buttons in Main Content - Always Light Mode */
+[data-mui-color-scheme="dark"] .MuiButton-root:not(.MuiAppBar-root .MuiButton-root) {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+/* Dialogs and Popups - Always Light Mode */
+[data-mui-color-scheme="dark"] .MuiDialog-paper {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+[data-mui-color-scheme="dark"] .MuiDialogTitle-root {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+[data-mui-color-scheme="dark"] .MuiDialogContent-root {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* Menus and Dropdowns - Always Light Mode */
+[data-mui-color-scheme="dark"] .MuiMenu-paper,
+[data-mui-color-scheme="dark"] .MuiPopover-paper {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+[data-mui-color-scheme="dark"] .MuiMenuItem-root {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* Data Grid - Always Light Mode */
+[data-mui-color-scheme="dark"] .MuiDataGrid-root,
+[data-mui-color-scheme="dark"] .MuiDataGrid-columnHeaders,
+[data-mui-color-scheme="dark"] .MuiDataGrid-cell,
+[data-mui-color-scheme="dark"] .MuiDataGrid-row {
+  background-color: #ffffff !important;
+  color: #000000 !important;
 }

@@ -67,7 +67,7 @@ const ColumnVisibilitySelect: React.FC<ColumnVisibilitySelectProps> = ({
         }}
         renderValue={(selected) => selected.join(", ")}
       >
-        <Typography sx={{ px: 2, py: 0, fontWeight: "bold", color: "text.secondary" }}>
+        <Typography sx={{ px: 2, py: 0, fontWeight: "bold",  }}>
           {label}
         </Typography>
         <Divider />
@@ -84,7 +84,13 @@ const ColumnVisibilitySelect: React.FC<ColumnVisibilitySelectProps> = ({
             }}
           >
             <Checkbox checked={visibleColumns[column]} />
-            <ListItemText primary={column} />
+            <ListItemText primary={column} sx={{
+              '& .MuiListItemText-primary': {
+                  color: '#000000 !important', 
+                  fontSize: '14px',
+                  fontWeight: 500,
+                },
+            }}/>
           </MenuItem>
         ))}
       </Select>

@@ -19,7 +19,7 @@ export const Button = styled.button`
 
   &:hover {
     background: var(--hover-color);
-    color: var(--text-white);
+    color: var(--text-black);
   }
 
   &:hover .input {
@@ -51,7 +51,7 @@ export const SecondaryButton = styled.button`
 
   &:hover {
     background: var(--hover-color);
-    color: var(--text-white);
+    color: var(--text-black);
   }
 
   &:hover .input {
@@ -83,26 +83,26 @@ export const IconsButton = styled.button`
   box-shadow: var(--shadow-dark);
 
   &:hover svg {
-    color: var(--text-white);
-    fill: var(--text-white);
+    color: var(--theme-color);
+    fill: var(--theme-color);
   }
 
   &:hover {
     background: var(--hover-color);
-    color: var(--text-white);
+    color: var(--theme-color);
   }
 
   &:hover .input {
-    color: var(--text-white);
+    color: var(--theme-color);
   }
 
   &:active {
     background: var(--active-color);
-    color: var(--text-white);
+    color: var(--theme-color);
   }
 
   &:active .input {
-    color: var(--text-white);
+    color: var(--theme-color);
   }
 `;
 

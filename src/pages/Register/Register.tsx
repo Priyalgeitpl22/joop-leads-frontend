@@ -209,7 +209,7 @@ const Register = () => {
         </IllustrationSection>
 
         <FormSection>
-          <Typography variant="h4" fontWeight="bold" mb={1} color="var(--border-color)">
+          <Typography variant="h4" fontWeight="bold" mb={1} color="var(--text-black)">
             Create an Account
           </Typography>
           <Typography variant="body1" color="black" mb={2}>

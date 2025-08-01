@@ -120,7 +120,7 @@ const EmailCampaignDialog: React.FC<EmailCampaignDialogProps> = ({
             variant="contained"
             sx={{
               flex: 1,
-              background: "#f1f2fb",
+              background: "#f1f2fb !important",
               color: "black",
               display: "flex",
               flexDirection: "column",
@@ -149,7 +149,7 @@ const EmailCampaignDialog: React.FC<EmailCampaignDialogProps> = ({
             variant="contained"
             sx={{
               flex: 1,
-              background: "#f1f2fb",
+              background: "#f1f2fb !important",
               color: "black",
               display: "flex",
               flexDirection: "column",
@@ -177,7 +177,7 @@ const EmailCampaignDialog: React.FC<EmailCampaignDialogProps> = ({
             variant="contained"
             sx={{
               flex: 1,
-              background: "#f1f2fb",
+              background: "#f1f2fb !important",
               color: "black",
               display: "flex",
               flexDirection: "column",

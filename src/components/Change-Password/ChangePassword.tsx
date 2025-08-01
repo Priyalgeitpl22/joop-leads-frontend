@@ -134,7 +134,7 @@ const ChangePassword: React.FC = () => {
           />
         </IllustrationSection>
         <FormSection>
-          <Typography variant="h4" fontWeight="bold" mb={1} color="var(--border-color)">
+          <Typography variant="h4" fontWeight="bold" mb={1} color="var(--text-black)">
             Change Password
           </Typography>
           <Typography variant="body1" mb={3}>
