@@ -35,7 +35,7 @@ const CampaignFolder = ({
   selectedFolder,
   handleEditCampaign,
   handleOpenDeleteDialog,
-  handleMoveFolderOpen,
+  // handleMoveFolderOpen,
   handleDetailCampaign,
   handleMenuOpen,
   handleMenuClose,
@@ -53,7 +53,7 @@ const CampaignFolder = ({
   selectedFolder: string | null;
   handleEditCampaign: (campaignId: string) => void;
   handleOpenDeleteDialog: (campaignId: string) => void;
-  handleMoveFolderOpen: (campaignId: string) => void;
+  // handleMoveFolderOpen: (campaignId: string) => void;
   handleDetailCampaign: (campaignId: string) => void;
   handleMenuOpen: (
     event: React.MouseEvent<HTMLElement>,
@@ -206,7 +206,7 @@ const CampaignFolder = ({
           handleResume={handleResume}
           handleEditCampaign={handleEditCampaign}
           handleOpenDeleteDialog={handleOpenDeleteDialog}
-          handleMoveFolderOpen={handleMoveFolderOpen}
+          // handleMoveFolderOpen={handleMoveFolderOpen}
           handleDetailCampaign={handleDetailCampaign}
           handleMenuOpen={handleMenuOpen}
           handleMenuClose={handleMenuClose}

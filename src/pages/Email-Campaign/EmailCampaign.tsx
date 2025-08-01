@@ -347,11 +347,11 @@ const EmailCampaign: React.FC = () => {
     }
   };
 
-  const handleMoveFolderOpen = (campaignId: string) => {
-    setSelectedCampaign(campaignId);
-    setMoveToFolderDialog(true);
-    setAnchorEl(null);
-  };
+  // const handleMoveFolderOpen = (campaignId: string) => {
+  //   setSelectedCampaign(campaignId);
+  //   setMoveToFolderDialog(true);
+  //   setAnchorEl(null);
+  // };
 
   const handleMoveFolderClose = () => {
     setMoveToFolderDialog(false);
@@ -714,7 +714,7 @@ const EmailCampaign: React.FC = () => {
                     setFolderId={setSelectedFolderId}
                     handleEditCampaign={handleEditCampaign}
                     handleOpenDeleteDialog={handleOpenDeleteDialog}
-                    handleMoveFolderOpen={handleMoveFolderOpen}
+                    // handleMoveFolderOpen={handleMoveFolderOpen}
                     handleDetailCampaign={handleDetailCampaign}
                     handleMenuOpen={handleMenuOpen}
                     handleMenuClose={handleMenuClose}
