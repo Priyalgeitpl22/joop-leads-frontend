@@ -42,17 +42,19 @@ export const SetupButton = styled.button`
   padding: 12px 30px;
   border: none;
   border-radius: 6px;
-  color: var(--text-primary);
-  background-color: var(--theme-color-light);
+  color: var(--text-white);
+  background-color: var(--theme-color);
   cursor: pointer;
   font-size: 16px;  
   white-space: nowrap;
   box-shadow: var(--shadow-dark);
+  border:1px solid var(--text-black);
 
-  &:hover {
-    background: var(--hover-color);
-    color: var(--text-white);
+  &:hover{
+  color: var(--text-black);
+  background-color: var(--theme-light);
   }
+
 
   &:hover .input {
     color: var(--background-light);

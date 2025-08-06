@@ -72,10 +72,8 @@ export const PlaceholderContainer = styled(Box)({
 export const EmailInboxMessagesContainer = styled(Box)`
   flex: 1;
   display: flex;
-  flex-direction: column;
   height: 100%;
   position: relative; /* Ensure child elements are positioned relative to this */
-  padding: 9px 20px 0px 20px;
   overflow: hidden; /* Prevents scrollbars from affecting layout */
 
   > div {
@@ -132,6 +130,7 @@ export const EmailInboxMessagesBox = styled(Box)({
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
+  width:"100vw",
   height: "100vh",
 })
 
@@ -139,7 +138,7 @@ export const EmailInboxMessagesHeading = styled(Box)({
   border: "1px solid #ddd",
   borderRadius: "8px",
   padding: "10px",
-  marginBottom: "10px",
+  margin: "10px",
 });
 
 export const EmailPagination = styled(Pagination)({
@@ -201,6 +200,7 @@ export const NoMailboxMessage = styled(Box)({
 });
 
 export const EmailInboxListHeader = styled(Box)({
+  display: "flex",
   alignItems: "center",
   color: "var(--active-color)",
   textAlign: "center",

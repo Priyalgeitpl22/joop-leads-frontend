@@ -20,6 +20,7 @@ export const Button = styled.button`
   &:hover {
     background: var(--hover-color);
     color: var(--text-black);
+    border:1px solid var(--text-black);
   }
 
   &:hover .input {

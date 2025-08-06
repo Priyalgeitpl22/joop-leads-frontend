@@ -8,11 +8,11 @@ import {
   FooterContent,
   SubjectBox,
   SubjectText,
-  VariablesButton,
 } from "./emailTemplate.styled";
 import "./EmailEditor.css";
 import ReactQuill from "react-quill";
 import { Menu, MenuItem } from "@mui/material";
+import { Button } from "../../../../../styles/global.styled";
 export const modules = {
   toolbar: [
     [{ header: [1, 2, 3, false] }],
@@ -211,7 +211,7 @@ const EmailTemplate: React.FC<EmailTemplateProps> = ({
             display: "flex",
             alignItems: "center",
             gap: "8px",
-            width: "100%",
+            width: "90%",
           }}
         >
           <SubjectText
@@ -220,9 +220,9 @@ const EmailTemplate: React.FC<EmailTemplateProps> = ({
             value={subject}
             onChange={(e) => handleDataChange(e.target.value, emailBody)}
           />
-          <VariablesButton onClick={() => handleOpenMenu("subject")}>
+          <Button onClick={() => handleOpenMenu("subject")}>
             {"{ } Variables"}
-          </VariablesButton>
+          </Button>
         </div>
         <Menu
           anchorReference="anchorPosition"

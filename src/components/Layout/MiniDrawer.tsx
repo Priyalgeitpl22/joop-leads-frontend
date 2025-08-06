@@ -279,7 +279,7 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen,
           }),
-          marginTop: '80px', // Add margin to account for fixed header
+          marginTop: '65px', // Add margin to account for fixed header
         }}
       >
         <ResponsiveLayout>

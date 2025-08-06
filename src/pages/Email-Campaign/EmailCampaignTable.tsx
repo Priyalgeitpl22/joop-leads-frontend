@@ -170,7 +170,6 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
                   justifyContent: "flex-start",
                   gap: "12px",
                 }}
-                onClick={(event) => {event.stopPropagation(); handleDetailCampaign(campaign.id)}}
               >
                 <IconButton
                   sx={{
@@ -181,37 +180,44 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
                     height: 36,
                   }}
                 >
-                  {campaign.status === "RUNNING" && !loading && (
+                   {campaign.status === "RUNNING" && !loading && (
                     <Tooltip title="Pause">
                       <PauseIcon
                         style={{ fontSize: 20, color: "#acacac" }}
-                        onClick={() => handlePause(campaign.id)}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handlePause(campaign.id);
+                        }}
                       />
                     </Tooltip>
-                  )}
+                    )}
 
-                  {campaign.status === "PAUSED" && !loading && (
-                    <Tooltip title="Resume">
-                      <PlayArrowIcon
-                        style={{ fontSize: 20, color: "#acacac" }}
-                        onClick={() => handleResume(campaign.id)}
-                      />
-                    </Tooltip>
-                  )}
+                    {campaign.status === "PAUSED" && !loading && (
+                      <Tooltip title="Resume">
+                        <PlayArrowIcon
+                          style={{ fontSize: 20, color: "#acacac" }}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            handleResume(campaign.id);
+                          }}
+                        />
+                      </Tooltip>
+                    )}
 
-                  {campaign.status === "COMPLETED" && !loading && (
-                    <Tooltip title="completed">
-                      <DoneIcon style={{ fontSize: 20, color: "#acacac" }} />
-                    </Tooltip>
-                  )}
+                    {campaign.status === "COMPLETED" && !loading && (
+                      <Tooltip title="Completed">
+                        <DoneIcon style={{ fontSize: 20, color: "#acacac" }} />
+                      </Tooltip>
+                    )}
 
-                  {(campaign.status === "DRAFT" ||
-                    campaign.status === "SCHEDULED") &&
-                    !loading && (
+                    {(campaign.status === "DRAFT" || campaign.status === "SCHEDULED") && !loading && (
                       <Tooltip title="Edit">
                         <ModeEditOutlineOutlinedIcon
                           style={{ fontSize: 20, color: "#acacac" }}
-                          onClick={() => handleEditCampaign(campaign.id)}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            handleEditCampaign(campaign.id);
+                          }}
                         />
                       </Tooltip>
                     )}
@@ -230,7 +236,7 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
                   )}
                 </IconButton>
 
-                <div>
+                <div  onClick={(event) => {event.stopPropagation(); handleDetailCampaign(campaign.id)}}>
                   <h6>
                     {structureName(campaign?.campaignName)}
                     {campaign?.campaign_name}

@@ -1,29 +1,16 @@
 import { styled } from "@mui/material/styles";
-import { Box, List, ListItem } from "@mui/material";
-import { RefreshRounded } from "@mui/icons-material";
+import { Box, List, ListItem, Typography } from "@mui/material";
+import CachedIcon from '@mui/icons-material/Cached';
 
 export const EmailInboxListContainer = styled(Box)({
-  width: "28%",
-  minWidth: "250px",
-  borderRight: "1px solid #ddd",
-  padding: "0px 10px 10px 10px",
-  marginTop: "5px",
+  width: "100%",
   height: "100%",
-  overflowY: "auto",
   backgroundColor: "var(--text-white)",
+  borderRight: "1px solid #ddd",
+  padding: "0px 10px",
+  marginTop: "5px",
   transition: "width 0.3s ease-in-out",
-
-  "@media (max-width: 1024px)": {
-    width: "35%",
-  },
-  "@media (max-width: 768px)": {
-    width: "45%",
-  },
-  "@media (max-width: 600px)": {
-    width: "100%",
-    borderRight: "none",
-    height: "auto",
-  },
+  overflowY: "auto",
 });
 
 export const EmailInboxHeading = styled(Box)({
@@ -157,10 +144,15 @@ export const HeaderIcons = styled(Box)({
 });
 
 export const AccountList = styled(List)({
-  padding: 0,
   overflowY: "auto",
   maxHeight: "calc(100vh - 120px)",
   marginTop: "5px",
+  
+  // Popup mode adjustments
+  "&.popup-mode": {
+    maxHeight: "320px",
+    marginTop: "0px",
+  },
 });
 
 export const AccountItem = styled(ListItem)({
@@ -196,7 +188,7 @@ export const AccountAvatar = styled(Box)({
   width: "35px",
   height: "35px",
   borderRadius: "50%",
-  backgroundColor: "rgb(9 16 115)",
+  backgroundColor: "var(--theme-color)",
   color: "var(--icon-light)",
   display: "flex",
   justifyContent: "center",
@@ -260,11 +252,32 @@ export const NoAccount = styled(Box)`
   width: 100%;
 `;
 
-export const RefreshRoundedbutton = styled(RefreshRounded)`
-  cursor: pointer;
-  padding: 2px;
-  margin-left: 2px;
-  height: 2rem;
-  width: 2rem;
-  color: rgb(9 16 115);
+
+export const ReloadIcon = styled(CachedIcon, {
+  shouldForwardProp: (prop) => prop !== "loading",
+})<{ loading?: boolean }>(({ loading }) => ({
+  cursor: "pointer",
+  transition: "transform 0.3s ease-in-out",
+  ...(loading && {
+    animation: "spin 1s linear infinite",
+    cursor: "not-allowed",
+  }),
+  "@keyframes spin": {
+    "0%": { transform: "rotate(360deg)" },
+    "100%": { transform: "rotate(0deg)" },
+  },
+}));
+
+// New styled components for account selector
+export const AccountSelectorDivider = styled(Box)`
+  padding: 8px 16px;
+  margin-top: 8px;
+`;
+
+export const AccountSelectorText = styled(Typography)`
+  color: #666;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 `;

@@ -64,16 +64,16 @@ export const AddVarientButton = styled(Button)({
 });
 
 export const AddStepButton = styled.button`
-  background: none;
-  border: 0;
-  color: var(--border-color);
+  padding:10px 16px;
+  color: var(--text-white);
   cursor: pointer;
+  border-radius: 6px;
+  border:1px solid var(--text-black);
+  background: var(--text-black);
 
   &:hover {
-    background: var(--accent-color);
-    border-radius: 3px;
-    padding: 4px;
-    transition: none !important;
+    background: var(--theme-white);
+    color:var(--text-black)
   }
 `;
 
@@ -91,7 +91,7 @@ export const VariantWrapper = styled(Box)(`
 `)
 
 export const StyledEmailIcon = styled(EmailIcon)(`
-  color: var(--hover-color) !important;
+  color: var(--text-black) !important;
   width: 40px;
   height: 40px;
   transition: color 0.3s ease, background-color 0.3s ease;
@@ -106,7 +106,7 @@ export const StyledEmailIcon = styled(EmailIcon)(`
 `);
 
 export const StyledAssignmentIcon = styled(AssessmentOutlined)(`
-  color: var(--hover-color) !important;
+  color: var(--text-black) !important;
   width: 40px;
   height: 40px;
   transition: color 0.3s ease, background-color 0.3s ease;
@@ -121,7 +121,7 @@ export const StyledAssignmentIcon = styled(AssessmentOutlined)(`
 `);
 
 export const StyledWaitIcon = styled(HourglassBottomOutlined)(`
-  color: var(--hover-color) !important;
+  color: var(--text-black) !important;
   width: 30px;
   height: 30px;
   transition: color 0.3s ease, background-color 0.3s ease;
@@ -135,7 +135,7 @@ export const StyledWaitIcon = styled(HourglassBottomOutlined)(`
 `);
 
 export const StyledMailIcon = styled(MailOutline)(`
-  color: var(--hover-color) !important;
+  color: var(--text-black) !important;
   width: 30px;
   height: 30px;
   transition: color 0.3s ease, background-color 0.3s ease;
@@ -149,7 +149,7 @@ export const StyledMailIcon = styled(MailOutline)(`
 `);
 
 export const StyledAddIcon = styled(AddIcon)(`
-  color: var(--hover-color) !important;
+  color: var(--text-black) !important;
   width: 30px;
   height: 30px;
   transition: color 0.3s ease, background-color 0.3s ease;

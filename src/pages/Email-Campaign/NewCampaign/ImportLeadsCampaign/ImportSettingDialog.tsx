@@ -4,7 +4,6 @@ import {
   DialogContent,
   DialogTitle,
   Box,
-  Button,
   IconButton,
   Switch,
   Typography,
@@ -14,6 +13,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { csvSettingsType } from "../../Interfaces";
+import {Button} from '../../../../styles/global.styled'
 
 interface ImportSettingDialogProps {
   open: boolean;
@@ -128,18 +128,7 @@ const ImportSettingDialog: React.FC<ImportSettingDialogProps> = ({
         ))}
 
         <Box display="flex" justifyContent="flex-end" mt={3}>
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: "var(--theme-color)",
-              color: "white",
-              textTransform: "none",
-              padding: "8px 24px",
-              borderRadius: "6px",
-              "&:hover": { backgroundColor: "var(--hover-color)" },
-            }}
-            onClick={handleSave}
-          >
+          <Button onClick={handleSave}>
             Proceed
           </Button>
         </Box>

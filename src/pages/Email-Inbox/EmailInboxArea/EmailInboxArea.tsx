@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import {memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../redux/store/store";
 import {
@@ -8,174 +8,212 @@ import {
   EmailPagination,
   TotalPageCount,
   NoMailboxMessage,
-  InboxMessageBody,
   EmailInboxListHeader,
   StyledDivider,
   SearchBar,
 } from "./EmailInboxArea.styled";
-import { Avatar, CircularProgress } from "@mui/material";
-import { Reply, ReplyAll, Trash2 } from "lucide-react";
 import {
-  getAllAccountMailBox,
+  Avatar,
+  Button,
+  Checkbox,
+  Chip,
+  CircularProgress,
+  debounce,
+  Menu,
+  MenuItem,
+  Tooltip,
+} from "@mui/material";
+import { Search } from "@mui/icons-material";
+import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
+import {
+  getAllEmailThreads,
   searchEmails,
   setCurrentPage,
+  setAppliedFilters,
+  clearFilters,
 } from "../../../redux/slice/emailInboxSlice";
-import { Search } from "lucide-react";
-import EmailInboxAreaDialog from "./EmailInboxAreaDialog";
 
-const extractPreviewText = (htmlContent: string): string => {
-  if (!htmlContent) return "";
-  
-  try {
-    let cleanedHtml = htmlContent
-      .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
-      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
-      .replace(/<[^>]*>/g, "");
-    
-    cleanedHtml = cleanedHtml
-      .replace(/&nbsp;/g, " ")
-      .replace(/&amp;/g, "&")
-      .replace(/&lt;/g, "<")
-      .replace(/&gt;/g, ">")
-      .replace(/&quot;/g, '"')
-      .replace(/&#39;/g, "'");
-    
-    cleanedHtml = cleanedHtml.replace(/&#(\d+);/g, (_match, dec) => {
-      if (dec >= 32 && dec <= 126) {
-        return String.fromCharCode(dec);
-      }
-      return "";
-    });
+const filterConfig = [
+  { key: "allReplies", label: "All Replies" },
+  { key: "repliedToCampaigns", label: "Replied to Campaigns" },
+  { key: "unreadOnly", label: "Unread Only" },
+  { key: "repliedWithin7Days", label: "Replied within 7 days" },
+  { key: "byUser", label: "By User" },
+] as const;
 
-    cleanedHtml = cleanedHtml
-      .replace(/&[a-zA-Z0-9]+;/g, "") 
-      .replace(/[\u200B-\u200F\u2028-\u202F\u205F-\u206F\u3000\uFEFF]/g, "") 
-      .replace(/\s+/g, " ") 
-      .trim();
-    
-    if (cleanedHtml.includes("{") && cleanedHtml.includes("}") && 
-        (cleanedHtml.includes(":") || cleanedHtml.includes(";") || cleanedHtml.includes("!important"))) {
-      const textParts = htmlContent.match(/>([^<]{5,})</g);
-      if (textParts && textParts.length > 0) {
-        cleanedHtml = textParts
-          .map(part => part.slice(1, -1).trim())
-          .join(" ")
-          .replace(/[\u200B-\u200F\u2028-\u202F\u205F-\u206F\u3000\uFEFF]/g, "") 
-          .replace(/\s+/g, " ")
-          .trim();
-      }
-    }
-    
-    const words = cleanedHtml.split(/\s+/).filter(word => {
-      return !(
-        /^\d+$/.test(word) || 
-        /^\d+px$/.test(word) || 
-        /^#[0-9a-f]{3,6}$/i.test(word) || 
-        /^rgba?\(.*\)$/.test(word) 
-      );
-    });
-    
-    return words.slice(0, 30).join(" ") + "...";
-  } catch (e) {
-    console.error("Error extracting preview text:", e);
-    return "Unable to generate preview...";
-  }
-};
+type FilterKey = typeof filterConfig[number]["key"];
+type FilterOptions = Record<FilterKey, boolean>;
 
-const EmailInboxArea: React.FC = () => {
+interface Message {
+  _id: string;
+  subject: string;
+  from: { name: string; address: string }[];
+  to: { name: string; address: string }[];
+  date: string;
+  body: string;
+  threadId: string;
+}
+
+interface EmailInboxAreaProps {
+  onMessageSelect?: (message: string) => void;
+  selectedMessage?: string | null;
+}
+
+const EmailInboxAreaComponent: React.FC<EmailInboxAreaProps> = ({ onMessageSelect, selectedMessage }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [searchTerm, setSearchTerm] = useState("");
-  const [expandedMessageId, setExpandedMessageId] = useState<string | null>(
-    null
-  );
-  const [openDialog, setOpenDialog] = useState(false);
-  const [selectedMessage, setSelectedMessage] = useState<any>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [filterOptions, setFilterOptions] = useState<FilterOptions>({
+    allReplies: false,
+    repliedToCampaigns: false,
+    unreadOnly: false,
+    repliedWithin7Days: false,
+    byUser: false,
+  });
+  const appliedFilters = useSelector((state: RootState) => state.emailInbox.appliedFilters);
 
-  const selectedMailboxId = useSelector(
-    (state: RootState) => state.emailInbox.selectedMailboxId
-  );
-  const selectedAccountId = useSelector(
-    (state: RootState) => state.emailInbox.selectedAccountId
-  );
-  const totalMessages = useSelector(
-    (state: RootState) => state.emailInbox.totalMessages
-  );
-  const mailboxMessages = useSelector(
-    (state: RootState) => state.emailInbox.mailboxMessages
-  );
-  const currentPage = useSelector(
-    (state: RootState) => state.emailInbox.currentPage
-  );
+  const selectedMailboxId = useSelector((state: RootState) => state.emailInbox.selectedMailboxId);
+  const selectedAccountId = useSelector((state: RootState) => state.emailInbox.selectedAccountId);
+  const totalMessages = useSelector((state: RootState) => state.emailInbox.totalMessages);
+  const mailboxMessages = useSelector((state: RootState) => state.emailInbox.mailboxMessages);
+  const currentPage = useSelector((state: RootState) => state.emailInbox.currentPage);
   const loading = useSelector((state: RootState) => state.emailInbox.loading);
-  const searchLoading = useSelector(
-    (state: RootState) => state.emailInbox.searchLoading
-  );
-  const searchResults = useSelector(
-    (state: RootState) => state.emailInbox.searchResults
-  );
+  const searchLoading = useSelector((state: RootState) => state.emailInbox.searchLoading);
+  const searchResults = useSelector((state: RootState) => state.emailInbox.searchResults);
 
   const messagesPerPage = 10;
   const totalPages = Math.ceil(totalMessages / messagesPerPage);
 
-  // const toggleMessageBody = (messageId: string) => {
-  //   setExpandedMessageId(expandedMessageId === messageId ? null : messageId);
-  // };
+  // Sync filterOptions with appliedFilters when popup opens or appliedFilters changes
+  useEffect(() => {
+    if (anchorEl) {
+      const newFilterOptions = { ...filterOptions };
+      filterConfig.forEach((config) => {
+        newFilterOptions[config.key] = appliedFilters.includes(config.key);
+      });
+      setFilterOptions(newFilterOptions);
+    }
+  }, [appliedFilters, anchorEl]);
 
-  console.log("setExpandedMessageId", setExpandedMessageId);
-  const handlePageChange = (
-    _event: React.ChangeEvent<unknown>,
-    page: number
-  ) => {
+  const handlePageChange = (_event: React.ChangeEvent<unknown>, page: number) => {
     dispatch(setCurrentPage(page));
     if (selectedAccountId && selectedMailboxId) {
       dispatch(
-        getAllAccountMailBox({
+        getAllEmailThreads({
           accountId: selectedAccountId,
-          mailBoxId: selectedMailboxId,
           page,
           limit: messagesPerPage,
+          filters: appliedFilters,
         })
       );
     }
   };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearch = useCallback(
+    debounce((value: string) => {
+      if (value.trim() && selectedAccountId && selectedMailboxId) {
+        dispatch(
+          searchEmails({
+            accountId: selectedAccountId,
+            mailboxId: selectedMailboxId,
+            search: value.trim(),
+            page: 1,
+            limit: messagesPerPage,
+          })
+        );
+      }
+    }, 500),
+    [dispatch, selectedAccountId, selectedMailboxId, messagesPerPage]
+  );
+
+  const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchTerm(value);
-
-    if (value.trim() && selectedAccountId && selectedMailboxId) {
-      dispatch(
-        searchEmails({
-          accountId: selectedAccountId,
-          mailboxId: selectedMailboxId,
-          search: value.trim(),
-          page: 1,
-          limit: messagesPerPage,
-        })
-      );
-    } else if (selectedAccountId && selectedMailboxId) {
-      dispatch(
-        getAllAccountMailBox({
-          accountId: selectedAccountId,
-          mailBoxId: selectedMailboxId,
-          page: currentPage,
-          limit: messagesPerPage,
-        })
-      );
-    }
+    handleSearch(value);
   };
 
   const showSearchResults = searchTerm.trim().length > 0;
   const isSearchDone = showSearchResults && !searchLoading;
 
-  const messagesToShow = isSearchDone
-    ? searchResults
-    :  mailboxMessages
-      ;
+  const messagesToShow = useMemo(() => {
+    return isSearchDone ? searchResults : mailboxMessages;
+  }, [isSearchDone, searchResults, mailboxMessages]);
+  
 
-  const handleMessageClick = (message: any) => {
-    setSelectedMessage(message);
-    setOpenDialog(true);
+  const handleFilterClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleFilterClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleFilterChange = (filter: FilterKey) => {
+    setFilterOptions((prev) => ({
+      ...prev,
+      [filter]: !prev[filter],
+    }));
+  };
+
+  const handleApplyFilters = () => {
+    const selectedFilters = Object.entries(filterOptions)
+      .filter(([_, value]) => value)
+      .map(([key]) => key as FilterKey);
+
+    dispatch(setAppliedFilters(selectedFilters));
+
+    if (selectedAccountId && selectedMailboxId) {
+      dispatch(
+        getAllEmailThreads({
+          accountId: selectedAccountId,
+          page: currentPage,
+          limit: messagesPerPage,
+          filters: selectedFilters,
+        })
+      );
+    }
+
+    handleFilterClose();
+  };
+
+  const handleCancelFilters = () => {
+    setFilterOptions({
+      allReplies: false,
+      repliedToCampaigns: false,
+      unreadOnly: false,
+      repliedWithin7Days: false,
+      byUser: false,
+    });
+    dispatch(clearFilters());
+
+    if (selectedAccountId && selectedMailboxId) {
+      dispatch(
+        getAllEmailThreads({
+          accountId: selectedAccountId,
+          page: currentPage,
+          limit: messagesPerPage,
+          filters: [],
+        })
+      );
+    }
+
+    handleFilterClose();
+  };
+
+  const handleRemoveFilter = (filterToRemove: string) => {
+    const updatedFilters = appliedFilters.filter((filter) => filter !== filterToRemove);
+    dispatch(setAppliedFilters(updatedFilters));
+
+    if (selectedAccountId && selectedMailboxId) {
+      dispatch(
+        getAllEmailThreads({
+          accountId: selectedAccountId,
+          page: currentPage,
+          limit: messagesPerPage,
+          filters: updatedFilters,
+        })
+      );
+    }
   };
 
   return (
@@ -189,125 +227,138 @@ const EmailInboxArea: React.FC = () => {
           <img
             src="https://cdn-icons-png.flaticon.com/512/2748/2748558.png"
             alt="No Messages"
-            style={{
-              width: "80px",
-              height: "80px",
-              marginBottom: "10px",
-              opacity: 0.6,
-            }}
+            style={{ width: "80px", height: "80px", marginBottom: "10px", opacity: 0.6 }}
           />
           No mail found.
         </NoMailboxMessage>
       ) : (
-        <div
-          style={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            overflow: "hidden",
-          }}
-        >
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
           <EmailInboxListHeader>
             <SearchBar>
               <Search />
-              <input
-                placeholder="Search Email"
-                value={searchTerm}
-                onChange={handleSearch}
-              />
+              <input placeholder="Search Email" value={searchTerm} onChange={onSearchChange} />
             </SearchBar>
+            <Tooltip title="Filter Emails">
+              <Button
+                onClick={handleFilterClick}
+                sx={{ marginLeft: "10px", color: "#000", border: "1px solid #000" }}
+              >
+                <FilterAltOutlinedIcon />
+              </Button>
+            </Tooltip>
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleFilterClose}
+              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+              transformOrigin={{ vertical: "top", horizontal: "right" }}
+            >
+              {filterConfig.map(({ key, label }) => (
+                <MenuItem key={key}>
+                  <Checkbox
+                    checked={filterOptions[key]}
+                    onChange={() => handleFilterChange(key)}
+                  />
+                  {label}
+                </MenuItem>
+              ))}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-evenly",
+                  padding: "10px",
+                }}
+              >
+                <Button
+                  onClick={handleCancelFilters}
+                  sx={{
+                    marginRight: "10px",
+                    color: "#000 !important",
+                    backgroundColor: "#fff !important",
+                    outline: "1px solid #000",
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button variant="contained" onClick={handleApplyFilters}>
+                  Apply
+                </Button>
+              </div>
+            </Menu>
           </EmailInboxListHeader>
+
+          {appliedFilters.length > 0 && (
+            <div
+              style={{
+                display: "flex",
+                gap: "10px",
+                margin: "10px 0",
+                overflowX: "auto",
+                width: "100%",
+                scrollbarWidth: "none",
+                msOverflowStyle: "none",
+              }}
+            >
+              {appliedFilters.map((filter) => (
+                <Chip
+                  key={filter}
+                  label={filter}
+                  onDelete={() => handleRemoveFilter(filter)}
+                  color="primary"
+                  variant="outlined"
+                />
+              ))}
+            </div>
+          )}
 
           <StyledDivider />
 
           {messagesToShow.length > 0 ? (
-            <div style={{ flex: 1, overflowY: "auto"}}>
-              {messagesToShow.map((message: any) => {
-                const isExpanded = expandedMessageId === message._id;
-                return (
-                  <EmailInboxMessagesHeading
-                    key={message._id}
-                    onClick={() => handleMessageClick(message)}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        marginBottom: "12px",
-                      }}
-                    >
-                      <h4>{message.subject || "No Subject"}</h4>
-                      <div style={{ display: "flex", gap: "15px" }}>
-                        <Reply />
-                        <ReplyAll />
-                        <Trash2 />
-                      </div>
-                    </div>
-
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        marginBottom: "10px",
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "10px",
-                        }}
-                      >
-                        <Avatar src="https://ssl.gstatic.com/ui/v1/icons/mail/profile_placeholder.png" />
-                        <div>
-                          <strong>{message.from?.[0]?.name}</strong>
-                          <div style={{ fontSize: "15px", color: "#555" }}>
-                            {message.from?.[0]?.address || "No Email"}
-                          </div>
+            <div style={{ flex: 1, overflowY: "auto" }}>
+              {messagesToShow.map((message: Message) => (
+                <EmailInboxMessagesHeading
+                  key={message._id}
+                  onClick={() => onMessageSelect && onMessageSelect(message?.threadId)}
+                  sx={{
+                    backgroundColor: message?.threadId === selectedMessage ? "#e0e0e0" : "inherit",
+                    border: message?.threadId === selectedMessage ? "1px solid #333333" : "none",
+                    transition: "background-color 0.2s, border 0.2s",
+                    "&:hover": {
+                      backgroundColor:
+                        message?.threadId === selectedMessage ? "#cccccc" : "#f5f5f5",
+                    },
+                    boxShadow: "0 0 10px 0 rgba(0, 0, 0, 0.1)",
+                  }}
+                >
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "12px" }}>
+                    <h4>{message.subject || "No Subject"}</h4>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <Avatar src="https://ssl.gstatic.com/ui/v1/icons/mail/profile_placeholder.png" />
+                      <div>
+                        <strong>{message.from?.[0]?.name}</strong>
+                        <div style={{ fontSize: "15px", color: "#555" }}>
+                          {message.from?.[0]?.address || "No Email"}
                         </div>
                       </div>
-                      <div
-                        style={{
-                          fontSize: "15px",
-                          color: "#777",
-                          marginTop: "5px",
-                        }}
-                      >
-                        Date: {new Date(message.date).toLocaleString()}
-                      </div>
                     </div>
-                    <div
-                      style={{
-                        fontSize: "15px",
-                        color: "#777",
-                        marginBottom: "20px",
-                      }}
-                    >
-                      To: <strong>{message.to?.[0]?.name}</strong> (
-                      {message.to?.[0]?.address || "No Email"})
+                    <div style={{ fontSize: "15px", color: "#777", marginTop: "5px" }}>
+                      Date: {new Date(message.date).toLocaleString()}
                     </div>
-                    <InboxMessageBody isExpanded={isExpanded}>
-                      {isExpanded ? (
-                        <div dangerouslySetInnerHTML={{ __html: message.body }} />
-                      ) : (
-                        extractPreviewText(message.body)
-                      )}
-                    </InboxMessageBody>
-                  </EmailInboxMessagesHeading>
-                );
-              })}
+                  </div>
+                  <div style={{ fontSize: "15px", color: "#777" }}>
+                    To: <strong>{message.to?.[0]?.name}</strong> ({message.to?.[0]?.address || "No Email"})
+                  </div>
+                </EmailInboxMessagesHeading>
+              ))}
             </div>
           ) : (
             <NoMailboxMessage>
               <img
                 src="https://cdn-icons-png.flaticon.com/512/2748/2748558.png"
                 alt="No Messages"
-                style={{
-                  width: "80px",
-                  height: "80px",
-                  marginBottom: "10px",
-                  opacity: 0.6,
-                }}
+                style={{ width: "80px", height: "80px", marginBottom: "10px", opacity: 0.6 }}
               />
               No mail found.
             </NoMailboxMessage>
@@ -316,30 +367,22 @@ const EmailInboxArea: React.FC = () => {
           <TotalPageCount>
             <div>
               Total Messages:{" "}
-              {searchTerm.trim().length > 0
-                ? searchResults.length
-                : totalMessages}
+              {searchTerm.trim().length > 0 ? searchResults.length : totalMessages}
             </div>
-            {searchTerm.trim().length === 0 &&
-              totalMessages > messagesPerPage && (
-                <EmailPagination
-                  count={totalPages}
-                  page={currentPage}
-                  onChange={handlePageChange}
-                />
-              )}
+            {searchTerm.trim().length === 0 && totalMessages > messagesPerPage && (
+              <EmailPagination
+                count={totalPages}
+                page={currentPage}
+                onChange={handlePageChange}
+              />
+            )}
           </TotalPageCount>
         </div>
-      )}
-      {selectedMessage && (
-        <EmailInboxAreaDialog
-          open={openDialog}
-          onClose={() => setOpenDialog(false)}
-          message={selectedMessage}
-        />
       )}
     </EmailInboxMessagesContainer>
   );
 };
+
+const EmailInboxArea = memo(EmailInboxAreaComponent);
 
 export default EmailInboxArea;
