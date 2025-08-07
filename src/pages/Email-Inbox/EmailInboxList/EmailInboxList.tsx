@@ -6,8 +6,7 @@ import {
   setSelectedAccount,
   resetMailboxes,
   setSelectedMailbox,
-  getAllAccountMailBox,
-  reloadAccountMailboxes,
+  getAllEmailThreads,
 } from "../../../redux/slice/emailInboxSlice";
 import { Search } from "lucide-react";
 import {
@@ -19,31 +18,29 @@ import {
   EmailInboxHeading,
   SearchBar,
   NoAccount,
-  RefreshRoundedbutton,
+  AccountSelectorDivider,
+  AccountSelectorText,
 } from "./EmailInboxList.styled";
-import { fetchEmailAccount } from "../../../redux/slice/emailAccountSlice";
-import { EmailAccount } from "../../Email-Campaign/NewCampaign/SetupCampaign/Interface";
+import { EmailAccount } from "../../../redux/slice/emailAccountSlice";
 
-const EmailInboxList: React.FC = () => {
+interface EmailInboxListProps {
+  onAccountSelect?: () => void;
+  accounts: EmailAccount[];
+}
+
+const EmailInboxList: React.FC<EmailInboxListProps> = ({ onAccountSelect, accounts }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const accounts = useSelector((state: RootState) => state.emailInbox.accounts);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [rows, setRows] = useState<any[]>([]);
-  const [emailAccounts, setEmailAccounts] = useState<EmailAccount[]>([])
-  const { user } = useSelector((state: RootState) => state.user);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [rows, setRows] = useState<any[]>(accounts);
 
   const selectedAccountId = useSelector(
     (state: RootState) => state.emailInbox.selectedAccountId
   );
 
+  // Update rows when accounts prop changes
   useEffect(() => {
-    if (accounts.length > 0 && !selectedAccountId) {
-      const firstAccountId = accounts[0]._id;
-      dispatch(setSelectedAccount(firstAccountId));
-      dispatch(getAllMailBox(firstAccountId));
-    }
-  }, [accounts, selectedAccountId, dispatch]);
+    setRows(accounts);
+  }, [accounts]);
 
   const handleAccountClick = async (accountId: string) => {
     dispatch(resetMailboxes());
@@ -53,36 +50,16 @@ const EmailInboxList: React.FC = () => {
       const firstMailbox = response[0];
       dispatch(setSelectedMailbox(firstMailbox._id));
       dispatch(
-        getAllAccountMailBox({
+        getAllEmailThreads({
           accountId,
-          mailBoxId: firstMailbox._id,
+          // mailBoxId: firstMailbox._id,
           page: 1,
           limit: 10,
         })
       );
     }
-  };
-
-  useEffect(() => {
-    const getEmailAccounts = async () => {
-      await getAllEmailAccounts();
-    };
-    console.log(loading);
-    getEmailAccounts();
-  }, []);
-
-  const getAllEmailAccounts = async () => {
-    try {
-      setLoading(true);
-      const data = await dispatch(
-        fetchEmailAccount({ orgId: user?.orgId || "" })
-      ).unwrap();
-      setEmailAccounts(data);
-      setRows(data);
-    } catch (error) {
-      console.error("Failed to fetch Account:", error);
-    } finally {
-      setLoading(false);
+    if (onAccountSelect) {
+      onAccountSelect();
     }
   };
 
@@ -90,11 +67,11 @@ const EmailInboxList: React.FC = () => {
     const trimmedQuery = query.trim().toLowerCase();
 
     if (trimmedQuery === "") {
-      setRows(emailAccounts);
+      setRows(accounts);
       return;
     }
 
-    const filteredData = emailAccounts.filter(
+    const filteredData = accounts.filter(
       (account) =>
         account.name.toLowerCase().includes(trimmedQuery) ||
         account.email.toLowerCase().includes(trimmedQuery)
@@ -109,36 +86,15 @@ const EmailInboxList: React.FC = () => {
     handleSearch(query);
   };
 
-  const handleReload = async () => {
-    if (!emailAccounts || emailAccounts.length === 0 || !selectedAccountId)
-      return;
 
-    try {
-      setLoading(true);
-      const res = await dispatch(
-        reloadAccountMailboxes({ accountId: selectedAccountId })
-      ).unwrap();
-      console.log(res, "res");
-      // if (res) {
-      //   const fetchMessages = await dispatch(
-      //     reloadAccountMessages({ accountId: selectedAccountId })
-      //   );
-      //   console.log(fetchMessages);
-      // }
-    } catch (error) {
-      console.error("❌ Error while reloading account mailboxes:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-  
+
+  // Separate selected account and other accounts
+  const selectedAccount = rows.find(account => account._id === selectedAccountId);
+  const otherAccounts = rows.filter(account => account._id !== selectedAccountId);
   
   return (
     <EmailInboxListContainer>
       <EmailInboxHeading>
-        {/* <EmailInboxListHeader>
-          <HeaderTitle>Accounts</HeaderTitle>
-        </EmailInboxListHeader> */}
         <SearchBar>
           <Search />
           <input
@@ -147,29 +103,53 @@ const EmailInboxList: React.FC = () => {
             onChange={handleSearchChange}
           />
         </SearchBar>
-        <RefreshRoundedbutton onClick={handleReload} />
       </EmailInboxHeading>
 
-        <AccountList>
-          {rows.length > 0 ? (
-            rows.map((account) => (
+      <AccountList className="popup-mode">
+        {rows.length > 0 ? (
+          <>
+            {selectedAccount && (
               <AccountItem
-                key={account._id}
-                onClick={() => handleAccountClick(account._id)}
-                data-selected={selectedAccountId === account._id}
+                key={selectedAccount._id}
+                onClick={() => handleAccountClick(selectedAccount._id)}
+                data-selected={true}
               >
-                <AccountAvatar>{account.name[0]?.toUpperCase()}</AccountAvatar>
+                <AccountAvatar>{selectedAccount.name[0]?.toUpperCase()}</AccountAvatar>
                 <AccountDetails>
-                  <strong>{account.name}</strong>
-                  <div>{account.email}</div>
+                  <strong>{selectedAccount.name}</strong>
+                  <div>{selectedAccount.email}</div>
                 </AccountDetails>
               </AccountItem>
-            ))
-          ) : (
-            <NoAccount>No accounts found</NoAccount>
-          )}
-        </AccountList>
-    
+            )}
+
+            {otherAccounts.length > 0 && (
+              <>
+                <AccountSelectorDivider>
+                  <AccountSelectorText variant="body2">
+                    Select another account
+                  </AccountSelectorText>
+                </AccountSelectorDivider>
+                
+                {otherAccounts.map((account) => (
+                  <AccountItem
+                    key={account._id}
+                    onClick={() => handleAccountClick(account._id)}
+                    data-selected={false}
+                  >
+                    <AccountAvatar>{account.name[0]?.toUpperCase()}</AccountAvatar>
+                    <AccountDetails>
+                      <strong>{account.name}</strong>
+                      <div>{account.email}</div>
+                    </AccountDetails>
+                  </AccountItem>
+                ))}
+              </>
+            )}
+          </>
+        ) : (
+          <NoAccount>No accounts found</NoAccount>
+        )}
+      </AccountList>
     </EmailInboxListContainer>
   );
 };

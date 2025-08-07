@@ -8,6 +8,13 @@ export interface Account {
   name: string;
   email: string;
 }
+export interface ReplyPayload {
+  from: { name: string; address: string };
+  to: { name: string; address: string };
+  emailTemplate: { subject: string; emailBody: string };
+  messageId: string;
+  threadId: string;
+}
 
 export interface Mailbox {
   _id: string;
@@ -35,6 +42,8 @@ interface EmailInboxState {
   error: string | null;
   searchLoading: boolean;
   results: Message[];
+  threadMessages: Message[];
+  appliedFilters:string[];
 }
 
 const initialState: EmailInboxState = {
@@ -42,6 +51,7 @@ const initialState: EmailInboxState = {
   accounts: [],
   mailboxes: [],
   mailboxMessages: [],
+  threadMessages: [],
   selectedAccountId: null,
   selectedMailboxId: null,
   currentPage: 1,
@@ -50,6 +60,7 @@ const initialState: EmailInboxState = {
   error: null,
   searchLoading: false,
   results: [],
+  appliedFilters:[]
 };
 
 export const getAllChats = createAsyncThunk(
@@ -85,22 +96,26 @@ export const getAllMailBox = createAsyncThunk(
   }
 );
 
-export const getAllAccountMailBox = createAsyncThunk(
-  "emailInbox/getAllAccountMailBox",
+export const getAllEmailThreads = createAsyncThunk(
+  "emailInbox/getAllEmailThreads",
   async (
     {
       accountId,
-      mailBoxId,
       page = 1,
       limit = 10,
-    }: { accountId: string; mailBoxId: string; page?: number; limit?: number },
+      filters = [],
+    }: { accountId: string; page?: number; limit?: number; filters?: string[] },
     { rejectWithValue }
   ) => {
     try {
-      const response = await emailApi.get(
-        `/accounts/${accountId}/${mailBoxId}/messages?page=${page}&limit=${limit}`
-      );
-
+      const params = {
+        page,
+        limit,
+        ...(filters.length > 0 && { filters: JSON.stringify(filters) }), // Encode filters as JSON array
+      };
+      const response = await emailApi.get(`/accounts/${accountId}/allThreads`, {
+        params,
+      });
 
       return {
         messages: response.data?.data?.messages || [],
@@ -108,7 +123,7 @@ export const getAllAccountMailBox = createAsyncThunk(
         currentPage: Number(response.data?.data?.currentPage) || 1,
       };
     } catch (error: any) {
-      // console.error("API Error:", error);
+      console.error("API Error:", error);
       return rejectWithValue(error.response?.data?.message || "Network error");
     }
   }
@@ -116,13 +131,10 @@ export const getAllAccountMailBox = createAsyncThunk(
 
 export const reloadAccountMailboxes = createAsyncThunk(
   "emailInbox/reloadAccountMailboxes",
-  async (
-    { accountId }: { accountId: string },
-    { rejectWithValue }
-  ) => {
+  async ({ accountId }: { accountId: string }, { rejectWithValue }) => {
     try {
       const response = await emailApi.post(`/accounts/${accountId}/loadmailboxes`);
-      return response.data; 
+      return response.data;
     } catch (error: any) {
       console.error("API Error:", error);
       return rejectWithValue(error.response?.data?.message || "Network error");
@@ -132,13 +144,10 @@ export const reloadAccountMailboxes = createAsyncThunk(
 
 export const reloadAccountMessages = createAsyncThunk(
   "emailInbox/reloadAccountMailboxes",
-  async (
-    { accountId }: { accountId: string },
-    { rejectWithValue }
-  ) => {
+  async ({ accountId }: { accountId: string }, { rejectWithValue }) => {
     try {
       const response = await emailApi.post(`/accounts/${accountId}/load-messages`);
-      return response.data; 
+      return response.data;
     } catch (error: any) {
       console.error("API Error:", error);
       return rejectWithValue(error.response?.data?.message || "Network error");
@@ -161,13 +170,39 @@ export const searchEmails = createAsyncThunk(
     page?: number;
     limit?: number;
   }) => {
-    const response = await emailApi.get(
-      `/accounts/${accountId}/${mailboxId}/messages`,
-      {
-        params: { limit, page, search },
-      }
-    );
+    const response = await emailApi.get(`/accounts/${accountId}/${mailboxId}/messages`, {
+      params: { limit, page, search },
+    });
     return response.data.data;
+  }
+);
+
+export const getAllThreadsMessages = createAsyncThunk(
+  "emailInbox/getEmailThread",
+  async (
+    { accountId, threadId }: { accountId: string; threadId: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await emailApi.get(`/accounts/${accountId}/thread/${threadId}`);
+      return response.data;
+    } catch (error: any) {
+      console.error("Failed to fetch thread:", error);
+      return rejectWithValue(error.response?.data?.message || "Network error");
+    }
+  }
+);
+
+export const sentEmailReply = createAsyncThunk(
+  "emailInbox/sentEmailReply",
+  async (payload: ReplyPayload, { rejectWithValue }) => {
+    try {
+      const response = await emailApi.post(`/accounts/send-reply-email`, payload);
+      return response.data;
+    } catch (error: any) {
+      console.error("API Error:", error);
+      return rejectWithValue(error.response?.data?.message || "Network error");
+    }
   }
 );
 
@@ -175,7 +210,6 @@ const emailInboxSlice = createSlice({
   name: "emailInbox",
   initialState,
   reducers: {
-    // Store selected account & clear previous mailboxes/messages
     setSelectedAccount: (state, action: PayloadAction<string | null>) => {
       state.selectedAccountId = action.payload;
       state.mailboxes = [];
@@ -184,8 +218,6 @@ const emailInboxSlice = createSlice({
     setCurrentPage: (state, action: PayloadAction<number>) => {
       state.currentPage = action.payload;
     },
-
-    // Store selected mailbox & clear previous messages
     setSelectedMailbox: (state, action: PayloadAction<string | null>) => {
       state.selectedMailboxId = action.payload;
       state.mailboxMessages = [];
@@ -194,10 +226,15 @@ const emailInboxSlice = createSlice({
       state.mailboxes = [];
       state.mailboxMessages = [];
     },
+    setAppliedFilters: (state, action: PayloadAction<string[]>) => {
+      state.appliedFilters = action.payload;
+    },
+    clearFilters: (state) => {
+      state.appliedFilters = [];
+    },
   },
   extraReducers: (builder) => {
     builder
-      // Fetch Accounts
       .addCase(getAllChats.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -210,8 +247,6 @@ const emailInboxSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       })
-
-      // Fetch Mailboxes
       .addCase(getAllMailBox.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -224,18 +259,16 @@ const emailInboxSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       })
-
-      .addCase(getAllAccountMailBox.pending, (state) => {
+      .addCase(getAllEmailThreads.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(getAllAccountMailBox.fulfilled, (state, action) => {
+      .addCase(getAllEmailThreads.fulfilled, (state, action) => {
         state.loading = false;
         state.mailboxMessages = action.payload.messages;
         state.totalMessages = action.payload?.totalMessages || 0;
-      
       })
-      .addCase(getAllAccountMailBox.rejected, (state, action) => {
+      .addCase(getAllEmailThreads.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
@@ -249,15 +282,29 @@ const emailInboxSlice = createSlice({
       .addCase(searchEmails.rejected, (state) => {
         state.searchLoading = false;
         state.searchResults = [];
+      })
+      .addCase(getAllThreadsMessages.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getAllThreadsMessages.fulfilled, (state, action) => {
+        state.loading = false;
+        state.threadMessages = Array.isArray(action.payload) ? action.payload : [];
+      })
+      .addCase(getAllThreadsMessages.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       });
   },
 });
 
-  export const {
-    setSelectedAccount,
-    setSelectedMailbox,
-    resetMailboxes,
-    setCurrentPage,
-  } = emailInboxSlice.actions;
+export const {
+  setSelectedAccount,
+  setSelectedMailbox,
+  resetMailboxes,
+  setCurrentPage,
+  setAppliedFilters,
+  clearFilters
+} = emailInboxSlice.actions;
 
 export default emailInboxSlice.reducer;

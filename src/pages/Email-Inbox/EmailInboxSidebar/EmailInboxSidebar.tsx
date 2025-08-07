@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../redux/store/store";
 import {
-  getAllAccountMailBox,
+  getAllEmailThreads,
   getAllChats,
   setSelectedMailbox,
 } from "../../../redux/slice/emailInboxSlice";
@@ -53,9 +53,8 @@ const EmailInboxSideBar = () => {
         const firstMailbox = uniqueMailboxes[0];
         dispatch(setSelectedMailbox(firstMailbox._id));
         await dispatch(
-          getAllAccountMailBox({
+          getAllEmailThreads({
             accountId: selectedAccountId,
-            mailBoxId: firstMailbox._id,
           })
         );
       }
@@ -70,9 +69,8 @@ const EmailInboxSideBar = () => {
     setLoading(true);
     dispatch(setSelectedMailbox(mailbox._id));
     await dispatch(
-      getAllAccountMailBox({
+      getAllEmailThreads({
         accountId: selectedAccountId,
-        mailBoxId: mailbox._id,
         page: 1,
         limit: 10,
       })

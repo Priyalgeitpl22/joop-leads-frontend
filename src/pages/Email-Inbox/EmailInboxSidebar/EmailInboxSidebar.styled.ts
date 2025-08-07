@@ -1,5 +1,5 @@
 import { styled } from "@mui/material/styles";
-import { Box, List, ListItem, Divider } from "@mui/material";
+import { Box, List, ListItem, Divider, Avatar } from "@mui/material";
 
 interface SidebarItemProps {
   active?: boolean;
@@ -17,6 +17,7 @@ export const SidebarContainer = styled(Box)`
 `;
 
 export const EmailInboxContainer = styled(Box)`
+  margin-top: 10px;
   width: 100%;
   height: 80vh;
   display: flex;
@@ -119,4 +120,45 @@ export const EmailInbox = styled(Box)`
 export const EmailInboxHeader = styled(Box)`
   background: var(--background-secondary);
   padding: 16px;
+  display: flex;
+  align-items: center; 
+  justify-content: space-between;
 `;
+
+export const AccountSelectorContainer = styled(Box)`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+export const AccountSelectorButton = styled(Box)`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  transition: all 0.2s;
+`;
+
+export const AccountAvatar = styled(Avatar)`
+  width: 32px;
+  height: 32px;
+  background-color: var(--theme-color);
+  font-size: 14px;
+  font-weight: bold;
+`;
+
+export const PopupContainer = styled(Box)`
+  padding: 0;
+`;
+
+export const PopupPaper = {
+  width: 300,
+  maxHeight: 400,
+  mt: 1,
+  boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+  borderRadius: '8px',
+  overflow: 'hidden'
+};

@@ -1,98 +1,242 @@
 import {
-  Dialog,
-  IconButton,
-  Box,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
   Typography,
-  Divider,
   Avatar,
+  Box,
+  Button,
+  Divider,
+  IconButton,
+  Paper,
 } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CloseIcon from "@mui/icons-material/Close";
-import { DialogBody, DialogBoxData, DialogContentBox, DialogSubject } from "./EmailInboxAreaDialog.styled";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState, AppDispatch } from "../../../redux/store/store"; // Adjust path as needed
+import { sentEmailReply } from "../../../redux/slice/emailInboxSlice"; // Import the action
 
-interface EmailInboxAreaDialogProps {
-  open: boolean;
-  onClose: () => void;
-  message: any;
+interface Message {
+  id: string;
+  threadId: string;
+  messageId: string;
+  from: { name: string; address: string }[];
+  to: { name: string; address: string }[];
+  subject: string;
+  body: string;
+  date: string;
 }
 
-const EmailInboxAreaDialog: React.FC<EmailInboxAreaDialogProps> = ({
-  open,
-  onClose,
-  message,
-}) => {
-  return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      fullWidth
-      maxWidth="md"
-      PaperProps={{
-        sx: {
-          borderRadius: 2,
-          boxShadow: 10,
-          backgroundColor: "#f7f9fc",
+interface EmailThreadViewProps {
+  messages: Message[];
+  onClose: () => void;
+}
+
+const stripHtml = (html: string) => {
+  const tempDiv = document.createElement("div");
+  tempDiv.innerHTML = html;
+  return tempDiv.textContent || tempDiv.innerText || "";
+};
+
+const EmailThreadView: React.FC<EmailThreadViewProps> = ({ messages, onClose }) => {
+  const [replyContent, setReplyContent] = useState("");
+  const [isReplying, setIsReplying] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const selectedAccount = useSelector((state: RootState) =>
+    state.emailInbox.accounts.find(
+      (account) => account._id === state.emailInbox.selectedAccountId
+    )
+  );
+
+  const handleSend = () => {
+    if (replyContent.trim()) {
+      const lastMessage = messages[messages.length - 1];
+      const firstMessage = messages[0];
+
+      const plainReplyText = stripHtml(replyContent);
+
+      const replyPayload = {
+        from: {
+          name: selectedAccount?.name || "Unknown",
+          address: selectedAccount?.email || "",
         },
+        to: {
+          name: lastMessage?.from?.[0]?.name || "Unknown",
+          address: lastMessage?.from?.[0]?.address || "",
+        },
+        emailTemplate: {
+          subject: firstMessage?.subject || "No Subject",
+          emailBody: plainReplyText,
+        },
+        messageId: lastMessage?.messageId || "",
+        threadId: lastMessage?.threadId || "",
+      };
+
+      dispatch(sentEmailReply(replyPayload));
+
+      console.log("Calling Reply api",replyPayload)
+      setReplyContent("");
+      setIsReplying(false);
+    }
+  };
+
+  const handleDiscard = () => {
+    setReplyContent("");
+    setIsReplying(false);
+  };
+
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, false] }],
+      ["bold", "italic", "underline"],
+      [{ list: "ordered" }, { list: "bullet" }],
+      ["link"],
+      [{ align: [] }],
+      ["clean"],
+    ],
+  };
+
+  const formats = [
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "list",
+    "bullet",
+    "link",
+    "align",
+  ];
+
+  const renderMessage = (msg: Message) => (
+    <Paper elevation={2} sx={{ padding: 2, borderRadius: 2, mb: 2 }}>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 1 }}>
+        <Avatar
+          src="https://ssl.gstatic.com/ui/v1/icons/mail/profile_placeholder.png"
+          sx={{ width: 40, height: 40 }}
+        />
+        <Box>
+          <Typography fontWeight={600} fontSize={16}>
+            {msg.from?.[0]?.name || "Unknown Sender"}
+          </Typography>
+          <Typography fontSize={14} color="text.secondary">
+            {new Date(msg.date).toLocaleString()}
+          </Typography>
+        </Box>
+      </Box>
+      <Typography fontSize={14} color="text.secondary" mb={1}>
+        To: {msg.to?.[0]?.name || "Unknown"} ({msg.to?.[0]?.address || "No Email"})
+      </Typography>
+      <Divider sx={{ mb: 2 }} />
+      <Typography
+        component="div"
+        dangerouslySetInnerHTML={{ __html: msg.body || "No content available." }}
+        sx={{ fontSize: "15px", lineHeight: 1.6 }}
+      />
+    </Paper>
+  );
+
+  return (
+    <Box
+      sx={{
+        padding: 3,
+        borderRadius: 3,
+        position: "relative",
       }}
     >
-      <DialogSubject>
-        <Typography variant="h6" sx={{ fontWeight: 600, fontSize: "17px" }}>
-          {message.subject || "No Subject"}
-        </Typography>
-        <IconButton
-          onClick={onClose}
-          sx={{ position: "absolute", right: 16, top: 8 }}
-        >
-          <CloseIcon />
-        </IconButton>
-      </DialogSubject>
+      <IconButton onClick={onClose} sx={{ position: "absolute", top: 8, right: 8 }}>
+        <CloseIcon />
+      </IconButton>
 
-      <DialogContentBox>
-        <DialogBoxData>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Avatar
-              src="https://ssl.gstatic.com/ui/v1/icons/mail/profile_placeholder.png"
-              sx={{ width: 48, height: 48 }}
+      <Typography variant="h5" fontWeight={700} mb={3}>
+        {messages[0]?.subject || "No Subject"}
+      </Typography>
+
+      {messages.length === 1 ? (
+        renderMessage(messages[0])
+      ) : (
+        messages.map((msg, index) => (
+          <Accordion
+            key={index}
+            defaultExpanded={index === messages.length - 1}
+            sx={{
+              backgroundColor: "#fff",
+              borderRadius: 2,
+              mb: 2,
+              "&::before": { display: "none" },
+            }}
+          >
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                <Avatar
+                  src="https://ssl.gstatic.com/ui/v1/icons/mail/profile_placeholder.png"
+                  sx={{ width: 40, height: 40 }}
+                />
+                <Box>
+                  <Typography fontWeight={600} fontSize={16}>
+                    {msg.from?.[0]?.name || "Unknown Sender"}
+                  </Typography>
+                  <Typography fontSize={14} color="text.secondary">
+                    {new Date(msg.date).toLocaleString()}
+                  </Typography>
+                </Box>
+              </Box>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography fontSize={14} color="text.secondary" mb={1}>
+                To: {msg.to?.[0]?.name || "Unknown"} ({msg.to?.[0]?.address || "No Email"})
+              </Typography>
+              <Divider sx={{ mb: 2 }} />
+              <Typography
+                component="div"
+                dangerouslySetInnerHTML={{ __html: msg.body || "No content available." }}
+                sx={{ fontSize: "15px", lineHeight: 1.6 }}
+              />
+            </AccordionDetails>
+          </Accordion>
+        ))
+      )}
+
+      <Box mt={4}>
+        {isReplying ? (
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <ReactQuill
+              value={replyContent}
+              onChange={setReplyContent}
+              modules={modules}
+              formats={formats}
+              placeholder="Type your reply here..."
+              style={{
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                backgroundColor: "#fff",
+              }}
             />
-            <Box>
-              <Typography
-                variant="subtitle1"
-                fontWeight={600}
-                sx={{ fontSize: "16px" }}
+            <Box sx={{ display: "flex", justifyContent: "flex-start", gap: 2 }}>
+              <Button variant="outlined" onClick={handleDiscard}>
+                Discard
+              </Button>
+              <Button
+                variant="contained"
+                onClick={handleSend}
+                disabled={!replyContent.trim()}
               >
-                {message.from?.[0]?.name || "Unknown Sender"}
-              </Typography>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                sx={{ fontSize: "16px" }}
-              >
-                {message.from?.[0]?.address || "No Email"}
-              </Typography>
+                Send
+              </Button>
             </Box>
           </Box>
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            sx={{ fontSize: "16px" }}
-          >
-            {message.date ? new Date(message.date).toLocaleString() : "No Date"}
-          </Typography>
-        </DialogBoxData>
-
-        <Typography
-          variant="body2"
-          sx={{ mb: 2, color: "text.secondary", fontSize: "14px" }}
-        >
-          To: {message.to?.[0]?.name || "Unknown"} (
-          {message.to?.[0]?.address || "No Email"})
-        </Typography>
-
-        <Divider sx={{ mb: 2 }} />
-
-        <DialogBody dangerouslySetInnerHTML={{ __html: message.body || "No content available." }} />
-      </DialogContentBox>
-    </Dialog>
+        ) : (
+          <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
+            <Button variant="contained" onClick={() => setIsReplying(true)}>
+              Reply
+            </Button>
+          </Box>
+        )}
+      </Box>
+    </Box>
   );
 };
 
-export default EmailInboxAreaDialog;
+export default EmailThreadView;
