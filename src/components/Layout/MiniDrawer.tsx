@@ -64,12 +64,19 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
     { title: 'All Leads', icon: <PersonIcon sx={{ color: 'inherit' }} />, path: '/all-leads' },
     { title: 'Master Inbox', icon: <ArchiveIcon sx={{ color: 'inherit' }} />, path: '/inbox' },
     { title: 'Users', icon: <AccountBoxIcon sx={{ color: 'inherit' }} />, path: '/user' },
+    // { title: 'Settings', icon: <Settings sx={{ color: 'inherit' }} />, path: '/setting' },
+    // { title: 'Help', icon: <Help sx={{ color: 'inherit' }} />, path: '/help' },
+    // { title: 'Add', icon: <Add sx={{ color: isDarkMode ? '#ffffff' : '#000000', }} />, path: '/add', hasBadge: true, badgeCount: 2 },
+    // { title: 'Logout', icon: <Logout sx={{ color: 'inherit' }} />, path: '/logout' },
+    { title: isDarkMode ? 'Light Mode' : 'Dark Mode', icon: isDarkMode ? <Brightness7 sx={{ color: 'inherit' }} /> : <Brightness4 sx={{ color: 'inherit' }} />, path: '/theme-toggle', isThemeToggle: true },
+  ];
+
+  const  navigateButtons =[
     { title: 'Settings', icon: <Settings sx={{ color: 'inherit' }} />, path: '/setting' },
     { title: 'Help', icon: <Help sx={{ color: 'inherit' }} />, path: '/help' },
     { title: 'Add', icon: <Add sx={{ color: isDarkMode ? '#ffffff' : '#000000', }} />, path: '/add', hasBadge: true, badgeCount: 2 },
     { title: 'Logout', icon: <Logout sx={{ color: 'inherit' }} />, path: '/logout' },
-    { title: isDarkMode ? 'Light Mode' : 'Dark Mode', icon: isDarkMode ? <Brightness7 sx={{ color: 'inherit' }} /> : <Brightness4 sx={{ color: 'inherit' }} />, path: '/theme-toggle', isThemeToggle: true },
-  ];
+  ]
 
   // Auto-collapse on mobile
   useEffect(() => {
@@ -142,16 +149,19 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
               </Typography>
             </Box>
             <IconButton size="small" onClick={handleDrawerToggle}>
-              <ChevronLeft sx={{ color: isDarkMode ? '#ffffff' : '#000000',
-                '&:hover': {
-                  color: isDarkMode ? '#000000' : '#ffffff',
-                }
-               }} />
+              <ChevronLeft  sx={{
+      color: isDarkMode ? '#ffffff' : '#000000',
+      '&:hover': {
+        color: isDarkMode ? '#000000' : '#000000',
+      },
+    }} />
             </IconButton>
           </>
         ) : (
-          <IconButton onClick={handleDrawerToggle} sx={{ mx: 'auto' }}>
-            <MenuIcon sx={{ color: isDarkMode ? '#ffffff' : '#000000', }} />
+          <IconButton onClick={handleDrawerToggle} sx={{ mx: '-0.5rem' }}>
+            <MenuIcon sx={{ color: isDarkMode ? '#ffffff' : '#000000', '&:hover': {
+        color: isDarkMode ? '#000000' : '#000000',
+      },}} />
           </IconButton>
         )}
       </Box>
@@ -194,6 +204,37 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
                   }}
                 />
               )}
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+      <List sx={{display:`${open?"flex":""}`}}>
+        {navigateButtons.map((item)=>(
+          <ListItem key={item.title} sx={{paddingX:"0px", paddingBottom:"1rem"}}>
+            <ListItemButton 
+              onClick={() => handleNavigation(item.path, item.isThemeToggle)}
+              selected={true}
+              sx={{
+                borderRadius: 1,
+                minHeight: 48,
+                justifyContent: open ? 'initial' : 'center',
+                px: 1,
+              }}
+            >
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  justifyContent: 'center',
+                }}
+              >
+                {item.hasBadge ? (
+                  <Badge badgeContent={item.badgeCount} color="warning">
+                    {item.icon}
+                  </Badge>
+                ) : (
+                  item.icon
+                )}
+              </ListItemIcon>
             </ListItemButton>
           </ListItem>
         ))}
