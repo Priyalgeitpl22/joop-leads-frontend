@@ -412,3 +412,33 @@ input:-webkit-autofill {
   background-color: #ffffff !important;
   color: #000000 !important;
 }
+
+/* Fix MUI X TimePicker toolbar colors in dark mode without changing global button styles */
+.MuiPickersToolbar-root .MuiPickersToolbarText-root,
+.MuiTimePickerToolbar-root .MuiPickersToolbarText-root {
+  color: #000000 !important;
+  background: transparent !important;
+}
+
+.MuiPickersToolbar-root .MuiButtonBase-root,
+.MuiTimePickerToolbar-root .MuiButtonBase-root {
+  background: transparent !important;
+  color: #000000 !important;
+}
+
+/* Ensure AM/PM toggles and separators remain visible */
+.MuiPickersToolbar-root .MuiPickersToolbar-ampmSelection .MuiButtonBase-root,
+.MuiTimePickerToolbar-root .MuiPickersToolbar-ampmSelection .MuiButtonBase-root {
+  background: transparent !important;
+  color: #000000 !important;
+}
+
+.MuiTimePickerToolbar-root .MuiTimePickerToolbar-separator,
+.MuiPickersToolbar-root .MuiTimePickerToolbar-separator {
+  color: #000000 !important;
+}
+
+/* Keep clock numbers readable */
+.MuiClockNumber-root {
+  color: #000000 !important;
+}
