@@ -36,6 +36,16 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import UserProfileMenu from '../User-Profile/UserProfile';
 
+// Define the interface for navigation items
+interface NavigationItem {
+  title?: string;
+  icon: React.ReactElement;
+  path: string;
+  hasBadge?: boolean;
+  badgeCount?: number;
+  isThemeToggle?: boolean;
+}
+
 const drawerWidth = 240;
 const miniDrawerWidth = 65;
 
@@ -57,33 +67,33 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
   const navigate = useNavigate();
   const location = useLocation();
 
-  const navigationItems = [
+  const navigationItems: NavigationItem[] = [
     { title: 'Dashboard', icon: <AssessmentIcon sx={{ color: 'inherit' }} />, path: '/' },
     { title: 'Email Campaigns', icon: <CampaignIcon sx={{ color: 'inherit' }} />, path: '/email-campaign/all' },
     { title: 'Email Accounts', icon: <ContactMailIcon sx={{ color: 'inherit' }} />, path: '/email-accounts' },
     { title: 'All Leads', icon: <PersonIcon sx={{ color: 'inherit' }} />, path: '/all-leads' },
     { title: 'Master Inbox', icon: <ArchiveIcon sx={{ color: 'inherit' }} />, path: '/inbox' },
     { title: 'Users', icon: <AccountBoxIcon sx={{ color: 'inherit' }} />, path: '/user' },
-    // { title: 'Settings', icon: <Settings sx={{ color: 'inherit' }} />, path: '/setting' },
-    // { title: 'Help', icon: <Help sx={{ color: 'inherit' }} />, path: '/help' },
-    // { title: 'Add', icon: <Add sx={{ color: isDarkMode ? '#ffffff' : '#000000', }} />, path: '/add', hasBadge: true, badgeCount: 2 },
-    // { title: 'Logout', icon: <Logout sx={{ color: 'inherit' }} />, path: '/logout' },
-    { title: isDarkMode ? 'Light Mode' : 'Dark Mode', icon: isDarkMode ? <Brightness7 sx={{ color: 'inherit' }} /> : <Brightness4 sx={{ color: 'inherit' }} />, path: '/theme-toggle', isThemeToggle: true },
+    { 
+      title: isDarkMode ? 'Light Mode' : 'Dark Mode', 
+      icon: isDarkMode ? <Brightness7 sx={{ color: 'inherit' }} /> : <Brightness4 sx={{ color: 'inherit' }} />, 
+      path: '/theme-toggle', 
+      isThemeToggle: true 
+    },
   ];
 
-  const  navigateButtons =[
-    { title: 'Settings', icon: <Settings sx={{ color: 'inherit' }} />, path: '/setting' },
-    { title: 'Help', icon: <Help sx={{ color: 'inherit' }} />, path: '/help' },
-    { title: 'Add', icon: <Add sx={{ color: isDarkMode ? '#ffffff' : '#000000', }} />, path: '/add', hasBadge: true, badgeCount: 2 },
-    { title: 'Logout', icon: <Logout sx={{ color: 'inherit' }} />, path: '/logout' },
-  ]
+  const navigateButtons: NavigationItem[] = [
+    { title: '', icon: <Settings sx={{ color: 'inherit' }} />, path: '/setting' },
+    { title: '', icon: <Help sx={{ color: 'inherit' }} />, path: '/help' },
+    { title: '', icon: <Add sx={{ color: isDarkMode ? '#ffffff' : '#000000', }} />, path: '/add', hasBadge: true, badgeCount: 2 },
+    { title: '', icon: <Logout sx={{ color: 'inherit' }} />, path: '/logout' },
+  ];
 
   // Auto-collapse on mobile
   useEffect(() => {
     if (isVerySmallScreen) {
       setOpen(false);
-    }
-    else{
+    } else {
       setOpen(true);
     }
   }, [isVerySmallScreen]);
@@ -91,7 +101,6 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
   const handleDrawerToggle = () => {
     setOpen(!open);
   };
-
 
   const handleUserMenuClose = () => {
     setUserMenuAnchor(null);
@@ -137,31 +146,41 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
           alignItems: 'center',
           gap: 1,
           minHeight: '65px',
-          bgcolor: isDarkMode ? 'var(--theme-color)':'var(--background-color)',
+          bgcolor: isDarkMode ? 'var(--theme-color)' : 'var(--background-color)',
         }}
       >
         {open ? (
           <>
-            <CampaignIcon sx={{ fontSize: 24, color: isDarkMode ? '#ffffff' : '#000000', }} />
+            <CampaignIcon sx={{ fontSize: 24, color: isDarkMode ? '#ffffff' : '#000000' }} />
             <Box sx={{ flexGrow: 1 }}>
-              <Typography variant="h6" sx={{ fontWeight: 600, fontSize: '1.125rem',color: isDarkMode ? '#ffffff' : '#000000', }}>
+              <Typography 
+                variant="h6" 
+                sx={{ 
+                  fontWeight: 600, 
+                  fontSize: '1.125rem', 
+                  color: isDarkMode ? '#ffffff' : '#000000' 
+                }}
+              >
                 Jooper.ai
               </Typography>
             </Box>
             <IconButton size="small" onClick={handleDrawerToggle}>
-              <ChevronLeft  sx={{
-      color: isDarkMode ? '#ffffff' : '#000000',
-      '&:hover': {
-        color: isDarkMode ? '#000000' : '#000000',
-      },
-    }} />
+              <ChevronLeft sx={{
+                color: isDarkMode ? '#ffffff' : '#000000',
+                '&:hover': {
+                  color: isDarkMode ? '#000000' : '#000000',
+                },
+              }} />
             </IconButton>
           </>
         ) : (
           <IconButton onClick={handleDrawerToggle} sx={{ mx: '-0.5rem' }}>
-            <MenuIcon sx={{ color: isDarkMode ? '#ffffff' : '#000000', '&:hover': {
-        color: isDarkMode ? '#000000' : '#000000',
-      },}} />
+            <MenuIcon sx={{ 
+              color: isDarkMode ? '#ffffff' : '#000000', 
+              '&:hover': {
+                color: isDarkMode ? '#000000' : '#000000',
+              },
+            }} />
           </IconButton>
         )}
       </Box>
@@ -208,12 +227,12 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
           </ListItem>
         ))}
       </List>
-      <List sx={{display:`${open?"flex":""}`}}>
-        {navigateButtons.map((item)=>(
-          <ListItem key={item.title} sx={{paddingX:"0px", paddingBottom:"1rem"}}>
+      <List sx={{ display: open ? 'flex' : '' }}>
+        {navigateButtons.map((item) => (
+          <ListItem key={item.title} sx={{ paddingX: '0px', paddingBottom: '1rem' }}>
             <ListItemButton 
               onClick={() => handleNavigation(item.path, item.isThemeToggle)}
-              selected={true}
+              selected={isActiveRoute(item.path)}
               sx={{
                 borderRadius: 1,
                 minHeight: 48,
@@ -235,6 +254,15 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
                   item.icon
                 )}
               </ListItemIcon>
+              {open && (
+                <ListItemText
+                  primary={item.title}
+                  primaryTypographyProps={{
+                    fontSize: '0.875rem',
+                    fontWeight: isActiveRoute(item.path) ? 600 : 400,
+                  }}
+                />
+              )}
             </ListItemButton>
           </ListItem>
         ))}
@@ -259,10 +287,9 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
           borderBottom: 1,
           borderColor: 'divider',
           height: '65px !important',
-          // minHeight: '80px',
         }}
       >
-        <Toolbar sx={{height:'65px !important', padding: '0 16px' }}>
+        <Toolbar sx={{ height: '65px !important', padding: '0 16px' }}>
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -324,7 +351,7 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
         }}
       >
         <ResponsiveLayout>
-        <Box
+          <Box
             sx={{
               minHeight: 'calc(100vh - 96px)',
               overflow: 'scroll',
@@ -362,4 +389,4 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
   );
 };
 
-export default MiniDrawer; 
+export default MiniDrawer;

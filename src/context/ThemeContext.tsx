@@ -420,10 +420,10 @@ export const CustomThemeProvider: React.FC<ThemeProviderProps> = ({ children }) 
           root: {
             backgroundColor: '#000000 !important',
             color: '#ffffff !important',
-            '&:hover': {
-              backgroundColor: '#333333 !important',
-              color: '#ffffff !important',
-            },
+            // '&:hover': {
+            //   backgroundColor: '#333333 !important',
+            //   color: '#ffffff !important',
+            // },
           },
         },
       },
