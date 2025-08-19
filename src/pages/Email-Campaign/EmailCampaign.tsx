@@ -552,7 +552,7 @@ const EmailCampaign: React.FC = () => {
             sx={{
               "& .MuiMenu-paper": {
                 minWidth: "320px",
-                padding: "10px",
+                padding: "20px",
                 boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
                 borderRadius: "8px",
               },

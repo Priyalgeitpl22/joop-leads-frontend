@@ -266,7 +266,7 @@ const EmailInboxAreaComponent: React.FC<EmailInboxAreaProps> = ({ onMessageSelec
                 style={{
                   display: "flex",
                   justifyContent: "space-evenly",
-                  padding: "10px",
+                  padding: "20px",
                 }}
               >
                 <Button

@@ -176,6 +176,11 @@ const ProfileDetail: React.FC<ProfileDetailProps> = ({ open, onClose }) => {
             fullWidth
             name="role"
             value={formData.role}
+            sx={{
+              "& .MuiInputBase-input.Mui-disabled": {
+                WebkitTextFillColor: "#000000", // for disabled text
+              },
+            }}
             disabled
           />
         </FieldWrapper>
