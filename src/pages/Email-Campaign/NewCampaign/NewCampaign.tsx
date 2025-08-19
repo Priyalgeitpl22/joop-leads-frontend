@@ -410,7 +410,7 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
 
   return (
     <Container>
-      <HeaderContainer style={{backgroundColor: isDarkMode ? "#4b1861" : "#ffffff"}}>
+      <HeaderContainer style={{backgroundColor: isDarkMode ? "#4b1861" : "#000000"}}>
         <Box
           sx={{
             width: "100%",

@@ -250,7 +250,6 @@ input:-webkit-autofill {
 .MuiDrawer-paper {
   border-radius: 0 !important;
   margin: 0 !important;
-  height: 100% !important;
   box-shadow: none !important;
 }
 

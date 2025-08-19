@@ -93,6 +93,11 @@ const EditUserDialog: React.FC<EditUserDialogProps> = ({
               fullWidth
               disabled
               margin="normal"
+              sx={{
+                "& .MuiInputBase-input.Mui-disabled": {
+                  WebkitTextFillColor: "#000000", // for disabled text
+                },
+              }}
             />
             <TextField
               label="Email"
@@ -101,6 +106,11 @@ const EditUserDialog: React.FC<EditUserDialogProps> = ({
               onChange={(e) => setEmail(e.target.value)}
               fullWidth
               margin="normal"
+              sx={{
+                "& .MuiInputBase-input.Mui-disabled": {
+                  WebkitTextFillColor: "#000000", // for disabled text
+                },
+              }}
             />
             {Object.keys(filterOptions).map((label) => (
               <FormControl key={label} fullWidth sx={{ mt: 2 }}>

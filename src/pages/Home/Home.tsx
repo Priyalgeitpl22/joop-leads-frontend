@@ -35,7 +35,7 @@ const Home = () => {
     {
       label: "Total Leads",
       value: dashboardData?.total_leads || 0,
-      borderColor: "var(--title-color)",
+      borderColor: "#58b4b0",
     },
     {
       label: "Total Sent",
@@ -50,7 +50,7 @@ const Home = () => {
     {
       label: "Total Scheduled",
       value: dashboardData?.total_scheduled_campaigns || 0,
-      borderColor: "var(--info-color)",
+      borderColor: "#58b4b0",
     },
   ];
 
