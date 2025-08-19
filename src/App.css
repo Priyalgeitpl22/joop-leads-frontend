@@ -133,10 +133,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ✏️ Paragraphs & Text */
-span, div, a, textarea {
+/* span, div, a, textarea {
   color: var(--text-primary);
   font-family: var(--font-family);
-}
+} */
 
 .input {
   color: var(--text-primary);

@@ -67,7 +67,7 @@ const ColumnVisibilitySelect: React.FC<ColumnVisibilitySelectProps> = ({
         }}
         renderValue={(selected) => selected.join(", ")}
       >
-        <Typography sx={{ px: 2, py: 0, fontWeight: "bold",  }}>
+        <Typography sx={{ px: 2, py: 1, fontWeight: "bold",  }}>
           {label}
         </Typography>
         <Divider />

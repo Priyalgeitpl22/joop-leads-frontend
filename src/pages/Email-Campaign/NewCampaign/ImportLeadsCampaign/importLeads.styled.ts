@@ -12,6 +12,7 @@ export const FileUploadContainer = styled.div`
   gap: 20px;
   min-width: 400px;
   cursor: pointer;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
 `;
 
 export const Container = styled.div`

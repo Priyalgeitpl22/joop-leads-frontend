@@ -10,7 +10,7 @@ export const StyledDrawer = styled(Drawer)(({ theme }) => ({
     display: "flex",
     flexDirection: "column",
     boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
-    background: "var(--background-light) !important",
+    // background: "var(--background-light) !important",
 
     [theme.breakpoints.down("sm")]: {
       width: "90%",
@@ -25,7 +25,7 @@ export const StyleBox = styled(Box)({
   display: "flex",
   flexDirection: "column",
   boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-  borderRadius: "12px",
+  // borderRadius: "12px",
   flex: 1,
   overflow: "hidden",
 });

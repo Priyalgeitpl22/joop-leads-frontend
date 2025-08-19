@@ -232,7 +232,7 @@ const EmailInboxAreaComponent: React.FC<EmailInboxAreaProps> = ({ onMessageSelec
           No mail found.
         </NoMailboxMessage>
       ) : (
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" , padding: "5px"}}>
           <EmailInboxListHeader>
             <SearchBar>
               <Search />

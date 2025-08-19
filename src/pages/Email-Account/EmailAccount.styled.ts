@@ -11,7 +11,7 @@ export const EmailAccountsContainer = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
-  overflow: scroll;
+  overflow: auto;
   scrollbarWidth: "none",         // Firefox
   msOverflowStyle: "none",        // IE and Edge
   "&::-webkit-scrollbar": {

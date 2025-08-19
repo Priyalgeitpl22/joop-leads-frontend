@@ -6,7 +6,6 @@ export const ContentContainer = styled(Box)({
   display: "flex",
   flexDirection: "column",
   gap: "24px",
-  backgroundColor: "var(--background-light)",
   minHeight: "100%",
 });
 

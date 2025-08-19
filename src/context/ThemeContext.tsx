@@ -167,7 +167,7 @@ export const CustomThemeProvider: React.FC<ThemeProviderProps> = ({ children }) 
   // Dark theme - Only sidebar dark, everything else light
   const darkTheme = createTheme({
     palette: {
-      mode: 'light', // Force light mode for main content
+      mode: 'dark', // Force light mode for main content
       primary: {
         main: '#000000', // Black for primary elements (same as light)
         light: '#333333',
@@ -206,9 +206,9 @@ export const CustomThemeProvider: React.FC<ThemeProviderProps> = ({ children }) 
       MuiDrawer: {
         styleOverrides: {
           paper: {
-            backgroundColor: '#000000 !important', // Black sidebar
+            backgroundColor: '#3b1a53 !important', // Black sidebar
             color: '#ffffff !important', // White text
-            borderRight: '1px solid #333333',
+            // borderRight: '1px solid #333333',
           },
         },
       },
@@ -216,10 +216,11 @@ export const CustomThemeProvider: React.FC<ThemeProviderProps> = ({ children }) 
       MuiAppBar: {
         styleOverrides: {
           root: {
-            backgroundColor: '#ffffff !important', // White header
+            backgroundColor: '#4b1861 !important', // White header
             color: '#000000 !important', // Black text
             boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-            borderBottom: '1px solid #e0e0e0',
+            backgroundImage: 'none',
+            // borderBottom: '1px solid #e0e0e0',
           },
         },
       },
@@ -232,15 +233,15 @@ export const CustomThemeProvider: React.FC<ThemeProviderProps> = ({ children }) 
             margin: '4px 8px',
             minHeight: '48px',
             '&:hover': {
-              backgroundColor: '#333333 !important', // Dark gray hover
+              backgroundColor: '#6a4b81 !important', // Dark gray hover
               color: '#ffffff !important',
             },
             '&.Mui-selected': {
-              backgroundColor: '#333333 !important', // Dark gray selected
+              backgroundColor: '#6207a3 !important', // Dark gray selected
               color: '#ffffff !important',
             },
             '&.Mui-focusVisible': {
-              backgroundColor: '#333333 !important',
+              backgroundColor: '#990aff !important',
               color: '#ffffff !important',
             },
           },
@@ -274,7 +275,6 @@ export const CustomThemeProvider: React.FC<ThemeProviderProps> = ({ children }) 
           root: {
             color: '#666666',
             '&:hover': {
-              backgroundColor: '#f5f5f5',
               color: '#000000',
             },
           },

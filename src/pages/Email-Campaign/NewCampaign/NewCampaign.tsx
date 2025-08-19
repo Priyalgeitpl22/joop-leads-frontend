@@ -30,6 +30,7 @@ import { Button, SecondaryButton } from "../../../styles/global.styled";
 import { Button2 } from "../../../styles/layout.styled";
 import { useLocation } from "react-router-dom";
 import CircularLoader from "../../../assets/Custom/circularProgress";
+import { useTheme } from "../../../context/ThemeContext";
 export interface ImportedLeadsData {
   campaignName?: string;
   clientId?: string;
@@ -76,6 +77,7 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
 
   const dispatch = useDispatch<AppDispatch>();
   const location = useLocation();
+  const { isDarkMode } = useTheme();
 
   const handleFileChange = (file: File) => {
     setSelectedFile(file);
@@ -408,7 +410,7 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
 
   return (
     <Container>
-      <HeaderContainer>
+      <HeaderContainer style={{backgroundColor: isDarkMode ? "#4b1861" : "#ffffff"}}>
         <Box
           sx={{
             width: "100%",

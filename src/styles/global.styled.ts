@@ -116,6 +116,7 @@ export const CustomDialogFooter = styled.div<CustomDialogFooterProps>`
   width: 100%;
   display: flex;
   padding: 16px;
+  border-radius: 0px 0px 10px 10px;
   background: var(--background-secondary);
 `;
 

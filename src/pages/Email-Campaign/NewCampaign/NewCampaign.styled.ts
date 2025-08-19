@@ -10,7 +10,6 @@ export const Container = styled.div(`
 
 export const HeaderContainer = styled.div`
   align-items: center;
-  background: var(--theme-color);
   box-shadow: 0 2px 4px #8d8fa91a;
   display: flex;
   padding: 16px;
