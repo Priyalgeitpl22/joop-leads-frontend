@@ -316,7 +316,7 @@ const theme = createTheme({
         root: {
           borderRadius: "8px",
           marginBottom: "8px",
-          padding: "10px !important",
+          // padding: "10px !important",
           "& .MuiSvgIcon-root": {
             color: "var(--theme-color) !important",
             fontSize: "30px !important"

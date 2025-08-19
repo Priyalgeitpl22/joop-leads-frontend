@@ -141,12 +141,11 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
         sx={{
           padding: '10px 20px',
           borderBottom: 1,
-          borderColor: 'divider',
+          borderColor: '#e0e0e06b',
           display: 'flex',
           alignItems: 'center',
           gap: 1,
           minHeight: '65px',
-          bgcolor: isDarkMode ? 'var(--theme-color)' : 'var(--background-color)',
         }}
       >
         {open ? (
@@ -167,9 +166,6 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
             <IconButton size="small" onClick={handleDrawerToggle}>
               <ChevronLeft sx={{
                 color: isDarkMode ? '#ffffff' : '#000000',
-                '&:hover': {
-                  color: isDarkMode ? '#000000' : '#000000',
-                },
               }} />
             </IconButton>
           </>
@@ -177,18 +173,15 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
           <IconButton onClick={handleDrawerToggle} sx={{ mx: '-0.5rem' }}>
             <MenuIcon sx={{ 
               color: isDarkMode ? '#ffffff' : '#000000', 
-              '&:hover': {
-                color: isDarkMode ? '#000000' : '#000000',
-              },
             }} />
           </IconButton>
         )}
       </Box>
 
       {/* Navigation Items */}
-      <List sx={{ flexGrow: 1, py: 1, px: 0 }}>
+      <List sx={{ flexGrow: 1, }}>
         {navigationItems.map((item) => (
-          <ListItem key={item.title} disablePadding sx={{ mb: 0.5, px: 1 }}>
+          <ListItem key={item.title} disablePadding sx={{ mb: 0.5, px: 0, py: 0}}>
             <ListItemButton
               onClick={() => handleNavigation(item.path, item.isThemeToggle)}
               selected={isActiveRoute(item.path)}
@@ -196,7 +189,6 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
                 borderRadius: 1,
                 minHeight: 48,
                 justifyContent: open ? 'initial' : 'center',
-                px: 2,
               }}
             >
               <ListItemIcon
@@ -227,9 +219,9 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
           </ListItem>
         ))}
       </List>
-      <List sx={{ display: open ? 'flex' : '' }}>
+      <List sx={{ display: open ? 'flex' : '' , py: 0}}>
         {navigateButtons.map((item) => (
-          <ListItem key={item.title} sx={{ paddingX: '0px', paddingBottom: '1rem' }}>
+          <ListItem key={item.title} sx={{ py:0, px:0}}>
             <ListItemButton 
               onClick={() => handleNavigation(item.path, item.isThemeToggle)}
               selected={isActiveRoute(item.path)}
@@ -277,15 +269,10 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
         sx={{
           width: { sm: `calc(100% - ${open ? drawerWidth : miniDrawerWidth}px)` },
           ml: { sm: `${open ? drawerWidth : miniDrawerWidth}px` },
-          transition: theme.transitions.create(['margin', 'width'], {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
-          }),
-          bgcolor: isDarkMode ? '#1a1a1a' : 'background.paper',
-          color: 'text.primary',
+          color: isDarkMode ? '#ffffff' : '#000000',
           boxShadow: 'none',
           borderBottom: 1,
-          borderColor: 'divider',
+          borderColor: '#e0e0e06b',
           height: '65px !important',
         }}
       >
@@ -326,7 +313,7 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
             overflowX: 'hidden',
             bgcolor: 'background.paper',
             borderRight: 1,
-            borderColor: 'divider',
+            borderColor: '#e0e0e06b',
             borderRadius: 0,
             margin: 0,
             height: '100%',
@@ -347,7 +334,8 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen,
           }),
-          marginTop: '65px', // Add margin to account for fixed header
+          marginTop: '65px',
+          backgroundColor: isDarkMode ? '#4b1861' : '#ffffff', // Add margin to account for fixed header
         }}
       >
         <ResponsiveLayout>

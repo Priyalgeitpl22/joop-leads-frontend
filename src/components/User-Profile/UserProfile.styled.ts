@@ -38,12 +38,11 @@ export const ProfileNameContainer = styled(Box)`
   overflow: hidden;
   text-overflow: ellipsis; // Adds "..." if text overflows
   margin-right: 10px;
-
-    p:first-of-type {
-    font-weight: 600;
-    font-size: 16px;
-    color: var(--text-primary, #000); // fallback to black if variable is missing
-    margin: 0;
+  
+  p:first-of-type {
+  font-weight: 600;
+  font-size: 16px;
+  margin: 0;
   }
 
   p:last-of-type {

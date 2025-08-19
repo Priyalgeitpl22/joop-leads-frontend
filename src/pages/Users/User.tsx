@@ -542,7 +542,7 @@ const Users = () => {
           <Button onClick={handleApplyFilter}>Apply</Button>
         </Box>
       </Menu>
-      <Box sx={{ padding: "15px 0px 0px 8px", background: "var(--input-bg)" }}>
+      <Box sx={{ background: "var(--input-bg)" }}>
         <ActiveFilters
           filters={activeFilters}
           onRemove={handleRemoveFilter}

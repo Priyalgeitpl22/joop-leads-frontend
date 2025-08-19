@@ -12,6 +12,7 @@ import { logoutUser } from "../../redux/slice/authSlice";
 import { AppDispatch, RootState } from "../../redux/store/store";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ProfileDetail from "./Profile-Details/ProfileDetail";
+import { useTheme } from "../../context/ThemeContext";
 export interface User {
   type: string;
   createdAt: any;
@@ -29,9 +30,11 @@ const UserProfileMenu: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
 
+  const { isDarkMode } = useTheme();
+
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.user);
-
+  
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -57,8 +60,8 @@ const UserProfileMenu: React.FC = () => {
   return (
     <UserProfileContainer>
       <ProfileNameContainer>
-        <p>{user?.fullName || "Unknown User"}</p>
-        <p>{user?.role || "N/A"}</p>
+        <p style={{ color: isDarkMode ? "#ffffff" : "#000000" }}>{user?.fullName || "Unknown User"}</p>
+        <p style={{ color: isDarkMode ? "#ffffff" : "#000000" }}>{user?.role || "N/A"}</p>
       </ProfileNameContainer>
 
       <ProfileIcon onClick={handleMenuOpen} style={{ cursor: "pointer" }}>
@@ -69,7 +72,7 @@ const UserProfileMenu: React.FC = () => {
             style={{ width: "35px", height: "35px", borderRadius: "20%" }}
           />
         ) : (
-          <AccountCircleIcon style={{ width: "35px", height: "35px" }} />
+          <AccountCircleIcon style={{ width: "35px", height: "35px", color:isDarkMode ?"white" : "black" }} />
         )}
       </ProfileIcon>
 

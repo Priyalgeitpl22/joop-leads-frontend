@@ -33,7 +33,7 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        overflow: 'scroll',
+        overflow: 'auto',
       }}>
       <Paper
         className="data-grid-container"
@@ -41,6 +41,7 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
           flexGrow: 1,
           display: "flex",
           minHeight: "380px",
+          borderRadius: "0px",
         }}
       >
         <DataGrid

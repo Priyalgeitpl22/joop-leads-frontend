@@ -146,7 +146,7 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
       }}
     >
       <Table stickyHeader sx={{ position: "sticky" }}>
-        <TableHead>
+        <TableHead >
           <TableRow>
             <TableCellHead>Campaign Details</TableCellHead>
 
@@ -157,7 +157,7 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
             <TableCellHead>Bounced</TableCellHead>
 
             {user?.role === "Admin" && <TableCellHead>Action</TableCellHead>}
-            <TableCellHead></TableCellHead>
+            {/* <TableCellHead></TableCellHead> */}
           </TableRow>
         </TableHead>
         {paginatedCampaigns.map((campaign) => (

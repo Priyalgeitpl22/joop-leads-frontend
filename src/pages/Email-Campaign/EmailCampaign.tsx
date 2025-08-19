@@ -477,7 +477,7 @@ const EmailCampaign: React.FC = () => {
                 },
               }}
             >
-              <SectionTitle label="Campaigns" value="all" />
+              <SectionTitle label="Campaigns" value="all" sx={{fontSize: "18px !important", fontWeight: "600", color: "#35495c !important"}} />
               {/* <SectionTitle label="Folders" value="folders" /> */}
               {activeTab === "all" && (
                 <Box
@@ -641,7 +641,7 @@ const EmailCampaign: React.FC = () => {
             </Box>
           </Menu>
           {loading && <ProgressBar />}
-          <Box sx={{ padding: "15px 0px 0px 8px" }}>
+          <Box>
             <ActiveFilters
               filters={activeFilters}
               onRemove={handleRemoveFilter}

@@ -55,7 +55,7 @@ export const CustomMuiColorInput = styled(MuiColorInput)({
 export const TableCellHead = styled(TableCell)({
   fontWeight: "bold",
   color: "#35495c",
-  padding: "8px 16px !important",
+  padding: "16px !important",
   borderBottom:"1px solid var(--border-dark) !important"
 });
 
