@@ -9,15 +9,14 @@ import {
   Divider,
   IconButton,
   Paper,
+  TextField,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CloseIcon from "@mui/icons-material/Close";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState, AppDispatch } from "../../../redux/store/store"; // Adjust path as needed
-import { sentEmailReply } from "../../../redux/slice/emailInboxSlice"; // Import the action
+import { RootState, AppDispatch } from "../../../redux/store/store";
+import { sentEmailReply } from "../../../redux/slice/emailInboxSlice";
 
 interface Message {
   id: string;
@@ -35,12 +34,6 @@ interface EmailThreadViewProps {
   onClose: () => void;
 }
 
-const stripHtml = (html: string) => {
-  const tempDiv = document.createElement("div");
-  tempDiv.innerHTML = html;
-  return tempDiv.textContent || tempDiv.innerText || "";
-};
-
 const EmailThreadView: React.FC<EmailThreadViewProps> = ({ messages, onClose }) => {
   const [replyContent, setReplyContent] = useState("");
   const [isReplying, setIsReplying] = useState(false);
@@ -56,8 +49,6 @@ const EmailThreadView: React.FC<EmailThreadViewProps> = ({ messages, onClose }) 
       const lastMessage = messages[messages.length - 1];
       const firstMessage = messages[0];
 
-      const plainReplyText = stripHtml(replyContent);
-
       const replyPayload = {
         from: {
           name: selectedAccount?.name || "Unknown",
@@ -69,7 +60,7 @@ const EmailThreadView: React.FC<EmailThreadViewProps> = ({ messages, onClose }) 
         },
         emailTemplate: {
           subject: firstMessage?.subject || "No Subject",
-          emailBody: plainReplyText,
+          emailBody: replyContent, // plain text from TextField
         },
         messageId: lastMessage?.messageId || "",
         threadId: lastMessage?.threadId || "",
@@ -77,7 +68,7 @@ const EmailThreadView: React.FC<EmailThreadViewProps> = ({ messages, onClose }) 
 
       dispatch(sentEmailReply(replyPayload));
 
-      console.log("Calling Reply api",replyPayload)
+      console.log("Calling Reply API", replyPayload);
       setReplyContent("");
       setIsReplying(false);
     }
@@ -87,28 +78,6 @@ const EmailThreadView: React.FC<EmailThreadViewProps> = ({ messages, onClose }) 
     setReplyContent("");
     setIsReplying(false);
   };
-
-  const modules = {
-    toolbar: [
-      [{ header: [1, 2, false] }],
-      ["bold", "italic", "underline"],
-      [{ list: "ordered" }, { list: "bullet" }],
-      ["link"],
-      [{ align: [] }],
-      ["clean"],
-    ],
-  };
-
-  const formats = [
-    "header",
-    "bold",
-    "italic",
-    "underline",
-    "list",
-    "bullet",
-    "link",
-    "align",
-  ];
 
   const renderMessage = (msg: Message) => (
     <Paper elevation={2} sx={{ padding: 2, borderRadius: 2, mb: 2 }}>
@@ -202,17 +171,13 @@ const EmailThreadView: React.FC<EmailThreadViewProps> = ({ messages, onClose }) 
       <Box mt={4}>
         {isReplying ? (
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <ReactQuill
+            <TextField
               value={replyContent}
-              onChange={setReplyContent}
-              modules={modules}
-              formats={formats}
+              onChange={(e) => setReplyContent(e.target.value)}
               placeholder="Type your reply here..."
-              style={{
-                border: "1px solid #ccc",
-                borderRadius: "4px",
-                backgroundColor: "#fff",
-              }}
+              multiline
+              minRows={4}
+              fullWidth
             />
             <Box sx={{ display: "flex", justifyContent: "flex-start", gap: 2 }}>
               <Button variant="outlined" onClick={handleDiscard}>
