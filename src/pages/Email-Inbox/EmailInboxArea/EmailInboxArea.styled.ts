@@ -134,12 +134,31 @@ export const EmailInboxMessagesBox = styled(Box)({
   height: "100vh",
 })
 
-export const EmailInboxMessagesHeading = styled(Box)({
+export const EmailInboxMessagesHeading = styled(Box, {
+  shouldForwardProp: (prop) => prop !== "isSelected" && prop !== "isUnread",
+})<{ isSelected?: boolean; isUnread?: boolean }>(({ isSelected, isUnread }) => ({
   border: "1px solid #ddd",
   borderRadius: "8px",
   padding: "10px",
   margin: "10px",
-});
+  transition: "border 0.2s",
+  boxShadow: "0 0 10px 0 rgba(0, 0, 0, 0.1)",
+
+  backgroundColor: isSelected
+    ? "#e0e0e0"
+    : isUnread
+    ? "#c77dff47"
+    : "inherit",
+
+  fontWeight: isUnread ? "bold" : "normal",
+
+  "&:hover": {
+    border: isUnread
+      ? "1px solid rgba(122, 30, 192, 0.88)"
+      : "1px solid #000",
+    // keep background unchanged on hover
+  },
+}));
 
 export const EmailPagination = styled(Pagination)({
   "& .Mui-selected": {

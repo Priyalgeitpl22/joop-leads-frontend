@@ -134,6 +134,14 @@ export default function EmailInboxs() {
     return () => clearTimeout(timer);
   }, [dispatch, user?.orgId]);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      handleReload();
+    }, 5 * 60 * 1000); // 5 minutes in milliseconds
+
+    return () => clearInterval(interval); // Cleanup on unmount
+  }, [selectedAccountId,accounts]);
+
   const handleAccountSelectorClick = (event: React.MouseEvent<HTMLElement>) => {
     setAccountSelectorAnchor(event.currentTarget);
   };
