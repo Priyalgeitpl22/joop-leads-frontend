@@ -155,6 +155,23 @@ export const reloadAccountMessages = createAsyncThunk(
   }
 );
 
+export const markThreadAsRead = createAsyncThunk(
+  "emailInbox/markThreadAsRead",
+  async (
+    { threadId }: { threadId: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await emailApi.patch(`/accounts/message/read-thread`, { threadId });
+      return { threadId, response: response.data };
+    } catch (error: any) {
+      console.error("API Error:", error);
+      return rejectWithValue(error.response?.data?.message || "Network error");
+    }
+  }
+);
+
+
 export const searchEmails = createAsyncThunk(
   "emailSearch/searchEmails",
   async ({
@@ -293,6 +310,25 @@ const emailInboxSlice = createSlice({
       })
       .addCase(getAllThreadsMessages.rejected, (state, action) => {
         state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(markThreadAsRead.pending,(state)=>{
+        state.error = null
+      })
+      .addCase(markThreadAsRead.fulfilled, (state, action) => {
+        const { threadId } = action.payload;
+        state.mailboxMessages = state.mailboxMessages.map((msg: any) =>
+          msg.threadId === threadId
+            ? { ...msg, flags: msg.flags?.filter((f: string) => f !== "UNREAD") }
+            : msg
+        );
+        state.threadMessages = state.threadMessages.map((msg: any) =>
+          msg.threadId === threadId
+            ? { ...msg, flags: msg.flags?.filter((f: string) => f !== "UNREAD") }
+            : msg
+        );
+      })
+      .addCase(markThreadAsRead.rejected, (state, action) => {
         state.error = action.payload as string;
       });
   },

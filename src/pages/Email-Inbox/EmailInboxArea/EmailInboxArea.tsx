@@ -31,6 +31,7 @@ import {
   setCurrentPage,
   setAppliedFilters,
   clearFilters,
+  markThreadAsRead,
 } from "../../../redux/slice/emailInboxSlice";
 
 const filterConfig = [
@@ -52,6 +53,7 @@ interface Message {
   date: string;
   body: string;
   threadId: string;
+  flags?: string[];
 }
 
 interface EmailInboxAreaProps {
@@ -317,19 +319,16 @@ const EmailInboxAreaComponent: React.FC<EmailInboxAreaProps> = ({ onMessageSelec
             <div style={{ flex: 1, overflowY: "auto" }}>
               {messagesToShow.map((message: Message) => (
                 <EmailInboxMessagesHeading
-                  key={message._id}
-                  onClick={() => onMessageSelect && onMessageSelect(message?.threadId)}
-                  sx={{
-                    backgroundColor: message?.threadId === selectedMessage ? "#e0e0e0" : "inherit",
-                    border: message?.threadId === selectedMessage ? "1px solid #333333" : "none",
-                    transition: "background-color 0.2s, border 0.2s",
-                    "&:hover": {
-                      backgroundColor:
-                        message?.threadId === selectedMessage ? "#cccccc" : "#f5f5f5",
-                    },
-                    boxShadow: "0 0 10px 0 rgba(0, 0, 0, 0.1)",
-                  }}
-                >
+                key={message._id}
+                isSelected={message?.threadId === selectedMessage}
+                isUnread={message?.flags?.includes("UNREAD")}
+                onClick={() => {
+                  if (onMessageSelect) onMessageSelect(message?.threadId);
+                  if (message?.flags?.includes("UNREAD")) {
+                    dispatch(markThreadAsRead({ threadId: message.threadId }));
+                  }
+                }}
+              >
                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "12px" }}>
                     <h4>{message.subject || "No Subject"}</h4>
                   </div>
