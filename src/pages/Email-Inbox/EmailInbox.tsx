@@ -19,13 +19,13 @@ import {
   getAllMailBox,
   getAllEmailThreads,
   setSelectedMailbox,
-  getAllThreadsMessages,
   reloadAccountMailboxes,
   reloadAccountMessages,
   getAllChats,
 } from "../../redux/slice/emailInboxSlice";
+import {getAllThreadsMessages} from "../../redux/slice/emailInboxThreadMessage"
 import { SectionTitle } from "../../styles/layout.styled";
-import { Popover, CircularProgress } from "@mui/material";
+import { Popover, CircularProgress, Box } from "@mui/material";
 import { Person } from "@mui/icons-material";
 import {
   fetchEmailAccount,
@@ -58,9 +58,9 @@ export default function EmailInboxs() {
   const loading = useSelector((state: RootState) => state.emailInbox.loading);
   const [emailAccounts, setEmailAccounts] = useState<EmailAccount[]>([]);
   const [loadingMailboxes, setLoadingMailboxes] = useState<boolean>(true);
-  const threadMessages = useSelector((state: RootState) => state.emailInbox.threadMessages);
+  const threadMessages = useSelector((state: RootState) => state.threadMessage.threadMessages);
+  const threadMessageLoading =  useSelector((state:RootState)=>state.threadMessage.loading)
   const [refreshLoading, setRefreshLoading] = useState<boolean>(false);
-
   const selectedAccount = accounts.find((account) => account._id === selectedAccountId);
 
   // Load email accounts
@@ -127,12 +127,8 @@ export default function EmailInboxs() {
 
   // Initial chats fetch (1 sec delay)
   useEffect(() => {
-    const timer = setTimeout(() => {
-      dispatch(getAllChats({ orgId: user?.orgId || "" }));
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, [dispatch, user?.orgId]);
+     dispatch(getAllChats({ orgId: user?.orgId || "" }));
+  }, [dispatch,user?.orgId]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -211,7 +207,8 @@ export default function EmailInboxs() {
                 <EmailInboxArea onMessageSelect={handleMessageSelect} selectedMessage={selectedMessage} />
               </div>
               <div style={{ flex: "0 0 50%", overflowY: "auto", padding: "10px" }}>
-                {selectedMessage && openDialog ? (
+                {selectedMessage && openDialog ? !threadMessageLoading?(
+                  
                   <EmailInboxAreaDialog
                     onClose={() => {
                       setOpenDialog(false);
@@ -219,7 +216,13 @@ export default function EmailInboxs() {
                     }}
                     messages={threadMessages as unknown as Message[]}
                   />
-                ) : (
+                ):
+                (
+              <Box sx={{display:"flex", justifyContent:"center",paddingTop:"50%"}}>
+              <CircularProgress  />
+              </Box>
+                )
+                 : (
                   <NoMailboxMessage>
                     <img
                       src="https://cdn-icons-png.flaticon.com/512/2748/2748558.png"

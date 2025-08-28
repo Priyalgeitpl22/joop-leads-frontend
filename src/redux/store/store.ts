@@ -10,6 +10,7 @@ import emailInboxReducer from "../slice/emailInboxSlice";
 import emailAccountReducer from "../slice/emailAccountSlice";
 import dashboardReducer from "../slice/dashboardSlice";
 import folderReducer from "../slice/emailCampaignFolderSlice"
+import threadMessageThreadReducer from "../slice/emailInboxThreadMessage"
 
 
 export const store = configureStore({
@@ -25,6 +26,7 @@ export const store = configureStore({
     emailAccount: emailAccountReducer,
     dashboard: dashboardReducer,
     folder: folderReducer,
+    threadMessage:threadMessageThreadReducer,
   },
 });
 
