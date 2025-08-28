@@ -194,21 +194,21 @@ export const searchEmails = createAsyncThunk(
   }
 );
 
-export const getAllThreadsMessages = createAsyncThunk(
-  "emailInbox/getEmailThread",
-  async (
-    { accountId, threadId }: { accountId: string; threadId: string },
-    { rejectWithValue }
-  ) => {
-    try {
-      const response = await emailApi.get(`/accounts/${accountId}/thread/${threadId}`);
-      return response.data;
-    } catch (error: any) {
-      console.error("Failed to fetch thread:", error);
-      return rejectWithValue(error.response?.data?.message || "Network error");
-    }
-  }
-);
+// export const getAllThreadsMessages = createAsyncThunk(
+//   "emailInbox/getEmailThread",
+//   async (
+//     { accountId, threadId }: { accountId: string; threadId: string },
+//     { rejectWithValue }
+//   ) => {
+//     try {
+//       const response = await emailApi.get(`/accounts/${accountId}/thread/${threadId}`);
+//       return response.data;
+//     } catch (error: any) {
+//       console.error("Failed to fetch thread:", error);
+//       return rejectWithValue(error.response?.data?.message || "Network error");
+//     }
+//   }
+// );
 
 export const sentEmailReply = createAsyncThunk(
   "emailInbox/sentEmailReply",
@@ -300,18 +300,18 @@ const emailInboxSlice = createSlice({
         state.searchLoading = false;
         state.searchResults = [];
       })
-      .addCase(getAllThreadsMessages.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(getAllThreadsMessages.fulfilled, (state, action) => {
-        state.loading = false;
-        state.threadMessages = Array.isArray(action.payload) ? action.payload : [];
-      })
-      .addCase(getAllThreadsMessages.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
-      })
+      // .addCase(getAllThreadsMessages.pending, (state) => {
+      //   state.loading = true;
+      //   state.error = null;
+      // })
+      // .addCase(getAllThreadsMessages.fulfilled, (state, action) => {
+      //   state.loading = false;
+      //   state.threadMessages = Array.isArray(action.payload) ? action.payload : [];
+      // })
+      // .addCase(getAllThreadsMessages.rejected, (state, action) => {
+      //   state.loading = false;
+      //   state.error = action.payload as string;
+      // })
       .addCase(markThreadAsRead.pending,(state)=>{
         state.error = null
       })
