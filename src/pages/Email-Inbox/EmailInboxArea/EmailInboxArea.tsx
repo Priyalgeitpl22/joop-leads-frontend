@@ -365,7 +365,7 @@ const EmailInboxAreaComponent: React.FC<EmailInboxAreaProps> = ({ onMessageSelec
 
           <TotalPageCount>
             <div>
-              Total Messages:{" "}
+              Total Threads:{" "}
               {searchTerm.trim().length > 0 ? searchResults.length : totalMessages}
             </div>
             {searchTerm.trim().length === 0 && totalMessages > messagesPerPage && (
