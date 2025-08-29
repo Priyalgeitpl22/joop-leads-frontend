@@ -149,12 +149,13 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
         <TableHead >
           <TableRow>
             <TableCellHead>Campaign Details</TableCellHead>
-
-            <TableCellHead>Leads</TableCellHead>
-            <TableCellHead>sent</TableCellHead>
-            <TableCellHead>Opened</TableCellHead>
-            <TableCellHead>Clicked</TableCellHead>
-            <TableCellHead>Bounced</TableCellHead>
+            {Object.entries(visibleColumns??{}).map((elem)=>{
+              const isElemTrue = elem[1]?elem[0]:null
+              if(isElemTrue){
+              return(
+                <TableCellHead>{isElemTrue?isElemTrue:isElemTrue}</TableCellHead>
+              )}
+            })}
 
             {user?.role === "Admin" && <TableCellHead>Action</TableCellHead>}
             {/* <TableCellHead></TableCellHead> */}
