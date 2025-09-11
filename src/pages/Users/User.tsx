@@ -10,6 +10,10 @@ import {
   FormControl,
   InputLabel,
   Select,
+  useTheme,
+  useMediaQuery,
+  Accordion,
+  AccordionSummary,
 } from "@mui/material";
 import {toast } from "react-hot-toast";
 import {
@@ -46,6 +50,8 @@ import { Dayjs } from "dayjs";
 import EditUserDialog from "./EditUser/EditUserRoleDialogue";
 import { ModeEditOutlineOutlined } from "@mui/icons-material";
 import ActiveFilters from "../Email-Campaign/ActiveFilters";
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import usePageWidth from "../../hooks/usePageWidth";
 
 
 const Users = () => {
@@ -152,6 +158,9 @@ const Users = () => {
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
+  const width = usePageWidth()
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"))
   const [searchTerm, setSearchTerm] = useState<string>("");
 
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
@@ -200,7 +209,7 @@ const Users = () => {
   const handleCloseDeleteDialog = () => {
     setSelectedUser(null);
     setOpenDeleteDialog(false);
-  };
+  };  
 
   const handleDeleteUser = async () => {
     if (!selectedUser) {
@@ -432,8 +441,51 @@ const Users = () => {
   };
 
   return (
-    <UsersContainer>
+    <UsersContainer style={{width:isMobile?`${width-20}px`:"100%"}}>
+      {isMobile?
       <UserHeader>
+       <Accordion style={{width:"100%",backgroundColor: "var(--background-secondary);"}}>
+        <AccordionSummary
+          expandIcon={<KeyboardArrowDownIcon />}
+          aria-controls="panel1-content"
+          id="panel1-header"
+        >
+            <SectionTitle>Users</SectionTitle>
+         
+        </AccordionSummary>
+         <Box
+          sx={{
+            display: "flex",
+            flexDirection:"column",
+            gap: "15px",
+            width: "100%",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+         <Box sx={{display:"flex",gap:"15px"}}>
+           <SearchBar>
+            <Search size={20} />
+            <input
+              placeholder="Search by Email or Name"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </SearchBar>
+          <Tooltip title="Filter" arrow>
+            <FilterIcon onClick={handleMenuOpen}>
+              <FilterAltOutlinedIcon />
+            </FilterIcon>
+          </Tooltip>
+         </Box>
+         <Box>
+           <AddUserDialog open={addUser} onClose={() => setAddUser(false)} />
+          <Button onClick={() => setAddUser(true)}>Add User</Button>
+         </Box>
+        </Box>
+      </Accordion>
+      </UserHeader>
+      :<UserHeader>
         <SectionTitle>Users</SectionTitle>
         <Box
           sx={{
@@ -460,7 +512,7 @@ const Users = () => {
           <AddUserDialog open={addUser} onClose={() => setAddUser(false)} />
           <Button onClick={() => setAddUser(true)}>Add User</Button>
         </Box>
-      </UserHeader>
+      </UserHeader>}
       <Menu
         anchorEl={anchorEl}
         open={isMenuOpen}

@@ -370,6 +370,8 @@ const EmailInboxAreaComponent: React.FC<EmailInboxAreaProps> = ({ onMessageSelec
             </div>
             {searchTerm.trim().length === 0 && totalMessages > messagesPerPage && (
               <EmailPagination
+              siblingCount={0}
+              boundaryCount={1}
                 count={totalPages}
                 page={currentPage}
                 onChange={handlePageChange}

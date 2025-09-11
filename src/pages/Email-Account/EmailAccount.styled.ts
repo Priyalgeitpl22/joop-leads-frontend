@@ -8,7 +8,6 @@ import {
 import { motion } from "framer-motion";
 
 export const EmailAccountsContainer = styled.div`
-  width: 100%;
   height: 100%;
   display: flex;
   overflow: auto;
@@ -22,7 +21,11 @@ export const EmailAccountsContainer = styled.div`
   position: relative;
   flex-direction: column;
   background: var(--white-fade-gradient);
-  border-radius: 8px;
+  border-radius: 8px;}
+
+  @media (max-width: 768px) {
+    padding: 0 0px; /* small padding on mobile */
+  }
 }
 `;
 export const EmailAccountHeader = styled.section`

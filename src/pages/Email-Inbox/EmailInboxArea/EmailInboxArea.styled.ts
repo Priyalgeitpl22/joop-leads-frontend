@@ -168,6 +168,8 @@ export const EmailPagination = styled(Pagination)({
   "& .MuiPaginationItem-root:hover": {
     backgroundColor: "rgba(0, 0, 0, 0.1)",
   },
+  
+ 
 });
 
 export const InboxMessageBody = styled(Box)<{ isExpanded: boolean }>(
@@ -215,8 +217,9 @@ export const NoMailboxMessage = styled(Box)({
   fontSize: "16px",
   fontWeight: "bold",
   height: "100%",
-  width: "100%",
+  width: "100%",  
 });
+
 
 export const EmailInboxListHeader = styled(Box)({
   display: "flex",
@@ -228,8 +231,9 @@ export const EmailInboxListHeader = styled(Box)({
   top: 0,
   backgroundColor: "var(--text-white)",
   "@media (max-width: 600px)": {
-    flexDirection: "column",
-    alignItems: "flex-start",
+    flexDirection: "row",
+    justifyContent:"space-evenly",
+    alignItems: "center",
   },
 });
 

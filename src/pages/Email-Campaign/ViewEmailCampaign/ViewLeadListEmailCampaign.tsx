@@ -35,7 +35,7 @@ const ViewLeadListEmailCampaign: React.FC<ViewLeadListEmailCampaignProps> = ({
   }, [dispatch]);
 
   return (
-    <CustomTableContainer>
+    <CustomTableContainer >
       <Table>
         <TableHead>
           <TableRow>

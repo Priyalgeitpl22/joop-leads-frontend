@@ -2,8 +2,9 @@ import { TableBody, TableCell, TableContainer } from "@mui/material";
 import styled from "styled-components";
 
 export const CustomTableContainer = styled(TableContainer)`
+
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  overflow: auto;
   max-height: 100%;
   overflow-y: auto;
   height: 100%;

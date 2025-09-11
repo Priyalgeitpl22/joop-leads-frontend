@@ -29,6 +29,7 @@ import MailOutlineSharpIcon from "@mui/icons-material/MailOutlineSharp";
 import { Search } from "lucide-react";
 import { SectionTitle } from "../../styles/layout.styled";
 
+
 const Leads: React.FC = () => {
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -44,7 +45,7 @@ const Leads: React.FC = () => {
   const isMenuOpen = Boolean(anchorEl);
 
   return (
-    <LeadssContainer>
+    <LeadssContainer >
       <LeadsHeader>
         <SectionTitle>All Leads</SectionTitle>
         <Box sx={{ display: "flex", gap: "20px", width: "100%" }}>

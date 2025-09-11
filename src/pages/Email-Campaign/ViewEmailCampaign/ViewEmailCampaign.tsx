@@ -12,8 +12,13 @@ import { useDispatch } from "react-redux";
 import { getCampaignById } from "../../../redux/slice/emailCampaignSlice";
 import { AppDispatch } from "../../../redux/store/store";
 import { IEmailCampaign } from "../NewCampaign/interfaces";
+import usePageWidth from "../../../hooks/usePageWidth";
+import  {useTheme,useMediaQuery } from "@mui/material";
 
 const ViewEmailCampaign = () => {
+  const width = usePageWidth()
+  const theme = useTheme()
+  const isMobile  = useMediaQuery(theme.breakpoints.down("sm"))
   const [activeTab, setActiveTab] = useState<string>("performance");
   const [campaignId, setCampaignId] = useState<string>("");
   const [campaign, setCampaign] = useState<IEmailCampaign | null>(null);
@@ -50,7 +55,7 @@ const ViewEmailCampaign = () => {
   };
 
   return (
-    <ContentContainer style={{height: "100%"}}>
+    <ContentContainer style={{height: "100%",width:isMobile?`${width-20}px`:"100%"}}>
       <CustomTabs
         value={activeTab}
         onChange={handleTabChange}
@@ -75,7 +80,7 @@ const ViewEmailCampaign = () => {
             <ViewPerformanceEmailCampaign campaignStats={campaign.campaignStats} />
           )}
           {activeTab === "lead_list" && campaign && (
-            <ViewLeadListEmailCampaign leads={campaign.contacts} />
+            <ViewLeadListEmailCampaign leads={campaign.contacts}  />
           )}
           {activeTab === "sequences" && campaign && (
             <ViewSequencesEmailCampaign campaignId={campaignId} />

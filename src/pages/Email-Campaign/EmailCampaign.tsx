@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
+  Accordion,
+  AccordionSummary,
   Box,
   FormControl,
   InputLabel,
@@ -11,6 +13,8 @@ import {
   Tabs,
   Tooltip,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { motion } from "framer-motion";
 import {
@@ -50,14 +54,17 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { showFolders } from "../../redux/slice/emailCampaignFolderSlice";
 import FolderOpenOutlinedIcon from "@mui/icons-material/FolderOpenOutlined";
 import RenameEmailCampaignDialog from "./RenameEmailCampaignDialog";
-
+import usePageWidth from "../../hooks/usePageWidth";
+import  KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import ColumnVisibilitySelect from "../../assets/Custom/customVisibilitySeletc";
 
 
-import ActiveFilters from "./ActiveFilters";
-
+import ActiveFilters from "./ActiveFilters"; 
 
 const EmailCampaign: React.FC = () => {
+  const width = usePageWidth()
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"))
   const dispatch = useDispatch<AppDispatch>();
   const location = useLocation();
   const pathParts = location.pathname.split("/");
@@ -458,11 +465,92 @@ const EmailCampaign: React.FC = () => {
         height: activeTab === "all" || activeTab === "folders" ? "100%" : "0",
         display:
           activeTab === "all" || activeTab === "folders" ? "flex" : "none",
+        width:isMobile?`${width-20}px`:"100%"
       }}
     >
       {activeTab === "all" || activeTab === "folders" ? (
         <>
-          <SectionHeader>
+        {isMobile?
+        <SectionHeader sx={{height:"auto"}}>
+        <Accordion style={{width:"100%",paddingRight:"0.5rem",paddingLeft:"0.5rem"}}>
+        <AccordionSummary
+          expandIcon={< KeyboardArrowDownIcon />}
+          aria-controls="panel1-content"
+          id="panel1-header"
+        >
+          <Typography sx={{fontSize: "18px !important", fontWeight: "600", color: "#35495c !important"}}>Campaigns</Typography>
+        </AccordionSummary>
+        {activeTab === "all" && (
+          <>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection:"column",
+                    gap: "15px",
+                    width: "100%",
+                    alignItems: "center",
+                    paddingBottom: "12px",
+                    justifyContent: "flex-end",
+                  }}
+                >
+                  <Box sx={{
+                    display: "flex",
+                    gap: "10px",
+                    width: "100%",
+                    alignItems: "center",
+                    paddingBottom: "12px",
+                    justifyContent: "center",
+                  }}>
+                    <Tooltip title="Filter" arrow>
+                    <FilterIcon onClick={handleMenuOpen1}>
+                      <FilterAltOutlinedIcon />
+                    </FilterIcon>
+                  </Tooltip>
+                  <SearchBar>
+                    <Search size={20} />
+                    <input
+                      placeholder="Search by Campaign Name"
+                      value={searchQuery}
+                      onChange={handleSearchChange}
+                    />
+                  </SearchBar>
+                  
+                  </Box>
+                  <Box sx={{
+                    display: "flex",
+                    gap: "13px",
+                    width: "100%",
+                    alignItems: "center",
+                    paddingBottom: "12px",
+                    justifyContent: "center",
+                  }}>
+                    <ColumnVisibilitySelect
+                    visibleColumns={visibleColumns}
+                    handleColumnVisibilityChange={handleColumnVisibilityChange}
+                    columns={columnOptions}
+                    labelId="column-visibility-label"
+                    label="Customize Columns"
+                    sx={{  width: 200, borderRadius: "4px" }}
+                  />
+                  <Button onClick={handleCreateCampaign}>
+                    Create Campaign
+                  </Button>
+                  
+                  </Box>
+                  
+                </Box>
+                </>
+              )}
+      
+        {/* <AccordionDetails>
+          
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
+          malesuada lacus ex, sit amet blandit leo lobortis eget.
+        </AccordionDetails> */}
+        
+      </Accordion>
+      </SectionHeader>
+      : <SectionHeader>
             <Tabs
               value={activeTab}
               onChange={handleTabChange}
@@ -541,7 +629,8 @@ const EmailCampaign: React.FC = () => {
                 </Box>
               )}
             </Tabs>
-          </SectionHeader>
+          </SectionHeader>}
+          
 
           {/* {loading && <ProgressBar />} */}
           <Menu

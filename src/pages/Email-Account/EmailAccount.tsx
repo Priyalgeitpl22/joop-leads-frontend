@@ -1,7 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Box,
   Tooltip,
+  useMediaQuery,
+  useTheme
 } from "@mui/material";
 import {
   EmailAccountsContainer,
@@ -11,6 +16,7 @@ import {
 import EmailAccountDialog from "./EmailAccountDialogBox/EmailAccountDialog";
 import AdvancedSettingDialog from "./AdvancedSettingDialogBox/AdvancedSettingDialog";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { useDispatch, useSelector } from "react-redux";
 import {
   deleteEmailAccount,
@@ -33,9 +39,12 @@ import { SectionTitle } from "../../styles/layout.styled";
 import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
 import EmailAccountSmtpDialog from "./EmailAccountDialogBox/EmailAccountSmtpDialog";
 import toast, { Toaster } from "react-hot-toast";
+import usePageWidth from "../../hooks/usePageWidth";
 // import ProgressBar from "../../assets/Custom/linearProgress";
 
 const EmailAccounts: React.FC = () => {
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"))
   const dispatch = useDispatch<AppDispatch>();
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
@@ -170,6 +179,7 @@ const EmailAccounts: React.FC = () => {
         setRows(mappedRows);
       }, 1000);
     } catch (error) {
+      console.error("Search failed:", error);
       setLoading(false);
     }
   };
@@ -189,6 +199,8 @@ const EmailAccounts: React.FC = () => {
       console.error("Search failed:", error);
     }
   };
+
+  const pageWidth = usePageWidth();
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value;
@@ -267,14 +279,16 @@ const EmailAccounts: React.FC = () => {
     setSmtpDialogOpen(true);
   };
 
+
   return (
-    <EmailAccountsContainer>
+    <EmailAccountsContainer style={{width:isMobile?`${pageWidth-20}px`:"100%"}}>
       <Toaster position="top-right" />
-      <EmailAccountHeader>
+      
+      <EmailAccountHeader style={{display:isMobile?"none":"flex"}}>
         <SectionTitle>Email Accounts</SectionTitle>
         <Box
           sx={{
-            display: "flex",
+            display: "none",
             gap: "15px",
             width: "100%",
             alignItems: "center",
@@ -309,17 +323,116 @@ const EmailAccounts: React.FC = () => {
           <Button onClick={handleOpenDialog}>Add Account</Button>
         </Box>
       </EmailAccountHeader>
-      {loading && <ProgressBar />}
-      <Box sx={{ height: "100%", overflow: "auto" }}>
-        <EmailAccountTable>
-          <CustomDataTable
-            columns={columns}
-            rows={rows}
-            pageSizeOptions={[15, 10, 5]}
-            enableCheckboxSelection={false}
+
+      {/* mobile */}
+
+      <EmailAccountHeader style={{display:isMobile?"flex":"none"}}>
+        <Accordion style={{width:"100%"}}>
+        <AccordionSummary
+          expandIcon={<KeyboardArrowDownIcon/>}
+          aria-controls="panel1-content"
+          id="panel1-header"
+        >
+          <SectionTitle>Email Accounts</SectionTitle>
+        </AccordionSummary>
+        <AccordionDetails>
+         <Box
+          sx={{
+            display: "flex",
+            flexDirection:"column",
+            gap: "15px",
+            width: "100%",
+            alignItems: "center",
+            justifyContent: "center"
+          }}
+        >
+
+          <SearchBar>
+            <Search size={20} />
+            <input
+              placeholder="Search by Email or Name"
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+          </SearchBar>
+          <EmailAccountSmtpDialog
+            open={smtpDialogOpen}
+            onClose={() => setSmtpDialogOpen(false)}
           />
-        </EmailAccountTable>
-      </Box>
+          <EmailAccountDialog
+            handleSmtpDetail={handleSmtpDetail}
+            open={isDialogOpen}
+            onClose={() => setIsDialogOpen(false)}
+          />
+          <AdvancedSettingDialog
+            open={isSettingOpen}
+            onClose={() => setIsSettingOpen(false)}
+          />
+          {/* <SecondaryButton onClick={handleSettingDialog}>
+            Advanced Settings
+          </SecondaryButton> */}
+          <Button onClick={handleOpenDialog}>Add Account</Button>
+        </Box>
+        </AccordionDetails>
+      </Accordion>
+        
+        {/* <SectionTitle>Email Accounts</SectionTitle>
+        <Box
+          sx={{
+            display: "none",
+            gap: "15px",
+            width: "100%",
+            alignItems: "center",
+            justifyContent: "flex-end"
+          }}
+        >
+
+          <SearchBar>
+            <Search size={20} />
+            <input
+              placeholder="Search by Email or Name"
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+          </SearchBar>
+          <EmailAccountSmtpDialog
+            open={smtpDialogOpen}
+            onClose={() => setSmtpDialogOpen(false)}
+          />
+          <EmailAccountDialog
+            handleSmtpDetail={handleSmtpDetail}
+            open={isDialogOpen}
+            onClose={() => setIsDialogOpen(false)}
+          />
+          <AdvancedSettingDialog
+            open={isSettingOpen}
+            onClose={() => setIsSettingOpen(false)}
+          />
+          {/* <SecondaryButton onClick={handleSettingDialog}>
+            Advanced Settings
+          </SecondaryButton> */}
+          {/* <Button onClick={handleOpenDialog}>Add Account</Button>
+        </Box> */} 
+      </EmailAccountHeader>
+
+      {loading && <ProgressBar />}
+    
+
+<Box sx={{ height: "100%", overflow: "auto" }}>
+  <EmailAccountTable
+    
+  >
+    <CustomDataTable
+    
+      columns={columns}
+      rows={rows}
+      pageSizeOptions={[15, 10, 5]}
+      enableCheckboxSelection={false}
+    />
+  </EmailAccountTable>
+</Box>
+
+
       <ConfirmDeleteDialog
         open={openDeleteDialog}
         onClose={handleCloseDeleteDialog}
