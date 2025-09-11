@@ -23,15 +23,18 @@ import {
   reloadAccountMessages,
   getAllChats,
 } from "../../redux/slice/emailInboxSlice";
-import {getAllThreadsMessages} from "../../redux/slice/emailInboxThreadMessage"
+import { getAllThreadsMessages } from "../../redux/slice/emailInboxThreadMessage";
 import { SectionTitle } from "../../styles/layout.styled";
-import { Popover, CircularProgress, Box } from "@mui/material";
+import { Popover, CircularProgress, Box, useMediaQuery, useTheme } from "@mui/material";
 import { Person } from "@mui/icons-material";
 import {
   fetchEmailAccount,
   EmailAccount,
 } from "../../redux/slice/emailAccountSlice";
-import { EmailInboxMessagesBox, NoMailboxMessage } from "./EmailInboxArea/EmailInboxArea.styled";
+import {
+  EmailInboxMessagesBox,
+  NoMailboxMessage,
+} from "./EmailInboxArea/EmailInboxArea.styled";
 import { ReloadIcon } from "./EmailInboxList/EmailInboxList.styled";
 
 interface Message {
@@ -59,9 +62,12 @@ export default function EmailInboxs() {
   const [emailAccounts, setEmailAccounts] = useState<EmailAccount[]>([]);
   const [loadingMailboxes, setLoadingMailboxes] = useState<boolean>(true);
   const threadMessages = useSelector((state: RootState) => state.threadMessage.threadMessages);
-  const threadMessageLoading =  useSelector((state:RootState)=>state.threadMessage.loading)
+  const threadMessageLoading = useSelector((state: RootState) => state.threadMessage.loading);
   const [refreshLoading, setRefreshLoading] = useState<boolean>(false);
   const selectedAccount = accounts.find((account) => account._id === selectedAccountId);
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // <= 600px
 
   // Load email accounts
   useEffect(() => {
@@ -69,15 +75,9 @@ export default function EmailInboxs() {
       try {
         const data = await dispatch(fetchEmailAccount({ orgId: user?.orgId || "" })).unwrap();
         setEmailAccounts(data);
-        if(selectedAccountId)
-        {
-          await dispatch(
-            getAllEmailThreads({
-              accountId: selectedAccountId,
-            })
-          );
+        if (selectedAccountId) {
+          await dispatch(getAllEmailThreads({ accountId: selectedAccountId }));
         }
-
         if (data.length > 0 && !selectedAccountId) {
           const firstAccountId = data[0]._id;
           dispatch(setSelectedAccount(firstAccountId));
@@ -109,11 +109,7 @@ export default function EmailInboxs() {
         if (unique.length > 0 && !selectedMailboxId) {
           const firstMailbox = unique[0];
           dispatch(setSelectedMailbox(firstMailbox._id));
-          await dispatch(
-            getAllEmailThreads({
-              accountId: selectedAccountId,
-            })
-          );
+          await dispatch(getAllEmailThreads({ accountId: selectedAccountId }));
         }
       } catch (err) {
         console.error("Failed to fetch mailboxes:", err);
@@ -125,18 +121,18 @@ export default function EmailInboxs() {
     fetchMailboxes();
   }, [selectedAccountId, dispatch, selectedMailboxId]);
 
-  // Initial chats fetch (1 sec delay)
+  // Initial chats fetch
   useEffect(() => {
-     dispatch(getAllChats({ orgId: user?.orgId || "" }));
-  }, [dispatch,user?.orgId]);
+    dispatch(getAllChats({ orgId: user?.orgId || "" }));
+  }, [dispatch, user?.orgId]);
 
+  // Auto reload
   useEffect(() => {
     const interval = setInterval(() => {
       handleReload();
-    }, 5 * 60 * 1000); // 5 minutes in milliseconds
-
-    return () => clearInterval(interval); // Cleanup on unmount
-  }, [selectedAccountId,accounts]);
+    }, 5 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, [selectedAccountId, accounts]);
 
   const handleAccountSelectorClick = (event: React.MouseEvent<HTMLElement>) => {
     setAccountSelectorAnchor(event.currentTarget);
@@ -147,7 +143,7 @@ export default function EmailInboxs() {
   };
 
   const handleMessageSelect = useCallback((message: string) => {
-    setSelectedMessage((prev) => (prev === message ? prev : message));
+    setSelectedMessage(message);
     setOpenDialog(true);
   }, []);
 
@@ -160,7 +156,6 @@ export default function EmailInboxs() {
 
   const handleReload = async () => {
     if (!accounts || accounts.length === 0 || !selectedAccountId) return;
-
     try {
       setRefreshLoading(true);
       const res = await dispatch(reloadAccountMailboxes({ accountId: selectedAccountId })).unwrap();
@@ -180,8 +175,6 @@ export default function EmailInboxs() {
     }
   };
 
-  console.log("Rerender 000000")
-
   return (
     <>
       <EmailInbox>
@@ -196,52 +189,82 @@ export default function EmailInboxs() {
             </AccountSelectorButton>
           </AccountSelectorContainer>
         </EmailInboxHeader>
+
         <EmailInboxContainer>
           {loadingMailboxes || loading ? (
             <EmailInboxMessagesBox>
               <CircularProgress />
             </EmailInboxMessagesBox>
           ) : (
-            <div style={{ display: "flex", flexDirection: "row", height: "100%", width: "100%" }}>
-              <div style={{ flex: "0 0 50%", overflowY: "auto" }}>
-                <EmailInboxArea onMessageSelect={handleMessageSelect} selectedMessage={selectedMessage} />
-              </div>
-              <div style={{ flex: "0 0 50%", overflowY: "auto", padding: "10px" }}>
-                {selectedMessage && openDialog ? !threadMessageLoading?(
-                  
-                  <EmailInboxAreaDialog
-                    onClose={() => {
-                      setOpenDialog(false);
-                      setSelectedMessage(null);
-                    }}
-                    messages={threadMessages as unknown as Message[]}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: isMobile ? "column" : "row",
+                height: "100%",
+                width: "100%",
+              }}
+            >
+              {/* Inbox list (hide on mobile when dialog is open) */}
+              {(!isMobile || !selectedMessage) && (
+                <div style={{ flex: isMobile ? "1" : "0 0 50%", overflowY: "auto" }}>
+                  <EmailInboxArea
+                    onMessageSelect={handleMessageSelect}
+                    selectedMessage={selectedMessage}
                   />
-                ):
-                (
-              <Box sx={{display:"flex", justifyContent:"center",paddingTop:"50%"}}>
-              <CircularProgress  />
-              </Box>
-                )
-                 : (
-                  <NoMailboxMessage>
-                    <img
-                      src="https://cdn-icons-png.flaticon.com/512/2748/2748558.png"
-                      alt="No Messages"
-                      style={{
-                        width: "80px",
-                        height: "80px",
-                        marginBottom: "10px",
-                        opacity: 0.6,
-                      }}
-                    />
-                    No mail found.
-                  </NoMailboxMessage>
-                )}
-              </div>
+                </div>
+              )}
+
+              {/* Dialog (hide on mobile until a message is selected) */}
+              {(!isMobile || (isMobile && selectedMessage)) && (
+                <div
+                  style={{
+                    flex: isMobile ? "1" : "0 0 50%",
+                    overflowY: "auto",
+                    padding: "10px",
+                  }}
+                >
+                  {selectedMessage && openDialog ? (
+                    !threadMessageLoading ? (
+                      <>
+                        
+                        <EmailInboxAreaDialog
+                          onClose={() => {
+                            setOpenDialog(false);
+                            setSelectedMessage(null);
+                          }}
+                          messages={threadMessages as unknown as Message[]}
+                        />
+                      </>
+                    ) : (
+                      <Box sx={{ display: "flex", justifyContent: "center", paddingTop: "50%" }}>
+                        <CircularProgress />
+                      </Box>
+                    )
+                  ) : (
+                    !isMobile && (
+                      <NoMailboxMessage>
+                        <img
+                          src="https://cdn-icons-png.flaticon.com/512/2748/2748558.png"
+                          alt="No Messages"
+                          style={{
+                            width: "80px",
+                            height: "80px",
+                            marginBottom: "10px",
+                            opacity: 0.6,
+                          }}
+                        />
+                        No mail found.
+                      </NoMailboxMessage>
+                    )
+                  )}
+                </div>
+              )}
             </div>
           )}
         </EmailInboxContainer>
       </EmailInbox>
+
+      {/* Account selector popover */}
       <Popover
         open={open}
         anchorEl={accountSelectorAnchor}

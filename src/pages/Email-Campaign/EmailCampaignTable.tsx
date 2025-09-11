@@ -75,6 +75,8 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
     page * rowsPerPage + rowsPerPage
   );
 
+
+
   const handleChangePage = (
     _event: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number
@@ -145,7 +147,7 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
         paddingBottom: "4%",
       }}
     >
-      <Table stickyHeader sx={{ position: "sticky" }}>
+      <Table stickyHeader sx={{ position: "sticky"}}>
         <TableHead >
           <TableRow>
             <TableCellHead>Campaign Details</TableCellHead>

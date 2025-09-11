@@ -11,6 +11,11 @@ import {
   IconButton,
   Tooltip,
   SelectChangeEvent,
+  useTheme,
+  useMediaQuery,
+  Accordion,
+  AccordionSummary,
+
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
@@ -61,6 +66,8 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Dayjs } from "dayjs";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
 import ActiveFilters from "../Email-Campaign/ActiveFilters";
+import usePageWidth from "../../hooks/usePageWidth";
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 
 
@@ -70,6 +77,10 @@ export interface ImportedLeadsData {
 
 const ContactTable: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const width = usePageWidth()
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+
 
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -585,21 +596,91 @@ const ContactTable: React.FC = () => {
   return (
     <ContactsContainer style={{
       overflow: "auto",
-        minWidth: 600,
         maxWidth: '100%',
-        width: '100%',
+        width: isMobile?`${width-20}px`:"100%",
         minHeight: "calc(100vh - 400px)", 
         position: 'relative',
         backgroundColor: "white !important",
     }}>
       <Toaster position="top-right" />
+      {isMobile?
       <ContactsHeader>
+      <Accordion sx={{width:"100%"}}>
+            <AccordionSummary
+              expandIcon={<KeyboardArrowDownIcon/>}
+              aria-controls="panel1-content"
+              id="panel1-header"
+            >
+             <SectionTitle>All Leads</SectionTitle>
+            </AccordionSummary>
+            <Box
+          sx={{
+            display: "flex",
+            flexDirection:"column",
+            gap: "15px",
+            width:"auto",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          
+          <Box sx={{ display:"flex",
+          gap: "15px",
+
+          }}>
+            <SearchBar>
+            <Search size={20} />
+            <input
+              placeholder="Search by Leads or Name"
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+          </SearchBar>
+          <Tooltip title="Filter" arrow>
+            <FilterIcon onClick={handleMenuOpen}>
+              <FilterAltOutlinedIcon />
+            </FilterIcon>
+          </Tooltip>
+          <ContactsAccountDialogBox
+            open={isAddAccountDialogOPen}
+            onClose={handleAccountCloseDialog}
+            selectedId={selectedId}
+          />
+          </Box>
+          
+         
+          <Box sx={{ display:"flex",
+          gap: "15px",
+
+          }}
+          >
+
+          {selectedIds.length == 0 && (
+            <Tooltip title="Upload Bulk Leads" arrow>
+              <IconsButton onClick={handleOpenDialog}>
+                <CloudUploadIcon />
+              </IconsButton>
+            </Tooltip>
+          )}
+          {selectedIds.length == 0 && (
+            <Tooltip title="Add Lead" arrow>
+              <IconsButton onClick={handleAccountOpenDialog}>
+                <PersonAddIcon />
+              </IconsButton>
+            </Tooltip>
+          )}
+          </Box>
+          
+        </Box>
+          </Accordion>
+          </ContactsHeader>
+:<ContactsHeader>
         <SectionTitle>All Leads</SectionTitle>
         <Box
           sx={{
             display: "flex",
             gap: "15px",
-            width: "100%",
+            width:"auto",
             alignItems: "center",
             justifyContent: "right",
           }}
@@ -670,7 +751,8 @@ const ContactTable: React.FC = () => {
             </Tooltip>
           )}
         </Box>
-      </ContactsHeader>
+      </ContactsHeader>}
+      
       {loading && <ProgressBar />}
       <Menu
         anchorEl={anchorEl}
