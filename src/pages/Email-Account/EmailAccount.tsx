@@ -288,7 +288,7 @@ const EmailAccounts: React.FC = () => {
         <SectionTitle>Email Accounts</SectionTitle>
         <Box
           sx={{
-            display: "none",
+            display: "flex",
             gap: "15px",
             width: "100%",
             alignItems: "center",
@@ -375,55 +375,11 @@ const EmailAccounts: React.FC = () => {
         </Box>
         </AccordionDetails>
       </Accordion>
-        
-        {/* <SectionTitle>Email Accounts</SectionTitle>
-        <Box
-          sx={{
-            display: "none",
-            gap: "15px",
-            width: "100%",
-            alignItems: "center",
-            justifyContent: "flex-end"
-          }}
-        >
-
-          <SearchBar>
-            <Search size={20} />
-            <input
-              placeholder="Search by Email or Name"
-              value={searchQuery}
-              onChange={handleSearchChange}
-            />
-          </SearchBar>
-          <EmailAccountSmtpDialog
-            open={smtpDialogOpen}
-            onClose={() => setSmtpDialogOpen(false)}
-          />
-          <EmailAccountDialog
-            handleSmtpDetail={handleSmtpDetail}
-            open={isDialogOpen}
-            onClose={() => setIsDialogOpen(false)}
-          />
-          <AdvancedSettingDialog
-            open={isSettingOpen}
-            onClose={() => setIsSettingOpen(false)}
-          />
-          {/* <SecondaryButton onClick={handleSettingDialog}>
-            Advanced Settings
-          </SecondaryButton> */}
-          {/* <Button onClick={handleOpenDialog}>Add Account</Button>
-        </Box> */} 
       </EmailAccountHeader>
-
       {loading && <ProgressBar />}
-    
-
-<Box sx={{ height: "100%", overflow: "auto" }}>
-  <EmailAccountTable
-    
-  >
-    <CustomDataTable
-    
+      <Box sx={{ height: "100%", overflow: "auto" }}>
+        <EmailAccountTable>
+          <CustomDataTable
       columns={columns}
       rows={rows}
       pageSizeOptions={[15, 10, 5]}
