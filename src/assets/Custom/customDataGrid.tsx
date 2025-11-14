@@ -34,6 +34,8 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
         display: "flex",
         flexDirection: "column",
         overflow: 'auto',
+          border:"2px solid gray",
+          borderRadius:"10px"
       }}>
       <Paper
         className="data-grid-container"
@@ -71,19 +73,28 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
           sx={{
             cursor: "pointer",
             backgroundColor: "white !important",
-            color: "black !important",
+            color: "white !important",
             "& .MuiDataGrid-root": {
               backgroundColor: "white !important",
               color: "black !important",
+              
             },
+            "& .MuiDataGrid-container--top [role=row]":{backgroundColor:"lightgray !important"},
+            "& .MuiDataGrid-columnHeaderRow":{
+                backgroundColor:"lightgray !important",
+                color:"white !important",
+                
+              },
             "& .MuiDataGrid-columnHeaders": {
-              backgroundColor: "white !important",
+              backgroundColor: "lightgray !important",
               color: "black !important",
               borderBottom: "1px solid black !important",
             },
+            
             "& .MuiDataGrid-cell": {
               backgroundColor: "white !important",
               color: "black !important",
+              
             },
             "& .MuiDataGrid-row": {
               backgroundColor: "white !important",

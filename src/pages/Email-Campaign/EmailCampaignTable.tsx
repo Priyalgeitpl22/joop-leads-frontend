@@ -145,33 +145,37 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
         overflowY: "auto",
         height: "calc(100vh - 150px)",
         paddingBottom: "4%",
+        padding:"3rem"
       }}
     >
-      <Table stickyHeader sx={{ position: "sticky"}}>
-        <TableHead >
-          <TableRow>
-            <TableCellHead>Campaign Details</TableCellHead>
+      <Table stickyHeader sx={{ position: "sticky",border:"2px solid gray",borderRadius:"10px"}}>
+        <TableHead sx={{height:"3rem"}} >
+          <TableRow >
+            <TableCellHead sx={{backgroundColor:"lightgrey"}}>Campaign Details</TableCellHead>
             {Object.entries(visibleColumns??{}).map((elem)=>{
               const isElemTrue = elem[1]?elem[0]:null
               if(isElemTrue){
               return(
-                <TableCellHead>{isElemTrue?isElemTrue:isElemTrue}</TableCellHead>
+                <TableCellHead sx={{backgroundColor:"lightgrey"}}>{isElemTrue?isElemTrue:isElemTrue}</TableCellHead>
               )}
             })}
 
-            {user?.role === "Admin" && <TableCellHead>Action</TableCellHead>}
+            {user?.role === "Admin" && <TableCellHead sx={{backgroundColor:"lightgrey"}}>Action</TableCellHead>}
             {/* <TableCellHead></TableCellHead> */}
           </TableRow>
         </TableHead>
         {paginatedCampaigns.map((campaign) => (
           <CustomTableBody key={campaign.id} >
-            <CustomTableRow>
+            <CustomTableRow sx={{
+              ":hover":{backgroundColor:"#4f535715"}
+            }}>
               <CustomTableCell
                 style={{
                   display: "flex",
                   flexDirection: "row",
                   justifyContent: "flex-start",
                   gap: "12px",
+                  
                 }}
               >
                 <IconButton

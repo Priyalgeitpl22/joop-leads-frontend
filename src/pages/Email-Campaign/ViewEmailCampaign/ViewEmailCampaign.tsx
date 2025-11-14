@@ -14,9 +14,12 @@ import { AppDispatch } from "../../../redux/store/store";
 import { IEmailCampaign } from "../NewCampaign/interfaces";
 import usePageWidth from "../../../hooks/usePageWidth";
 import  {useTheme,useMediaQuery } from "@mui/material";
+import { ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const ViewEmailCampaign = () => {
   const width = usePageWidth()
+  const navigate = useNavigate()
   const theme = useTheme()
   const isMobile  = useMediaQuery(theme.breakpoints.down("sm"))
   const [activeTab, setActiveTab] = useState<string>("performance");
@@ -39,6 +42,9 @@ const ViewEmailCampaign = () => {
   }, [location.search]);
 
   const handleTabChange = (_: any, newValue: string) => {
+    if(newValue as string === "back"){
+      navigate("/email-campaign/all")
+    }
     const validTabs = ["performance", "lead_list", "sequences"];
     setActiveTab(validTabs.includes(newValue) ? newValue : "performance");
   };
@@ -64,8 +70,10 @@ const ViewEmailCampaign = () => {
           alignItems: "center",
           borderBottom: 1,
           borderColor: "divider",
+          height:"3.5rem"
         }}
       >
+        <CustomTab label={<ArrowLeft/>} value="back"/>
         <CustomTab label="Performance" value="performance" />
         <CustomTab label="Lead List" value="lead_list" />
         <CustomTab label="Sequences" value="sequences" />

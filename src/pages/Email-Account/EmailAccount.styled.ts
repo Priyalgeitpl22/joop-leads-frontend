@@ -20,7 +20,7 @@ export const EmailAccountsContainer = styled.div`
   background: white;
   position: relative;
   flex-direction: column;
-  background: var(--white-fade-gradient);
+  // background: var(--white-fade-gradient);
   border-radius: 8px;}
 
   @media (max-width: 768px) {
@@ -67,7 +67,8 @@ export const EmailAccountTable = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.4);
+  box-shadow: 0px 2px 6px rgba(255, 255, 255, 0.4);
+  padding: 3rem;
 `;
 
 export const StyledTableContainer = styled(TableContainer)`

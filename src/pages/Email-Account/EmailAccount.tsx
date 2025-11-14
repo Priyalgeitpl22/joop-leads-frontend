@@ -63,12 +63,12 @@ const EmailAccounts: React.FC = () => {
 
   const columns: GridColDef[] = useMemo(() => {
     const baseColumns: GridColDef[] = [
-      { field: "name", headerName: "Name", width: 160 },
-      { field: "email", headerName: "Email", width: 260 },
+      { field: "name", headerName: "Name", width: 240 },
+      { field: "email", headerName: "Email", width: 280 },
       {
         field: "type",
         headerName: "Type",
-        width: 100,
+        width:180,
         renderCell: (params: any) => {
           let icon = null;
 
@@ -100,31 +100,31 @@ const EmailAccounts: React.FC = () => {
       {
         field: "warm_up",
         headerName: "Warmup Enabled",
-        width: 150,
+        width: 160,
         renderCell: () => <Box>Yes</Box>,
       },
       {
         field: "msg_per_day",
         headerName: "Daily Limit",
-        width: 120,
+        width: 180,
         valueGetter: (params: any) => (params ?? "N/A"),
       },
       {
         field: "reputation",
         headerName: "Reputation",
-        width: 110,
+        width: 150,
         renderCell: () => <Box>100%</Box>,
       },
       {
         field: "createdAt",
         headerName: "Created At",
-        width: 160,
+        width: 230,
         valueGetter: (params: any) => (params ? formatDate(params) : null),
       },
       {
         field: "edit",
         headerName: "Action",
-        width: 100,
+        width: 150,
         sortable: false,
         renderCell: (params) => (
           <CustomTableCell>
@@ -284,8 +284,13 @@ const EmailAccounts: React.FC = () => {
     <EmailAccountsContainer style={{width:isMobile?`${pageWidth-20}px`:"100%"}}>
       <Toaster position="top-right" />
       
-      <EmailAccountHeader style={{display:isMobile?"none":"flex"}}>
-        <SectionTitle>Email Accounts</SectionTitle>
+      <EmailAccountHeader style={{display:isMobile?"none":"flex",backgroundColor:"white"}}>
+        <Box>
+          <SectionTitle style={{fontSize:"1.5rem", color:"#112233"}}>Email Accounts</SectionTitle>
+           <SectionTitle style={{fontSize:"1rem", color:"#494848ff"}}>Already Existing Email Accounts </SectionTitle>
+        </Box>
+        
+        
         <Box
           sx={{
             display: "flex",
@@ -333,7 +338,12 @@ const EmailAccounts: React.FC = () => {
           aria-controls="panel1-content"
           id="panel1-header"
         >
-          <SectionTitle>Email Accounts</SectionTitle>
+          <Box>
+            <SectionTitle style={{fontSize:"1rem", color:"#112233"}}>Email Accounts</SectionTitle>
+            <SectionTitle style={{fontSize:"0.8rem", color:"#494848ff"}}>All Existing Email Accounts</SectionTitle>
+          </Box>
+          
+          
         </AccordionSummary>
         <AccordionDetails>
          <Box
@@ -382,6 +392,7 @@ const EmailAccounts: React.FC = () => {
           <CustomDataTable
       columns={columns}
       rows={rows}
+      handleRowSelection={handleEditEmailAccount}
       pageSizeOptions={[15, 10, 5]}
       enableCheckboxSelection={false}
     />

@@ -158,10 +158,10 @@ export const SectionHeader = styled(Box)`
   // min-height: 60px;
   // height: 250px;
   padding: 12px 12px 0px 12px;
-  background: var(--background-secondary);
+  // background: var(--background-secondary);
  
   .MuiTabs-indicator {
-    background-color: #33475b;
+    background-color: #7a838dff;
     height: 4px;
     border-radius: 4px;
   }

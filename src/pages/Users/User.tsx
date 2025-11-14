@@ -276,7 +276,7 @@ const Users = () => {
       {
         field: "fullName",
         headerName: "Full Name",
-        width: 250,
+        width: 260,
         renderCell: (params) => (
           <Box sx={{ display: "flex", gap: "6%" }}>
             <Box>
@@ -312,13 +312,13 @@ const Users = () => {
       {
         field: "phone_number",
         headerName: "Phone",
-        width: 200,
+        width: 250,
         renderCell: (params) => <Box>{params?.row?.phone || "N/A"} </Box>,
       },
       {
         field: "role",
         headerName: "Role",
-        width: 150,
+        width: 180,
         renderCell: (params) => {
           const role = params?.row?.role;
           const formattedRole = role
@@ -330,7 +330,7 @@ const Users = () => {
       {
         field: "createdAt",
         headerName: "Uploaded Date",
-        width: 150,
+        width: 250,
         valueGetter: (params: any) => (params ? formatDateTime(params) : "N/A"),
       },
     ];
@@ -339,7 +339,7 @@ const Users = () => {
       baseColumns.push({
         field: "edit",
         headerName: "Edit",
-        width: 100,
+        width: 150,
         renderCell: (params) => (
           <Tooltip title="Edit User" arrow>
             <IconButton
@@ -450,7 +450,10 @@ const Users = () => {
           aria-controls="panel1-content"
           id="panel1-header"
         >
-            <SectionTitle>Users</SectionTitle>
+           <Box>
+            <SectionTitle style={{fontSize:"1rem", color:"#112233"}} >User</SectionTitle>
+        <SectionTitle style={{fontSize:"0.8rem",color:"#494848ff"}}>List of all the users</SectionTitle>
+                      </Box>
          
         </AccordionSummary>
          <Box
@@ -485,8 +488,11 @@ const Users = () => {
         </Box>
       </Accordion>
       </UserHeader>
-      :<UserHeader>
-        <SectionTitle>Users</SectionTitle>
+      :<UserHeader style={{backgroundColor:"white"}}>
+        <Box>
+            <SectionTitle style={{fontSize:"1.5rem", color:"#112233"}} >User</SectionTitle>
+        <SectionTitle style={{fontSize:"1rem",color:"#494848ff"}}>List of all the users</SectionTitle>
+                      </Box>
         <Box
           sx={{
             display: "flex",
@@ -612,7 +618,7 @@ const Users = () => {
             No records found
           </Box>
         ) : (
-          <UserTable>
+          <UserTable >
             <CustomDataTable
               columns={columns}
               rows={filteredRows}

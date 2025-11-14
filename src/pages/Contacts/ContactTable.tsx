@@ -225,34 +225,36 @@ const ContactTable: React.FC = () => {
       {
         field: "fullName",
         headerName: "Full Name",
-        width: 180,
+        width: 250,
         renderCell: (params) => (
           <Box>
             {params.row.first_name} {params.row.last_name}
           </Box>
         ),
       },
-      { field: "email", headerName: "Email", width: 250 },
+      { field: "email", headerName: "Email", width: 280 },
       {
         field: "phone_number",
         headerName: "Phone",
-        width: 135,
+        width: 150,
         valueGetter: (params) => params || "N/A",
       },
       {
         field: "used_in_campaigns",
         headerName: "Used in Campaign (Count)",
-        width: 120,
+        width: 200,
       },
       {
         field: "createdAt",
         headerName: "Uploaded Date",
-        width: 150,
+        width: 260,
         valueGetter: (params: any) => (params ? formatDateTime(params) : "N/A"),
       },
       {
         field: "active",
+        width:190,
         headerName: "Status",
+        
         renderCell: (params: any) => (
           <span
             style={{
@@ -280,7 +282,7 @@ const ContactTable: React.FC = () => {
       {
         field: "view",
         headerName: "View",
-        width: 60,
+        width: 80,
         renderCell: (params) => (
           <Tooltip title="View Leads Detail" arrow>
             <IconButton
@@ -294,7 +296,7 @@ const ContactTable: React.FC = () => {
       {
         field: "edit",
         headerName: "Edit",
-        width: 60,
+        width: 80,
         renderCell: (params) => (
           <Tooltip title="Edit Leads Detail" arrow>
             <IconButton
@@ -311,7 +313,7 @@ const ContactTable: React.FC = () => {
       baseColumns.push({
         field: "delete",
         headerName: "Delete",
-        width: 60,
+        width: 80,
         renderCell: (_params) => (
           <Tooltip title="Delete Lead" arrow>
             <IconButton
@@ -611,7 +613,11 @@ const ContactTable: React.FC = () => {
               aria-controls="panel1-content"
               id="panel1-header"
             >
-             <SectionTitle>All Leads</SectionTitle>
+            <Box>
+    <SectionTitle style={{fontSize:"1rem", color:"#112233"}} >All Leads</SectionTitle>
+<SectionTitle style={{fontSize:"0.8rem",color:"#494848ff"}}>List of all the contacts present in campaigns</SectionTitle>
+              </Box>
+             
             </AccordionSummary>
             <Box
           sx={{
@@ -674,8 +680,12 @@ const ContactTable: React.FC = () => {
         </Box>
           </Accordion>
           </ContactsHeader>
-:<ContactsHeader>
-        <SectionTitle>All Leads</SectionTitle>
+:<ContactsHeader style={{backgroundColor:"white"}}>
+  <Box>
+    <SectionTitle style={{fontSize:"1.5rem", color:"#112233"}} >All Leads</SectionTitle>
+<SectionTitle style={{fontSize:"1rem",color:"#494848ff"}}>List of all the contacts present in campaigns</SectionTitle>
+              </Box>
+        
         <Box
           sx={{
             display: "flex",
@@ -839,6 +849,8 @@ const ContactTable: React.FC = () => {
         sx={{
           height: "100%",
           overflow: "hidden",
+          backgroundColor:"white",
+          padding:"3rem"
         }}
       >
         <Box sx={{ background: "var(--input-bg)" }}>
