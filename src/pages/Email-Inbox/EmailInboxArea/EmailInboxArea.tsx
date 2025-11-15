@@ -243,9 +243,9 @@ const EmailInboxAreaComponent: React.FC<EmailInboxAreaProps> = ({ onMessageSelec
             <Tooltip title="Filter Emails">
               <Button
                 onClick={handleFilterClick}
-                sx={{ marginLeft: "10px", color: "#000", border: "1px solid #000" }}
+                sx={{ marginLeft: "10px", color: "var(--secondary)", border: "1px solid var(--secondary)" }}
               >
-                <FilterAltOutlinedIcon />
+                <FilterAltOutlinedIcon style={{color:"var(--secondary-dark)"}} />
               </Button>
             </Tooltip>
             <Menu

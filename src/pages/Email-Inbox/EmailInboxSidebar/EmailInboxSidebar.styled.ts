@@ -26,6 +26,8 @@ export const EmailInboxContainer = styled(Box)`
   position: relative;
   flex-direction: row;
   overflow: hidden;
+  border:1px solid var(--border-grey);
+  border-radius:10px
 `;
 ;
 
@@ -105,6 +107,7 @@ export const NoMailboxMessage = styled(Box)`
 `;
 
 export const EmailInbox = styled(Box)`
+padding:1.5rem;
   width: 100%;
   height: 100%;
   display: flex;
@@ -113,12 +116,12 @@ export const EmailInbox = styled(Box)`
   background: white;
   position: relative;
   flex-direction: column;
-  background: var(--white-fade-gradient);
-  border-radius: 8px;
+  // background: var(--white-fade-gradient);
+  border-radius: 10px;
 `;
 
 export const EmailInboxHeader = styled(Box)`
-  background: var(--background-secondary);
+  background: var(--background-primary);
   padding: 16px;
   display: flex;
   align-items: center; 
@@ -137,7 +140,7 @@ export const AccountSelectorButton = styled(Box)`
   gap: 8px;
   padding: 8px 12px;
   border-radius: 20px;
-  border: 1px solid #ddd;
+  border: 0px solid #ddd;
   cursor: pointer;
   transition: all 0.2s;
 `;
@@ -145,9 +148,10 @@ export const AccountSelectorButton = styled(Box)`
 export const AccountAvatar = styled(Avatar)`
   width: 32px;
   height: 32px;
-  background-color: var(--theme-color);
+  background: var(--secondary-gradient);
   font-size: 14px;
   font-weight: bold;
+  border:0px;
 `;
 
 export const PopupContainer = styled(Box)`

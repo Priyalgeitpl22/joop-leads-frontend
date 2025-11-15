@@ -148,7 +148,14 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
       }}
     >
       <Table stickyHeader sx={{ position: "sticky"}}>
-        <TableHead >
+        <TableHead
+          sx={{
+            "& .MuiTableCell-head": {
+              background: 'var(--background-slate)',
+              fontWeight: 600,
+            },
+          }}
+        >
           <TableRow>
             <TableCellHead>Campaign Details</TableCellHead>
             {Object.entries(visibleColumns??{}).map((elem)=>{

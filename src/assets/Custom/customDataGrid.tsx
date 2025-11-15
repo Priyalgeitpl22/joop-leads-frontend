@@ -34,6 +34,8 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
         display: "flex",
         flexDirection: "column",
         overflow: 'auto',
+        border:"1px solid var(--border-grey)",
+        borderRadius:"10px"
       }}>
       <Paper
         className="data-grid-container"

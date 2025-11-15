@@ -35,6 +35,101 @@ export const Button = styled.button`
     color: var(--text-white);
   }
 `;
+export const PrimaryButton = styled.button`
+  font-weight: 600;
+  width: fit-content;
+  padding: 12px 30px;
+  border: none;
+  border-radius: 6px;
+  color: var(--text-white);
+  background: linear-gradient(
+    135deg,
+    var(--primary) 0%,
+    var(--primary-dark) 100%
+  );
+  cursor: pointer;
+  font-size: 16px;
+  white-space: nowrap;
+  transition: 0.2s ease-in-out;
+
+  &:hover {
+    background: linear-gradient(
+    135deg,
+    var(--primary) 0%,
+    var(--primary-light) 100%
+  );
+    color: white;
+  }
+
+  &:active {
+    background: var(--active-color);
+    color: var(--text-white);
+  }
+`;
+export const ButtonDisabled = styled.button`
+  font-weight: 600;
+  width: fit-content;
+  padding: 12px 30px;
+  border: none;
+  border-radius: 6px;
+  color: var(--text-white);
+  background: linear-gradient(
+    135deg,
+    var(--secondary) 0%,
+    var(--secondary-light) 100%
+  );
+  cursor: pointer;
+  font-size: 16px;
+  white-space: nowrap;
+  transition: 0.2s ease-in-out;
+
+  &:hover {
+    background: linear-gradient(
+    135deg,
+    var(--secondary) 0%,
+    var(--secondary-light) 100%
+  );
+    color: white;
+  }
+
+  &:active {
+    background: var(--active-color);
+    color: var(--text-white);
+  }
+`;
+
+export const PrimaryButtonDisabled = styled.button`
+  font-weight: 600;
+  width: fit-content;
+  padding: 12px 30px;
+  border: none;
+  border-radius: 6px;
+  color: var(--text-white);
+  background: linear-gradient(
+    135deg,
+    var(--primary) 0%,
+    var(--primary-light) 100%
+  );
+  cursor: pointer;
+  font-size: 16px;
+  white-space: nowrap;
+  transition: 0.2s ease-in-out;
+
+  &:hover {
+    background: linear-gradient(
+    135deg,
+    var(--primary) 0%,
+    var(--primary-light) 100%
+  );
+    color: white;
+  }
+
+  &:active {
+    background: var(--active-color);
+    color: var(--text-white);
+  }
+`;
+
 
 
 export const SecondaryButton = styled.button`

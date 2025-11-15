@@ -188,7 +188,7 @@ export const AccountAvatar = styled(Box)({
   width: "35px",
   height: "35px",
   borderRadius: "50%",
-  backgroundColor: "var(--theme-color)",
+  background: "var(--secondary-gradient)",
   color: "var(--icon-light)",
   display: "flex",
   justifyContent: "center",

@@ -144,8 +144,8 @@ export const CopyButton = styled.button`
 
 export const CustomTabs = styled(Tabs)`
   min-height: 46px;
-  padding: 5px 5px 0px 5px;
-  background: var(--background-secondary);
+  padding: 5px 5px 30px 5px;
+  background: var(--background-primary);
 
   .MuiTabs-indicator {
     background-color: #33475b;
@@ -162,7 +162,7 @@ export const SectionHeader = styled(Box)`
 `;
 
 export const CustomTab = styled(Tab)`
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
   text-transform: none;
   color: #33475b;

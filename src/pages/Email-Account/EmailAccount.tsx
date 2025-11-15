@@ -281,11 +281,12 @@ const EmailAccounts: React.FC = () => {
 
 
   return (
-    <EmailAccountsContainer style={{width:isMobile?`${pageWidth-20}px`:"100%"}}>
+    <Box sx={{paddingTop:"3rem",backgroundColor:"white",height:"90vh"}}>
+    <EmailAccountsContainer style={{width:isMobile?`${pageWidth-20}px`:"100%",padding:"1.8rem", border:"1px solid var(--border-grey)"}}>
       <Toaster position="top-right" />
       
-      <EmailAccountHeader style={{display:isMobile?"none":"flex"}}>
-        <SectionTitle>Email Accounts</SectionTitle>
+      <EmailAccountHeader style={{display:isMobile?"none":"flex",paddingBottom:"2rem"}}>
+        <SectionTitle style={{fontSize:"1.5rem"}}>Email Accounts</SectionTitle>
         <Box
           sx={{
             display: "flex",
@@ -333,7 +334,7 @@ const EmailAccounts: React.FC = () => {
           aria-controls="panel1-content"
           id="panel1-header"
         >
-          <SectionTitle>Email Accounts</SectionTitle>
+          <SectionTitle >Email Accounts</SectionTitle>
         </AccordionSummary>
         <AccordionDetails>
          <Box
@@ -382,6 +383,7 @@ const EmailAccounts: React.FC = () => {
           <CustomDataTable
       columns={columns}
       rows={rows}
+      handleRowSelection={handleEditEmailAccount}
       pageSizeOptions={[15, 10, 5]}
       enableCheckboxSelection={false}
     />
@@ -400,6 +402,7 @@ const EmailAccounts: React.FC = () => {
       />
 
     </EmailAccountsContainer>
+    </Box>
   );
 };
 

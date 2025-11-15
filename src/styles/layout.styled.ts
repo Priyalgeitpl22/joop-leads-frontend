@@ -163,19 +163,21 @@ export const Button2 = styled("button", {
 
 export const TextField = styled(MuiTextField)`
   border-radius: 5px;
-  box-shadow: 1px 1px 1px 1px #bebebe;
+  // box-shadow: 1px 1px 1px 1px #bebebe;
 
   & .MuiInputBase-root {
-    max-height: 45px;
+    max-height: 2.4rem;
   }
 
   &:hover {
-    marginTop: 2px;
+    marginTop: 1px;
   }
+    
 `;
 
 export const InputLabel = styled(MuiInputLabel)`
-  color: black;
+  color:"var(--text-secondary)";
+  font-family: sans-serif;
 `;
 
 export const TableItem = styled(Box)(`

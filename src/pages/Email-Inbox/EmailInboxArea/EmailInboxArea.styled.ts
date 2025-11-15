@@ -137,7 +137,7 @@ export const EmailInboxMessagesBox = styled(Box)({
 export const EmailInboxMessagesHeading = styled(Box, {
   shouldForwardProp: (prop) => prop !== "isSelected" && prop !== "isUnread",
 })<{ isSelected?: boolean; isUnread?: boolean }>(({ isSelected, isUnread }) => ({
-  border: "1px solid #ddd",
+  border: "1px solid var(--border-grey)",
   borderRadius: "8px",
   padding: "10px",
   margin: "10px",
@@ -147,15 +147,15 @@ export const EmailInboxMessagesHeading = styled(Box, {
   backgroundColor: isSelected
     ? "#e0e0e0"
     : isUnread
-    ? "#c77dff47"
+    ? "#2463eb36"
     : "inherit",
 
   fontWeight: isUnread ? "bold" : "normal",
 
   "&:hover": {
     border: isUnread
-      ? "1px solid rgba(122, 30, 192, 0.88)"
-      : "1px solid #000",
+      ? "1px solid var(--primary)"
+      : "1px solid var(--primary)",
     // keep background unchanged on hover
   },
 }));

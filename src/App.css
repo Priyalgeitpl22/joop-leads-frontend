@@ -36,8 +36,10 @@ body {
   --secondary: #00B877;
   --secondary-light: #7fc97e;
   --secondary-dark: #388e3c;
+  --background-slate: #dee2ed;
   --primary-gradient: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
   --secondary-gradient: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-dark) 100%);
+  
 
   --theme-color: #000000; /* Black for primary elements */
   --theme-color-light: #333333; /* Dark gray */

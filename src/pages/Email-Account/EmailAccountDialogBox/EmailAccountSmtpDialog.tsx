@@ -27,6 +27,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../redux/store/store";
 import { validateEmail } from "../../../utils/Validation";
 import toast, { Toaster } from "react-hot-toast";
+import { Button, ButtonDisabled, PrimaryButton } from "../../../styles/global.styled";
 
 interface EmailAccountSmtpDialogProps {
   open: boolean;
@@ -286,19 +287,21 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
         sx={{
           fontWeight: "bold",
           fontSize: 16,
-          background: "#f1f2fb",
+          background: "white",
           padding: "12px 24px",
         }}
       >
-        Add Email
-        <br />
-        <Typography mt={1}>
+        <Typography sx={{fontWeight:"bold", fontSize:"1.5rem", color:" #35495c;",paddingTop:"1rem"}}>
+          Add Email
+        </Typography>
+        
+        <Typography mt={1} sx={{color:"var(--text-secondary)"}}>
           Read the full tutorial on setting up your email account here
         </Typography>
       </DialogTitle>
 
-      <DialogContent>
-        <Typography fontWeight="bold" mt={2} mb={2}>
+      <DialogContent sx={{ border:"1px solid var(--border-grey)",margin:"1rem",borderRadius:"10px"}}>
+        <Typography fontWeight="bold" mt={2} mb={2} sx={{color:"#35495c"}}>
           SMTP Settings (sending emails)
         </Typography>
         <Grid2 container spacing={2} sx={{ justifyContent: "flex-end" }}>
@@ -308,6 +311,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
             <TextField
               fullWidth
               name="fromName"
+              placeholder="Jone Doe"
               value={formData.fromName}
               onChange={handleChange}
               error={!!errors.fromName}
@@ -323,6 +327,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
             <TextField
               fullWidth
               name="fromEmail"
+              placeholder="jonedoe@jooper.ai"
               value={formData.fromEmail}
               onChange={handleChange}
               error={!!errors.fromEmail}
@@ -339,6 +344,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
             <TextField
               fullWidth
               name="userName"
+              placeholder="joneDoe"
               value={formData.userName}
               onChange={handleChange}
               error={!!errors.userName}
@@ -351,6 +357,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
             <TextField
               fullWidth
               name="password"
+              placeholder="*********"
               value={formData.password}
               onChange={handleChange}
               error={!!errors.password}
@@ -363,6 +370,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
             <TextField
               fullWidth
               name="smtpHost"
+              placeholder="jooper.ai"
               value={formData.smtpHost}
               onChange={handleChange}
               error={!!errors.smtpHost}
@@ -376,6 +384,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
             <TextField
               fullWidth
               name="smtpPort"
+              placeholder="589"
               value={formData.smtpPort}
               onChange={handleChange}
               error={!!errors.smtpPort}
@@ -400,6 +409,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
             <TextField
               fullWidth
               name="msg_per_day"
+              placeholder="20"
               value={formData.msg_per_day}
               onChange={handleChange}
               error={!!errors.msg_per_day}
@@ -413,6 +423,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
             <TextField
               fullWidth
               name="time_gap"
+              placeholder="20"
               value={formData.time_gap}
               onChange={handleChange}
               error={!!errors.time_gap}
@@ -423,10 +434,12 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
           </Grid2>
           <Grid2 size={{ xs: 12, sm: 12 }}>
             <FormControlLabel
+            sx={{color:"var(--text-secondary)"}}
               control={
                 <Checkbox
                   checked={formData.replyToAddressChecked}
                   onChange={(e) => handleChange(e as any)}
+                  
                 />
               }
               label="Set a different reply to address"
@@ -437,6 +450,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
                 <TextField
                   fullWidth
                   name="replyToAddress"
+                  placeholder="Address "
                   value={formData.replyToAddress}
                   onChange={handleChange}
                   autoComplete="off"
@@ -445,10 +459,11 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
             )}
           </Grid2>
           <Grid2 size={{ xs: 12, sm: 12 }}>
-            <Typography fontWeight="bold">
+            <Typography fontWeight="bold" sx={{color:"#35495c",paddingTop:"1rem", paddingBottom:"0.8rem"}}>
               IMAP Settings (receives emails)
             </Typography>
             <FormControlLabel
+            sx={{color:"var(--text-secondary)"}}
               control={
                 <Checkbox
                   checked={formData.replyToAddressChecked}
@@ -467,6 +482,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
                 <TextField
                   fullWidth
                   name="imapUserName"
+                  placeholder="Jone Doe"
                   value={formData.imapUserName}
                   onChange={handleChange}
                   autoComplete="off"
@@ -477,6 +493,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
                 <TextField
                   fullWidth
                   name="imapPassword"
+                  placeholder="******"
                   value={formData.imapPassword}
                   onChange={handleChange}
                   autoComplete="off"
@@ -490,6 +507,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
             <TextField
               fullWidth
               name="imapHost"
+              placeholder="Jooper.ai"
               value={formData.imapHost}
               onChange={handleChange}
               error={!!errors.imapHost}
@@ -503,6 +521,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
             <TextField
               fullWidth
               name="imapPort"
+              placeholder="657"
               value={formData.imapPort}
               onChange={handleChange}
               error={!!errors.imapPort}
@@ -522,18 +541,16 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
             </RadioGroup>
           </Grid2>
 
-          <Button2
+          <PrimaryButton
             onClick={handleVerifyAccount}
-            color={"white"}
-            background={"var(--theme-color)"}
-            style={{ width: "100%", cursor: "pointer" }}
+            
           >
             {verificationInProgress ? (
               <CircularProgress size={24} sx={{ color: "white" }} />
             ) : (
               "Verify Email Account"
             )}
-          </Button2>
+          </PrimaryButton>
           {isVerified && (
             <Grid2
               size={{ xs: 12, sm: 12 }}
@@ -557,8 +574,8 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
             </Grid2>
           )}
           <Grid2 size={{ xs: 12, sm: 12 }}>
-            <Typography fontWeight="bold">Signature</Typography>
-            <Typography>
+            <Typography fontWeight="bold" color="#35495c">Signature</Typography>
+            <Typography color="var(--text-secondary)">
               Enter your email signature below (manually or by copy-pasting it
               from your email client).
             </Typography>
@@ -572,22 +589,38 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
               }
             />
           </Grid2>
-          <Button2
+          {isSaveDisabled?<ButtonDisabled
             disabled={isSaveDisabled}
             onClick={handleCreateAccount}
-            color={isSaveDisabled ? "black" : "white"}
-            background={isSaveDisabled ? "#d3d3d3" : "var(--theme-color)"}
-            style={{
-              width: "10%",
-              cursor: isSaveDisabled ? "not-allowed" : "pointer",
-            }}
+            color={isSaveDisabled ? "white" : "white"}
+            // background={isSaveDisabled ? "var(--secondary)" : "var(--secodary)"}
+            // style={{
+            //   width: "10%",
+            //   cursor: isSaveDisabled ? "not-allowed" : "pointer",
+            // }}
           >
             {loading ? (
               <CircularProgress size={24} sx={{ color: "white" }} />
             ) : (
               "Save"
             )}
-          </Button2>
+          </ButtonDisabled>:<Button
+            disabled={isSaveDisabled}
+            onClick={handleCreateAccount}
+            color={isSaveDisabled ? "white" : "white"}
+            // background={isSaveDisabled ? "var(--secondary)" : "var(--secodary)"}
+            // style={{
+            //   width: "10%",
+            //   cursor: isSaveDisabled ? "not-allowed" : "pointer",
+            // }}
+          >
+            {loading ? (
+              <CircularProgress size={24} sx={{ color: "white" }} />
+            ) : (
+              "Save"
+            )}
+          </Button>}
+          
         </Grid2>
       </DialogContent>
     </Dialog>
