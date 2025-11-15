@@ -24,7 +24,7 @@ import {
 } from "./User.styled";
 import { Button2, SectionTitle } from "../../styles/layout.styled";
 import { SearchBar } from "../../components/Header/header.styled";
-import { Search } from "lucide-react";
+import { Search, Trash2 } from "lucide-react";
 import { CustomDataTable } from "../../assets/Custom/customDataGrid";
 import { Button } from "../../styles/global.styled";
 import { GridColDef } from "@mui/x-data-grid";
@@ -330,7 +330,7 @@ const Users = () => {
       {
         field: "createdAt",
         headerName: "Uploaded Date",
-        width: 150,
+        width: 210,
         valueGetter: (params: any) => (params ? formatDateTime(params) : "N/A"),
       },
     ];
@@ -339,14 +339,14 @@ const Users = () => {
       baseColumns.push({
         field: "edit",
         headerName: "Edit",
-        width: 100,
+        width: 110,
         renderCell: (params) => (
           <Tooltip title="Edit User" arrow>
             <IconButton
               color="primary"
               onClick={() => handleOpenEditDialog(params.row)}
             >
-              <ModeEditOutlineOutlined />
+              <ModeEditOutlineOutlined sx={{color:"var(--secondary-light)"}} />
             </IconButton>
           </Tooltip>
         ),
@@ -362,7 +362,7 @@ const Users = () => {
               color="error"
               onClick={() => handleOpenDeleteDialog(_params?.row?.id)}
             >
-              <DeleteIcon />
+              <Trash2 size={18} color="red" />
             </IconButton>
           </Tooltip>
         ),
@@ -441,7 +441,8 @@ const Users = () => {
   };
 
   return (
-    <UsersContainer style={{width:isMobile?`${width-20}px`:"100%"}}>
+    <Box sx={{paddingTop:"3rem", height:"90vh"}}>
+    <UsersContainer style={{width:isMobile?`${width-20}px`:"100%", padding:"2rem"}}>
       {isMobile?
       <UserHeader>
        <Accordion style={{width:"100%",backgroundColor: "var(--background-secondary);"}}>
@@ -450,7 +451,7 @@ const Users = () => {
           aria-controls="panel1-content"
           id="panel1-header"
         >
-            <SectionTitle>Users</SectionTitle>
+            <SectionTitle >Users</SectionTitle>
          
         </AccordionSummary>
          <Box
@@ -486,7 +487,7 @@ const Users = () => {
       </Accordion>
       </UserHeader>
       :<UserHeader>
-        <SectionTitle>Users</SectionTitle>
+        <SectionTitle style={{fontSize:"1.5rem"}}>Users</SectionTitle>
         <Box
           sx={{
             display: "flex",
@@ -641,7 +642,9 @@ const Users = () => {
         onSave={handleSaveEdit}
       />
     </UsersContainer>
+    </Box>
   );
+  
 };
 
 export default Users;

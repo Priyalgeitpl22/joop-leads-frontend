@@ -8,12 +8,14 @@ import {
   InputLabel,
   FormControl,
   Select,
+  Button,
   MenuItem,
   SelectChangeEvent,
 } from "@mui/material";
 import { Button2 } from "../../../styles/layout.styled";
 import { GridCloseIcon } from "@mui/x-data-grid";
 import { CloseIconButton, StyledDialogTitle } from "./EditUser.styled";
+import {  ButtonDisabled } from "../../../styles/global.styled";
 
 interface EditUserDialogProps {
   open: boolean;
@@ -94,6 +96,9 @@ const EditUserDialog: React.FC<EditUserDialogProps> = ({
               disabled
               margin="normal"
               sx={{
+                "& .MuiInputBase-input":{
+                  height:"1rem"
+                },
                 "& .MuiInputBase-input.Mui-disabled": {
                   WebkitTextFillColor: "#000000", // for disabled text
                 },
@@ -110,6 +115,9 @@ const EditUserDialog: React.FC<EditUserDialogProps> = ({
                 "& .MuiInputBase-input.Mui-disabled": {
                   WebkitTextFillColor: "#000000", // for disabled text
                 },
+                "& .MuiInputBase-input":{
+                  height:"1rem"
+                }
               }}
             />
             {Object.keys(filterOptions).map((label) => (
@@ -139,17 +147,25 @@ const EditUserDialog: React.FC<EditUserDialogProps> = ({
         )}
       </DialogContent>
       <DialogActions>
-        <Button2 onClick={onClose} color="secondary" background={""}>
-          Cancel
-        </Button2>
-        <Button2
+       <Button
+                  onClick={onClose}
+                  style={{
+                    marginRight: "10px",
+                    color: "red",
+                    backgroundColor: "#ffff !important",
+                    outline: "1px solid red",
+                  }}
+                >
+                  Cancel
+                </Button>
+        <ButtonDisabled
           onClick={handleSaveClick}
           color={"white"}
-          background={"var(--theme-color)"}
+          // background={"var(--secondary-gradient)"}
         >
           Save Changes
           {loading && <CircularProgress size={20} color="inherit" />}
-        </Button2>
+        </ButtonDisabled>
       </DialogActions>
     </Dialog>
   );

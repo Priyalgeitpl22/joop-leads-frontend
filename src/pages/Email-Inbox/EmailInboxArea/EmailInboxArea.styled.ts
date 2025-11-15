@@ -147,7 +147,7 @@ export const EmailInboxMessagesHeading = styled(Box, {
   backgroundColor: isSelected
     ? "#e0e0e0"
     : isUnread
-    ? "#2463eb36"
+    ? "#2463eb1c"
     : "inherit",
 
   fontWeight: isUnread ? "bold" : "normal",
@@ -161,12 +161,13 @@ export const EmailInboxMessagesHeading = styled(Box, {
 }));
 
 export const EmailPagination = styled(Pagination)({
+  color:"var(--text-secondary)",
   "& .Mui-selected": {
-    backgroundColor: "var(--theme-color) !important",
+    backgroundColor: "var(--primary-light) !important",
     color: "#fff !important",
   },
   "& .MuiPaginationItem-root:hover": {
-    backgroundColor: "rgba(0, 0, 0, 0.1)",
+    backgroundColor: "rgba(7, 111, 248, 0.23)",
   },
   
  
@@ -250,9 +251,10 @@ export const SearchBar = styled(Box)`
   border-radius: 5px;
   flex-grow: 1;
   margin-bottom: 1px;
+  margin-left:4px;
   width: 100%;
   gap: 10px;
-  height: 35px;
+  height: 38px;
 
   input {
     background: none;

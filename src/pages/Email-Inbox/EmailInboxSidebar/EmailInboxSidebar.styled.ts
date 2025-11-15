@@ -148,7 +148,7 @@ export const AccountSelectorButton = styled(Box)`
 export const AccountAvatar = styled(Avatar)`
   width: 32px;
   height: 32px;
-  background: var(--secondary-gradient);
+  background: var(--primary-gradient);
   font-size: 14px;
   font-weight: bold;
   border:0px;

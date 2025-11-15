@@ -590,7 +590,7 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
             <Typography sx={{fontWeight:"bold", color:"var(--text-secondary)"}}>SMTP Settings (sending emails)</Typography>
           </Box>
           
-          <Grid2 container spacing={7} sx={{ justifyContent: "left" }}>
+          <Grid2 container spacing={5} sx={{ justifyContent: "left" }}>
             <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel >From Name</InputLabel>
 
@@ -633,6 +633,7 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
               <InputLabel>Message Per Day (Warmups not included) *</InputLabel>
               <SmtpUpdateTextField
                 fullWidth
+                
                 type="number"
                 name="msg_per_day"
                 placeholder="12"

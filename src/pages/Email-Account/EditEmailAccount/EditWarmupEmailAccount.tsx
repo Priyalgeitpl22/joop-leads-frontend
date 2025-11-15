@@ -1,7 +1,6 @@
 import { useState } from "react";
 import {
   Switch,
-  TextField,
   Slider,
 } from "@mui/material";
 import {
@@ -9,7 +8,7 @@ import {
   WarmUpHeading,
   WarmupBox,
 } from "./EditEmailAccount.styled";
-import { Button2 } from "../../../styles/layout.styled";
+import {  SmtpUpdateTextField } from "../../../styles/layout.styled";
 import { Button } from "../../../styles/global.styled";
 
 const EditWarmupEmailAccount = () => {
@@ -33,20 +32,33 @@ const EditWarmupEmailAccount = () => {
       <WarmUpBlock>
         <WarmUpHeading style={{ marginBottom: "2%" }}>
           <Switch
-            checked={warmupEnabled}
-            onChange={() => setWarmupEnabled(!warmupEnabled)}
-            sx={{
-              "& .MuiSwitch-track": {
-                backgroundColor: "var(--primary-light)",
-              },
-              "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
-                backgroundColor: "var(--primary) !important",
-              },
-              "& .MuiSwitch-thumb": {
-                backgroundColor: "var(--primary-dark)",
-              },
-            }}
-          />
+  checked={warmupEnabled}
+  onChange={() => setWarmupEnabled(!warmupEnabled)}
+  sx={{
+    // TRACK (OFF state)
+    "& .MuiSwitch-track": {
+      backgroundColor: "#BDBDBD", // light grey
+      opacity: 1,
+    },
+
+    // TRACK (ON state)
+    "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+      backgroundColor: "var(--primary) !important",
+      opacity: 1,
+    },
+
+    // THUMB (OFF state)
+    "& .MuiSwitch-thumb": {
+      backgroundColor: "#9E9E9E", // darker grey
+    },
+
+    // THUMB (ON state)
+    "& .MuiSwitch-switchBase.Mui-checked .MuiSwitch-thumb": {
+      backgroundColor: "var(--primary-dark)",
+    },
+  }}
+/>
+
           <label style={{ fontWeight: "bold", color: "#1d1e22" }}>
             Email Warmup Enabled
           </label>
@@ -68,10 +80,10 @@ const EditWarmupEmailAccount = () => {
               Maximum number of warm-up emails that could be sent via this email
               account per day
             </div>
-            <TextField
+            <SmtpUpdateTextField
               type="number"
               value={warmupEmails}
-              onChange={(e) => setWarmupEmails(Number(e.target.value))}
+              onChange={(e:any) => setWarmupEmails(Number(e.target.value))}
               sx={{ width: "8%", marginBottom: "3%" }}
             />
           </div>
@@ -79,27 +91,39 @@ const EditWarmupEmailAccount = () => {
             <WarmUpHeading style={{ marginTop: "-5px", marginBottom: "2%" }}>
               <div>
                 <Switch
-                  checked={dailyRampup}
-                  onChange={() => setDailyRampup(!dailyRampup)}
-                  sx={{
-                    "& .MuiSwitch-track": {
-                      backgroundColor: "var(--secondary-light)",
-                    },
-                    "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
-                      backgroundColor: "var(--secondary) !important",
-                    },
-                    "& .MuiSwitch-thumb": {
-                      backgroundColor: "var(--secondary-dark)",
-                    },
-                  }}
-                />
+  checked={dailyRampup}
+  onChange={() => setDailyRampup(!dailyRampup)}
+  sx={{
+    // TRACK (OFF state)
+    "& .MuiSwitch-track": {
+      backgroundColor: "#BDBDBD", // light grey
+      opacity: 1,
+    },
+
+    // TRACK (ON state)
+    "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+      backgroundColor: "var(--secondary) !important",
+      opacity: 1,
+    },
+
+    // THUMB (OFF state)
+    "& .MuiSwitch-thumb": {
+      backgroundColor: "#9E9E9E", // darker grey
+    },
+
+    // THUMB (ON state)
+    "& .MuiSwitch-switchBase.Mui-checked .MuiSwitch-thumb": {
+      backgroundColor: "var(--secondary-dark)",
+    },
+  }}
+/>
                 <label style={{ fontWeight: "bold", color: "#1d1e22" }}>
                   Daily Rampup
                 </label>
                 <br />
                 Rampup increment value per day (suggested 5 per day)
               </div>
-              <TextField
+              <SmtpUpdateTextField
                 type="number"
                 value={rampupday}
                 onChange={(e) => setRampupday(Number(e.target.value))}
@@ -149,10 +173,10 @@ const EditWarmupEmailAccount = () => {
                   </b>
                   Suggested - 20, Maximum - 100
                 </div>
-                <TextField
+                <SmtpUpdateTextField
                   type="number"
                   value={replyRate}
-                  onChange={(e) => setReplyRate(Number(e.target.value))}
+                  onChange={(e:any) => setReplyRate(Number(e.target.value))}
                   inputProps={{
                     min: 20,
                     max: 100,
@@ -201,17 +225,17 @@ const EditWarmupEmailAccount = () => {
                     gap: "10px",
                   }}
                 >
-                  <TextField
+                  <SmtpUpdateTextField
                     type="text"
                     value={firstText}
-                    onChange={(e) => setFirstText(e.target.value)}
+                    onChange={(e:any) => setFirstText(e.target.value)}
                     sx={{ width: "20%", marginBottom: "2%", marginTop: "1%" }}
                   />
                   -
-                  <TextField
+                  <SmtpUpdateTextField
                     type="text"
                     value={secondText}
-                    onChange={(e) => setSecondText(e.target.value)}
+                    onChange={(e:any) => setSecondText(e.target.value)}
                     sx={{ width: "20%", marginBottom: "2%", marginTop: "1%" }}
                   />
                   = {firstText} - {secondText}{" "}

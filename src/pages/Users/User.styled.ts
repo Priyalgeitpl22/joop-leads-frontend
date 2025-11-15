@@ -10,7 +10,7 @@ export const UsersContainer = styled.div`
   background: white;
   position: relative;
   flex-direction: column;
-  background: var(--white-fade-gradient);
+  background: "white";
   border-radius: 8px;
 }
 `;
@@ -20,7 +20,7 @@ export const UserHeader = styled.section`
   align-items: center;
   justify-content: space-between;
   padding: 12px;
-  background: var(--background-secondary);
+  background: white;
 `;
 export const FilterIcon = styled(IconButton)`
   height: 40px;
@@ -31,6 +31,7 @@ export const FilterIcon = styled(IconButton)`
 `;
 
 export const UserTable = styled.div`
+padding-top:1rem;
   width: 100%;
   height: 100%;
   display: flex;

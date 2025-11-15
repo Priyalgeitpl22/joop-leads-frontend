@@ -166,7 +166,7 @@ export const TextField = styled(MuiTextField)`
   // box-shadow: 1px 1px 1px 1px #bebebe;
 
   & .MuiInputBase-root {
-    max-height: 2.4rem;
+    height: 3rem;
   }
 
   &:hover {
@@ -207,5 +207,6 @@ export const SmtpUpdateTextField = styled(MuiTextField)`
   box-shadow: none !important;
   & .MuiOutlinedInput-root {
     box-shadow: none !important;
+    height:2.3rem;
   }
 `;

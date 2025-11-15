@@ -3,7 +3,7 @@ import { Box, styled } from "@mui/material";
 export const DialogBox = styled(Box)({
   width: "100%",
   height: "80px",
-  backgroundColor: "var(--theme-color-light)",
+  backgroundColor: "white",
 })
 
 export const DialogBoxHead = styled(Box)({

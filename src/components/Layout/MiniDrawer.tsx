@@ -77,7 +77,7 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
   const navigationItems: NavigationItem[] = [
     {
       title: "Dashboard",
-      icon: <LayoutDashboard size={16} />,
+      icon: <LayoutDashboard size={18} />,
       path: "/",
     },
     {
@@ -269,12 +269,15 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
               }}
             >
               <ListItemIcon
-                sx={{
-                  mr: open ? 1 : 'auto',
-                  justifyContent: 'center',
-                  color: 'inherit',
-                }}
-              >
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 1.5 : 0,
+                      justifyContent: 'center',
+                      display: 'flex',
+                      width: open ? 'auto' : '100%',   // <— CENTER ICON WHEN CLOSED
+                      color: 'inherit',
+                    }}
+                  >
                 {item.hasBadge ? (
                   <Badge badgeContent={item.badgeCount} color="warning">
                     {item.icon}
@@ -299,7 +302,7 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
 
       {/* Bottom Navigation Buttons */}
       <Divider sx={{ bgcolor: isDarkMode ? 'rgba(255,255,255,0.1)' : '#e8e8e8' }} />
-      <List sx={{ px: open ? 1 : 0.5, py: 1, display: 'flex', justifyContent: "space-evenly" }}>
+     {open? <List sx={{ px: open ? 1 : 0.5, py: 1, display: 'flex', justifyContent: "space-evenly" }}>
   {navigateButtons.map((item) => (
     <ListItem key={item.path} disablePadding>
       <Tooltip title={item.title} placement="right" arrow>
@@ -329,7 +332,37 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
       </Tooltip>
     </ListItem>
   ))}
-</List>
+</List>: <List sx={{ px: open ? 1 : 0.5, py: 1, display: 'flex', justifyContent: "space-evenly", flexDirection:"column" }}>
+  {navigateButtons.map((item) => (
+    <ListItem key={item.path} disablePadding>
+      <Tooltip title={item.title} placement="right" arrow>
+        <ListItemButton
+          onClick={() => handleNavigation(item.path, item.isThemeToggle)}
+          selected={isActiveRoute(item.path)}
+          sx={{
+            borderRadius: "10px",
+            justifyContent: "center", // Always center icon for clean look
+            color: isDarkMode ? "#b0b0b0" : "#666666",
+            transition: "all 0.3s ease",
+            "&:hover": {
+              bgcolor: isDarkMode ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)",
+              color: isDarkMode ? "#ffffff" : "#1a1a1a",
+            },
+          }}
+        >
+          <ListItemIcon
+            sx={{
+              justifyContent: "center",
+              color: "#000000",
+            }}
+          >
+            {item.icon}
+          </ListItemIcon>
+        </ListItemButton>
+      </Tooltip>
+    </ListItem>
+  ))}
+</List>}
 
     </Box>
   );

@@ -15,9 +15,9 @@ export const StyledTable = styled(Table)`
 `;
 
 export const StyledTableHead = styled(TableHead)`
-  background: #f4f6f8;
+  background: var(--background-slate);
   & th {
-    color: #333;
+    color: #35495c;
     font-weight: bold;
     padding: 12px;
     text-align: left;

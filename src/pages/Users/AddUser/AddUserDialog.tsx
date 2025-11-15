@@ -26,6 +26,7 @@ import { AppDispatch, RootState } from "../../../redux/store/store";
 import { createUser, getAllUsers } from "../../../redux/slice/userSlice";
 import { validateEmail, validateFullName } from "../../../utils/Validation";
 import { DialogBox, DialogBoxHead } from "./AddUserDialog.styled";
+import { Button, ButtonDisabled } from "../../../styles/global.styled";
 
 interface AddUserDialogProps {
   open: boolean;
@@ -144,7 +145,7 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onClose }) => {
                 />
               ) : (
                 <AccountCircleIcon
-                  sx={{ fontSize: 80, color: "var(--theme-color)" }}
+                  sx={{ fontSize: 80, color: "var(--primary-dark)" }}
                 />
               )}
             </label>
@@ -159,7 +160,7 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onClose }) => {
 
           <StyledTitle
             variant="h6"
-            sx={{ color: "var(--theme-color-dark)", mt: 1 }}
+            sx={{ color: "var(--text-secondary)", mt: 1 }}
           >
             Add New User
           </StyledTitle>
@@ -226,7 +227,8 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onClose }) => {
               sx={{
                 background: "white!important",
                 borderRadius: "4px",
-                boxShadow: "1px 1px 1px 1px #bebebe",
+                // boxShadow: "1px 1px 1px 1px #bebebe",
+                height:"3rem"
               }}
             >
               <MenuItem value="admin">Admin</MenuItem>
@@ -237,18 +239,30 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onClose }) => {
       </DialogBody>
 
       <DialogFooter>
-        <Button2
+        {!isFormValid?<ButtonDisabled
           onClick={handleCreateUser}
           disabled={!isFormValid}
           color={!isFormValid ? "lightgray" : "white"}
-          background={!isFormValid ? "#878484" : "var(--theme-color)"}
+          // background={!isFormValid ? "#878484" : "var(--theme-color)"}
         >
           {addAccountInProgress ? (
             <CircularProgress size={24} sx={{ color: "white" }} />
           ) : (
             "Create User"
           )}
-        </Button2>
+        </ButtonDisabled>:<Button
+          onClick={handleCreateUser}
+          disabled={!isFormValid}
+          color={!isFormValid ? "lightgray" : "white"}
+          // background={!isFormValid ? "#878484" : "var(--theme-color)"}
+        >
+          {addAccountInProgress ? (
+            <CircularProgress size={24} sx={{ color: "white" }} />
+          ) : (
+            "Create User"
+          )}
+        </Button>}
+        
       </DialogFooter>
       {loading || addAccountInProgress}
     </Dialog>

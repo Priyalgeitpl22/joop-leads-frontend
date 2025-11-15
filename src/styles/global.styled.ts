@@ -31,7 +31,7 @@ export const Button = styled.button`
   }
 
   &:active {
-    background: var(--active-color);
+    background: var(--secondary);
     color: var(--text-white);
   }
 `;
@@ -62,7 +62,7 @@ export const PrimaryButton = styled.button`
   }
 
   &:active {
-    background: var(--active-color);
+    background: var(--primary);
     color: var(--text-white);
   }
 `;
@@ -93,7 +93,7 @@ export const ButtonDisabled = styled.button`
   }
 
   &:active {
-    background: var(--active-color);
+    background: var(--secondary);
     color: var(--text-white);
   }
 `;
@@ -125,7 +125,7 @@ export const PrimaryButtonDisabled = styled.button`
   }
 
   &:active {
-    background: var(--active-color);
+    background: var(--primary);
     color: var(--text-white);
   }
 `;
