@@ -141,10 +141,10 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
       component={Paper}
       sx={{
         boxShadow: "none",
-        borderRadius: "8px",
+        borderRadius: "10px",
         overflowY: "auto",
-        height: "calc(100vh - 150px)",
-        paddingBottom: "4%",
+        height: "calc(100vh - 320px)",
+        border: "1px solid lightgray",
       }}
     >
       <Table stickyHeader sx={{ position: "sticky"}}>
@@ -347,8 +347,6 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
         sx={{
           position: "absolute",
           bottom: 0,
-          width: "100%",
-          borderTop: "1px solid #e0e0e0",
           backgroundColor: "#fff",
           zIndex: 1,
           "& .MuiTablePagination-selectLabel, \

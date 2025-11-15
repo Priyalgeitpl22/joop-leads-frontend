@@ -155,15 +155,9 @@ export const CustomTabs = styled(Tabs)`
 `;
 
 export const SectionHeader = styled(Box)`
-  // min-height: 60px;
-  // height: 250px;
-  padding: 12px 12px 0px 12px;
-  background: var(--background-secondary);
- 
+  padding: 20px 4px;
   .MuiTabs-indicator {
-    background-color: #33475b;
-    height: 4px;
-    border-radius: 4px;
+   display:none;
   }
 `;
 
@@ -189,14 +183,14 @@ export const CustomTab = styled(Tab)`
 
 export const ContentContainer = styled(Box)`
   width: 100%;
-  height:100%
+  height: calc(100vh - 150px);
   display: flex;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
   background: white;
   position: relative;
   flex-direction: column;
-  overflow: auto;
+  margin-top:3rem;
+  padding: 10px;
 `;
 
 export const ScrollableContent = styled("div")`

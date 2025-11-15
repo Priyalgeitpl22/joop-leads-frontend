@@ -106,19 +106,18 @@ export const CustomThemeProvider: React.FC<ThemeProviderProps> = ({ children }) 
         styleOverrides: {
           root: {
             borderRadius: '8px',
-            margin: '4px 8px',
             color: '#000000',
-            minHeight: '48px',
+            padding: '2px 8px',
+            minHeight: '36px',
             '&.Mui-selected': {
-              backgroundColor: '#e8e8e8',
-              color: '#000000',
-              '&:hover': {
-                backgroundColor: '#d0d0d0',
-                color: '#000000',
-              },
+              background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%)',
+              color: '#ffffff',
               '& .MuiListItemIcon-root': {
-                color: '#000000',
+                color: '#ffffff !important' ,
               },
+              '&:hover':{
+                color: '#ffffff',
+              }
             },
             '&:hover': {
               backgroundColor: '#f5f5f5',
@@ -128,8 +127,7 @@ export const CustomThemeProvider: React.FC<ThemeProviderProps> = ({ children }) 
               },
             },
             '& .MuiListItemIcon-root': {
-              color: '#666666',
-              minWidth: '24px',
+              color: '#00000 !important' ,
             },
           },
         },
@@ -317,10 +315,11 @@ export const CustomThemeProvider: React.FC<ThemeProviderProps> = ({ children }) 
       MuiSelect: {
         styleOverrides: {
           root: {
-            backgroundColor: '#ffffff !important',
+            backgroundColor: 'var(--primary) !important',
             color: '#000000 !important',
             '& .MuiSelect-select': {
               color: '#000000 !important',
+              backgroundColor: 'var(--primary) !important',
             },
             '& .MuiSvgIcon-root': {
               color: '#000000 !important',

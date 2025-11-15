@@ -5,37 +5,37 @@ interface CustomDialogFooterProps {
 }
 
 export const Button = styled.button`
-  font-weight: semibold;
+  font-weight: 600;
   width: fit-content;
   padding: 12px 30px;
   border: none;
   border-radius: 6px;
   color: var(--text-white);
-  background-color:var(--theme-color);
+  background: linear-gradient(
+    135deg,
+    var(--secondary) 0%,
+    var(--secondary-dark) 100%
+  );
   cursor: pointer;
   font-size: 16px;
   white-space: nowrap;
-  box-shadow: var(--shadow-dark);
+  transition: 0.2s ease-in-out;
 
   &:hover {
-    background: var(--hover-color);
-    color: var(--text-black);
-    border:1px solid var(--text-black);
-  }
-
-  &:hover .input {
-    color: var(--text-white);
+    background: linear-gradient(
+    135deg,
+    var(--secondary) 0%,
+    var(--secondary-light) 100%
+  );
+    color: white;
   }
 
   &:active {
     background: var(--active-color);
     color: var(--text-white);
   }
-
-  &:active .input {
-    color: var(--text-white);
-  }
 `;
+
 
 export const SecondaryButton = styled.button`
   font-weight: semibold;
