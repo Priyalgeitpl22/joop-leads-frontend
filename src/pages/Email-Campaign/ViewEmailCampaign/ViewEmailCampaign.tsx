@@ -14,6 +14,8 @@ import { AppDispatch } from "../../../redux/store/store";
 import { IEmailCampaign } from "../NewCampaign/interfaces";
 import usePageWidth from "../../../hooks/usePageWidth";
 import  {useTheme,useMediaQuery } from "@mui/material";
+import { ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const ViewEmailCampaign = () => {
   const width = usePageWidth()
@@ -25,6 +27,7 @@ const ViewEmailCampaign = () => {
   const [loading, setLoading] = useState<boolean>(true);
 
   const location = useLocation();
+  const navigate = useNavigate()
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
@@ -39,6 +42,9 @@ const ViewEmailCampaign = () => {
   }, [location.search]);
 
   const handleTabChange = (_: any, newValue: string) => {
+    if(newValue as string === "back"){
+      navigate("/email-accounts")
+    }
     const validTabs = ["performance", "lead_list", "sequences"];
     setActiveTab(validTabs.includes(newValue) ? newValue : "performance");
   };
@@ -55,17 +61,17 @@ const ViewEmailCampaign = () => {
   };
 
   return (
-    <ContentContainer style={{height: "100%",width:isMobile?`${width-20}px`:"100%"}}>
+    <ContentContainer style={{border:"1px solid var(--border-grey)",height: "100%",width:isMobile?`${width-20}px`:"100%"}}>
       <CustomTabs
         value={activeTab}
         onChange={handleTabChange}
         sx={{
           display: "flex",
           alignItems: "center",
-          borderBottom: 1,
           borderColor: "divider",
         }}
       >
+        <CustomTab label={<ArrowLeft/>} value="back" />
         <CustomTab label="Performance" value="performance" />
         <CustomTab label="Lead List" value="lead_list" />
         <CustomTab label="Sequences" value="sequences" />

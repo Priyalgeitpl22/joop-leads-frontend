@@ -35,8 +35,15 @@ const ViewLeadListEmailCampaign: React.FC<ViewLeadListEmailCampaignProps> = ({
   }, [dispatch]);
 
   return (
-    <CustomTableContainer >
-      <Table>
+    <CustomTableContainer sx={{
+      borderRadius:"10px",
+      width:"98%",
+
+    }} >
+      <Table style={{
+        border:"1px solid var(--border-grey)",
+        overflow:"auto",
+      }}>
         <TableHead>
           <TableRow>
             <HeaderCell>Lead Details</HeaderCell>

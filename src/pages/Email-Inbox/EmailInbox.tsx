@@ -176,12 +176,13 @@ export default function EmailInboxs() {
   };
 
   return (
-    <>
+    <Box sx={{paddingTop:"3rem"}}>
+    <Box sx={{height:"85vh", border:"1px solid var(--border-grey)", borderRadius:"10px",background:"white"}}>
       <EmailInbox>
         <EmailInboxHeader>
-          <SectionTitle>Email Inbox</SectionTitle>
+          <SectionTitle style={{fontSize:"1.5rem"}}>Email Inbox</SectionTitle>
           <AccountSelectorContainer>
-            <ReloadIcon onClick={handleReload} loading={refreshLoading} />
+            <ReloadIcon style={{color:"var(--text-secondary)"}} onClick={handleReload} loading={refreshLoading} />
             <AccountSelectorButton onClick={handleAccountSelectorClick}>
               <AccountAvatar>
                 {selectedAccount?.name?.[0]?.toUpperCase() || <Person />}
@@ -285,6 +286,7 @@ export default function EmailInboxs() {
           <EmailInboxList onAccountSelect={handleAccountSelectorClose} accounts={emailAccounts} />
         </PopupContainer>
       </Popover>
-    </>
+    </Box>
+    </Box>
   );
 }

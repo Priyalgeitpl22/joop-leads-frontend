@@ -2,9 +2,11 @@ import styled from "styled-components";
 import { Box, Table, TableContainer, TableHead } from "@mui/material";
 
 export const StyledTableContainer = styled(TableContainer)`
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  // box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  height: 90vh;
+  height: 65vh;
+  border:1px solid var(--border-grey);
+  border-radius:10px
 `;
 
 export const StyledTable = styled(Table)`
@@ -13,9 +15,9 @@ export const StyledTable = styled(Table)`
 `;
 
 export const StyledTableHead = styled(TableHead)`
-  background: #f4f6f8;
+  background: var(--background-slate);
   & th {
-    color: #333;
+    color: #35495c;
     font-weight: bold;
     padding: 12px;
     text-align: left;
@@ -60,11 +62,12 @@ export const NoDataContainer = styled.td`
 export const ContentContainer = styled(Box)`
   width: 100%;
   display: flex;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  background: white;
+  border-radius: 10px;
+  // box-shadow: 0 2px 10px var(--background-secondary);
+  background: var(--background-color);
   position: relative;
   flex-direction: column;
-  height: 90vh;
+  height: 83vh;
   overflow: hidden;
+  padding:1rem;
 `;

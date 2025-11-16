@@ -26,10 +26,10 @@ import {
 } from "../../redux/slice/emailAccountSlice";
 import { AppDispatch, RootState } from "../../redux/store/store";
 import { SearchBar } from "../../components/Header/header.styled";
-import { Search } from "lucide-react";
+import { Search, Trash2 } from "lucide-react";
 // import toast from "react-hot-toast";
 import { CustomDataTable } from "../../assets/Custom/customDataGrid";
-import { GridColDef, GridDeleteIcon } from "@mui/x-data-grid";
+import { GridColDef} from "@mui/x-data-grid";
 import { formatDate } from "../../utils/utils";
 import { Button } from "../../styles/global.styled";
 import { CustomTableCell } from "../Email-Campaign/EmailCampaign.styled";
@@ -63,12 +63,12 @@ const EmailAccounts: React.FC = () => {
 
   const columns: GridColDef[] = useMemo(() => {
     const baseColumns: GridColDef[] = [
-      { field: "name", headerName: "Name", width: 160 },
-      { field: "email", headerName: "Email", width: 260 },
+      { field: "name", headerName: "Name", width: 200 },
+      { field: "email", headerName: "Email", width: 250 },
       {
         field: "type",
         headerName: "Type",
-        width: 100,
+        width: 150,
         renderCell: (params: any) => {
           let icon = null;
 
@@ -100,25 +100,25 @@ const EmailAccounts: React.FC = () => {
       {
         field: "warm_up",
         headerName: "Warmup Enabled",
-        width: 150,
+        width: 170,
         renderCell: () => <Box>Yes</Box>,
       },
       {
         field: "msg_per_day",
         headerName: "Daily Limit",
-        width: 120,
+        width: 150,
         valueGetter: (params: any) => (params ?? "N/A"),
       },
       {
         field: "reputation",
         headerName: "Reputation",
-        width: 110,
+        width: 140,
         renderCell: () => <Box>100%</Box>,
       },
       {
         field: "createdAt",
         headerName: "Created At",
-        width: 160,
+        width: 200,
         valueGetter: (params: any) => (params ? formatDate(params) : null),
       },
       {
@@ -132,14 +132,15 @@ const EmailAccounts: React.FC = () => {
               <Tooltip title="Edit Email Account" arrow>
                 <ModeEditOutlineOutlinedIcon
                   onClick={() => handleEditEmailAccount(params.row.id)}
-                  sx={{ cursor: "pointer" }}
+                  sx={{ cursor: "pointer",color:"var(--secondary-light)" }}
                 />
               </Tooltip>
 
               {user?.role === "Admin" && (
                 <Tooltip title="Delete Email Account" arrow>
-                  <GridDeleteIcon
-                    sx={{ cursor: "pointer" }}
+                  <Trash2
+                  size="18"
+                    style={{ cursor: "pointer" }}
                     onClick={() => handleOpenDeleteDialog(params.row.id)}
                   />
                 </Tooltip>
@@ -281,11 +282,12 @@ const EmailAccounts: React.FC = () => {
 
 
   return (
-    <EmailAccountsContainer style={{width:isMobile?`${pageWidth-20}px`:"100%"}}>
+    <Box sx={{paddingTop:"3rem",height:"90vh"}}>
+    <EmailAccountsContainer style={{width:isMobile?`${pageWidth-20}px`:"100%",backgroundColor:"white", padding:"1.5rem", border:"1px solid var(--border-grey)"}}>
       <Toaster position="top-right" />
       
       <EmailAccountHeader style={{display:isMobile?"none":"flex"}}>
-        <SectionTitle>Email Accounts</SectionTitle>
+        <SectionTitle style={{fontSize:"1.3rem"}}>Email Accounts</SectionTitle>
         <Box
           sx={{
             display: "flex",
@@ -333,7 +335,7 @@ const EmailAccounts: React.FC = () => {
           aria-controls="panel1-content"
           id="panel1-header"
         >
-          <SectionTitle>Email Accounts</SectionTitle>
+          <SectionTitle >Email Accounts</SectionTitle>
         </AccordionSummary>
         <AccordionDetails>
          <Box
@@ -382,6 +384,7 @@ const EmailAccounts: React.FC = () => {
           <CustomDataTable
       columns={columns}
       rows={rows}
+      handleRowSelection={handleEditEmailAccount}
       pageSizeOptions={[15, 10, 5]}
       enableCheckboxSelection={false}
     />
@@ -400,6 +403,7 @@ const EmailAccounts: React.FC = () => {
       />
 
     </EmailAccountsContainer>
+    </Box>
   );
 };
 

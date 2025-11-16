@@ -50,7 +50,7 @@ const PhoneNumberField: React.FC<PhoneNumberFieldProps> = ({ value, onChange }) 
                 disableDropdown={false}
                 placeholder=""
                 inputStyle={{
-                    width: "100%", fontSize: "16px", paddingLeft: "48px", outline: "none", border: "1px solid black", // Default border black
+                    width: "100%", fontSize: "16px", paddingLeft: "48px", outline: "none",
 
                 }}
 

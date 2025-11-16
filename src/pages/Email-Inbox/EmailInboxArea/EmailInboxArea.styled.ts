@@ -137,7 +137,7 @@ export const EmailInboxMessagesBox = styled(Box)({
 export const EmailInboxMessagesHeading = styled(Box, {
   shouldForwardProp: (prop) => prop !== "isSelected" && prop !== "isUnread",
 })<{ isSelected?: boolean; isUnread?: boolean }>(({ isSelected, isUnread }) => ({
-  border: "1px solid #ddd",
+  border: "1px solid var(--border-grey)",
   borderRadius: "8px",
   padding: "10px",
   margin: "10px",
@@ -147,26 +147,27 @@ export const EmailInboxMessagesHeading = styled(Box, {
   backgroundColor: isSelected
     ? "#e0e0e0"
     : isUnread
-    ? "#c77dff47"
+    ? "#2463eb1c"
     : "inherit",
 
   fontWeight: isUnread ? "bold" : "normal",
 
   "&:hover": {
     border: isUnread
-      ? "1px solid rgba(122, 30, 192, 0.88)"
-      : "1px solid #000",
+      ? "1px solid var(--primary)"
+      : "1px solid var(--primary)",
     // keep background unchanged on hover
   },
 }));
 
 export const EmailPagination = styled(Pagination)({
+  color:"var(--text-secondary)",
   "& .Mui-selected": {
-    backgroundColor: "var(--theme-color) !important",
+    backgroundColor: "var(--primary-light) !important",
     color: "#fff !important",
   },
   "& .MuiPaginationItem-root:hover": {
-    backgroundColor: "rgba(0, 0, 0, 0.1)",
+    backgroundColor: "rgba(7, 111, 248, 0.23)",
   },
   
  
@@ -250,9 +251,10 @@ export const SearchBar = styled(Box)`
   border-radius: 5px;
   flex-grow: 1;
   margin-bottom: 1px;
+  margin-left:4px;
   width: 100%;
   gap: 10px;
-  height: 35px;
+  height: 38px;
 
   input {
     background: none;

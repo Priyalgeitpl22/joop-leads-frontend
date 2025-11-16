@@ -27,6 +27,20 @@ body {
 
 :root {
   /* 🌟 Black & White Theme Colors */
+
+
+  /* New Global Colors Variables */
+  --primary: #2463EB;
+  --primary-light: #6093eb;
+  --primary-dark: #0d47a1;
+  --secondary: #00B877;
+  --secondary-light: #7fc97e;
+  --secondary-dark: #388e3c;
+  --background-slate: #dee2ed;
+  --primary-gradient: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  --secondary-gradient: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-dark) 100%);
+  --primary-light-gradient: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+
   --theme-color: #000000; /* Black for primary elements */
   --theme-color-light: #333333; /* Dark gray */
   --theme-color-dark: #000000; /* Pure black */
@@ -313,10 +327,6 @@ input:-webkit-autofill {
   color: #000000; /* Main content text stays black */
 }
 
-/* Dark Mode Header Background - Only Header */
-[data-mui-color-scheme="dark"] .MuiAppBar-root {
-  /* background-color: #1a1a1a !important; */
-}
 
 /* Dark Mode Icon Colors - Only Sidebar/Header */
 [data-mui-color-scheme="dark"] .MuiDrawer-paper .MuiListItemIcon-root {

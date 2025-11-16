@@ -4,6 +4,8 @@ import {
   Radio,
   Checkbox,
   CircularProgress,
+  Box,
+  Typography,
 
 } from "@mui/material";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
@@ -23,6 +25,7 @@ import { AppDispatch, RootState } from "../../../redux/store/store";
 import { validateEmail } from "../../../utils/Validation";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { PrimaryButton, PrimaryButtonDisabled } from "../../../styles/global.styled";
 
 const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -302,12 +305,12 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
   };
 
   return (
-    <div style={{ padding: "3%" }}>
+    <div style={{ padding: "3%", border:"1px solid var(--border-grey)", borderRadius:"10px" }}>
       {formData.type === "imap" && (
         <div>
-          <b>
-            <div>SMTP Settings (sending emails)</div>
-          </b>
+         <Box sx={{paddingBottom:"1rem"}}>
+            <Typography sx={{fontWeight:"bold", color:"var(--text-secondary)"}}>SMTP Settings (sending emails)</Typography>
+          </Box>
           <Grid2 container spacing={2} sx={{ justifyContent: "left", mt: 1 }}>
             <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel>From Name</InputLabel>
@@ -582,13 +585,14 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
       )}
 
       {(formData.type === "gmail" || formData.type === "outlook") && (
-        <div>
-          <b>
-            <div>SMTP Settings (sending emails)</div>
-          </b>
-          <Grid2 container spacing={2} sx={{ justifyContent: "left" }}>
+        <div >
+          <Box sx={{paddingBottom:"2rem"}}>
+            <Typography sx={{fontWeight:"bold", color:"var(--text-secondary)"}}>SMTP Settings (sending emails)</Typography>
+          </Box>
+          
+          <Grid2 container spacing={5} sx={{ justifyContent: "left" }}>
             <Grid2 size={{ xs: 5, sm: 5 }}>
-              <InputLabel>From Name</InputLabel>
+              <InputLabel >From Name</InputLabel>
 
               <TextField
                 fullWidth
@@ -629,8 +633,10 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
               <InputLabel>Message Per Day (Warmups not included) *</InputLabel>
               <SmtpUpdateTextField
                 fullWidth
+                
                 type="number"
                 name="msg_per_day"
+                placeholder="12"
                 value={formData.msg_per_day}
                 onChange={handleChange}
                 error={!formData.msg_per_day || formData.msg_per_day <= 0}
@@ -650,6 +656,7 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
                 fullWidth
                 type="number"
                 name="time_gap"
+                placeholder="12"
                 value={formData.time_gap}
                 onChange={handleChange}
                 error={!formData.time_gap || formData.time_gap <= 0}
@@ -664,34 +671,62 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
               />
             </Grid2>
             <Grid2 size={{ xs: 10, sm: 10 }}>
-              {formData.type === "gmail" ? (
-                <Button2
+              {formData.type === "gmail" ? 
+              <>{isUpdateDisabled?<PrimaryButtonDisabled
                   disabled={isUpdateDisabled}
                   onClick={handleUpdatAccount}
-                  color={isUpdateDisabled ? "black" : "white"}
-                  background={isUpdateDisabled ? "#d3d3d3" : "var(--theme-color)"}
+                  // color={isUpdateDisabled ? "white" : "white"}
+                  // background={isUpdateDisabled ? "var(--primary-light)" : "var(--primary)"}
 
-                  style={{
-                    cursor: isUpdateDisabled ? "not-allowed" : "pointer",
-                    width: "20%",
-                  }}
+                  // style={{
+                  //   cursor: isUpdateDisabled ? "not-allowed" : "pointer",
+                  //   width: "20%",
+                    
+                  // }}
                 >
                   Update Details
-                </Button2>
-              ) : (
-                <Button2
+                </PrimaryButtonDisabled>:<PrimaryButton
+                  disabled={isUpdateDisabled}
+                  onClick={handleUpdatAccount}
+                  // color={isUpdateDisabled ? "white" : "white"}
+                  // background={isUpdateDisabled ? "var(--primary-light)" : "var(--primary)"}
+
+                  // style={{
+                  //   cursor: isUpdateDisabled ? "not-allowed" : "pointer",
+                  //   width: "20%",
+                    
+                  // }}
+                >
+                  Update Details
+                </PrimaryButton>}</>
+                
+               : 
+               <>{isSaveDisabled?<PrimaryButtonDisabled
                   disabled={isSaveDisabled}
                   onClick={handleUpdatAccount}
-                  color={"white"}
-                  background={"var(--theme-color)"}
-                  style={{
-                    width: "10%",
-                    cursor: isSaveDisabled ? "not-allowed" : "pointer",
-                  }}
+                  // color={"white"}
+                  // background="green"
+                  // style={{
+                  //   width: "10%",
+                  //   cursor: isSaveDisabled ? "not-allowed" : "pointer",
+                  // }}
                 >
                   Update Details
-                </Button2>
-              )}
+                </PrimaryButtonDisabled>:
+                <PrimaryButton
+                  disabled={isSaveDisabled}
+                  onClick={handleUpdatAccount}
+                  // color={"white"}
+                  // background="green"
+                  // style={{
+                  //   width: "10%",
+                  //   cursor: isSaveDisabled ? "not-allowed" : "pointer",
+                  // }}
+                >
+                  Update Details
+                </PrimaryButton>}</>
+                
+              }
             </Grid2>
           </Grid2>
         </div>

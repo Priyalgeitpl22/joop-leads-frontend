@@ -119,7 +119,7 @@ const ProfileDetail: React.FC<ProfileDetailProps> = ({ open, onClose }) => {
             {preview ? (
               <ProfileImage src={preview} alt="User profile" />
             ) : (
-              <AccountCircleIcon sx={{ fontSize: 80 }} />
+              <AccountCircleIcon sx={{ fontSize: 80,color: "var(--primary-dark)" }}/>
             )}
             <EditIcon
               sx={{

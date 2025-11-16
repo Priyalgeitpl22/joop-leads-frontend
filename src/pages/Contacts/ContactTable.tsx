@@ -20,8 +20,8 @@ import {
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import {
-  ContactsHeader,
   ContactsContainer,
+  ContactsHeader,
   FilterIcon,
 } from "./ContactTable.styled";
 import { useDispatch, useSelector } from "react-redux";
@@ -38,10 +38,10 @@ import {
 } from "../../redux/slice/contactSlice";
 import { AppDispatch, RootState } from "../../redux/store/store";
 import { SearchBar } from "../../components/Header/header.styled";
-import { CheckCircle, Search, XCircle } from "lucide-react";
+import { CheckCircle, Search, Trash2, XCircle } from "lucide-react";
 import { CustomDataTable } from "../../assets/Custom/customDataGrid";
 import { GridColDef } from "@mui/x-data-grid";
-import {  formatDateTime } from "../../utils/utils";
+import { formatDateTime } from "../../utils/utils";
 import { Button, IconsButton } from "../../styles/global.styled";
 import ProgressBar from "../../assets/Custom/linearProgress";
 import ContactsAccountDialogBox from "./ContactsAccountDialogBox/ContactsAccountDialogBox";
@@ -59,7 +59,6 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import toast, { Toaster } from 'react-hot-toast';
 import { Button2, SectionTitle } from "../../styles/layout.styled";
-import { DeleteIcon } from "./ContactTable.styled";
 import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -119,10 +118,10 @@ const ContactTable: React.FC = () => {
   const [campaignId, setCampaignId] = React.useState("");
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
-  const [dateFilters, setDateFilters] = useState<{ 
-    startDate: Dayjs | null; 
-    endDate: Dayjs | null; 
-    [key: string]: string | Dayjs | null; 
+  const [dateFilters, setDateFilters] = useState<{
+    startDate: Dayjs | null;
+    endDate: Dayjs | null;
+    [key: string]: string | Dayjs | null;
   }>({
     startDate: null,
     endDate: null,
@@ -147,12 +146,12 @@ const ContactTable: React.FC = () => {
   };
 
   const handleFilterChange =
-      (field: keyof typeof filters) => (event: SelectChangeEvent<string>) => {
-        setFilters((prev) => ({
-          ...prev,
-          [field]: event.target.value,
-        }));
-      };
+    (field: keyof typeof filters) => (event: SelectChangeEvent<string>) => {
+      setFilters((prev) => ({
+        ...prev,
+        [field]: event.target.value,
+      }));
+    };
   const handleDateChange =
     (field: "startDate" | "endDate") => (value: Dayjs | null) => {
       setDateFilters((prev) => ({
@@ -225,7 +224,7 @@ const ContactTable: React.FC = () => {
       {
         field: "fullName",
         headerName: "Full Name",
-        width: 180,
+        width: 200,
         renderCell: (params) => (
           <Box>
             {params.row.first_name} {params.row.last_name}
@@ -236,18 +235,18 @@ const ContactTable: React.FC = () => {
       {
         field: "phone_number",
         headerName: "Phone",
-        width: 135,
+        width: 150,
         valueGetter: (params) => params || "N/A",
       },
       {
         field: "used_in_campaigns",
         headerName: "Used in Campaign (Count)",
-        width: 120,
+        width: 170,
       },
       {
         field: "createdAt",
         headerName: "Uploaded Date",
-        width: 150,
+        width: 200,
         valueGetter: (params: any) => (params ? formatDateTime(params) : "N/A"),
       },
       {
@@ -280,13 +279,13 @@ const ContactTable: React.FC = () => {
       {
         field: "view",
         headerName: "View",
-        width: 60,
+        width: 100,
         renderCell: (params) => (
           <Tooltip title="View Leads Detail" arrow>
             <IconButton
-              onClick={(event) => handleViewClick(event, params.row.id)}
-            >
-              <VisibilityIcon />
+              onClick={(event) => handleViewClick(event, params.row.id)}>
+              <VisibilityIcon style={{ color: "var(--primary-light)" }} />
+
             </IconButton>
           </Tooltip>
         ),
@@ -294,13 +293,13 @@ const ContactTable: React.FC = () => {
       {
         field: "edit",
         headerName: "Edit",
-        width: 60,
+        width: 100,
         renderCell: (params) => (
           <Tooltip title="Edit Leads Detail" arrow>
             <IconButton
               onClick={(event) => handleEditClick(event, params.row.id)}
             >
-              <ModeEditOutlineOutlinedIcon />
+              <ModeEditOutlineOutlinedIcon style={{ color: "var(--secondary-light)" }} />
             </IconButton>
           </Tooltip>
         ),
@@ -311,14 +310,14 @@ const ContactTable: React.FC = () => {
       baseColumns.push({
         field: "delete",
         headerName: "Delete",
-        width: 60,
+        width: 100,
         renderCell: (_params) => (
           <Tooltip title="Delete Lead" arrow>
             <IconButton
               color="error"
               onClick={() => handleOpenDeleteDialog(_params.row.id)}
             >
-              <DeleteIcon />
+              <Trash2 width="18px" style={{ color: "var(--error-color)" }} />
             </IconButton>
           </Tooltip>
         ),
@@ -594,165 +593,199 @@ const ContactTable: React.FC = () => {
   };
 
   return (
-    <ContactsContainer style={{
-      overflow: "auto",
-        maxWidth: '100%',
-        width: isMobile?`${width-20}px`:"100%",
-        minHeight: "calc(100vh - 400px)", 
-        position: 'relative',
-        backgroundColor: "white !important",
-    }}>
+    <ContactsContainer
+      style={{
+        width: isMobile ? `${width - 20}px` : "100%",
+        border: "1px solid lightgray",
+
+      }}
+      sx={{
+        px: { xs: "1rem", sm: "1.5rem", md: "2rem" }
+      }}
+    >
       <Toaster position="top-right" />
       {isMobile?
-      <ContactsHeader>
-      <Accordion sx={{width:"100%"}}>
+        <ContactsHeader>
+          <Accordion sx={{width:"100%"}}>
             <AccordionSummary
-              expandIcon={<KeyboardArrowDownIcon/>}
+              expandIcon={<KeyboardArrowDownIcon />}
               aria-controls="panel1-content"
               id="panel1-header"
             >
-             <SectionTitle>All Leads</SectionTitle>
+              {/* <ContactSectionTitle label="All Leads" value="all" /> */}
+            <SectionTitle style={{fontSize: "1.3rem !important", fontWeight: "600", color: "#35495c" }} >All Leads</SectionTitle>
             </AccordionSummary>
             <Box
-          sx={{
-            display: "flex",
+              sx={{
+                display: "flex",
             flexDirection:"column",
-            gap: "15px",
+                gap: "15px",
             width:"auto",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+
           <Box sx={{ display:"flex",
-          gap: "15px",
+                gap: "15px",
 
-          }}>
-            <SearchBar>
-            <Search size={20} />
-            <input
-              placeholder="Search by Leads or Name"
-              value={searchQuery}
-              onChange={handleSearchChange}
-            />
-          </SearchBar>
-          <Tooltip title="Filter" arrow>
-            <FilterIcon onClick={handleMenuOpen}>
-              <FilterAltOutlinedIcon />
-            </FilterIcon>
-          </Tooltip>
-          <ContactsAccountDialogBox
-            open={isAddAccountDialogOPen}
-            onClose={handleAccountCloseDialog}
-            selectedId={selectedId}
-          />
-          </Box>
-          
-         
-          <Box sx={{ display:"flex",
-          gap: "15px",
+              }}>
+                <SearchBar>
+                  <Search size={20} />
+                  <input
+                    placeholder="Search by Leads or Name"
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                  />
+                </SearchBar>
+                <Tooltip title="Filter" arrow>
+                  <FilterIcon onClick={handleMenuOpen}>
+                    <FilterAltOutlinedIcon />
+                  </FilterIcon>
+                </Tooltip>
+                <ContactsAccountDialogBox
+                  open={isAddAccountDialogOPen}
+                  onClose={handleAccountCloseDialog}
+                  selectedId={selectedId}
+                />
+              </Box>
 
-          }}
-          >
 
-          {selectedIds.length == 0 && (
-            <Tooltip title="Upload Bulk Leads" arrow>
-              <IconsButton onClick={handleOpenDialog}>
-                <CloudUploadIcon />
-              </IconsButton>
-            </Tooltip>
-          )}
-          {selectedIds.length == 0 && (
-            <Tooltip title="Add Lead" arrow>
-              <IconsButton onClick={handleAccountOpenDialog}>
-                <PersonAddIcon />
-              </IconsButton>
-            </Tooltip>
-          )}
-          </Box>
-          
-        </Box>
+              <Box sx={{
+                display: "flex",
+                gap: "15px",
+
+              }}
+              >
+
+                {selectedIds.length == 0 && (
+                  <Tooltip title="Upload Bulk Leads" arrow>
+                    <IconsButton onClick={handleOpenDialog}>
+                      <CloudUploadIcon />
+                    </IconsButton>
+                  </Tooltip>
+                )}
+                {selectedIds.length == 0 && (
+                  <Tooltip title="Add Lead" arrow>
+                    <IconsButton onClick={handleAccountOpenDialog}>
+                      <PersonAddIcon />
+                    </IconsButton>
+                  </Tooltip>
+                )}
+              </Box>
+
+            </Box>
           </Accordion>
-          </ContactsHeader>
-:<ContactsHeader>
-        <SectionTitle>All Leads</SectionTitle>
-        <Box
-          sx={{
-            display: "flex",
-            gap: "15px",
-            width:"auto",
-            alignItems: "center",
-            justifyContent: "right",
-          }}
-        >
-          <SearchBar>
-            <Search size={20} />
-            <input
-              placeholder="Search by Leads or Name"
-              value={searchQuery}
-              onChange={handleSearchChange}
+        </ContactsHeader>
+
+        : <ContactsHeader>
+
+          {/* <ContactSectionTitle label="All Leads" value="all" sx={{ fontSize: "24px !important", fontWeight: "600", color: "#35495c", }} /> */}
+          <SectionTitle style={{fontSize: "1.3rem", fontWeight: "600", color: "#35495c" }} >All Leads</SectionTitle>
+          <Box
+            sx={{
+              display: "flex",
+              gap: "15px",
+              width:"auto",
+              alignItems: "center",
+              justifyContent: "right",
+            }}
+          >
+            <SearchBar>
+              <Search size={20} />
+              <input
+                placeholder="Search by Leads or Name"
+                value={searchQuery}
+                onChange={handleSearchChange}
+              />
+            </SearchBar>
+            <Tooltip title="Filter" arrow>
+              <FilterIcon onClick={handleMenuOpen}>
+                <FilterAltOutlinedIcon />
+              </FilterIcon>
+            </Tooltip>
+            <ContactsAccountDialogBox
+              open={isAddAccountDialogOPen}
+              onClose={handleAccountCloseDialog}
+              selectedId={selectedId}
             />
-          </SearchBar>
-          <Tooltip title="Filter" arrow>
-            <FilterIcon onClick={handleMenuOpen}>
-              <FilterAltOutlinedIcon />
-            </FilterIcon>
-          </Tooltip>
-          <ContactsAccountDialogBox
-            open={isAddAccountDialogOPen}
-            onClose={handleAccountCloseDialog}
-            selectedId={selectedId}
-          />
 
-          {selectedIds.length == 0 && (
-            <Tooltip title="Upload Bulk Leads" arrow>
-              <IconsButton onClick={handleOpenDialog}>
-                <CloudUploadIcon />
-              </IconsButton>
-            </Tooltip>
-          )}
-          {selectedIds.length == 0 && (
-            <Tooltip title="Add Lead" arrow>
-              <IconsButton onClick={handleAccountOpenDialog}>
-                <PersonAddIcon />
-              </IconsButton>
-            </Tooltip>
-          )}
+            {selectedIds.length == 0 && (
+              <Tooltip title="Upload Bulk Leads" arrow>
+                <IconsButton onClick={handleOpenDialog} style={{ border: "1px solid var(--secondary-light)" }} >
+                  <CloudUploadIcon
+                    sx={{
 
-          {selectedIds.length > 0 && allActive && (
-            <Tooltip title="Deactivate User" arrow>
-              <IconsButton onClick={handleDeactivate}>
-                <PersonOffIcon />
-              </IconsButton>
-            </Tooltip>
-          )}
+                      color: "var(--secondary-dark)",
+                      "&:hover": {
+                        color: "var(--secondary-light)",
+                      },
+                    }}
+                  />
+                </IconsButton>
 
-          {selectedIds.length > 0 && allInactive && (
-            <Tooltip title="Activate User" arrow>
-              <IconsButton onClick={handleDeactivate}>
-                <HowToRegIcon />
-              </IconsButton>
-            </Tooltip>
-          )}
+              </Tooltip>
+            )}
+            {selectedIds.length == 0 && (
+              <Tooltip title="Add Lead" arrow>
+                <IconsButton onClick={handleAccountOpenDialog} style={{ border: "1px solid var(--primary-light)" }} >
+                  <PersonAddIcon
+                    sx={{
+                      color: "var(--primary-dark)",
+                      "&:hover": {
+                        color: "var(--primary-light)",
+                      },
+                    }} />
+                </IconsButton>
+              </Tooltip>
+            )}
 
-          {selectedIds.length > 0 && (
-            <Tooltip title="Create Campaign" arrow>
-              <IconsButton onClick={handleCreateCampaign}>
-                <AddCircleIcon />
-              </IconsButton>
-            </Tooltip>
-          )}
+            {selectedIds.length > 0 && allActive && (
+              <Tooltip title="Deactivate User" arrow>
+                <IconsButton onClick={handleDeactivate}
+                  style={{
+                    color: "var(--error-color)",
+                    border: "1px solid var(--error-color)"
+                  }}>
+                  <PersonOffIcon />
+                </IconsButton>
+              </Tooltip>
+            )}
 
-          {selectedIds.length > 0 && (
-            <Tooltip title="Delete Contacts" arrow>
-              <IconsButton onClick={() => handleOpenDeleteDialog(selectedIds)}>
-                <DeleteIcon />
-              </IconsButton>
-            </Tooltip>
-          )}
-        </Box>
-      </ContactsHeader>}
-      
+            {selectedIds.length > 0 && allInactive && (
+              <Tooltip title="Activate User" arrow>
+                <IconsButton onClick={handleDeactivate}>
+                  <HowToRegIcon />
+                </IconsButton>
+              </Tooltip>
+            )}
+
+            {selectedIds.length > 0 && (
+              <Tooltip title="Create Campaign" arrow>
+                <IconsButton onClick={handleCreateCampaign}
+                  style={{
+                    color: "var(--primary-dark)",
+                    border: "1px solid var(--primary-light)"
+                  }}>
+                  <AddCircleIcon />
+                </IconsButton>
+              </Tooltip>
+            )}
+
+            {selectedIds.length > 0 && (
+              <Tooltip title="Delete Contacts" arrow>
+                <IconsButton onClick={() => handleOpenDeleteDialog(selectedIds)}
+                  style={{
+                    color: "var(--error-color)",
+                    border: "1px solid var(--error-color)"
+                  }}>
+                  <Trash2 width="18px" />
+                </IconsButton>
+              </Tooltip>
+            )}
+          </Box>
+        </ContactsHeader>}
+
       {loading && <ProgressBar />}
       <Menu
         anchorEl={anchorEl}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
   Dialog,
-  DialogActions,
+  // DialogActions,
   DialogContent,
   MenuItem,
   useMediaQuery,
@@ -20,10 +20,10 @@ import {
   EmailPreviewBox,
   PreviewRow,
   PreviewLabel,
-  FooterBox,
-  FooterTextBox,
-  ClippedText,
-  StyledButton,
+  // FooterBox,
+  // FooterTextBox,
+  // ClippedText,
+  // StyledButton,
   StyledSelect,
 } from "./PreviewSequenceDialogue.styled";
 import SendTestEmailDialog from "../../SendTestEmailDialog";
@@ -60,7 +60,7 @@ const PreviewSequenceDialogue: React.FC<EditUserDialogProps> = ({
   console.log(setSelectedNewSequnce);
   const [campaign, setCampaign] = useState<IEmailCampaign | null>(null);
   const [testEmailDialog, setTestEmailDialog] = React.useState(false);
-  const [loading, setLoading] = useState<boolean>(true);
+  // const [loading, setLoading] = useState<boolean>(true);
   const [openSenderAccount, setOpenSenderAccount] = useState(false);
   const [senderAccounts, setSenderAccounts] = useState<any[]>([]);
   const [selectedContactId, setSelectedContactId] = useState<string>("");
@@ -105,7 +105,7 @@ const PreviewSequenceDialogue: React.FC<EditUserDialogProps> = ({
     } catch (error) {
       console.error("Error fetching campaign:", error);
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -135,6 +135,8 @@ const PreviewSequenceDialogue: React.FC<EditUserDialogProps> = ({
         sx: {
           width: "950px",
           maxWidth: "100vw",
+          borderRadius: "8px",
+          background: "#ffffff",
         },
       }}
     >
@@ -142,7 +144,7 @@ const PreviewSequenceDialogue: React.FC<EditUserDialogProps> = ({
         <GridCloseIcon />
       </CloseIconButton>
       <StyledDialogTitle>Sequence Preview</StyledDialogTitle>
-      <DialogContent>
+      <DialogContent sx={{ pt: 3 }}>
         <StyledSelectTypography>Select a Lead</StyledSelectTypography>
 
         {campaign?.contacts?.length > 0 && (
@@ -173,43 +175,56 @@ const PreviewSequenceDialogue: React.FC<EditUserDialogProps> = ({
         </StyledHelpTypography>
 
         <EmailPreviewBox>
-          <Typography variant="subtitle1" fontWeight={600}>
+          <Typography
+            variant="subtitle1"
+            fontWeight={600}
+            sx={{ color: "#1f2937", fontSize: "14px", mb: 2 }}
+          >
             Email preview
           </Typography>
 
           <PreviewRow>
             <PreviewLabel>Email:</PreviewLabel>
-            <Typography>
+            <Typography sx={{ color: "#374151", fontSize: "14px" }}>
               {selectedContact?.email || "Select a contact"}
             </Typography>
           </PreviewRow>
-          <Divider />
+          <Divider sx={{ my: 1, borderColor: "#d1d5db" }} />
 
           <PreviewRow>
             <PreviewLabel>Subject:</PreviewLabel>
-            <Typography fontWeight={600}>
+            <Typography
+              fontWeight={600}
+              sx={{ color: "#1f2937", fontSize: "14px" }}
+            >
               {replacePlaceholders(
                 selectedSequence?.seq_variants[0]?.subject || "",
                 selectedContact
               )}
             </Typography>
           </PreviewRow>
-          <Divider />
+          <Divider sx={{ my: 1, borderColor: "#d1d5db" }} />
 
           <PreviewRow>
-            <Typography>
+            <Typography
+              sx={{ color: "#6b7280", fontSize: "13px", lineHeight: "1.6" }}
+            >
               {stripHtmlTags(
                 selectedSequence?.seq_variants[0]?.emailBody || ""
               )}
             </Typography>
           </PreviewRow>
-          <Divider />
         </EmailPreviewBox>
       </DialogContent>
-      <DialogActions>
+      {/* <DialogActions sx={{ p: 0 }}>
         <FooterBox>
           <FooterTextBox>
-            <Typography fontWeight={600}>Send Test Email</Typography>
+            <Typography
+              fontWeight={600}
+              sx={{ color: "#1f2937", fontSize: "14px" }}
+            >
+              Send Test Email
+            </Typography>
             <ClippedText>
               Send a test email to preview how your message will appear before
               sending to your full list.
@@ -229,7 +244,7 @@ const PreviewSequenceDialogue: React.FC<EditUserDialogProps> = ({
             {loading && <span className="spinner" />}
           </StyledButton>
         </FooterBox>
-      </DialogActions>
+      </DialogActions> */}
       <SendTestEmailDialog
         open={testEmailDialog}
         onClose={() => setTestEmailDialog(false)}

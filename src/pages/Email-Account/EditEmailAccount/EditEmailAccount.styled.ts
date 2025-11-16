@@ -10,9 +10,11 @@ export const TableDataCell = styled(TableCell)(({}) => ({
 }));
 
 export const WarmUpBlock = styled.div`
-  border-bottom: 1px solid #e0e0e0;
-  margin-top: 2%;
-  margin-bottom: 3%;
+  border: 1px solid var(--border-grey);
+  border-radius:10px;
+  padding:1rem;
+  margin-top: 1%;
+  margin-bottom: 2%;
 `;
 
 export const WarmupLabel = styled.label`
@@ -29,4 +31,7 @@ export const WarmUpHeading = styled.div `
 
 export const WarmupBox = styled(Box)
 `  padding: 20px;
+border:1px solid var(--border-grey);
+border-radius:10px;
+color:var(--text-secondary)
 `;

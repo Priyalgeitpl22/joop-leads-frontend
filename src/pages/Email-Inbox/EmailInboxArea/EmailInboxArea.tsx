@@ -236,16 +236,16 @@ const EmailInboxAreaComponent: React.FC<EmailInboxAreaProps> = ({ onMessageSelec
       ) : (
         <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" , padding: "5px"}}>
           <EmailInboxListHeader>
-            <SearchBar>
+            <SearchBar >
               <Search />
               <input placeholder="Search Email" value={searchTerm} onChange={onSearchChange} />
             </SearchBar>
             <Tooltip title="Filter Emails">
               <Button
                 onClick={handleFilterClick}
-                sx={{ marginLeft: "10px", color: "#000", border: "1px solid #000" }}
+                sx={{ marginLeft: "5px", color: "var(--primary)", border: "1px solid var(--primary)"}}
               >
-                <FilterAltOutlinedIcon />
+                <FilterAltOutlinedIcon style={{color:"var(--primary)"}} />
               </Button>
             </Tooltip>
             <Menu
@@ -257,12 +257,19 @@ const EmailInboxAreaComponent: React.FC<EmailInboxAreaProps> = ({ onMessageSelec
             >
               {filterConfig.map(({ key, label }) => (
                 <MenuItem key={key}>
-                  <Checkbox
-                    checked={filterOptions[key]}
-                    onChange={() => handleFilterChange(key)}
-                  />
-                  {label}
-                </MenuItem>
+                <Checkbox
+                  checked={filterOptions[key]}
+                  onChange={() => handleFilterChange(key)}
+                  sx={{
+                    color: "var(--primary-light)", // unchecked color
+                    "&.Mui-checked": {
+                      color: "var(--primary-light)", // checked color
+                    },
+                  }}
+                />
+                {label}
+              </MenuItem>
+
               ))}
               <div
                 style={{
@@ -275,14 +282,14 @@ const EmailInboxAreaComponent: React.FC<EmailInboxAreaProps> = ({ onMessageSelec
                   onClick={handleCancelFilters}
                   sx={{
                     marginRight: "10px",
-                    color: "#000 !important",
+                    color: "red !important",
                     backgroundColor: "#fff !important",
-                    outline: "1px solid #000",
+                    outline: "1px solid red",
                   }}
                 >
                   Cancel
                 </Button>
-                <Button variant="contained" onClick={handleApplyFilters}>
+                <Button variant="contained" sx={{background:"var(--primary-gradient)"}} onClick={handleApplyFilters}>
                   Apply
                 </Button>
               </div>

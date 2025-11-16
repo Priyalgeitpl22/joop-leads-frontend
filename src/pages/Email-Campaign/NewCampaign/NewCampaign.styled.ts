@@ -10,10 +10,12 @@ export const Container = styled.div(`
 
 export const HeaderContainer = styled.div`
   align-items: center;
-  box-shadow: 0 2px 4px #8d8fa91a;
+  box-shadow: none;
+  border-bottom: 1px solid #e5e7eb;
   display: flex;
-  padding: 16px;
+  padding: 8px 24px;
   gap: 20px;
+  background-color: #ffffff;
 `;
 
 export const FooterContainer = styled.div`
@@ -21,12 +23,13 @@ export const FooterContainer = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: flex-end;
-  gap: 20px;
+  gap: 16px;
   height: fit-content;
-  padding: 20px;
+  padding: 20px 24px;
   position: static;
-  background: var(--shadow-color);
-  box-shadow: var(--shadow-dark);
+  background: #ffffff;
+  border-top: 1px solid #e5e7eb;
+  box-shadow: none;
 `;
 
 export const MainContainer = styled.div`
@@ -36,35 +39,21 @@ export const MainContainer = styled.div`
 `;
 
 export const SetupButton = styled.button`
-  font-weight: semibold;
+  font-weight: 600;
   width: 260px;
-  padding: 12px 30px;
+  padding: 12px 24px;
   border: none;
-  border-radius: 6px;
-  color: var(--text-white);
-  background-color: var(--theme-color);
+  border-radius: 8px;
+  color: white;
+  background: var(--primary-light-gradient);
   cursor: pointer;
-  font-size: 16px;  
+  font-size: 14px;
   white-space: nowrap;
-  box-shadow: var(--shadow-dark);
-  border:1px solid var(--text-black);
+  box-shadow: 0 1px 3px rgba(59, 130, 246, 0.2);
+  transition: all 0.2s;
 
-  &:hover{
-  color: var(--text-black);
-  background-color: var(--theme-light);
-  }
-
-
-  &:hover .input {
-    color: var(--background-light);
-  }
-
-  &:active {
-    background: var(--active-color);
-    color: var(--background-light);
-  }
-
-  &:active .input {
-    color: var(--background-light);
+  &:disabled {
+    background-color: #d1d5db;
+    cursor: not-allowed;
   }
 `;

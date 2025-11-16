@@ -211,7 +211,7 @@ const EmailTemplate: React.FC<EmailTemplateProps> = ({
             display: "flex",
             alignItems: "center",
             gap: "8px",
-            width: "90%",
+            width: "94%",
           }}
         >
           <SubjectText
@@ -220,7 +220,7 @@ const EmailTemplate: React.FC<EmailTemplateProps> = ({
             value={subject}
             onChange={(e) => handleDataChange(e.target.value, emailBody)}
           />
-          <Button onClick={() => handleOpenMenu("subject")}>
+          <Button onClick={() => handleOpenMenu("subject")} style={{marginRight:"10px"}}>
             {"{ } Variables"}
           </Button>
         </div>

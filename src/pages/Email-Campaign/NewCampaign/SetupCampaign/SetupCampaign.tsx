@@ -90,8 +90,8 @@ const SetupCampaign: React.FC<SetupCampaignProps> = ({
           maxWidth: "700px",
           padding: "32px",
           borderRadius: "10px",
-          backgroundColor: "#F8F9FC",
-          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+          // backgroundColor: "#f7f7f7ff",
+          border:"1px solid var(--border-color)"
         }}
       >
         <Box

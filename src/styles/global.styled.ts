@@ -5,37 +5,132 @@ interface CustomDialogFooterProps {
 }
 
 export const Button = styled.button`
-  font-weight: semibold;
+  font-weight: 600;
   width: fit-content;
   padding: 12px 30px;
   border: none;
   border-radius: 6px;
   color: var(--text-white);
-  background-color:var(--theme-color);
+  background: linear-gradient(
+    135deg,
+    var(--secondary) 0%,
+    var(--secondary-dark) 100%
+  );
   cursor: pointer;
   font-size: 16px;
   white-space: nowrap;
-  box-shadow: var(--shadow-dark);
+  transition: 0.2s ease-in-out;
 
   &:hover {
-    background: var(--hover-color);
-    color: var(--text-black);
-    border:1px solid var(--text-black);
-  }
-
-  &:hover .input {
-    color: var(--text-white);
+    background: linear-gradient(
+      135deg,
+      var(--secondary) 0%,
+      var(--secondary-light) 100%
+    );
+    color: white;
   }
 
   &:active {
-    background: var(--active-color);
-    color: var(--text-white);
-  }
-
-  &:active .input {
+    background: var(--secondary);
     color: var(--text-white);
   }
 `;
+export const PrimaryButton = styled.button`
+  font-weight: 600;
+  width: fit-content;
+  padding: 12px 30px;
+  border: none;
+  border-radius: 6px;
+  color: var(--text-white);
+  background: linear-gradient(
+    135deg,
+    var(--primary) 0%,
+    var(--primary-dark) 100%
+  );
+  cursor: pointer;
+  font-size: 16px;
+  white-space: nowrap;
+  transition: 0.2s ease-in-out;
+
+  &:hover {
+    background: linear-gradient(
+    135deg,
+    var(--primary) 0%,
+    var(--primary-light) 100%
+  );
+    color: white;
+  }
+
+  &:active {
+    background: var(--primary);
+    color: var(--text-white);
+  }
+`;
+export const ButtonDisabled = styled.button`
+  font-weight: 600;
+  width: fit-content;
+  padding: 12px 30px;
+  border: none;
+  border-radius: 6px;
+  color: var(--text-white);
+  background: linear-gradient(
+    135deg,
+    var(--secondary) 0%,
+    var(--secondary-light) 100%
+  );
+  cursor: pointer;
+  font-size: 16px;
+  white-space: nowrap;
+  transition: 0.2s ease-in-out;
+
+  &:hover {
+    background: linear-gradient(
+    135deg,
+    var(--secondary) 0%,
+    var(--secondary-light) 100%
+  );
+    color: white;
+  }
+
+  &:active {
+    background: var(--secondary);
+    color: var(--text-white);
+  }
+`;
+
+export const PrimaryButtonDisabled = styled.button`
+  font-weight: 600;
+  width: fit-content;
+  padding: 12px 30px;
+  border: none;
+  border-radius: 6px;
+  color: var(--text-white);
+  background: linear-gradient(
+    135deg,
+    var(--primary) 0%,
+    var(--primary-light) 100%
+  );
+  cursor: pointer;
+  font-size: 16px;
+  white-space: nowrap;
+  transition: 0.2s ease-in-out;
+
+  &:hover {
+    background: linear-gradient(
+    135deg,
+    var(--primary) 0%,
+    var(--primary-light) 100%
+  );
+    color: white;
+  }
+
+  &:active {
+    background: var(--primary);
+    color: var(--text-white);
+  }
+`;
+
+
 
 export const SecondaryButton = styled.button`
   font-weight: semibold;
@@ -83,28 +178,28 @@ export const IconsButton = styled.button`
   white-space: nowrap;
   box-shadow: var(--shadow-dark);
 
-  &:hover svg {
-    color: var(--theme-color);
-    fill: var(--theme-color);
-  }
+  // &:hover svg {
+  //   color: var(--theme-color);
+  //   fill: var(--theme-color);
+  // }
 
-  &:hover {
-    background: var(--hover-color);
-    color: var(--theme-color);
-  }
+  // &:hover {
+  //   background: var(--hover-color);
+  //   color: var(--theme-color);
+  // }
 
-  &:hover .input {
-    color: var(--theme-color);
-  }
+  // &:hover .input {
+  //   color: var(--theme-color);
+  // }
 
-  &:active {
-    background: var(--active-color);
-    color: var(--theme-color);
-  }
+  // &:active {
+  //   background: var(--active-color);
+  //   color: var(--theme-color);
+  // }
 
-  &:active .input {
-    color: var(--theme-color);
-  }
+  // &:active .input {
+  //   color: var(--theme-color);
+  // }
 `;
 
 export const CustomDialogFooter = styled.div<CustomDialogFooterProps>`
@@ -117,7 +212,7 @@ export const CustomDialogFooter = styled.div<CustomDialogFooterProps>`
   display: flex;
   padding: 16px;
   border-radius: 0px 0px 10px 10px;
-  background: var(--background-secondary);
+  background: var(--background-head);
 `;
 
 export const CustomDialogHeader = styled.div`
@@ -127,7 +222,7 @@ export const CustomDialogHeader = styled.div`
   box-sizing: border-box;
   width: 100%;
   padding: 12px;
-  background: var(--background-secondary);
+  background: var(--background-head);
   display: flex;
   flex-direction: row;
   align-items: center;

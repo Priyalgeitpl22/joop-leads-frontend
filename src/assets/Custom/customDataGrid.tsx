@@ -30,103 +30,140 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
   return (
     <Box
       sx={{
-        height: "100%",
         display: "flex",
+        boxShadow: "none",
         flexDirection: "column",
         overflow: 'auto',
+        border:"1px solid var(--border-grey)",
+        borderRadius:"10px"
       }}>
       <Paper
         className="data-grid-container"
         sx={{
           flexGrow: 1,
           display: "flex",
-          minHeight: "380px",
+          minHeight: "550px",
           borderRadius: "0px",
         }}
       >
         <DataGrid
-          rows={rows}
-          columns={columns}
-          pageSizeOptions={pageSizeOptions}
-          paginationModel={paginationModel}
-          onPaginationModelChange={setPaginationModel}
-          onRowSelectionModelChange={handleRowSelection}
-          rowSelectionModel={rowSelectionModel}
-          checkboxSelection={enableCheckboxSelection}
-          getRowId={(row) => row._id || row.id}
-          slots={{
-            noRowsOverlay: () => (
-              <div
-                style={{ 
-                  padding: "20px", 
-                  textAlign: "center", 
-                  color: "black !important",
-                  backgroundColor: "white !important"
-                }}
-              >
-                No data found
-              </div>
-            ),
-          }}
-          sx={{
-            cursor: "pointer",
-            backgroundColor: "white !important",
-            color: "black !important",
-            "& .MuiDataGrid-root": {
-              backgroundColor: "white !important",
-              color: "black !important",
-            },
-            "& .MuiDataGrid-columnHeaders": {
-              backgroundColor: "white !important",
-              color: "black !important",
-              borderBottom: "1px solid black !important",
-            },
-            "& .MuiDataGrid-cell": {
-              backgroundColor: "white !important",
-              color: "black !important",
-            },
-            "& .MuiDataGrid-row": {
-              backgroundColor: "white !important",
-              color: "black !important",
-              "&:hover": {
-                backgroundColor: "#f5f5f5 !important",
-              },
-            },
-            "& .MuiDataGrid-footerContainer": {
-              backgroundColor: "white !important",
-              color: "black !important",
-              borderTop: "1px solid #e0e0e0",
-            },
-            "& .MuiDataGrid-panel": {
-              backgroundColor: "white !important",
-              color: "black !important",
-            },
-            "& .MuiDataGrid-toolbarContainer": {
-              backgroundColor: "white !important",
-              color: "black !important",
-            },
-            "& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within":
-              {
-                outline: "none",
-              },
-            "& .MuiDataGrid-footerContainer .MuiTablePagination-selectLabel, \
-            & .MuiDataGrid-footerContainer .MuiTablePagination-displayedRows, \
-            & .MuiDataGrid-footerContainer .MuiSelect-select, \
-            & .MuiDataGrid-footerContainer .MuiSvgIcon-root":
-            {
-              color: "black !important",
-            },
-            "& .MuiDataGrid-virtualScrollerContent": {
-              flexBasis: "0px !important",
-            },
-            "& .MuiDataGrid-scrollbar": {
-            scrollbarWidth: "none",         // Firefox
-            msOverflowStyle: "none",        // IE and Edge
-            "&::-webkit-scrollbar": {
-              display: "none",              // Chrome, Safari
-            },
-          }}}
-        />
+  rows={rows}
+  columns={columns}
+  pageSizeOptions={pageSizeOptions}
+  paginationModel={paginationModel}
+  onPaginationModelChange={setPaginationModel}
+  onRowSelectionModelChange={handleRowSelection}
+  rowSelectionModel={rowSelectionModel}
+  checkboxSelection={enableCheckboxSelection}
+  getRowId={(row) => row._id || row.id}
+  slots={{
+    noRowsOverlay: () => (
+      <div
+        style={{
+          padding: "20px",
+          textAlign: "center",
+          color: "black",
+          backgroundColor: "white",
+        }}
+      >
+        No data found
+      </div>
+    ),
+  }}
+  sx={{
+    cursor: "pointer",
+    backgroundColor: "white !important",
+    color: "black !important",
+
+    /* ⭐ BOLD COLUMN HEADING */
+    "& .MuiDataGrid-columnHeaderTitle": {
+      fontWeight: "700 !important",
+    },
+
+    "& .MuiDataGrid-columnHeaders": {
+      backgroundColor: "white !important",
+      color: "black !important",
+      borderBottom: "1px solid black !important",
+    },
+
+    "& .MuiDataGrid-cell": {
+      backgroundColor: "white !important",
+      color: "black !important",
+    },
+
+    ".MuiDataGrid-container--top [role=row]": {
+      backgroundColor: "var(--background-slate) !important",
+      color: "#35495c !important",
+      fontWeight: "bold !important",
+      "&:hover": {
+        backgroundColor: "var(--background-slate) !important",
+      },
+    },
+
+    ".MuiDataGrid-columnSeparator--resizable": {
+      color: "var(--text-grey)",
+    },
+
+    "& .MuiDataGrid-row": {
+      backgroundColor: "white !important",
+      color: "black !important",
+      border: "1px solid var(--border-grey)",
+      "&:hover": {
+        backgroundColor: "#f5f5f5 !important",
+      },
+    },
+
+    /* ⭐ PAGINATION LEFT ALIGNMENT */
+    "& .MuiDataGrid-footerContainer": {
+      backgroundColor: "white !important",
+      color: "black !important",
+      borderTop: "1px solid #e0e0e0",
+      justifyContent: "flex-start !important",  // LEFT ALIGN
+    },
+
+    "& .MuiTablePagination-root": {
+      marginLeft: "0 !important", // flush left
+    },
+
+    "& .MuiDataGrid-panel": {
+      backgroundColor: "white !important",
+      color: "black !important",
+    },
+
+    "& .MuiDataGrid-toolbarContainer": {
+      backgroundColor: "white !important",
+      color: "black !important",
+    },
+
+    "& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within": {
+      outline: "none",
+    },
+
+    "& .MuiDataGrid-footerContainer .MuiTablePagination-selectLabel, \
+      & .MuiDataGrid-footerContainer .MuiTablePagination-displayedRows, \
+      & .MuiDataGrid-footerContainer .MuiSelect-select, \
+      & .MuiDataGrid-footerContainer .MuiSvgIcon-root": {
+      color: "black !important",
+    },
+
+    "& .MuiDataGrid-virtualScrollerContent": {
+      flexBasis: "0px !important",
+    },
+    "& .MuiCheckbox-root.Mui-checked": {
+       color: "var(--primary) !important",
+      },
+
+    /* HIDE SCROLLBAR */
+    "& .MuiDataGrid-scrollbar": {
+      scrollbarWidth: "none",
+      msOverflowStyle: "none",
+      "&::-webkit-scrollbar": {
+        display: "none",
+      },
+    },
+  }}
+/>
+
       </Paper>
     </Box>
   );

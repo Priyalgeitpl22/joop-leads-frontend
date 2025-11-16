@@ -178,15 +178,17 @@ const EmailThreadView: React.FC<EmailThreadViewProps> = ({ messages, onClose }) 
               multiline
               minRows={4}
               fullWidth
+              sx={{borderRadius:"10px"}}
             />
             <Box sx={{ display: "flex", justifyContent: "flex-start", gap: 2 }}>
-              <Button variant="outlined" onClick={handleDiscard}>
+              <Button variant="outlined" color="error" onClick={handleDiscard}>
                 Discard
               </Button>
               <Button
                 variant="contained"
                 onClick={handleSend}
                 disabled={!replyContent.trim()}
+                style={{background:"var(--secondary-gradient)",color:"white"}}
               >
                 Send
               </Button>
@@ -194,7 +196,7 @@ const EmailThreadView: React.FC<EmailThreadViewProps> = ({ messages, onClose }) 
           </Box>
         ) : (
           <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
-            <Button variant="contained" onClick={() => setIsReplying(true)}>
+            <Button variant="contained" style={{background:"var(--secondary-gradient)"}} onClick={() => setIsReplying(true)}>
               Reply
             </Button>
           </Box>

@@ -45,29 +45,31 @@ const ColumnVisibilitySelect: React.FC<ColumnVisibilitySelectProps> = ({
   };
 
   return (
-    <FormControl sx={{ ...sx,  }}> {/* Remove margin and padding */}
+    <FormControl sx={{ ...sx, }}> {/* Remove margin and padding */}
       <Select
         labelId={labelId}
         id="column-visibility"
         multiple
         value={columns.filter((column) => visibleColumns[column])}
         onChange={handleChange}
-        inputProps={{ "aria-label": label }}  
+        inputProps={{ "aria-label": label }}
         sx={{
           background: "white !important",
-          padding: "0px",
+          padding: "0px 10px",
           height: "40px",
           borderRadius: "4px",
-          "&.Mui-focused": {
-            borderRadius: "4px",
-            border: "none !important",
+
+          "& .MuiSelect-select": {
+            fontSize: "13px !important",
+            fontWeight: 500,
+            padding: "0px !important",
           },
-        
+
           ...selectSx,
         }}
         renderValue={(selected) => selected.join(", ")}
       >
-        <Typography sx={{ px: 2, py: 1, fontWeight: "bold",  }}>
+        <Typography sx={{ px: 2, py: 1, fontWeight: "bold", }}>
           {label}
         </Typography>
         <Divider />
@@ -83,14 +85,19 @@ const ColumnVisibilitySelect: React.FC<ColumnVisibilitySelectProps> = ({
               ...menuItemSx,
             }}
           >
-            <Checkbox checked={visibleColumns[column]} />
+            <Checkbox checked={visibleColumns[column]} sx={{
+              color: 'var(--primary-light) !important',
+              '& .MuiCheckbox': {
+                color: 'var(--primary-light) !important',
+              },
+            }} />
             <ListItemText primary={column} sx={{
               '& .MuiListItemText-primary': {
-                  color: '#000000 !important', 
-                  fontSize: '14px',
-                  fontWeight: 500,
-                },
-            }}/>
+                color: '#000000 !important',
+                fontSize: '14px',
+                fontWeight: 500,
+              },
+            }} />
           </MenuItem>
         ))}
       </Select>

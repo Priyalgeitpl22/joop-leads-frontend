@@ -61,6 +61,7 @@ function useDemoRouter(initialPath: string): Router {
   };
 }
 
+
 const App=() => {
   const dispatch = useDispatch<AppDispatch>();
   const router = useDemoRouter("/");
@@ -68,6 +69,41 @@ const App=() => {
   const isNewCampaignPage = router.pathname === "/email-campaign/new-campaign";
   const { user } = useSelector((state: RootState) => state.user);
   const { isDarkMode, toggleTheme } = useTheme();
+
+  const getPageInfo = () => {
+    const path = router.pathname;
+  
+    if (path === "/") {
+      return { title: "Dashboard", subTitle: "Overview of your performance" };
+    }
+    if (path.startsWith("/email-campaign")) {
+      return { title: "Email Campaigns", subTitle: "Manage and analyze campaigns" };
+    }
+    if (path === "/email-accounts") {
+      return { title: "Email Accounts", subTitle: "Manage your email connections" };
+    }
+    if (path.startsWith("/email-account/edit-email-account")) {
+      return { title: "Edit Email Account", subTitle: "Modify account settings" };
+    }
+    if (path.startsWith("/email-campaign/view-email-campaign")) {
+      return { title: "View Campaign", subTitle: "Campaign details and insights" };
+    }
+    if (path === "/inbox") {
+      return { title: "Master Inbox", subTitle: "All your inbox messages" };
+    }
+    if (path === "/user") {
+      return { title: "Users", subTitle: "Manage team members" };
+    }
+    if (path === "/all-leads") {
+      return { title: "All Leads", subTitle: "Track and manage leads" };
+    }
+    if (path === "/organization") {
+      return { title: "Organization", subTitle: "Manage organization settings" };
+    }
+  
+    return { title: "Settings", subTitle: "" };
+  };
+  const { title, subTitle } = getPageInfo();
 
   React.useEffect(() => {
     const hideChatWidget = () => {
@@ -133,32 +169,36 @@ const App=() => {
   return (
     <>
       <Toaster position="top-right" reverseOrder={false} />
+  
       {isNewCampaignPage ? (
         <NewCampaign router={router} />
       ) : (
-        <MiniDrawer 
+        <MiniDrawer
           onThemeToggle={toggleTheme}
           isDarkMode={isDarkMode}
-          >
-            {router.pathname === "/" && <Home />}
-            {router.pathname.startsWith("/email-campaign") && <EmailCampaign />}
-            {router.pathname === "/email-accounts" && <EmailAccount />}
-            {router.pathname.startsWith(
-              "/email-account/edit-email-account/"
-            ) && <EditEmailAccount id={router.pathname.split("/").pop()} />}
-            {router.pathname.startsWith(
-              "/email-campaign/view-email-campaign"
-            ) && <ViewEmailCampaign />}
-            {router.pathname === "/inbox" && <EmailInboxs />}
-            {router.pathname === "/user" && <Users />}
-            {router.pathname === "/leads" && <Leads />}
-            {router.pathname === "/chats" && <Chats />}
-            {router.pathname === "/all-leads" && <ContactTable />}
-            {router.pathname === "/organization" && <Organization />}
+          pageTitle={title}
+          subTitle={subTitle}
+        >
+          {router.pathname === "/" && <Home />}
+          {router.pathname.startsWith("/email-campaign") && <EmailCampaign />}
+          {router.pathname === "/email-accounts" && <EmailAccount />}
+          {router.pathname.startsWith("/email-account/edit-email-account/") &&
+            <EditEmailAccount id={router.pathname.split("/").pop()} />
+          }
+          {router.pathname.startsWith("/email-campaign/view-email-campaign") &&
+            <ViewEmailCampaign />
+          }
+          {router.pathname === "/inbox" && <EmailInboxs />}
+          {router.pathname === "/user" && <Users />}
+          {router.pathname === "/leads" && <Leads />}
+          {router.pathname === "/chats" && <Chats />}
+          {router.pathname === "/all-leads" && <ContactTable />}
+          {router.pathname === "/organization" && <Organization />}
         </MiniDrawer>
       )}
     </>
   );
+  
 }
 
 export default App;

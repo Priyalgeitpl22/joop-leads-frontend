@@ -279,7 +279,7 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
             </SearchBar>
           </Box>
         </Box>
-        <Box sx={{ height: "350px", overflow: "auto" }}>
+        <Box sx={{ maxHeight:"calc(100vh-300px)", overflow: "auto" }}>
           <CustomDataTable
             columns={columns}
             rows={rows}

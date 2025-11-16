@@ -462,10 +462,13 @@ const EmailCampaign: React.FC = () => {
   return (
     <ContentContainer
       style={{
-        height: activeTab === "all" || activeTab === "folders" ? "100%" : "0",
         display:
           activeTab === "all" || activeTab === "folders" ? "flex" : "none",
-        width:isMobile?`${width-20}px`:"100%"
+        width:isMobile?`${width-20}px`:"100%",
+        border:"1px solid lightgray",
+      }}
+      sx={{
+        px: { xs: "1rem", sm: "1.5rem", md: "2rem" }
       }}
     >
       {activeTab === "all" || activeTab === "folders" ? (
@@ -565,7 +568,7 @@ const EmailCampaign: React.FC = () => {
                 },
               }}
             >
-              <SectionTitle label="Campaigns" value="all" sx={{fontSize: "18px !important", fontWeight: "600", color: "#35495c !important"}} />
+              <SectionTitle label="Campaigns" value="all" sx={{fontSize: "1.3rem !important", fontWeight: "600", color: "#35495c !important"}} />
               {/* <SectionTitle label="Folders" value="folders" /> */}
               {activeTab === "all" && (
                 <Box
@@ -574,7 +577,6 @@ const EmailCampaign: React.FC = () => {
                     gap: "15px",
                     width: "100%",
                     alignItems: "center",
-                    paddingBottom: "12px",
                     justifyContent: "flex-end",
                   }}
                 >

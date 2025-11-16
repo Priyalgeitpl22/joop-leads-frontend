@@ -6,7 +6,6 @@ import {
   Box,
   Button,
   IconButton,
-  TextField,
   FormControl,
   FormHelperText,
 } from "@mui/material";
@@ -24,6 +23,7 @@ import toast from "react-hot-toast";
 import { Loader } from "lucide-react";
 import { validateEmail } from "../../../utils/Validation";
 import PhoneNumberField from "../../../assets/Custom/PhoneNumberField";
+import { ModernInput } from "./ContactsAccountDialog.styled";
 
 interface ContactsAccountDialogProps {
   open: boolean;
@@ -168,42 +168,50 @@ const ContactsAccountDialogBox: React.FC<ContactsAccountDialogProps> = ({
         sx={{
           fontWeight: "bold",
           fontSize: 18,
-          background: "#f1f2fb",
           padding: "12px 24px",
+          color: "#35495c",
         }}
       >
         {selectedId ? "Edit Lead" : "Add Lead Account"}
       </DialogTitle>
+
       <DialogContent>
         <form onSubmit={handleSubmit}>
-          <DialogContent>
+          <DialogContent sx={{ paddingX: 0 }}>
             <Box display="flex" flexDirection="column" gap={2}>
-              <TextField
-                label="First Name *"
-                name="first_name"
-                value={formData.first_name}
-                onChange={handleChange}
-                fullWidth
-                error={!!formErrors.first_name}
-                helperText={formErrors.first_name}
-              />
-              <TextField
-                label="Last Name"
-                name="last_name"
-                value={formData.last_name}
-                onChange={handleChange}
-                fullWidth
-              />
-              <TextField
+
+              {/* Row: First + Last Name */}
+              <Box display="grid" gridTemplateColumns="1fr 1fr" gap={2}>
+                <ModernInput
+                  label="First Name *"
+                  name="first_name"
+                  value={formData.first_name}
+                  onChange={handleChange}
+                  error={!!formErrors.first_name}
+                  helperText={formErrors.first_name}
+                />
+
+                <ModernInput
+                  label="Last Name"
+                  name="last_name"
+                  value={formData.last_name}
+                  onChange={handleChange}
+                />
+              </Box>
+
+              {/* Email */}
+              <ModernInput
                 label="Email *"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                fullWidth
                 type="email"
                 error={!!formErrors.email}
                 helperText={formErrors.email}
+                fullWidth
               />
+
+              {/* Phone Number */}
               <FormControl fullWidth error={!!formErrors.phone_number}>
                 <PhoneNumberField
                   value={formData.phone_number}
@@ -219,52 +227,61 @@ const ContactsAccountDialogBox: React.FC<ContactsAccountDialogProps> = ({
                   <FormHelperText>{formErrors.phone_number}</FormHelperText>
                 )}
               </FormControl>
-              <TextField
-                label="Company Name"
-                name="company_name"
-                value={formData.company_name}
-                onChange={handleChange}
-                fullWidth
-              />
-              <TextField
-                label="LinkedIn Profile"
-                name="linkedin_profile"
-                value={formData.linkedin_profile}
-                onChange={handleChange}
-                fullWidth
-              />
-              <TextField
-                label="Website"
-                name="website"
-                value={formData.website}
-                onChange={handleChange}
-                fullWidth
-              />
-              <TextField
-                label="Location"
-                name="location"
-                value={formData.location}
-                onChange={handleChange}
-                fullWidth
-              />
-            <Box sx={{textAlign: "right"}}>
-              <Button
-                type="submit"
-                variant="contained"
-                sx={{
-                  backgroundColor: "var(--theme-color)",
-                  cursor: !isFormValid ? "not-allowed" : "pointer",
-                }}
-                disabled={!isFormValid || loading}
-              >
-                {loading ? <Loader /> : selectedId ? "Update" : "Submit"}
-              </Button>
-            </Box>
+
+              {/* Row: Company + Location */}
+              <Box display="grid" gridTemplateColumns="1fr 1fr" gap={2}>
+                <ModernInput
+                  label="Company Name"
+                  name="company_name"
+                  value={formData.company_name}
+                  onChange={handleChange}
+                />
+
+                <ModernInput
+                  label="Location"
+                  name="location"
+                  value={formData.location}
+                  onChange={handleChange}
+                />
+              </Box>
+
+              {/* Row: LinkedIn + Website */}
+              <Box display="grid" gridTemplateColumns="1fr 1fr" gap={2}>
+                <ModernInput
+                  label="LinkedIn Profile"
+                  name="linkedin_profile"
+                  value={formData.linkedin_profile}
+                  onChange={handleChange}
+                />
+
+                <ModernInput
+                  label="Website"
+                  name="website"
+                  value={formData.website}
+                  onChange={handleChange}
+                />
+              </Box>
+
+              {/* Submit Button */}
+              <Box sx={{ textAlign: "right" }}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  sx={{
+                    background: "var(--primary-gradient)",
+                    cursor: !isFormValid ? "not-allowed" : "pointer",
+                  }}
+                  disabled={!isFormValid || loading}
+                >
+                  {loading ? <Loader /> : selectedId ? "Update" : "Submit"}
+                </Button>
+              </Box>
             </Box>
           </DialogContent>
         </form>
       </DialogContent>
     </Dialog>
+
   );
 };
 

@@ -144,8 +144,8 @@ export const CopyButton = styled.button`
 
 export const CustomTabs = styled(Tabs)`
   min-height: 46px;
-  padding: 5px 5px 0px 5px;
-  background: var(--background-secondary);
+  padding: 5px 5px 30px 5px;
+  background: var(--background-primary);
 
   .MuiTabs-indicator {
     background-color: #33475b;
@@ -155,20 +155,14 @@ export const CustomTabs = styled(Tabs)`
 `;
 
 export const SectionHeader = styled(Box)`
-  // min-height: 60px;
-  // height: 250px;
-  padding: 12px 12px 0px 12px;
-  background: var(--background-secondary);
- 
+  padding: 12px 0px;
   .MuiTabs-indicator {
-    background-color: #33475b;
-    height: 4px;
-    border-radius: 4px;
+   display:none;
   }
 `;
 
 export const CustomTab = styled(Tab)`
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
   text-transform: none;
   color: #33475b;
@@ -189,14 +183,14 @@ export const CustomTab = styled(Tab)`
 
 export const ContentContainer = styled(Box)`
   width: 100%;
-  height:100%
+  height: calc(100vh - 150px);
   display: flex;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
   background: white;
   position: relative;
   flex-direction: column;
-  overflow: auto;
+  margin-top:3rem;
+  padding: 10px;
 `;
 
 export const ScrollableContent = styled("div")`
@@ -236,7 +230,7 @@ export const CustomTableRow = styled(TableRow)(({ }) => ({
 
   // Example of styling a paragraph inside TableRow
   "& p": {
-    fontSize: "14px",
+    fontSize: "12px",
     color: "var(--disable-color)",
     fontWeight: 400,
     margin: 0,
@@ -244,7 +238,7 @@ export const CustomTableRow = styled(TableRow)(({ }) => ({
   },
 
   "& h6": {
-    fontSize: "16px",
+    fontSize: "14px",
     fontWeight: 600,
     color: "var(--title-color-secondary)",
     margin: 0,
@@ -257,7 +251,7 @@ export const CustomTableRow = styled(TableRow)(({ }) => ({
 }));
 
 export const SectionTitle = styled(Tab)({
-  fontSize: "18px",
+  fontSize: "16px",
   fontWeight: "600",
   color: "#35495c",
   display: "flex",
@@ -266,7 +260,7 @@ export const SectionTitle = styled(Tab)({
 });
 
 export const CustomTableCell = styled(TableCell)(({ }) => ({
-  fontSize: "14px",
+  fontSize: "12px",
   fontWeight: "500",
   color: "var(--error-color)",
   padding: "12px 16px",
