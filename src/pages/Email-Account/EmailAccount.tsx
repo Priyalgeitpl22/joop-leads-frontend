@@ -29,7 +29,7 @@ import { SearchBar } from "../../components/Header/header.styled";
 import { Search, Trash2 } from "lucide-react";
 // import toast from "react-hot-toast";
 import { CustomDataTable } from "../../assets/Custom/customDataGrid";
-import { GridColDef, GridDeleteIcon } from "@mui/x-data-grid";
+import { GridColDef} from "@mui/x-data-grid";
 import { formatDate } from "../../utils/utils";
 import { Button } from "../../styles/global.styled";
 import { CustomTableCell } from "../Email-Campaign/EmailCampaign.styled";
@@ -282,11 +282,11 @@ const EmailAccounts: React.FC = () => {
 
 
   return (
-    <Box sx={{paddingTop:"3rem",backgroundColor:"white",height:"90vh"}}>
-    <EmailAccountsContainer style={{width:isMobile?`${pageWidth-20}px`:"100%", padding:"1.5rem", border:"1px solid var(--border-grey)"}}>
+    <Box sx={{paddingTop:"3rem",height:"90vh"}}>
+    <EmailAccountsContainer style={{width:isMobile?`${pageWidth-20}px`:"100%",backgroundColor:"white", padding:"1.5rem", border:"1px solid var(--border-grey)"}}>
       <Toaster position="top-right" />
       
-      <EmailAccountHeader style={{display:isMobile?"none":"flex",paddingBottom:"2rem"}}>
+      <EmailAccountHeader style={{display:isMobile?"none":"flex"}}>
         <SectionTitle style={{fontSize:"1.5rem"}}>Email Accounts</SectionTitle>
         <Box
           sx={{

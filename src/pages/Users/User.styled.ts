@@ -6,12 +6,12 @@ export const UsersContainer = styled.div`
   height: 100%;
   display: flex;
   overflow: auto;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   background: white;
   position: relative;
   flex-direction: column;
   background: "white";
-  border-radius: 8px;
+  border-radius: 10px;
+  border:var(--border-color) 1px solid !important;
 }
 `;
 export const UserHeader = styled.section`
@@ -31,10 +31,9 @@ export const FilterIcon = styled(IconButton)`
 `;
 
 export const UserTable = styled.div`
-padding-top:1rem;
+// padding-top:1rem;
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.4);
 `;

@@ -2,17 +2,15 @@ import React, { useState } from "react";
 import { Menu, Typography } from "@mui/material";
 import {
   ProfileIcon,
-  ProfileNameContainer,
   StyledMenuItem,
   UserProfileContainer,
 } from "./UserProfile.styled";
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { logoutUser } from "../../redux/slice/authSlice";
-import { AppDispatch, RootState } from "../../redux/store/store";
+import {useSelector } from "react-redux";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ProfileDetail from "./Profile-Details/ProfileDetail";
 import { useTheme } from "../../context/ThemeContext";
+import { RootState } from "../../redux/store/store";
 export interface User {
   type: string;
   createdAt: any;
@@ -32,7 +30,6 @@ const UserProfileMenu: React.FC = () => {
 
   const { isDarkMode } = useTheme();
 
-  const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.user);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -48,12 +45,7 @@ const UserProfileMenu: React.FC = () => {
     action();
   };
 
-  const handleLogout = async () => {
-    await dispatch(logoutUser());
-    localStorage.setItem("logout", Date.now().toString());
-    handleMenuClose();
-    window.location.assign("/login");
-  };
+
 
   const isMenuOpen = Boolean(anchorEl);
 
@@ -75,44 +67,6 @@ const UserProfileMenu: React.FC = () => {
           <AccountCircleIcon style={{ width: "35px", height: "35px", color: "var(--primary-dark)" }} />
         )}
       </ProfileIcon>
-
-      {/* <Menu
-        anchorEl={anchorEl}
-        open={isMenuOpen}
-        onClose={handleMenuClose}
-        MenuListProps={{ "aria-labelledby": "profile-menu-button" }}
-        sx={{
-          "& .MuiMenu-paper": {
-            minWidth: "200px",
-            boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.5)",
-          },
-        }}
-      >
-        <StyledMenuItem
-          onClick={() => handleMenuItemClick(() => setIsProfileOpen(true))}
-        >
-          <Typography variant="body2" color="textSecondary">
-            Profile
-          </Typography>
-        </StyledMenuItem>
-
-        <StyledMenuItem onClick={handleMenuClose}>
-          <Link
-            to="/change-password"
-            style={{ textDecoration: "none", color: "inherit" }}
-          >
-            <Typography variant="body2" color="textSecondary">
-              Change Password
-            </Typography>
-          </Link>
-        </StyledMenuItem>
-
-        <StyledMenuItem onClick={handleLogout}>
-          <Typography variant="body2" color="textSecondary">
-            Logout
-          </Typography>
-        </StyledMenuItem>
-      </Menu> */}
       <Menu
         anchorEl={anchorEl}
         open={isMenuOpen}
@@ -199,21 +153,6 @@ const UserProfileMenu: React.FC = () => {
             <span>🔒</span>
             <Typography variant="body2">Change Password</Typography>
           </Link>
-        </StyledMenuItem>
-
-        <StyledMenuItem
-          onClick={handleLogout}
-          sx={{
-            padding: "10px 16px",
-            color: "#ef4444",
-            fontWeight: 600,
-            "&:hover": {
-              backgroundColor: isDarkMode ? "rgba(255,0,0,0.08)" : "#fee2e2",
-            },
-          }}
-        >
-          <span>🚪</span>
-          <Typography variant="body2">Logout</Typography>
         </StyledMenuItem>
       </Menu>
 

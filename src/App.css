@@ -327,10 +327,6 @@ input:-webkit-autofill {
   color: #000000; /* Main content text stays black */
 }
 
-/* Dark Mode Header Background - Only Header */
-[data-mui-color-scheme="dark"] .MuiAppBar-root {
-  /* background-color: #1a1a1a !important; */
-}
 
 /* Dark Mode Icon Colors - Only Sidebar/Header */
 [data-mui-color-scheme="dark"] .MuiDrawer-paper .MuiListItemIcon-root {

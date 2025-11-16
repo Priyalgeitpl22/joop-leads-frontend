@@ -101,7 +101,7 @@ const App=() => {
       return { title: "Organization", subTitle: "Manage organization settings" };
     }
   
-    return { title: "Jooper.ai", subTitle: "" };
+    return { title: "Settings", subTitle: "" };
   };
   const { title, subTitle } = getPageInfo();
 

@@ -29,7 +29,6 @@ import { CustomDataTable } from "../../assets/Custom/customDataGrid";
 import { Button } from "../../styles/global.styled";
 import { GridColDef } from "@mui/x-data-grid";
 import { useEffect, useMemo, useState } from "react";
-import { DeleteIcon } from "../Contacts/ContactTable.styled";
 import AddUserDialog from "./AddUser/AddUserDialog";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../redux/store/store";
@@ -441,8 +440,8 @@ const Users = () => {
   };
 
   return (
-    <Box sx={{paddingTop:"3rem", height:"90vh"}}>
-    <UsersContainer style={{width:isMobile?`${width-20}px`:"100%", padding:"2rem"}}>
+    <Box sx={{paddingTop:"3rem", height: "calc(100vh - 100px)", border: "var()--border-color"}}>
+    <UsersContainer style={{width:isMobile?`${width-20}px`:"100%", padding:"1rem"}}>
       {isMobile?
       <UserHeader>
        <Accordion style={{width:"100%",backgroundColor: "var(--background-secondary);"}}>
@@ -603,7 +602,7 @@ const Users = () => {
         />
       </Box>
 
-      <Box sx={{ height: "100%", overflow: "auto" }}>
+      <Box sx={{ height: "calc(100vh - 150px)", overflow: "auto" }}>
         {loading ? (
           <Box sx={{ display: "flex", justifyContent: "center", mt: 5 }}>
             <CircularProgress />

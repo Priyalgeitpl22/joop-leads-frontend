@@ -5,21 +5,11 @@ import {
   Box,
   Typography,
   IconButton,
-  Menu,
-  MenuItem,
-  Divider,
-  Avatar,
   useTheme,
-  useMediaQuery,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
-  Logout,
-  Settings,
-  AccountCircle,
 } from '@mui/icons-material';
-import Cookies from 'js-cookie';
-import { useNavigate } from 'react-router-dom';
 import UserProfileMenu from '../User-Profile/UserProfile';
 
 interface HeaderProps {
@@ -42,34 +32,17 @@ interface HeaderProps {
     subtitle,
     isDarkMode,
     onMenuToggle,
-    userProfile = { name: 'John Doe', email: 'john@example.com' },
     drawerOpen,
     drawerWidth,
     miniDrawerWidth,
   }) => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [_, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-  const navigate = useNavigate();
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleLogout = () => {
-    Cookies.remove('access_token');
-    navigate('/login');
-    handleMenuClose();
-  };
-
-  const handleSettings = () => {
-    navigate('/settings');
-    handleMenuClose();
-  };
 
   return (
     <AppBar
@@ -150,39 +123,6 @@ interface HeaderProps {
             }}
             onClick={handleMenuOpen}
           >
-            {/* <Box sx={{ textAlign: 'right', display: { xs: 'none', sm: 'block' } }}>
-              <Typography
-                sx={{
-                  fontSize: '0.875rem',
-                  fontWeight: 600,
-                  color: isDarkMode ? '#ffffff' : '#1a1a1a',
-                  lineHeight: 1.2,
-                }}
-              >
-                {userProfile?.name || 'User'}
-              </Typography>
-              <Typography
-                sx={{
-                  fontSize: '0.75rem',
-                  color: isDarkMode ? '#b0b0b0' : '#666666',
-                  lineHeight: 1.2,
-                }}
-              >
-                {userProfile?.email || 'user@example.com'}
-              </Typography>
-            </Box>
-            <Avatar
-              sx={{
-                width: 40,
-                height: 40,
-                bgcolor: '#6366f1',
-                cursor: 'pointer',
-                fontWeight: 600,
-              }}
-              src={userProfile?.avatar}
-            >
-              {userProfile?.name?.charAt(0).toUpperCase() || 'U'}
-            </Avatar> */}
             <UserProfileMenu />
           </Box>
 

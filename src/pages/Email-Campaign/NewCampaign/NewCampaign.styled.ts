@@ -45,7 +45,7 @@ export const SetupButton = styled.button`
   border: none;
   border-radius: 8px;
   color: white;
-  background-color: var(--primary-dark);
+  background: var(--primary-light-gradient);
   cursor: pointer;
   font-size: 14px;
   white-space: nowrap;

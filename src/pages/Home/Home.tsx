@@ -8,13 +8,10 @@ import {
   CardContent,
   CircularProgress,
   Typography,
-  Tooltip,
-  IconButton,
   Paper,
   Stack,
 } from "@mui/material";
 
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 
 import {

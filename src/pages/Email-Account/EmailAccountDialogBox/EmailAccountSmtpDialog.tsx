@@ -15,7 +15,7 @@ import {
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CloseIcon from "@mui/icons-material/Close";
 import Grid2 from "@mui/material/Grid2";
-import { Button2, TextField, InputLabel } from "../../../styles/layout.styled";
+import { TextField, InputLabel } from "../../../styles/layout.styled";
 import ReactQuill from "react-quill";
 import {
   CreateEmailAccount,

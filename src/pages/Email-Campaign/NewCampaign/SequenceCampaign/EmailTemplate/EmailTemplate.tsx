@@ -220,7 +220,7 @@ const EmailTemplate: React.FC<EmailTemplateProps> = ({
             value={subject}
             onChange={(e) => handleDataChange(e.target.value, emailBody)}
           />
-          <Button onClick={() => handleOpenMenu("subject")}>
+          <Button onClick={() => handleOpenMenu("subject")} style={{marginRight:"10px"}}>
             {"{ } Variables"}
           </Button>
         </div>

@@ -23,7 +23,6 @@ import {
   ContactsContainer,
   ContactsHeader,
   FilterIcon,
-  ContactSectionTitle,
 } from "./ContactTable.styled";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -59,7 +58,7 @@ import HowToRegIcon from '@mui/icons-material/HowToReg'
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import toast, { Toaster } from 'react-hot-toast';
-import { Button2 } from "../../styles/layout.styled";
+import { Button2, SectionTitle } from "../../styles/layout.styled";
 import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -225,29 +224,29 @@ const ContactTable: React.FC = () => {
       {
         field: "fullName",
         headerName: "Full Name",
-        width: 110,
+        width: 200,
         renderCell: (params) => (
           <Box>
             {params.row.first_name} {params.row.last_name}
           </Box>
         ),
       },
-      { field: "email", headerName: "Email", width: 200 },
+      { field: "email", headerName: "Email", width: 250 },
       {
         field: "phone_number",
         headerName: "Phone",
-        width: 110,
+        width: 150,
         valueGetter: (params) => params || "N/A",
       },
       {
         field: "used_in_campaigns",
         headerName: "Used in Campaign (Count)",
-        width: 100,
+        width: 170,
       },
       {
         field: "createdAt",
         headerName: "Uploaded Date",
-        width: 130,
+        width: 200,
         valueGetter: (params: any) => (params ? formatDateTime(params) : "N/A"),
       },
       {
@@ -280,7 +279,7 @@ const ContactTable: React.FC = () => {
       {
         field: "view",
         headerName: "View",
-        width: 60,
+        width: 100,
         renderCell: (params) => (
           <Tooltip title="View Leads Detail" arrow>
             <IconButton
@@ -294,7 +293,7 @@ const ContactTable: React.FC = () => {
       {
         field: "edit",
         headerName: "Edit",
-        width: 60,
+        width: 100,
         renderCell: (params) => (
           <Tooltip title="Edit Leads Detail" arrow>
             <IconButton
@@ -311,7 +310,7 @@ const ContactTable: React.FC = () => {
       baseColumns.push({
         field: "delete",
         headerName: "Delete",
-        width: 60,
+        width: 100,
         renderCell: (_params) => (
           <Tooltip title="Delete Lead" arrow>
             <IconButton
@@ -613,7 +612,8 @@ const ContactTable: React.FC = () => {
               aria-controls="panel1-content"
               id="panel1-header"
             >
-              <ContactSectionTitle label="All Leads" value="all" sx={{ fontSize: "24px !important", fontWeight: "600", color: "#35495c" }} />
+              {/* <ContactSectionTitle label="All Leads" value="all" /> */}
+            <SectionTitle style={{fontSize: "24px !important", fontWeight: "600", color: "#35495c" }} >All Leads</SectionTitle>
             </AccordionSummary>
             <Box
               sx={{
@@ -680,7 +680,8 @@ const ContactTable: React.FC = () => {
 
         : <ContactsHeader>
 
-          <ContactSectionTitle label="All Leads" value="all" sx={{ fontSize: "24px !important", fontWeight: "600", color: "#35495c", }} />
+          {/* <ContactSectionTitle label="All Leads" value="all" sx={{ fontSize: "24px !important", fontWeight: "600", color: "#35495c", }} /> */}
+          <SectionTitle style={{fontSize: "1.5rem", fontWeight: "600", color: "#35495c" }} >All Leads</SectionTitle>
           <Box
             sx={{
               display: "flex",

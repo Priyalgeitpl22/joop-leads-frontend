@@ -122,7 +122,7 @@ padding:1.5rem;
 
 export const EmailInboxHeader = styled(Box)`
   background: var(--background-primary);
-  padding: 16px;
+  padding: 0px 16px 16px 16px;
   display: flex;
   align-items: center; 
   justify-content: space-between;

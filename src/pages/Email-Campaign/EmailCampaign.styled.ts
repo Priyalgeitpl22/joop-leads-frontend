@@ -155,7 +155,7 @@ export const CustomTabs = styled(Tabs)`
 `;
 
 export const SectionHeader = styled(Box)`
-  padding: 20px 4px;
+  padding: 12px 0px;
   .MuiTabs-indicator {
    display:none;
   }
@@ -230,7 +230,7 @@ export const CustomTableRow = styled(TableRow)(({ }) => ({
 
   // Example of styling a paragraph inside TableRow
   "& p": {
-    fontSize: "14px",
+    fontSize: "12px",
     color: "var(--disable-color)",
     fontWeight: 400,
     margin: 0,
@@ -238,7 +238,7 @@ export const CustomTableRow = styled(TableRow)(({ }) => ({
   },
 
   "& h6": {
-    fontSize: "16px",
+    fontSize: "14px",
     fontWeight: 600,
     color: "var(--title-color-secondary)",
     margin: 0,
@@ -251,7 +251,7 @@ export const CustomTableRow = styled(TableRow)(({ }) => ({
 }));
 
 export const SectionTitle = styled(Tab)({
-  fontSize: "18px",
+  fontSize: "16px",
   fontWeight: "600",
   color: "#35495c",
   display: "flex",
@@ -260,7 +260,7 @@ export const SectionTitle = styled(Tab)({
 });
 
 export const CustomTableCell = styled(TableCell)(({ }) => ({
-  fontSize: "14px",
+  fontSize: "12px",
   fontWeight: "500",
   color: "var(--error-color)",
   padding: "12px 16px",

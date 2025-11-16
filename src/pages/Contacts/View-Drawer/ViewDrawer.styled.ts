@@ -1,7 +1,7 @@
 import { styled } from "@mui/material/styles";
 import { Drawer, Box, Typography, Card, IconButton, Chip } from "@mui/material";
 
-export const StyledDrawer = styled(Drawer)(({ theme }) => ({
+export const StyledDrawer = styled(Drawer)({
   "& .MuiDrawer-paper": {
     width: "50%",
     maxWidth: "320px",
@@ -12,7 +12,7 @@ export const StyledDrawer = styled(Drawer)(({ theme }) => ({
     boxShadow: "0px 0px 20px rgba(0,0,0,0.1)",
 
   },
-}));
+});
 
 export const StyleBox = styled(Box)({
   display: "flex",

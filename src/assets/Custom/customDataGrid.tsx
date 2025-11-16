@@ -42,7 +42,7 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
         sx={{
           flexGrow: 1,
           display: "flex",
-          minHeight: "380px",
+          minHeight: "550px",
           borderRadius: "0px",
         }}
       >

@@ -16,7 +16,7 @@ import {
   FieldWrapper,
   StyledTitle,
 } from "../../../components/User-Profile/Profile-Details/profileDetail.styled";
-import { Button2, TextField } from "../../../styles/layout.styled";
+import {  TextField } from "../../../styles/layout.styled";
 import { toast } from "react-hot-toast";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useState } from "react";

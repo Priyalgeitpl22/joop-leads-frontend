@@ -268,7 +268,7 @@ const ContactsAccountDialogBox: React.FC<ContactsAccountDialogProps> = ({
                   type="submit"
                   variant="contained"
                   sx={{
-                    backgroundColor: "var(--primary)",
+                    background: "var(--primary-gradient)",
                     cursor: !isFormValid ? "not-allowed" : "pointer",
                   }}
                   disabled={!isFormValid || loading}

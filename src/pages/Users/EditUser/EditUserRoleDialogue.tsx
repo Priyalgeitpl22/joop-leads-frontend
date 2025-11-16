@@ -12,7 +12,6 @@ import {
   MenuItem,
   SelectChangeEvent,
 } from "@mui/material";
-import { Button2 } from "../../../styles/layout.styled";
 import { GridCloseIcon } from "@mui/x-data-grid";
 import { CloseIconButton, StyledDialogTitle } from "./EditUser.styled";
 import {  ButtonDisabled } from "../../../styles/global.styled";

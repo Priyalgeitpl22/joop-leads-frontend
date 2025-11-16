@@ -29,6 +29,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store/store";
 import TablePagination from "@mui/material/TablePagination";
 
+
 export interface EmailCampaignTableProps {
   campaigns: IEmailCampaign[];
   loading: boolean;
@@ -84,11 +85,11 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
     setPage(newPage);
   };
 
-  const structureName = (name:string):string=>{
-    const tempName  = name.split(" ") 
-    const nameArray=tempName.map((elem)=>elem.charAt(0).toUpperCase()+elem.slice(1)) 
-    const result:string  = nameArray.join(" ") 
-    return result; 
+  const structureName = (name: string): string => {
+    const tempName = name.split(" ")
+    const nameArray = tempName.map((elem) => elem.charAt(0).toUpperCase() + elem.slice(1))
+    const result: string = nameArray.join(" ")
+    return result;
   }
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -147,7 +148,7 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
         border: "1px solid lightgray",
       }}
     >
-      <Table stickyHeader sx={{ position: "sticky"}}>
+      <Table stickyHeader sx={{ position: "sticky" }}>
         <TableHead
           sx={{
             "& .MuiTableCell-head": {
@@ -158,12 +159,13 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
         >
           <TableRow>
             <TableCellHead>Campaign Details</TableCellHead>
-            {Object.entries(visibleColumns??{}).map((elem)=>{
-              const isElemTrue = elem[1]?elem[0]:null
-              if(isElemTrue){
-              return(
-                <TableCellHead>{isElemTrue?isElemTrue:isElemTrue}</TableCellHead>
-              )}
+            {Object.entries(visibleColumns ?? {}).map((elem) => {
+              const isElemTrue = elem[1] ? elem[0] : null
+              if (isElemTrue) {
+                return (
+                  <TableCellHead>{isElemTrue ? isElemTrue : isElemTrue}</TableCellHead>
+                )
+              }
             })}
 
             {user?.role === "Admin" && <TableCellHead>Action</TableCellHead>}
@@ -190,47 +192,47 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
                     height: 36,
                   }}
                 >
-                   {campaign.status === "RUNNING" && !loading && (
+                  {campaign.status === "RUNNING" && !loading && (
                     <Tooltip title="Pause">
                       <PauseIcon
-                        style={{ fontSize: 20, color: "#acacac" }}
+                        style={{ fontSize: 18, color: "#acacac" }}
                         onClick={(event) => {
                           event.stopPropagation();
                           handlePause(campaign.id);
                         }}
                       />
                     </Tooltip>
-                    )}
+                  )}
 
-                    {campaign.status === "PAUSED" && !loading && (
-                      <Tooltip title="Resume">
-                        <PlayArrowIcon
-                          style={{ fontSize: 20, color: "#acacac" }}
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            handleResume(campaign.id);
-                          }}
-                        />
-                      </Tooltip>
-                    )}
+                  {campaign.status === "PAUSED" && !loading && (
+                    <Tooltip title="Resume">
+                      <PlayArrowIcon
+                        style={{ fontSize: 18, color: "#acacac" }}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleResume(campaign.id);
+                        }}
+                      />
+                    </Tooltip>
+                  )}
 
-                    {campaign.status === "COMPLETED" && !loading && (
-                      <Tooltip title="Completed">
-                        <DoneIcon style={{ fontSize: 20, color: "#acacac" }} />
-                      </Tooltip>
-                    )}
+                  {campaign.status === "COMPLETED" && !loading && (
+                    <Tooltip title="Completed">
+                      <DoneIcon style={{ fontSize: 18, color: "#acacac" }} />
+                    </Tooltip>
+                  )}
 
-                    {(campaign.status === "DRAFT" || campaign.status === "SCHEDULED") && !loading && (
-                      <Tooltip title="Edit">
-                        <ModeEditOutlineOutlinedIcon
-                          style={{ fontSize: 20, color: "#acacac" }}
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            handleEditCampaign(campaign.id);
-                          }}
-                        />
-                      </Tooltip>
-                    )}
+                  {(campaign.status === "DRAFT" || campaign.status === "SCHEDULED") && !loading && (
+                    <Tooltip title="Edit">
+                      <ModeEditOutlineOutlinedIcon
+                        style={{ fontSize: 18, color: "#acacac" }}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleEditCampaign(campaign.id);
+                        }}
+                      />
+                    </Tooltip>
+                  )}
 
                   {loading && (
                     <CircularProgress
@@ -246,14 +248,14 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
                   )}
                 </IconButton>
 
-                <div  onClick={(event) => {event.stopPropagation(); handleDetailCampaign(campaign.id)}}>
+                <div onClick={(event) => { event.stopPropagation(); handleDetailCampaign(campaign.id) }}>
                   <h6>
                     {structureName(campaign?.campaignName)}
                     {campaign?.campaign_name}
                   </h6>
                   <p>
-                  {campaign.status==="COMPLETED"?`✅ ${campaign.status}`:campaign.status==="SCHEDULED"?`⏳ ${campaign.status}`:campaign.status==="DRAFT"?`⏳ ${campaign.status}`:campaign.status === "RUNNING"?`▶️ ${campaign.status}`:campaign.status} 
-                  | {`${formatDateTime(campaign.createdAt).split(",")[0]}, ${formatDateTime(campaign.createdAt).split(",")[1]}`} |{" "}
+                    {campaign.status === "COMPLETED" ? `✅ ${campaign.status}` : campaign.status === "SCHEDULED" ? `⏳ ${campaign.status}` : campaign.status === "DRAFT" ? `⏳ ${campaign.status}` : campaign.status === "RUNNING" ? `▶️ ${campaign.status}` : campaign.status}
+                    | {`${formatDateTime(campaign.createdAt).split(",")[0]}, ${formatDateTime(campaign.createdAt).split(",")[1]}`} |{" "}
                     {campaign.sequences && campaign.sequences.length > 0
                       ? campaign.sequences.length
                       : campaign.sequence_count}{" "}
@@ -269,14 +271,14 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
                 return isVisible ? (
                   <CustomTableCell key={item.label}>
                     <TableItem>
-                      <item.icon sx={{ fontSize: "20px", color: item.color }} />
+                      <item.icon sx={{ fontSize: "18px", color: item.color }} />
                       <p>
                         {/* {item.label}:{" "} */}
                         {item.countType === "custom"
                           ? item.getCount?.(campaign)
                           : (campaign?.analytics_count?.[
-                              item.count_label as keyof typeof campaign.analytics_count
-                            ] ?? 0)}
+                            item.count_label as keyof typeof campaign.analytics_count
+                          ] ?? 0)}
                       </p>
                     </TableItem>
                   </CustomTableCell>
@@ -297,7 +299,8 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
                   size="large"
                   onClick={(event) => {
                     event.stopPropagation()
-                    handleMenuOpen(event, campaign.id)}}
+                    handleMenuOpen(event, campaign.id)
+                  }}
                 >
                   <MoreVertIcon fontSize="small" />
                 </IconButton>
@@ -305,39 +308,121 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
                   anchorEl={selectedCampaign === campaign.id ? anchorEl : null}
                   open={Boolean(anchorEl && selectedCampaign === campaign.id)}
                   onClose={handleMenuClose}
-                >{user?.role === "Admin"&&(<MenuItem onClick={(event) => {
-                  event.stopPropagation()
-                  handleOpenDeleteDialog(campaign.id)}}>
-                    Delete
-                  </MenuItem>)}
-                  {/* <MenuItem onClick={() => handleMoveFolderOpen(campaign.id)}>
-                    Move to folder
-                  </MenuItem> */}
+                  PaperProps={{
+                    sx: {
+                      padding:"0.5rem",
+                      width: 100,
+                      borderRadius: "10px",
+                      backgroundColor: "#fff",
+                    },
+                  }}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "left",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                >
+                  {user?.role === "Admin" && (
+                    <MenuItem
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        handleOpenDeleteDialog(campaign.id);
+                      }}
+                      sx={{
+                        border: "1px solid var(--error-color)",
+                        borderRadius: "6px",
+                        mb: 1,
+                        color: "var(--error-color)",
+                        fontWeight: 500,
+                        fontSize: "14px",
+                        padding: "4px 10px",
+                        minHeight: "32px",
+                        "&:hover": {
+                          backgroundColor: "var(--error-color)",
+                          color: "#fff !important",
+                        },
+                      }}
+                    >
+                      Delete
+                    </MenuItem>
+                  )}
+
                   <MenuItem
-                    onClick={(event) =>{
-                      event.stopPropagation()
+                    onClick={(event) => {
+                      event.stopPropagation();
                       handleRenameOpen(
                         campaign.id,
                         campaign.campaignName ?? campaign.campaign_name ?? ""
-                      )
+                      );
+                    }}
+                    sx={{
+                      border: "1px solid var(--secondary)",
+                      borderRadius: "6px",
+                      mb: 1,
+                      color: "var(--secondary)",
+                      fontWeight: 500,
+                      fontSize: "14px",
+                      padding: "4px 10px",
+                      minHeight: "32px",
+                      "&:hover": {
+                        backgroundColor: "var(--secondary)",
+                        color: "#fff !important",
+                      },
                     }}
                   >
                     Edit
                   </MenuItem>
-                  {/* <MenuItem onClick={handleMenuClose}>Details</MenuItem> */}
+
                   <MenuItem
-                    onClick={(event) =>{
-                      event.stopPropagation()
-                      handleDetailCampaign(campaign.id)}}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleDetailCampaign(campaign.id);
+                    }}
+                    sx={{
+                      border: "1px solid var(--primary)",
+                      borderRadius: "6px",
+                      mb: 1,
+                      color: "var(--primary)",
+                      fontWeight: 500,
+                      fontSize: "14px",
+                      padding: "4px 10px",
+                      minHeight: "32px",
+                      "&:hover": {
+                        backgroundColor: "var(--primary)",
+                        color: "#fff !important",
+                      },
+                    }}
                   >
                     View
                   </MenuItem>
-                  <MenuItem onClick={(event)=>{
-                    event.stopPropagation()
-                    handleMenuClose()
-                  }
-                    }>Details</MenuItem>
+
+                  <MenuItem
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleMenuClose();
+                    }}
+                    sx={{
+                      border: "1px solid lightgray",
+                      borderRadius: "6px",
+                      color: "gray",
+                      fontWeight: 500,
+                      fontSize: "14px",
+                      padding: "4px 10px",
+                      minHeight: "32px",
+                      "&:hover": {
+                        backgroundColor: "gray",
+                        color: "#fff !important",
+                      },
+                    }}
+                  >
+                    Details
+                  </MenuItem>
                 </FolderMenu>
+
+
               </CustomTableCell>
             </CustomTableRow>
           </CustomTableBody>
@@ -366,7 +451,7 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
       />
 
       {campaigns.length === 0 && (
-        <div style={{ padding: "20px", textAlign: "center", color: "#888" }}>
+        <div style={{ padding: "18px", textAlign: "center", color: "#888" }}>
           No campaigns found
         </div>
       )}
