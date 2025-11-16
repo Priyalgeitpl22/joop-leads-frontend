@@ -5,7 +5,6 @@ import ImportLeadsDetail from "./ImportLeadsDetail";
 import ImportSettingsDialog from "./ImportSettingDialog";
 import Papa from "papaparse";
 import { ImportedLeadsData } from "../NewCampaign";
-import { CustomDialogFooter } from "../../../../styles/global.styled";
 import { FileUploadContainer } from "./importLeads.styled";
 import ViewImportedCsvFile from "./ViewImportedCsvFile";
 import { useDispatch } from "react-redux";
@@ -110,17 +109,17 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
     const handleDragOver = (event: DragEvent) => {
       event.preventDefault();
     };
-  
+
     const handleDropAnywhere = (event: DragEvent) => {
       event.preventDefault();
-  
+
       const file = event.dataTransfer?.files?.[0];
       if (file) processFile(file);
     };
-  
+
     window.addEventListener("dragover", handleDragOver);
     window.addEventListener("drop", handleDropAnywhere);
-  
+
     return () => {
       window.removeEventListener("dragover", handleDragOver);
       window.removeEventListener("drop", handleDropAnywhere);
@@ -136,8 +135,7 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
         alignItems: "center",
         flexDirection: "column",
         width: "100%",
-        padding: "2px 0",
-        paddingTop: "50px",
+        padding: "40px 20px",
       }}
     >
       {showDetail ? (
@@ -152,10 +150,20 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
         />
       ) : (
         <>
-          <Typography variant="h6" fontWeight="600" textAlign="center">
+          <Typography
+            variant="h5"
+            fontWeight={700}
+            textAlign="center"
+            sx={{ color: "#111827", mb: 1, mt:5 }}
+          >
             Easily add or update Leads / Contacts
           </Typography>
-          <Typography variant="body2" textAlign="center" color="gray" mb={3}>
+
+          <Typography
+            variant="body1"
+            textAlign="center"
+            sx={{ color: "#6b7280", mb: 6, mt: 1 }}
+          >
             How would you like to get contacts into your list?
           </Typography>
 
@@ -164,23 +172,30 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
             onDragOver={(event) => event.preventDefault()}
             onDrop={handleDrop}
           >
-            <Typography variant="h6" fontWeight="600" mt={2}>
+            <div className="circle-icon">
+              <UploadFileOutlinedIcon
+                sx={{ fontSize: 32, color: "var(--primary-dark)" }}
+              />
+            </div>
+
+            <Typography
+              variant="h6"
+              fontWeight="600"
+              sx={{ color: "#111827", mt: 1 }}
+            >
               Upload CSV File
             </Typography>
-            <UploadFileOutlinedIcon
-              sx={{
-                fontSize: 80,
-                color: "var(--icon-color)",
-                marginBottom: "10px",
-              }}
-            />
             <Typography
               variant="body2"
-              color="gray"
-              sx={{ textAlign: "center" }}
+              sx={{
+                textAlign: "center",
+                color: "#6b7280",
+                fontSize: "14px",
+                lineHeight: "20px",
+                mt: 1,
+              }}
             >
-              Select a CSV file to import <br /> or <br /> Drag & Drop CSV file
-              here
+              Select a CSV file to import <br /> or Drag & Drop CSV file here
             </Typography>
 
             <input
@@ -191,22 +206,33 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
               onChange={handleFileChange}
             />
             {selectedFile && (
-              <Typography variant="body2" color="green" mt={1}>
-                {selectedFile.name}
+              <Typography
+                variant="body2"
+                sx={{ color: "#059669", mt: 2, fontSize: "13px" }}
+              >
+                ✓ {selectedFile.name}
               </Typography>
             )}
             {error && (
               <Typography
                 variant="body2"
-                color="var(--background-light)"
-                mt={1}
+                sx={{ color: "#ef4444", mt: 2, fontSize: "13px" }}
               >
-                {error}
+                ✕ {error}
               </Typography>
             )}
-            <CustomDialogFooter>
+
+            <Typography
+              variant="body2"
+              sx={{
+                color: "#9ca3af",
+                mt: 3,
+                fontSize: "13px",
+                textAlign: "center",
+              }}
+            >
               Upload your CSV files to import leads.
-            </CustomDialogFooter>
+            </Typography>
           </FileUploadContainer>
           {isEdit && <ViewImportedCsvFile csvFileDetails={csvFileDetails} />}
         </>

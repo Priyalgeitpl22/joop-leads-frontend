@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
-  Button,
   CircularProgress,
   DialogContent,
   IconButton,
@@ -19,6 +18,7 @@ import { AppDispatch, RootState } from "../../../redux/store/store";
 import { fetchEmailAccount } from "../../../redux/slice/emailAccountSlice";
 import { SendTestEmail } from "../../../redux/slice/emailCampaignSlice";
 import toast from "react-hot-toast";
+import { Button } from "../../../styles/global.styled";
 
 interface SendTestEmailDialogProps {
   open: boolean;
@@ -132,6 +132,7 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
           fullWidth
           variant="outlined"
           onChange={(e) => setToEmail(e.target.value)}
+          placeholder="Type here"
           sx={{ marginTop: "15px" }}
           InputProps={{
             sx: { height: "40px" },
@@ -145,16 +146,6 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
 
       <DialogFooter>
         <Button
-          variant="contained"
-          fullWidth
-          sx={{
-            backgroundColor: "var(--theme-color)",
-            color: "white",
-            textTransform: "none",
-            padding: "8px 24px",
-            borderRadius: "6px",
-            "&:hover": { backgroundColor: "var(--hover-color)" },
-          }}
           onClick={sendTestEmail}
         >
           {loading ? (

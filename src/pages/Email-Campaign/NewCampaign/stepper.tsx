@@ -17,45 +17,46 @@ import {
   Settings,
 } from "@mui/icons-material";
 
-const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
+const ColorlibConnector = styled(StepConnector)({
   [`&.${stepConnectorClasses.alternativeLabel}`]: { top: 14 },
   [`&.${stepConnectorClasses.active}, &.${stepConnectorClasses.completed}`]: {
     [`& .${stepConnectorClasses.line}`]: {
-      backgroundImage: "var(--white-fade-gradient)",
+      background: "var(--primary-light-gradient)",
     },
   },
   [`& .${stepConnectorClasses.line}`]: {
-    height: 3,
+    height: 2,
     border: 0,
-    backgroundColor:
-      theme.palette.mode === "dark" ? theme.palette.grey[800] : "#eaeaf0",
+    backgroundColor: "#e5e7eb",
     borderRadius: 1,
   },
-}));
+});
 
 const ColorlibStepIconRoot = styled("div")<{
   ownerState: { active?: boolean; completed?: boolean };
 }>(({ ownerState }) => ({
-  backgroundColor:
-    ownerState.completed || ownerState.active ? "transparent" : "#ccc",
+  backgroundColor: "#f3f4f6",
   zIndex: 1,
-  padding: "5px",
-  color: "var(--background-light)",
-  width: 20 !,
-  height: 20,
-  marginBottom: "-8px",
+  padding: "6px",
+  color: "#6b7280",
+  width: 40,
+  height: 40,
   display: "flex",
   borderRadius: "50%",
   justifyContent: "center",
   alignItems: "center",
+  border: "2px solid #e5e7eb",
+  transition: "all 0.3s ease-in-out",
   ...(ownerState.active && {
-    backgroundImage:
-      "linear-gradient(136deg, rgb(36 24 80), rgb(145 131 208), rgb(89 16 222))",
-    boxShadow: "0 4px 10px 0 rgba(0,0,0,.25)",
+    background: "var(--primary-light-gradient)",
+    color: "white",
+    border: "2px solid var(--primary-dark)",
+    boxShadow: "0 2px 8px rgba(59, 130, 246, 0.3)",
   }),
   ...(ownerState.completed && {
-    backgroundImage:
-      "linear-gradient(136deg, rgb(36 24 80), rgb(145 131 208), rgb(89 16 222))",
+    background: "var(--primary-light-gradient)",
+    color: "white",
+    border: "2px solid var(--primary-dark)",
   }),
 }));
 
@@ -63,25 +64,20 @@ function ColorlibStepIcon(props: StepIconProps) {
   const { active, completed, icon } = props;
 
   const stepIcons: Record<number, JSX.Element> = {
-    1: <UploadFile sx={{ fontSize: "18px" }} />,
-    2: <PlaylistAddCheck sx={{ fontSize: "18px" }} />,
-    3: <Settings sx={{ fontSize: "18px" }} />,
-    4: <CheckCircle sx={{ fontSize: "18px" }} />,
+    1: <UploadFile sx={{ fontSize: "20px" }} />,
+    2: <PlaylistAddCheck sx={{ fontSize: "20px" }} />,
+    3: <Settings sx={{ fontSize: "20px" }} />,
+    4: <CheckCircle sx={{ fontSize: "20px" }} />,
   };
 
   return (
     <ColorlibStepIconRoot ownerState={{ completed, active }}>
       {completed ? (
-        <CheckIcon sx={{ fontSize: "18px", color: "var(--background-light)" }} />
-      ) : active ? (
-        stepIcons[Number(icon)] &&
-        React.cloneElement(stepIcons[Number(icon)], {
-          sx: { color: "var(--theme-color-light)" },
-        })
+        <CheckIcon sx={{ fontSize: "20px" }} />
       ) : (
         stepIcons[Number(icon)] &&
         React.cloneElement(stepIcons[Number(icon)], {
-          sx: { color: "var(--hover-color)" },
+          sx: { color: active ? "white" : "#9ca3af" },
         })
       )}
     </ColorlibStepIconRoot>
@@ -113,15 +109,19 @@ export const CustomizedStepper: React.FC<CustomizedStepperProps> = ({
       >
         {steps.map((step, index) => (
           <Step key={step.label}>
-            <StepButton onClick={() => setActiveStep(index)}>
+            <StepButton
+              onClick={() => setActiveStep(index)}
+              sx={{
+                "&:hover": { background: "transparent" },
+              }}
+            >
               <StepLabel
                 StepIconComponent={ColorlibStepIcon}
                 sx={{
                   "& .MuiStepLabel-label": {
-                    color:
-                      activeStep >= index
-                        ? "var(--background-light) !important"
-                        : "var(--background-light)",
+                    color: activeStep >= index ? "#1f2937" : "#9ca3af",
+                    fontWeight: activeStep >= index ? "600" : "500",
+                    fontSize: "14px",
                     transition: "color 0.3s ease-in-out",
                   },
                 }}

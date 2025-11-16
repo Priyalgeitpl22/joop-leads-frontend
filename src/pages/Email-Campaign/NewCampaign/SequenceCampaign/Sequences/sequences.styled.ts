@@ -64,17 +64,14 @@ export const AddVarientButton = styled(Button)({
 });
 
 export const AddStepButton = styled.button`
-  padding:10px 16px;
+  padding: 10px 16px;
   color: var(--text-white);
   cursor: pointer;
   border-radius: 6px;
-  border:1px solid var(--text-black);
-  background: var(--text-black);
+  font-weight: 600;
+  border: 1px solid var(--primary-dark);
+  background: var(--primary-gradient);
 
-  &:hover {
-    background: var(--theme-white);
-    color:var(--text-black)
-  }
 `;
 
 export const AddStepButtonWrapper = styled(Box)({
@@ -121,12 +118,12 @@ export const StyledAssignmentIcon = styled(AssessmentOutlined)(`
 `);
 
 export const StyledWaitIcon = styled(HourglassBottomOutlined)(`
-  color: var(--text-black) !important;
+  color: white !important;
+  background: var(--primary-dark);
   width: 30px;
   height: 30px;
   transition: color 0.3s ease, background-color 0.3s ease;
   padding: 4px;
-  background: white;
   border-radius: 50%;
   
   &:hover {
@@ -135,12 +132,12 @@ export const StyledWaitIcon = styled(HourglassBottomOutlined)(`
 `);
 
 export const StyledMailIcon = styled(MailOutline)(`
-  color: var(--text-black) !important;
+  color: white !important;
+  background: var(--primary-dark);
   width: 30px;
   height: 30px;
   transition: color 0.3s ease, background-color 0.3s ease;
-  padding: 4px;
-  background: white;
+  padding: 5px;
   border-radius: 50%;
   
   &:hover {
@@ -149,12 +146,12 @@ export const StyledMailIcon = styled(MailOutline)(`
 `);
 
 export const StyledAddIcon = styled(AddIcon)(`
-  color: var(--text-black) !important;
+  color: white !important;
+  background: var(--primary-dark);
   width: 30px;
   height: 30px;
   transition: color 0.3s ease, background-color 0.3s ease;
   padding: 4px;
-  background: white;
   border-radius: 50%;
   
   &:hover {

@@ -50,7 +50,7 @@ export const CustomThemeProvider: React.FC<ThemeProviderProps> = ({ children }) 
         dark: '#000000',
       },
       secondary: {
-        main: '#ff9800', // Orange for badges and accents
+        main: "var(--primary-dark)", // Orange for badges and accents
         light: '#ffb74d',
       },
       background: {

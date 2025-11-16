@@ -27,10 +27,8 @@ import SendTestEmailDialog from "./SendTestEmailDialog";
 import { ILeadsCounts } from "./interfaces";
 import { CustomizedStepper } from "./stepper";
 import { Button, SecondaryButton } from "../../../styles/global.styled";
-import { Button2 } from "../../../styles/layout.styled";
 import { useLocation } from "react-router-dom";
 import CircularLoader from "../../../assets/Custom/circularProgress";
-import { useTheme } from "../../../context/ThemeContext";
 export interface ImportedLeadsData {
   campaignName?: string;
   clientId?: string;
@@ -77,7 +75,6 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
 
   const dispatch = useDispatch<AppDispatch>();
   const location = useLocation();
-  const { isDarkMode } = useTheme();
 
   const handleFileChange = (file: File) => {
     setSelectedFile(file);
@@ -410,33 +407,41 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
 
   return (
     <Container>
-      <HeaderContainer style={{backgroundColor: isDarkMode ? "#4b1861" : "#000000"}}>
+      <HeaderContainer
+        style={{
+          backgroundColor: "#f7f7f7",
+          borderBottom: "1px solid #e5e7eb",
+          boxShadow: "0 1px 3px rgba(0, 0, 0, 0.08)",
+        }}
+      >
         <Box
           sx={{
             width: "100%",
             display: "flex",
             alignItems: "center",
-            gap: "25%",
+            gap: "40px",
+            px: 2,
           }}
         >
           <WestOutlinedIcon
             onClick={GoBack}
             sx={{
-              color: "var(--text-white)",
+              color: "#1f2937",
               cursor: "pointer",
-              margin: "14px",
-              width: "35px",
-              height: "35px",
-              "&:hover": { color: "var(--hover-color)" },
+              width: "28px",
+              height: "28px",
+              "&:hover": { color: "var(--primary-dark)" },
+              transition: "color 0.2s",
             }}
           />
-          <CustomizedStepper
-            activeStep={activeStep}
-            setActiveStep={setActiveStep}
-          />
+          <Box sx={{ flex: 1 }}>
+            <CustomizedStepper
+              activeStep={activeStep}
+              setActiveStep={setActiveStep}
+            />
+          </Box>
           <UploadLeadsDialog
             open={uploadleads}
-            // setIsNextDisabled={setIsStep1Valid}
             uploadCounts={uploadCounts}
             onClose={() => {
               setUploadLeads(false);
@@ -483,11 +488,19 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
             handleCampaignSettingsUpdate={handleCampaignSettingsUpdate}
           />
         )}
-        {activeStep === 3 && <FinalReviewCampaign campaign_id={campaignId} setSelectedEmailTemplate={setSelectedNewSequnce} />}
+        {activeStep === 3 && (
+          <FinalReviewCampaign
+            campaign_id={campaignId}
+            setSelectedEmailTemplate={setSelectedNewSequnce}
+          />
+        )}
       </MainContainer>
       <FooterContainer>
         {activeStep !== 0 && (
-          <SecondaryButton onClick={handleBack} disabled={activeStep === 0 || activeStep === 1}>
+          <SecondaryButton
+            onClick={handleBack}
+            disabled={activeStep === 0 || activeStep === 1}
+          >
             Back
           </SecondaryButton>
         )}
@@ -504,15 +517,20 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
             <Button onClick={handleNext}>Schedule Campaign</Button>
           </>
         ) : (
-          <Button2
+          <Button
             onClick={handleNext}
             disabled={isNextDisabled()}
             color={isNextDisabled() ? "lightgray" : "white"}
-            background={isNextDisabled() ? "#878484" : "var(--theme-color)"}
-            style={{ cursor: isNextDisabled() ? "not-allowed" : "pointer" }}
+            style={{
+              cursor: isNextDisabled() ? "not-allowed" : "pointer",
+              transition: "all 0.2s",
+              background: isNextDisabled()
+                ? "#d1d5db"
+                : "var(--secondary-gradient)",
+            }}
           >
             Save and Next
-          </Button2>
+          </Button>
         )}
       </FooterContainer>
     </Container>

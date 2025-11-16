@@ -33,6 +33,7 @@ import { getCampaignById } from "../../../../../redux/slice/emailCampaignSlice";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../../redux/store/store";
 import moment from "moment-timezone";
+import ScheduleIcon from "@mui/icons-material/Schedule";
 
 interface ScheduleCampaignProps {
   open: boolean;
@@ -52,6 +53,23 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
   campaign_id,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
+
+  const commonInputSx = {
+    "& .MuiOutlinedInput-root": {
+      borderRadius: "8px",
+      backgroundColor: "#ffffff",
+      "&:hover fieldset": { borderColor: "#3b82f6" },
+      "&.Mui-focused fieldset": { borderColor: "#3b82f6" },
+    },
+  };
+
+  const topLabelStyle = {
+    marginBottom: "6px",
+    color: "#1f2937",
+    fontSize: "14px",
+    fontWeight: 500,
+    float: "left"
+  };
 
   const [formData, setFormData] = useState<{
     timeZone: "";
@@ -83,7 +101,7 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
     const campaignId = params.get("id");
 
     const id = campaignId ?? campaign_id;
-    if (id !== undefined && id !== null) {
+    if (id != null) {
       fetchCampaignDetails(id);
     }
   }, [open, campaignSchedule]);
@@ -96,7 +114,7 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
       if (campaignSchedule) {
         setFormData((prev) => ({
           ...prev,
-          timeZone: campaignSchedule.timeZone || [],
+          timeZone: campaignSchedule.timeZone || "",
           selectedDays: campaignSchedule.selectedDays || [],
           startTime: dayjs(campaignSchedule.startTime),
           endTime: dayjs(campaignSchedule.endTime),
@@ -116,7 +134,7 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
 
   const handleChange = (field: keyof typeof formData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    validateField(field, value); // Validate the field on change
+    validateField(field, value);
   };
 
   const handleTimeZoneChange = (value: string | string[]) => {
@@ -138,12 +156,10 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
 
   useEffect(() => {
     validateForm();
-    // handleScheduleValid(isValid);
   }, [formData]);
 
   const validateForm = () => {
     let newErrors: { [key: string]: string } = {};
-    console.log("newError", newErrors);
 
     if (!formData.timeZone.length) {
       newErrors.timeZone = "Time zone is required.";
@@ -247,166 +263,234 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
       open={open}
       onClose={onClose}
       maxWidth="md"
-      sx={{ overflowX: "hidden" }}
+      sx={{
+        "& .MuiDialog-paper": {
+          borderRadius: "12px",
+          boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
+        },
+      }}
     >
       <CustomDialogHeader>
-        <Typography variant="h5">Schedule Settings</Typography>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <ScheduleIcon
+            sx={{
+              fontSize: 30,
+              color: "var(--primary-dark)",
+              padding: "5px",
+              background: "#e3eaeeff",
+              borderRadius: "20px",
+            }}
+          />
+          <Typography variant="h5">Schedule Settings</Typography>
+        </Box>
+
         <IconButton
           onClick={onClose}
-          sx={{ position: "absolute", right: 8, top: 2 }}
+          sx={{ position: "absolute", right: 12, top: 12, color: "#6b7280" }}
         >
           <CloseIcon />
         </IconButton>
       </CustomDialogHeader>
 
       <CustomDialogContainer>
-        <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="flex-start"
-          gap={2}
-        >
-          <FormControl
-            fullWidth
-            sx={{ textAlign: "left" }}
-            error={!!errors.timeZone}
+        <Box display="flex" flexDirection="column" gap={1}>
+          <Box
+            sx={{
+              backgroundColor: "#f9fafb",
+              padding: 2,
+              borderRadius: "8px",
+              border: "1px solid #e5e7eb",
+            }}
           >
-            <Autocomplete
-              fullWidth
-              disablePortal
-              options={timeZoneOptions}
-              getOptionLabel={(option) => option.label}
-              value={
-                timeZoneOptions.find(
-                  (tz: any) => tz.value === formData.timeZone
-                ) || null
-              }
-              onChange={(_event, newValue) =>
-                handleTimeZoneChange(newValue?.value || "")
-              }
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Select Time Zone *"
-                  variant="outlined"
-                  error={!!errors.timeZone}
-                />
+            <Typography sx={topLabelStyle}>Select Time Zone *</Typography>
+
+            <FormControl fullWidth error={!!errors.timeZone}>
+              <Autocomplete
+                fullWidth
+                disablePortal
+                options={timeZoneOptions}
+                getOptionLabel={(option) => option.label}
+                value={
+                  timeZoneOptions.find(
+                    (tz: any) => tz.value === formData.timeZone
+                  ) || null
+                }
+                onChange={(_event, newValue) =>
+                  handleTimeZoneChange(newValue?.value || "")
+                }
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    placeholder="Select Time Zone"
+                    sx={commonInputSx}
+                  />
+                )}
+              />
+              {errors.timeZone && (
+                <FormHelperText sx={{ color: "#ef4444" }}>
+                  {errors.timeZone}
+                </FormHelperText>
               )}
-            />
-            {errors.timeZone && (
-              <FormHelperText>{errors.timeZone}</FormHelperText>
-            )}
-          </FormControl>
+            </FormControl>
+          </Box>
 
-          <Typography>Send these days *</Typography>
-          <FormControl error={!!errors.selectedDays} component="fieldset">
-            <FormGroup row>
-              {daysOfWeek.map((day) => (
-                <FormControlLabel
-                  key={day}
-                  control={
-                    <Checkbox
-                      checked={formData.selectedDays.includes(day)}
-                      onChange={() => handleDayChange(day)}
+          <Box
+            sx={{
+              backgroundColor: "#f9fafb",
+              padding: 2,
+              borderRadius: "8px",
+              border: "1px solid #e5e7eb",
+            }}
+          >
+            <Typography sx={topLabelStyle}>Send on Days *</Typography>
+            <FormControl error={!!errors.selectedDays}>
+              <FormGroup row sx={{ gap: "2px" }}>
+                {daysOfWeek.map((day) => (
+                  <FormControlLabel
+                    key={day}
+                    control={
+                      <Checkbox
+                        checked={formData.selectedDays.includes(day)}
+                        onChange={() => handleDayChange(day)}
+                        sx={{
+                          color: "#9ca3af",
+                          "&.Mui-checked": { color: "#3b82f6" },
+                        }}
+                      />
+                    }
+                    label={DaysOfWeek[day]}
+                  />
+                ))}
+              </FormGroup>
+              {errors.selectedDays && (
+                <FormHelperText sx={{ color: "#ef4444" }}>
+                  {errors.selectedDays}
+                </FormHelperText>
+              )}
+            </FormControl>
+          </Box>
+
+          <Box
+            sx={{
+              backgroundColor: "#f9fafb",
+              padding: 2,
+              borderRadius: "8px",
+              border: "1px solid #e5e7eb",
+            }}
+          >
+            <Typography sx={topLabelStyle}>Schedule Time Range *</Typography>
+
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={4}>
+                  <Typography sx={topLabelStyle}>Start Time</Typography>
+                  <FormControl fullWidth error={!!errors.startTime}>
+                    <MobileTimePicker
+                      value={formData.startTime}
+                      onChange={(value) => handleChange("startTime", value)}
+                      slotProps={{
+                        textField: { sx: commonInputSx },
+                      }}
                     />
-                  }
-                  label={DaysOfWeek[day]}
-                />
-              ))}
-            </FormGroup>
-            {errors.selectedDays && (
-              <FormHelperText>{errors.selectedDays}</FormHelperText>
-            )}
-          </FormControl>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <Grid container spacing={2} sx={{ minWidth: "710px" }}>
-              <Grid item xs={4}>
-                <FormControl fullWidth error={!!errors.startTime}>
-                  <MobileTimePicker
-                    label="From *"
-                    value={formData.startTime}
-                    onChange={(value) => handleChange("startTime", value)}
-                  />
-                  {errors.startTime && (
-                    <FormHelperText>{errors.startTime}</FormHelperText>
-                  )}
-                </FormControl>
-              </Grid>
+                    {errors.startTime && (
+                      <FormHelperText sx={{ color: "#ef4444" }}>
+                        {errors.startTime}
+                      </FormHelperText>
+                    )}
+                  </FormControl>
+                </Grid>
 
-              <Grid item xs={4}>
-                <FormControl fullWidth error={!!errors.endTime}>
-                  <MobileTimePicker
-                    label="To *"
-                    value={formData.endTime}
-                    onChange={(value) => handleChange("endTime", value)}
-                  />
-                  {errors.endTime && (
-                    <FormHelperText>{errors.endTime}</FormHelperText>
-                  )}
-                </FormControl>
-              </Grid>
+                <Grid item xs={12} sm={4}>
+                  <Typography sx={topLabelStyle}>End Time</Typography>
+                  <FormControl fullWidth error={!!errors.endTime}>
+                    <MobileTimePicker
+                      value={formData.endTime}
+                      onChange={(value) => handleChange("endTime", value)}
+                      slotProps={{
+                        textField: { sx: commonInputSx },
+                      }}
+                    />
+                    {errors.endTime && (
+                      <FormHelperText sx={{ color: "#ef4444" }}>
+                        {errors.endTime}
+                      </FormHelperText>
+                    )}
+                  </FormControl>
+                </Grid>
 
-              <Grid item xs={4}>
-                <FormControl fullWidth error={!!errors.emailInterval}>
-                  <TextField
-                    label="Minutes *"
-                    type="number"
-                    value={formData.emailInterval}
-                    onChange={(e) =>
-                      handleChange("emailInterval", Number(e.target.value) || 0)
-                    }
-                    fullWidth
-                    error={!!errors.emailInterval}
-                  />
-                  {errors.emailInterval && (
-                    <FormHelperText>{errors.emailInterval}</FormHelperText>
-                  )}
-                </FormControl>
+                <Grid item xs={12} sm={4}>
+                  <Typography sx={topLabelStyle}>Interval (Minutes)</Typography>
+                  <FormControl fullWidth>
+                    <TextField
+                      type="number"
+                      value={formData.emailInterval}
+                      onChange={(e) =>
+                        handleChange(
+                          "emailInterval",
+                          Number(e.target.value) || 0
+                        )
+                      }
+                      sx={commonInputSx}
+                    />
+                  </FormControl>
+                </Grid>
               </Grid>
-            </Grid>
-          </LocalizationProvider>
+            </LocalizationProvider>
+          </Box>
 
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <Grid container spacing={2} sx={{ width: "100%" }}>
-              <Grid item xs={6}>
-                <FormControl fullWidth error={!!errors.startDate}>
-                  <Typography sx={{ textAlign: "justify" }}>
-                    Set Campaign Start Date *
+          <Box
+            sx={{
+              backgroundColor: "#f9fafb",
+              padding: 2,
+              borderRadius: "8px",
+              border: "1px solid #e5e7eb",
+            }}
+          >
+            <Typography sx={topLabelStyle}>Campaign Details *</Typography>
+
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <Typography sx={topLabelStyle}>
+                    Campaign Start Date
                   </Typography>
-                  <DesktopDatePicker
-                    value={formData.startDate}
-                    onChange={(value) => handleChange("startDate", value)}
-                    slotProps={{
-                      textField: { error: !!errors.startDate },
-                    }}
-                  />
-                  {errors.startDate && (
-                    <FormHelperText>{errors.startDate}</FormHelperText>
-                  )}
-                </FormControl>
-              </Grid>
+                  <FormControl fullWidth error={!!errors.startDate}>
+                    <DesktopDatePicker
+                      value={formData.startDate}
+                      onChange={(value) => handleChange("startDate", value)}
+                      slotProps={{
+                        textField: { sx: commonInputSx },
+                      }}
+                    />
+                    {errors.startDate && (
+                      <FormHelperText sx={{ color: "#ef4444" }}>
+                        {errors.startDate}
+                      </FormHelperText>
+                    )}
+                  </FormControl>
+                </Grid>
 
-              <Grid item xs={6}>
-                <FormControl fullWidth error={!!errors.maxLeads}>
-                  <Typography sx={{ textAlign: "justify" }}>
-                    Max Number Of New Leads Per Day *
-                  </Typography>
-                  <TextField
-                    type="number"
-                    value={formData.maxLeads}
-                    onChange={(e) =>
-                      handleChange("maxLeads", Number(e.target.value) || 0)
-                    }
-                    fullWidth
-                    error={!!errors.maxLeads}
-                  />
-                  {errors.maxLeads && (
-                    <FormHelperText>{errors.maxLeads}</FormHelperText>
-                  )}
-                </FormControl>
+                <Grid item xs={12} sm={6}>
+                  <Typography sx={topLabelStyle}>Max Leads Per Day</Typography>
+                  <FormControl fullWidth error={!!errors.maxLeads}>
+                    <TextField
+                      type="number"
+                      value={formData.maxLeads}
+                      onChange={(e) =>
+                        handleChange("maxLeads", Number(e.target.value) || 0)
+                      }
+                      sx={commonInputSx}
+                    />
+                    {errors.maxLeads && (
+                      <FormHelperText sx={{ color: "#ef4444" }}>
+                        {errors.maxLeads}
+                      </FormHelperText>
+                    )}
+                  </FormControl>
+                </Grid>
               </Grid>
-            </Grid>
-          </LocalizationProvider>
+            </LocalizationProvider>
+          </Box>
         </Box>
       </CustomDialogContainer>
 
@@ -414,11 +498,12 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
         <Button
           onClick={handleSaveClick}
           disabled={isSaveDisabled}
-
           style={{
-            color: isSaveDisabled ? "Black" : "white",
-            background: isSaveDisabled ? "#878484" : "var(--theme-color)",
-            opacity: isSaveDisabled ? 0.6 : 1,
+            color: isSaveDisabled ? "lightgrey" : "white",
+            background: isSaveDisabled
+              ? "#9ca3af"
+              : "var(--secondary-gradient)",
+            opacity: isSaveDisabled ? 0.7 : 1,
             cursor: isSaveDisabled ? "not-allowed" : "pointer",
           }}
         >
