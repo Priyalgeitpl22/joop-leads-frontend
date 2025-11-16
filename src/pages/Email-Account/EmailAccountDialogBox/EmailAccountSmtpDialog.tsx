@@ -108,13 +108,28 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
   };
 
 
-  const handleSelectChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    field: string
-  ) => {
-    const value = e.target.value === "ssl";
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
+ const handleSelectChange = (
+  e: React.ChangeEvent<HTMLInputElement>,
+  field: string
+) => {
+  const value = e.target.value === "ssl";
+
+  setFormData((prev) => {
+    let updated = { ...prev, [field]: value };
+
+    
+    if (field === "security") {
+      updated.smtpPort = value ? "465" : "587"; 
+    }
+
+    if (field === "imapSecurity") {
+      updated.imapPort = "993"; 
+    }
+
+    return updated;
+  });
+};
+
 
   const handleVerifyAccount = () => {
     if (!validateFields()) return;
