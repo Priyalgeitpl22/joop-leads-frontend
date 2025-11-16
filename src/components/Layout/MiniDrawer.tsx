@@ -161,7 +161,9 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
   };
 
   const drawerContent = (
-    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column',}}>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column',
+      background: "linear-gradient(45deg, #d3d3f8ff 0%, #ecf8ff 100%)"
+    }}>
       <Box
         sx={{
           padding: open ? '16px 20px' : '12px',
@@ -171,10 +173,6 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
           alignItems: 'center',
           gap: 1,
           minHeight: '72px',
-          background: isDarkMode
-            ? 'linear-gradient(135deg, #1e1e2e 0%, #2a2a3e 100%)'
-            : 'linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%)',
-            
         }}
       >
         {open ? (

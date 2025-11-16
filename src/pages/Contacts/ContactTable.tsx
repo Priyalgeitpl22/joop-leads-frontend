@@ -613,7 +613,7 @@ const ContactTable: React.FC = () => {
               id="panel1-header"
             >
               {/* <ContactSectionTitle label="All Leads" value="all" /> */}
-            <SectionTitle style={{fontSize: "24px !important", fontWeight: "600", color: "#35495c" }} >All Leads</SectionTitle>
+            <SectionTitle style={{fontSize: "1.3rem !important", fontWeight: "600", color: "#35495c" }} >All Leads</SectionTitle>
             </AccordionSummary>
             <Box
               sx={{
@@ -681,7 +681,7 @@ const ContactTable: React.FC = () => {
         : <ContactsHeader>
 
           {/* <ContactSectionTitle label="All Leads" value="all" sx={{ fontSize: "24px !important", fontWeight: "600", color: "#35495c", }} /> */}
-          <SectionTitle style={{fontSize: "1.5rem", fontWeight: "600", color: "#35495c" }} >All Leads</SectionTitle>
+          <SectionTitle style={{fontSize: "1.3rem", fontWeight: "600", color: "#35495c" }} >All Leads</SectionTitle>
           <Box
             sx={{
               display: "flex",

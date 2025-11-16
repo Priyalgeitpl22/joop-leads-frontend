@@ -486,7 +486,7 @@ const Users = () => {
       </Accordion>
       </UserHeader>
       :<UserHeader>
-        <SectionTitle style={{fontSize:"1.5rem"}}>Users</SectionTitle>
+        <SectionTitle style={{fontSize:"1.3rem"}}>Users</SectionTitle>
         <Box
           sx={{
             display: "flex",

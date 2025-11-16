@@ -287,7 +287,7 @@ const EmailAccounts: React.FC = () => {
       <Toaster position="top-right" />
       
       <EmailAccountHeader style={{display:isMobile?"none":"flex"}}>
-        <SectionTitle style={{fontSize:"1.5rem"}}>Email Accounts</SectionTitle>
+        <SectionTitle style={{fontSize:"1.3rem"}}>Email Accounts</SectionTitle>
         <Box
           sx={{
             display: "flex",

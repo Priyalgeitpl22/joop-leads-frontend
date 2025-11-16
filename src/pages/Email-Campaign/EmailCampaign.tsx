@@ -568,7 +568,7 @@ const EmailCampaign: React.FC = () => {
                 },
               }}
             >
-              <SectionTitle label="Campaigns" value="all" sx={{fontSize: "24px !important", fontWeight: "600", color: "#35495c !important"}} />
+              <SectionTitle label="Campaigns" value="all" sx={{fontSize: "1.3rem !important", fontWeight: "600", color: "#35495c !important"}} />
               {/* <SectionTitle label="Folders" value="folders" /> */}
               {activeTab === "all" && (
                 <Box
