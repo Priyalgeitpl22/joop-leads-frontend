@@ -1,11 +1,7 @@
 import React from "react";
-import { Stack, Divider, Typography } from "@mui/material";
-import EmailIcon from "@mui/icons-material/Email";
+import { Divider, Typography, Box } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import PhoneIcon from "@mui/icons-material/Phone";
-import BusinessIcon from "@mui/icons-material/Business";
 import WorkIcon from "@mui/icons-material/Work";
-import CampaignIcon from "@mui/icons-material/Campaign";
 import { RootState } from "../../../redux/store/store";
 import { useSelector } from "react-redux";
 import {
@@ -15,11 +11,13 @@ import {
   StyledCloseIconButton,
   ContactCard,
   CampaignCard,
-  IconStyle,
   SectionTitle,
   UploadedByContainer,
   StyleBox,
   ScrollableContent,
+  FieldLabel,
+  DraftChip,
+  FieldValue,
 } from "./ViewDrawer.styled";
 import { useTheme } from "../../../context/ThemeContext";
 
@@ -33,70 +31,69 @@ interface ViewDrawerProps {
 
 const ViewDrawer: React.FC<ViewDrawerProps> = ({ open, onClose }) => {
   const { campaignList } = useSelector((state: RootState) => state.contact);
-  const {isDarkMode} = useTheme();
+  const { isDarkMode } = useTheme();
 
   return (
-    <StyledDrawer anchor="right" open={open} onClose={onClose} sx={{
-      "& .MuiDrawer-paper": {
-      backgroundColor: "#ffffff !important",
-      borderRadius:"12px !important"
-    },
-    }}>
+    <StyledDrawer anchor="right" open={open} onClose={onClose}>
       <StyleBox>
-        <TitleContainer sx={{bgcolor: isDarkMode ? "#4b1861" : "#000000"}}>
-          <StyledTypography variant="h6" sx={{color:"#ffffff"}}>📌 Lead Details</StyledTypography>
+        <TitleContainer sx={{ bgcolor: isDarkMode ? "#4b1861" : "var(--primary-dark)" }}>
+          <StyledTypography style={{color: "#ffffff", }}>Lead Details</StyledTypography>
+
           <StyledCloseIconButton onClick={onClose}>
             <CloseIcon />
           </StyledCloseIconButton>
         </TitleContainer>
+
         <ScrollableContent>
+          {/* Contact Info */}
+          <SectionTitle>Contact Information</SectionTitle>
+
           <ContactCard>
-            <Stack spacing={2}>
-              <Typography>
-                <EmailIcon sx={IconStyle("#1976D2")} />
-                <strong>Name:</strong> {campaignList?.first_name}
-              </Typography>
-              <Typography>
-                <EmailIcon sx={IconStyle("#1976D2")} />
-                <strong>Email:</strong> {campaignList?.email}
-              </Typography>
-              <Typography>
-                <PhoneIcon sx={IconStyle("#43A047")} />
-                <strong>Phone:</strong> {campaignList?.phone_number || "N/A"}
-              </Typography>
-              <Typography>
-                <BusinessIcon sx={IconStyle("#D84315")} />
-                <strong>Company:</strong> {campaignList?.company_name || "N/A"}
-              </Typography>
-            </Stack>
+            <FieldLabel>Full Name</FieldLabel>
+            <FieldValue>{campaignList?.first_name || "N/A"}</FieldValue>
+            <Divider sx={{ my: 1 }} />
+
+            <FieldLabel>Email</FieldLabel>
+            <FieldValue>{campaignList?.email || "N/A"}</FieldValue>
+            <Divider sx={{ my: 1 }} />
+
+            <FieldLabel>Phone</FieldLabel>
+            <FieldValue>{campaignList?.phone_number || "N/A"}</FieldValue>
+            <Divider sx={{ my: 1 }} />
+
+            <FieldLabel>Company</FieldLabel>
+            <FieldValue>{campaignList?.company_name || "N/A"}</FieldValue>
           </ContactCard>
 
+          {/* Campaigns */}
           {campaignList?.emailCampaigns?.length ? (
             <>
-              <Divider sx={{ my: 2 }} />
-              <SectionTitle variant="subtitle1">📢 Campaigns:</SectionTitle>
-              {campaignList.emailCampaigns.map((campaignItem, index) => (
+              <SectionTitle>Campaigns</SectionTitle>
+
+              {campaignList.emailCampaigns.map((item, index) => (
                 <CampaignCard key={index}>
-                  <Typography>
-                    <CampaignIcon sx={IconStyle("#FF5722")} />
-                    <strong>Name:</strong>{" "}
-                    {campaignItem?.campaign?.campaignName}
-                  </Typography>
-                  <Typography>
-                    <strong>Delivery Status:</strong>{" "}
-                    {campaignItem?.campaign?.status}
-                  </Typography>
+                  <FieldLabel>Campaign Name</FieldLabel>
+                  <Box style={{ display: "flex", justifyContent: "space-between " }}>
+                    <FieldValue>
+                      {item?.campaign?.campaignName || "Untitled Campaign"}
+                    </FieldValue>
+
+                    <DraftChip label="DRAFT" />
+                  </Box>
                 </CampaignCard>
               ))}
             </>
           ) : null}
 
-          <Divider sx={{ my: 2 }} />
-          <SectionTitle variant="subtitle1">📎 Uploaded By:</SectionTitle>
-          <UploadedByContainer>
-            <WorkIcon sx={IconStyle("#673AB7")} />
-            {campaignList?.uploadedUser?.fullName} (
-            {campaignList?.uploadedUser?.email})
+          {/* Uploaded By */}
+          <SectionTitle>Activity</SectionTitle>
+
+          <UploadedByContainer sx={{ display: "flex", alignItems: "center" }}>
+            <WorkIcon sx={{ marginRight: "6px", color: "#6b7280" }} />
+            <Typography fontSize={15}>
+              {campaignList?.uploadedUser?.fullName} (
+              {campaignList?.uploadedUser?.email})
+            </Typography>
           </UploadedByContainer>
         </ScrollableContent>
       </StyleBox>

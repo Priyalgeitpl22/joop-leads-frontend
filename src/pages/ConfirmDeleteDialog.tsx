@@ -5,9 +5,9 @@ import {
   StyledDialogContent,
   Text,
   DialogFooter,
-  DeleteIcon,
 } from "./ConfirmDeleteDialog.styled";
 import { Button2 } from "../styles/layout.styled";
+import { Trash2 } from "lucide-react";
 
 interface ConfirmDeleteDialogProps {
   open: boolean;
@@ -31,7 +31,7 @@ const ConfirmDeleteDialog: React.FC<ConfirmDeleteDialogProps> = ({
   return (
     <Dialog open={open} onClose={onClose}>
       <StyledDialogContent>
-        <DeleteIcon />
+        <Trash2 style={{ color: "var(--error-color)" }} />
         <StyledDialogTitle>{title}</StyledDialogTitle>
         <Text>{message}</Text>
         <DialogFooter>

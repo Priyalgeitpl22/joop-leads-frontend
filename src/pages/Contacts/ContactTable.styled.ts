@@ -1,34 +1,41 @@
 import styled from "@emotion/styled";
 import { Delete } from "@mui/icons-material";
 import {
+  Box,
   IconButton,
+  Tab,
   TableCell,
   TableContainer,
   TableHead,
 } from "@mui/material";
 import { motion } from "framer-motion";
 
-export const ContactsContainer = styled.div`
-  border: 2px solid var(--error-color)
+export const ContactsContainer = styled(Box)`
   width: 100%;
-  height: 100%;
+  height: calc(100vh - 150px);
   display: flex;
-  overflow: auto;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
   background: white;
   position: relative;
   flex-direction: column;
-  background: var(--white-fade-gradient);
-  border-radius: 8px;
-}
+  margin-top:3rem;
+  padding: 10px;
 `;
+export const ContactSectionTitle = styled(Tab)({
+  fontSize: "18px",
+  fontWeight: "600",
+  color: "#35495c",
+  display: "flex",
+  whiteSpace: "nowrap",
+  textTransform: "none",
+});
+
 export const ContactsHeader = styled.section`
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
   padding: 12px;
-  background: var(--background-secondary);
 `;
 
 export const CreateContact = styled(motion.button)`

@@ -30,8 +30,8 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
   return (
     <Box
       sx={{
-        height: "100%",
         display: "flex",
+        boxShadow: "none",
         flexDirection: "column",
         overflow: 'auto',
         border:"1px solid var(--border-grey)",
@@ -149,6 +149,9 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
     "& .MuiDataGrid-virtualScrollerContent": {
       flexBasis: "0px !important",
     },
+    "& .MuiCheckbox-root.Mui-checked": {
+       color: "var(--primary) !important",
+      },
 
     /* HIDE SCROLLBAR */
     "& .MuiDataGrid-scrollbar": {

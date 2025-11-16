@@ -178,28 +178,28 @@ export const IconsButton = styled.button`
   white-space: nowrap;
   box-shadow: var(--shadow-dark);
 
-  &:hover svg {
-    color: var(--theme-color);
-    fill: var(--theme-color);
-  }
+  // &:hover svg {
+  //   color: var(--theme-color);
+  //   fill: var(--theme-color);
+  // }
 
-  &:hover {
-    background: var(--hover-color);
-    color: var(--theme-color);
-  }
+  // &:hover {
+  //   background: var(--hover-color);
+  //   color: var(--theme-color);
+  // }
 
-  &:hover .input {
-    color: var(--theme-color);
-  }
+  // &:hover .input {
+  //   color: var(--theme-color);
+  // }
 
-  &:active {
-    background: var(--active-color);
-    color: var(--theme-color);
-  }
+  // &:active {
+  //   background: var(--active-color);
+  //   color: var(--theme-color);
+  // }
 
-  &:active .input {
-    color: var(--theme-color);
-  }
+  // &:active .input {
+  //   color: var(--theme-color);
+  // }
 `;
 
 export const CustomDialogFooter = styled.div<CustomDialogFooterProps>`
