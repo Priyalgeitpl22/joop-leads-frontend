@@ -211,7 +211,7 @@ const EmailTemplate: React.FC<EmailTemplateProps> = ({
             display: "flex",
             alignItems: "center",
             gap: "8px",
-            width: "90%",
+            width: "94%",
           }}
         >
           <SubjectText

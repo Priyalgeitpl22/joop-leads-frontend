@@ -43,29 +43,29 @@ export const CustomThemeProvider: React.FC<ThemeProviderProps> = ({ children }) 
   // Light theme - Clean white background with black text
   const lightTheme = createTheme({
     palette: {
-      mode: 'light',
+      mode: "light",
       primary: {
-        main: '#000000', // Black for primary elements
-        light: '#333333',
-        dark: '#000000',
+        main: "#000000", // Black for primary elements
+        light: "#333333",
+        dark: "#000000",
       },
       secondary: {
-        main: '#ff9800', // Orange for badges and accents
-        light: '#ffb74d',
+        main: "#0d47a1", // Orange for badges and accents
+        light: "#ffb74d",
       },
       background: {
-        default: '#ffffff', // Pure white background
-        paper: '#ffffff', // Pure white for drawer
+        default: "#ffffff", // Pure white background
+        paper: "#ffffff", // Pure white for drawer
       },
       text: {
-        primary: '#000000', // Black text
-        secondary: '#666666', // Dark gray for secondary text
+        primary: "#000000", // Black text
+        secondary: "#666666", // Dark gray for secondary text
       },
-      divider: '#e0e0e0', // Light gray dividers
+      divider: "#e0e0e0", // Light gray dividers
       action: {
-        hover: '#f5f5f5', // Light gray hover
-        selected: '#e8e8e8', // Light gray for selected items
-        active: '#000000', // Black for active states
+        hover: "#f5f5f5", // Light gray hover
+        selected: "#e8e8e8", // Light gray for selected items
+        active: "#000000", // Black for active states
       },
     },
     breakpoints: {
@@ -81,22 +81,22 @@ export const CustomThemeProvider: React.FC<ThemeProviderProps> = ({ children }) 
       MuiDrawer: {
         styleOverrides: {
           paper: {
-            backgroundColor: '#ffffff',
-            borderRight: '1px solid #e0e0e0',
+            backgroundColor: "#ffffff",
+            borderRight: "1px solid #e0e0e0",
             borderRadius: 0,
             margin: 0,
-            height: '100%',
-            boxShadow: 'none',
+            height: "100%",
+            boxShadow: "none",
           },
         },
       },
       MuiAppBar: {
         styleOverrides: {
           root: {
-            backgroundColor: '#ffffff',
-            color: '#000000',
-            boxShadow: 'none',
-            borderBottom: '1px solid #e0e0e0',
+            backgroundColor: "#ffffff",
+            color: "#000000",
+            boxShadow: "none",
+            borderBottom: "1px solid #e0e0e0",
             // height: '80px',
             // minHeight: '80px',
           },
@@ -105,29 +105,30 @@ export const CustomThemeProvider: React.FC<ThemeProviderProps> = ({ children }) 
       MuiListItemButton: {
         styleOverrides: {
           root: {
-            borderRadius: '8px',
-            color: '#000000',
-            padding: '2px 8px',
-            minHeight: '36px',
-            '&.Mui-selected': {
-              background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%)',
-              color: '#ffffff',
-              '& .MuiListItemIcon-root': {
-                color: '#ffffff !important' ,
+            borderRadius: "8px",
+            color: "#000000",
+            padding: "2px 8px",
+            minHeight: "36px",
+            "&.Mui-selected": {
+              background:
+                "linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%)",
+              color: "#ffffff",
+              "& .MuiListItemIcon-root": {
+                color: "#ffffff !important",
               },
-              '&:hover':{
-                color: '#ffffff',
-              }
-            },
-            '&:hover': {
-              backgroundColor: '#f5f5f5',
-              color: '#000000',
-              '& .MuiListItemIcon-root': {
-                color: '#000000',
+              "&:hover": {
+                color: "#ffffff",
               },
             },
-            '& .MuiListItemIcon-root': {
-              color: '#00000 !important' ,
+            "&:hover": {
+              backgroundColor: "#f5f5f5",
+              color: "#000000",
+              "& .MuiListItemIcon-root": {
+                color: "#000000",
+              },
+            },
+            "& .MuiListItemIcon-root": {
+              color: "#00000 !important",
             },
           },
         },
@@ -135,11 +136,11 @@ export const CustomThemeProvider: React.FC<ThemeProviderProps> = ({ children }) 
       MuiIconButton: {
         styleOverrides: {
           root: {
-            color: '#666666',
-            padding: '8px',
-            '&:hover': {
-              backgroundColor: '#f5f5f5',
-              color: '#000000',
+            color: "#666666",
+            padding: "8px",
+            "&:hover": {
+              backgroundColor: "#f5f5f5",
+              color: "#000000",
             },
           },
         },
@@ -147,15 +148,15 @@ export const CustomThemeProvider: React.FC<ThemeProviderProps> = ({ children }) 
       MuiBadge: {
         styleOverrides: {
           badge: {
-            backgroundColor: '#ff9800',
-            color: '#ffffff',
+            backgroundColor: "#ff9800",
+            color: "#ffffff",
           },
         },
       },
       MuiTypography: {
         styleOverrides: {
           root: {
-            fontFamily: 'Inter, sans-serif',
+            fontFamily: "Inter, sans-serif",
           },
         },
       },

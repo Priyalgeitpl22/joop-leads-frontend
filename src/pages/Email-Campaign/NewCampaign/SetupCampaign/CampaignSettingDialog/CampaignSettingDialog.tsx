@@ -11,7 +11,6 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { ContentContainer } from "../../../EmailCampaign.styled";
 import CloseIcon from "@mui/icons-material/Close";
 import {
   Button,
@@ -22,6 +21,8 @@ import { getCampaignById } from "../../../../../redux/slice/emailCampaignSlice";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../../redux/store/store";
 import ProgressBar from "../../../../../assets/Custom/linearProgress";
+import { FormField, SectionDescription, SectionTitle, SettingsContainer, SettingSection } from "./CampaignSetting.styled";
+import CampaignOutlinedIcon from "@mui/icons-material/CampaignOutlined";
 
 interface SettingCampaignProps {
   open: boolean;
@@ -140,182 +141,351 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
         onClose={onClose}
         fullWidth
         maxWidth="md"
-        sx={{ "& .MuiDialog-paper": { height: "620px" } }}
+        sx={{
+          "& .MuiDialog-paper": {
+            borderRadius: "12px",
+            boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
+          },
+        }}
       >
         <CustomDialogHeader>
-          <IconButton
-            onClick={onClose}
-            sx={{ position: "absolute", right: 8, top: 2 }}
-          >
-            <CloseIcon />
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <CampaignOutlinedIcon
+              sx={{
+                fontSize: 33,
+                color: "var(--primary-dark)",
+                background: "#e3eaeeff",
+                borderRadius: "20px",
+                padding: "5px"
+              }}
+            />
+            <Typography variant="h5">General Campaign Settings</Typography>
+          </Box>
+
+          <IconButton onClick={onClose} size="small">
+            <CloseIcon style={{ color: "#6b7280" }} />
           </IconButton>
-          <Typography variant="h5">General Campaign Settings</Typography>
         </CustomDialogHeader>
+
         {loading && <ProgressBar />}
 
-        <ContentContainer>
-          <Box sx={{ padding: 3, margin: "auto" }}>
-            <Box>
-              <Typography variant="h6">Campaign Name *</Typography>
+        <SettingsContainer>
+          <SettingSection>
+            <FormField>
+              <SectionTitle>Campaign Name *</SectionTitle>
               <TextField
                 fullWidth
+                size="small"
+                placeholder="Enter campaign name"
                 value={formData.campaignName}
                 onChange={(e) => handleChange("campaignName", e.target.value)}
                 error={!!errors.campaignName}
                 helperText={errors.campaignName}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    backgroundColor: "#ffffff",
+                    borderRadius: "6px",
+                    "& fieldset": {
+                      borderColor: "#d1d5db",
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "#9ca3af",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#3b82f6",
+                      borderWidth: "2px",
+                    },
+                  },
+                }}
               />
-            </Box>
-            <Typography variant="h6" mt={2}>
-              Stop sending messages when your lead
-            </Typography>
-            <RadioGroup
-              value={formData.stopSending}
-              onChange={(e) => handleChange("stopSending", e.target.value)}
-            >
-              <FormControlLabel
-                value="replies"
-                control={<Radio />}
-                label="Replies to a message"
-              />
-              <FormControlLabel
-                value="clicks"
-                control={<Radio />}
-                label="Clicks on a link"
-              />
-              <FormControlLabel
-                value="opens"
-                control={<Radio />}
-                label="Opens an email"
-              />
-            </RadioGroup>
+            </FormField>
+          </SettingSection>
 
-            <Typography variant="h6" mt={2}>
-              Optimise Email Delivery
-            </Typography>
-            <FormControlLabel
-              control={<Checkbox />}
-              checked={formData.emailDeliveryOptimization}
-              onChange={(e) =>
-                handleChange(
-                  "emailDeliveryOptimization",
-                  (e.target as HTMLInputElement).checked
-                )
-              }
-              label="Boost your deliverability by sending emails in plain text, without HTML"
-            />
-
-            <Typography variant="h6" mt={2}>
-              What shouldn't we track
-            </Typography>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={formData.trackEmailOpens}
-                  onChange={(e) =>
-                    handleChange("trackEmailOpens", e.target.checked)
+          <SettingSection>
+            <FormField>
+              <SectionTitle>Stop Sending When Your Lead</SectionTitle>
+              <SectionDescription>
+                Automatically pause campaigns when leads take these actions
+              </SectionDescription>
+              <RadioGroup
+                value={formData.stopSending}
+                onChange={(e) => handleChange("stopSending", e.target.value)}
+              >
+                <FormControlLabel
+                  value="replies"
+                  control={
+                    <Radio
+                      sx={{
+                        color: "#d1d5db",
+                        "&.Mui-checked": { color: "#3b82f6" },
+                      }}
+                    />
+                  }
+                  label={
+                    <span style={{ color: "#374151", fontSize: "14px" }}>
+                      Replies to a message
+                    </span>
                   }
                 />
-              }
-              label="DON'T track email opens"
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={formData.trackLinkClicks}
-                  onChange={(e) =>
-                    handleChange("trackLinkClicks", e.target.checked)
+                <FormControlLabel
+                  value="clicks"
+                  control={
+                    <Radio
+                      sx={{
+                        color: "#d1d5db",
+                        "&.Mui-checked": { color: "#3b82f6" },
+                      }}
+                    />
+                  }
+                  label={
+                    <span style={{ color: "#374151", fontSize: "14px" }}>
+                      Clicks on a link
+                    </span>
                   }
                 />
-              }
-              label="DON'T track link clicks"
-            />
+                <FormControlLabel
+                  value="opens"
+                  control={
+                    <Radio
+                      sx={{
+                        color: "#d1d5db",
+                        "&.Mui-checked": { color: "#3b82f6" },
+                      }}
+                    />
+                  }
+                  label={
+                    <span style={{ color: "#374151", fontSize: "14px" }}>
+                      Opens an email
+                    </span>
+                  }
+                />
+              </RadioGroup>
+            </FormField>
+          </SettingSection>
 
-            <Typography variant="h6" mt={2}>
-              Prioritise sending pattern
-            </Typography>
-            <Slider
-              value={formData.priority}
-              onChange={(_event, newValue) =>
-                handleChange("priority", newValue)
-              }
-              step={10}
-              marks
-              min={0}
-              max={100}
-              valueLabelDisplay="auto"
-            />
+          <SettingSection>
+            <FormField>
+              <SectionTitle>Email Delivery</SectionTitle>
+              <SectionDescription>
+                Boost your deliverability by sending emails in plain text,
+                without HTML
+              </SectionDescription>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={formData.emailDeliveryOptimization}
+                    onChange={(e) =>
+                      handleChange(
+                        "emailDeliveryOptimization",
+                        e.target.checked
+                      )
+                    }
+                    sx={{
+                      color: "#d1d5db",
+                      "&.Mui-checked": { color: "#3b82f6" },
+                    }}
+                  />
+                }
+                label={
+                  <span style={{ color: "#374151", fontSize: "14px" }}>
+                    Optimize for plain text delivery
+                  </span>
+                }
+              />
+            </FormField>
+          </SettingSection>
 
-            <Typography variant="h6" mt={2}>
-              Company Level Auto-Pause
-            </Typography>
-            <Typography>
-              Stops messaging other people within a company once a person
-              replies from that company.
-            </Typography>
-            <FormControlLabel
-              control={<Checkbox />}
-              value={formData.companyAutoPause}
-              onChange={(newValue) =>
-                handleChange("companyAutoPause", newValue)
-              }
-              label="Auto-pause if one of the leads from the same domain replies."
-            />
+          <SettingSection>
+            <FormField>
+              <SectionTitle>Tracking Preferences</SectionTitle>
+              <SectionDescription>
+                Choose what metrics to exclude from tracking
+              </SectionDescription>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={formData.trackEmailOpens}
+                    onChange={(e) =>
+                      handleChange("trackEmailOpens", e.target.checked)
+                    }
+                    sx={{
+                      color: "#d1d5db",
+                      "&.Mui-checked": { color: "#3b82f6" },
+                    }}
+                  />
+                }
+                label={
+                  <span style={{ color: "#374151", fontSize: "14px" }}>
+                    Don't track email opens
+                  </span>
+                }
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={formData.trackLinkClicks}
+                    onChange={(e) =>
+                      handleChange("trackLinkClicks", e.target.checked)
+                    }
+                    sx={{
+                      color: "#d1d5db",
+                      "&.Mui-checked": { color: "#3b82f6" },
+                    }}
+                  />
+                }
+                label={
+                  <span style={{ color: "#374151", fontSize: "14px" }}>
+                    Don't track link clicks
+                  </span>
+                }
+              />
+            </FormField>
+          </SettingSection>
 
-            <Typography variant="h6" mt={2}>
-              Enhanced Email Sending & Delivery
-            </Typography>
-            <Typography variant="body1">
-              AI Auto-matches your leads email providers + Your mailbox
-              providers for boosted deliver (e.g Gmail to Gmail, Outlook to
-              Outlook)
-            </Typography>
-            <FormControlLabel
-              control={<Checkbox />}
-              checked={formData.EmailDelivery}
-              onChange={(e) =>
-                handleChange(
-                  "EmailDelivery",
-                  (e.target as HTMLInputElement).checked
-                )
-              }
-              label="Auto-analyse leads mailbox email service providers."
-            />
+          <SettingSection>
+            <FormField>
+              <SectionTitle>Sending Priority</SectionTitle>
+              <SectionDescription>
+                Set the priority level for sending (0 = low, 100 = high)
+              </SectionDescription>
+              <Slider
+                value={formData.priority}
+                onChange={(_event, newValue) =>
+                  handleChange("priority", newValue)
+                }
+                step={10}
+                marks
+                min={0}
+                max={100}
+                valueLabelDisplay="auto"
+                sx={{
+                  color: "#3b82f6",
+                  "& .MuiSlider-rail": {
+                    backgroundColor: "#e5e7eb",
+                  },
+                  "& .MuiSlider-thumb": {
+                    boxShadow: "0 2px 4px rgba(59, 130, 246, 0.4)",
+                  },
+                }}
+              />
+            </FormField>
+          </SettingSection>
 
-            <Typography variant="h6" mt={2}>
-              High Bounce Rate Auto-Protection
-            </Typography>
-            <Typography>
-              Protect your mailbox reputation with auto-pause on high bounce
-              rates
-            </Typography>
-            <FormControlLabel
-              control={<Checkbox />}
-              checked={formData.BounceRate}
-              onChange={(e) =>
-                handleChange(
-                  "BounceRate",
-                  (e.target as HTMLInputElement).checked
-                )
-              }
-              label="Activate auto-pause protection from bounces"
-            />
+          <SettingSection>
+            <FormField>
+              <SectionTitle>Company Level Auto-Pause</SectionTitle>
+              <SectionDescription>
+                Automatically stops messaging other people from a company once
+                one person replies
+              </SectionDescription>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={formData.companyAutoPause}
+                    onChange={(e) =>
+                      handleChange("companyAutoPause", e.target.checked)
+                    }
+                    sx={{
+                      color: "#d1d5db",
+                      "&.Mui-checked": { color: "#3b82f6" },
+                    }}
+                  />
+                }
+                label={
+                  <span style={{ color: "#374151", fontSize: "14px" }}>
+                    Enable auto-pause for same domain replies
+                  </span>
+                }
+              />
+            </FormField>
+          </SettingSection>
 
-            <Typography variant="h6" mt={2}>
-              Unsubscribe
-            </Typography>
-            <FormControlLabel
-              control={<Checkbox />}
-              checked={formData.Unsubscribe}
-              onChange={(e) =>
-                handleChange(
-                  "Unsubscribe",
-                  (e.target as HTMLInputElement).checked
-                )
-              }
-              label="Add unsubscribe message in all emails"
-            />
-          </Box>
-        </ContentContainer>
+          <SettingSection>
+            <FormField>
+              <SectionTitle>Smart Email Delivery</SectionTitle>
+              <SectionDescription>
+                AI auto-matches lead email providers with your mailbox provider
+                for better deliverability
+              </SectionDescription>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={formData.EmailDelivery}
+                    onChange={(e) =>
+                      handleChange("EmailDelivery", e.target.checked)
+                    }
+                    sx={{
+                      color: "#d1d5db",
+                      "&.Mui-checked": { color: "#3b82f6" },
+                    }}
+                  />
+                }
+                label={
+                  <span style={{ color: "#374151", fontSize: "14px" }}>
+                    Analyze leads mailbox email service providers
+                  </span>
+                }
+              />
+            </FormField>
+          </SettingSection>
+
+          <SettingSection>
+            <FormField>
+              <SectionTitle>Bounce Rate Protection</SectionTitle>
+              <SectionDescription>
+                Protect your mailbox reputation with automatic pause on high
+                bounce rates
+              </SectionDescription>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={formData.BounceRate}
+                    onChange={(e) =>
+                      handleChange("BounceRate", e.target.checked)
+                    }
+                    sx={{
+                      color: "#d1d5db",
+                      "&.Mui-checked": { color: "#3b82f6" },
+                    }}
+                  />
+                }
+                label={
+                  <span style={{ color: "#374151", fontSize: "14px" }}>
+                    Activate auto-pause protection from bounces
+                  </span>
+                }
+              />
+            </FormField>
+          </SettingSection>
+
+          <SettingSection>
+            <FormField>
+              <SectionTitle>Unsubscribe Option</SectionTitle>
+              <SectionDescription>
+                Add unsubscribe message in all sent emails
+              </SectionDescription>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={formData.Unsubscribe}
+                    onChange={(e) =>
+                      handleChange("Unsubscribe", e.target.checked)
+                    }
+                    sx={{
+                      color: "#d1d5db",
+                      "&.Mui-checked": { color: "#3b82f6" },
+                    }}
+                  />
+                }
+                label={
+                  <span style={{ color: "#374151", fontSize: "14px" }}>
+                    Include unsubscribe link in emails
+                  </span>
+                }
+              />
+            </FormField>
+          </SettingSection>
+        </SettingsContainer>
 
         <CustomDialogFooter justifyContent="flex-end">
           <Button
@@ -328,8 +498,10 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
             style={{
               cursor: !isFormValid ? "not-allowed" : "pointer",
               color: !isFormValid ? "lightgrey" : "white",
-
-              backgroundColor: !isFormValid ? "#878484" : "var(--theme-color)",
+              opacity: !isFormValid ? 0.7 : 1,
+              background: !isFormValid
+                ? "#9ca3af"
+                : "var(--secondary-gradient)",
             }}
 
           >

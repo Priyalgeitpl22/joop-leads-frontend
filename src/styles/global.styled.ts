@@ -23,10 +23,10 @@ export const Button = styled.button`
 
   &:hover {
     background: linear-gradient(
-    135deg,
-    var(--secondary) 0%,
-    var(--secondary-light) 100%
-  );
+      135deg,
+      var(--secondary) 0%,
+      var(--secondary-light) 100%
+    );
     color: white;
   }
 
@@ -212,7 +212,7 @@ export const CustomDialogFooter = styled.div<CustomDialogFooterProps>`
   display: flex;
   padding: 16px;
   border-radius: 0px 0px 10px 10px;
-  background: var(--background-secondary);
+  background: var(--background-head);
 `;
 
 export const CustomDialogHeader = styled.div`
@@ -222,7 +222,7 @@ export const CustomDialogHeader = styled.div`
   box-sizing: border-box;
   width: 100%;
   padding: 12px;
-  background: var(--background-secondary);
+  background: var(--background-head);
   display: flex;
   flex-direction: row;
   align-items: center;
