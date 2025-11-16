@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {Container, ContentBox, Subtitle, TextContainer, Title} from "./ViewSequencesCampaign.styled"
-import { Button2 } from "../../../styles/layout.styled";
+import { Button } from "../../../styles/global.styled";
 interface ViewSequencesEmailCampaignProps {
   campaignId: string;
 }
@@ -30,19 +30,11 @@ const ViewSequencesEmailCampaign: React.FC<ViewSequencesEmailCampaignProps> = ({
               Listen and react to your lead's replies automatically. <br />
               Auto-handle & convert "Out of Office", "Not Interested" responses.
             </Subtitle>
-            <Button2
+            <Button
               onClick={() => handleAddSequence()}
-              color={"#fff"}
-              background={"var(--theme-color)"}
-              style={{
-                width: "30%",
-                height: "35%",
-                marginTop: "10px",
-                padding: "0px",
-              }}
             >
               Add Sequences
-            </Button2>
+            </Button>
           </TextContainer>
         </ContentBox>
       </motion.div>

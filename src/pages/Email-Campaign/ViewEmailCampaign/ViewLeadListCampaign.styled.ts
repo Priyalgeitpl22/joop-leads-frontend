@@ -2,16 +2,16 @@ import { TableBody, TableCell, TableContainer } from "@mui/material";
 import styled from "styled-components";
 
 export const CustomTableContainer = styled(TableContainer)`
-
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
   overflow: auto;
-  max-height: 100%;
   overflow-y: auto;
-  height: 100%;
-
+  max-height: 500px;
+  scrollbar-width: none;
+  -ms-overflow-style: none
   &::-webkit-scrollbar {
     width: 8px;
   }
+    margin-inline:10px
 `;
 
 export const CustomTableBody = styled(TableBody)`
@@ -31,8 +31,8 @@ export const CustomTableCell = styled(TableCell)`
 
 export const HeaderCell = styled(TableCell)`
   font-weight: bold;
-  color: var(--text-white);
-  background: var(--theme-color-light);
+  color: black;
+  background: var(--background-slate);
   padding: 14px;
   text-transform: uppercase;
   position: sticky;
