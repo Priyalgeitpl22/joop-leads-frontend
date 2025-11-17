@@ -131,17 +131,22 @@ const EmailAccounts: React.FC = () => {
             <Box display="flex" alignItems="center" gap={1.5}>
               <Tooltip title="Edit Email Account" arrow>
                 <ModeEditOutlineOutlinedIcon
-                  onClick={() => handleEditEmailAccount(params.row.id)}
-                  sx={{ cursor: "pointer",color:"var(--secondary-light)" }}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    handleEditEmailAccount(params.row.id);
+                  }}
+                  sx={{ cursor: "pointer", color: "var(--secondary-light)" }}
                 />
               </Tooltip>
-
               {user?.role === "Admin" && (
                 <Tooltip title="Delete Email Account" arrow>
                   <Trash2
-                  size="18"
+                    size="18"
                     style={{ cursor: "pointer" }}
-                    onClick={() => handleOpenDeleteDialog(params.row.id)}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleOpenDeleteDialog(params.row.id);
+                    }}
                   />
                 </Tooltip>
               )}
