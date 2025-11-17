@@ -79,8 +79,8 @@ const UserProfileMenu: React.FC = () => {
             minWidth: "230px",
             borderRadius: "12px",
             padding: "6px 0",
-            backgroundColor: isDarkMode ? "#1e1e2e" : "#ffffff",
-            color: isDarkMode ? "#ffffff" : "#000000",
+            backgroundColor: "#ffffff",
+            color: "#000000",
             boxShadow: isDarkMode
               ? "0 8px 20px rgba(0,0,0,0.5)"
               : "0 8px 20px rgba(0,0,0,0.12)",
@@ -91,9 +91,7 @@ const UserProfileMenu: React.FC = () => {
         <div
           style={{
             padding: "14px 16px",
-            borderBottom: isDarkMode
-              ? "1px solid rgba(255,255,255,0.1)"
-              : "1px solid #e5e7eb",
+            borderBottom: "1px solid #e5e7eb",
             display: "flex",
             alignItems: "center",
             gap: "12px",
@@ -104,7 +102,7 @@ const UserProfileMenu: React.FC = () => {
               sx={{
                 fontSize: "0.95rem",
                 fontWeight: 600,
-                color: isDarkMode ? "#ffffff" : "#111827",
+                color: "#111827 !important",
               }}
             >
               {user?.fullName}
@@ -112,7 +110,7 @@ const UserProfileMenu: React.FC = () => {
             <Typography
               sx={{
                 fontSize: "0.75rem",
-                color: isDarkMode ? "#cbd5e1" : "#6b7280",
+                color: "#6b7280",
               }}
             >
               {user?.email}

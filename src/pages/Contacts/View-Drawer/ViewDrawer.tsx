@@ -19,7 +19,6 @@ import {
   DraftChip,
   FieldValue,
 } from "./ViewDrawer.styled";
-import { useTheme } from "../../../context/ThemeContext";
 
 interface ViewDrawerProps {
   open: boolean;
@@ -31,12 +30,11 @@ interface ViewDrawerProps {
 
 const ViewDrawer: React.FC<ViewDrawerProps> = ({ open, onClose }) => {
   const { campaignList } = useSelector((state: RootState) => state.contact);
-  const { isDarkMode } = useTheme();
 
   return (
     <StyledDrawer anchor="right" open={open} onClose={onClose}>
       <StyleBox>
-        <TitleContainer sx={{ bgcolor: isDarkMode ? "#4b1861" : "var(--primary-dark)" }}>
+        <TitleContainer sx={{ background:"var(--primary-gradient)" }}>
           <StyledTypography style={{color: "#ffffff", }}>Lead Details</StyledTypography>
 
           <StyledCloseIconButton onClick={onClose}>
