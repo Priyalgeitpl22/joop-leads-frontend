@@ -162,13 +162,13 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
 
   const drawerContent = (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column',
-      background: "linear-gradient(45deg, #d3d3f8ff 0%, #ecf8ff 100%)"
+      background: "linear-gradient(45deg, #d3d3f8ff 0%, #ecf8ff 100%) !important"
     }}>
       <Box
         sx={{
           padding: open ? '16px 20px' : '12px',
-          borderBottom: '1px solid',
-          borderColor: isDarkMode ? 'rgba(255,255,255,0.1)' : '#e8e8e8',
+          borderBottom: '1px solid var(--border-color)',
+          // borderColor: isDarkMode ? 'rgba(255,255,255,0.1)' : '#e8e8e8',
           display: 'flex',
           alignItems: 'center',
           gap: 1,
@@ -196,7 +196,7 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
                 sx={{
                   fontWeight: 700,
                   fontSize: '1.5rem',
-                  color: isDarkMode ? '#ffffff' : '#1a1a1a',
+                  color: '#1a1a1a !important',
                   letterSpacing: '0.5px',
                   opacity: 0.8,
                 }}
@@ -208,9 +208,9 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
               size="small"
               onClick={handleDrawerToggle}
               sx={{
-                color: isDarkMode ? '#ffffff' : '#1a1a1a',
+                color:'#1a1a1a !important',
                 '&:hover': {
-                  bgcolor: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
+                  bgcolor:'rgba(0,0,0,0.05) !important',
                 },
               }}
             >
@@ -221,10 +221,10 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
           <IconButton
             onClick={handleDrawerToggle}
             sx={{
-              color: isDarkMode ? '#ffffff' : '#1a1a1a',
+              color: '#1a1a1a !important',
               margin: 'auto',
               '&:hover': {
-                bgcolor: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
+                bgcolor: 'rgba(0,0,0,0.05) !important',
               },
             }}
           >
@@ -245,23 +245,15 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
                 height: "20px",
                 justifyContent: open ? 'initial' : 'center',
                 color: isActiveRoute(item.path)
-                  ? '#6366f1'
-                  : isDarkMode
-                  ? '#b0b0b0'
+                  ? 'var(--primary) !important'
                   : '#666666',
                 bgcolor: isActiveRoute(item.path)
-                  ? isDarkMode
-                    ? 'rgba(99, 102, 241, 0.15)'
-                    : 'rgba(99, 102, 241, 0.08)'
+                  ?'rgba(99, 102, 241, 0.08)'
                   : 'transparent',
                 transition: 'all 0.3s ease',
                 '&:hover': {
                   bgcolor: isActiveRoute(item.path)
-                    ? isDarkMode
-                      ? 'rgba(99, 102, 241, 0.2)'
-                      : 'rgba(99, 102, 241, 0.12)'
-                    : isDarkMode
-                    ? 'rgba(255,255,255,0.1)'
+                    ? 'rgba(99, 102, 241, 0.12)'
                     : 'rgba(0,0,0,0.05)',
                 },
               }}
@@ -272,7 +264,7 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
                       mr: open ? 1.5 : 0,
                       justifyContent: 'center',
                       display: 'flex',
-                      width: open ? 'auto' : '100%',   // <— CENTER ICON WHEN CLOSED
+                      width: open ? 'auto' : '100%',  
                       color: 'inherit',
                     }}
                   >
@@ -299,7 +291,7 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
       </List>
 
       {/* Bottom Navigation Buttons */}
-      <Divider sx={{ bgcolor: isDarkMode ? 'rgba(255,255,255,0.1)' : '#e8e8e8' }} />
+      <Divider sx={{ bgcolor: "var(--border-color) !important" }} />
      {open? <List sx={{ px: open ? 1 : 0.5, py: 1, display: 'flex', justifyContent: "space-evenly" }}>
   {navigateButtons.map((item) => (
     <ListItem key={item.path} disablePadding>
@@ -310,11 +302,11 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
           sx={{
             borderRadius: "10px",
             justifyContent: "center", // Always center icon for clean look
-            color: isDarkMode ? "#b0b0b0" : "#666666",
+            color: "#666666 ",
             transition: "all 0.3s ease",
             "&:hover": {
-              bgcolor: isDarkMode ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)",
-              color: isDarkMode ? "#ffffff" : "#1a1a1a",
+              bgcolor: "rgba(0,0,0,0.05) !important",
+              color: "#1a1a1a !important",
             },
           }}
         >
@@ -340,11 +332,11 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
           sx={{
             borderRadius: "10px",
             justifyContent: "center", // Always center icon for clean look
-            color: isDarkMode ? "#b0b0b0" : "#666666",
+            color: "#666666",
             transition: "all 0.3s ease",
             "&:hover": {
-              bgcolor: isDarkMode ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)",
-              color: isDarkMode ? "#ffffff" : "#1a1a1a",
+              bgcolor: "rgba(0,0,0,0.05)",
+              color: "#1a1a1a",
             },
           }}
         >

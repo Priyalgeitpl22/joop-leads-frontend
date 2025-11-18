@@ -54,8 +54,8 @@ interface HeaderProps {
             marginLeft: {
             sm: `${drawerOpen ? drawerWidth : miniDrawerWidth}px`
             },
-            bgcolor: isDarkMode ? '#1e1e2e' : '#ffffff',
-            color: isDarkMode ? '#ffffff' : '#000000',
+            bgcolor: '#ffffff',
+            color: '#000000',
             boxShadow: isDarkMode ? '0 2px 8px rgba(0,0,0,0.3)' : '0 2px 8px rgba(0,0,0,0.08)',
             borderBottom: isDarkMode ? 'none' : '1px solid #e8e8e8',
             height: '72px',
@@ -82,7 +82,7 @@ interface HeaderProps {
             sx={{
               fontWeight: 700,
               fontSize: { xs: '1rem', md:'1.25rem' },
-              color: "black",
+              color: "black !important",
               opacity:"0.8"
             }}
           >
