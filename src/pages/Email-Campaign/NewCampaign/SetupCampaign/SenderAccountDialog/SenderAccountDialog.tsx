@@ -301,7 +301,7 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
           }}
           disabled={isSaveDisabled}
           style={{
-            backgroundColor: isSaveDisabled ? "#878484" : "var(--theme-color)",
+            backgroundColor: isSaveDisabled ? "#878484" : "var(--secondary-light)",
             color: isSaveDisabled ? "lightgray" : "white"
 
           }}
