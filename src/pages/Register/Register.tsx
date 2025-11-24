@@ -160,6 +160,10 @@ const Register = () => {
         toast.success("Registration successful!");
         navigate("/verify-otp", { state: { email: formData.email } });
       }
+      if (response?.code === 200) {
+        toast.success("A New Verification code has been sent to your email address.");
+        navigate("/verify-otp", { state: { email: formData.email } });
+      }
     } catch (err: any) {
       console.error("Registration failed:", err);
 
