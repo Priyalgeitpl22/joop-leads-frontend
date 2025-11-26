@@ -94,6 +94,14 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isSaveDisabled, setIsSaveDisabled] = useState(true);
 
+  const [touched, setTouched] = useState({
+    timeZone: false,
+    selectedDays: false,
+    startTime: false,
+    endTime: false,
+    startDate: false,
+    maxLeads: false,
+  });
 
 
   useEffect(() => {
@@ -134,6 +142,7 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
 
   const handleChange = (field: keyof typeof formData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    setTouched((prev) => ({ ...prev, [field]: true }));
     validateField(field, value);
   };
 
@@ -146,6 +155,10 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
   ) as number[];
 
   const handleDayChange = (day: number) => {
+    setTouched((prev) => ({
+      ...prev,
+      selectedDays: true,
+    }));
     setFormData((prev) => ({
       ...prev,
       selectedDays: prev.selectedDays.includes(day)
@@ -326,7 +339,7 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
                   />
                 )}
               />
-              {errors.timeZone && (
+              {touched.timeZone && errors.timeZone && (
                 <FormHelperText sx={{ color: "#ef4444" }}>
                   {errors.timeZone}
                 </FormHelperText>
@@ -362,7 +375,7 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
                   />
                 ))}
               </FormGroup>
-              {errors.selectedDays && (
+              {touched.selectedDays && errors.selectedDays && (
                 <FormHelperText sx={{ color: "#ef4444" }}>
                   {errors.selectedDays}
                 </FormHelperText>
@@ -392,7 +405,7 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
                         textField: { sx: commonInputSx },
                       }}
                     />
-                    {errors.startTime && (
+                    {touched.startTime && errors.startTime && (
                       <FormHelperText sx={{ color: "#ef4444" }}>
                         {errors.startTime}
                       </FormHelperText>
@@ -410,7 +423,7 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
                         textField: { sx: commonInputSx },
                       }}
                     />
-                    {errors.endTime && (
+                    {touched.endTime && errors.endTime && (
                       <FormHelperText sx={{ color: "#ef4444" }}>
                         {errors.endTime}
                       </FormHelperText>
@@ -462,7 +475,7 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
                         textField: { sx: commonInputSx },
                       }}
                     />
-                    {errors.startDate && (
+                    {touched.startDate && errors.startDate && (
                       <FormHelperText sx={{ color: "#ef4444" }}>
                         {errors.startDate}
                       </FormHelperText>
@@ -481,7 +494,7 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
                       }
                       sx={commonInputSx}
                     />
-                    {errors.maxLeads && (
+                    {touched.maxLeads && errors.maxLeads && (
                       <FormHelperText sx={{ color: "#ef4444" }}>
                         {errors.maxLeads}
                       </FormHelperText>

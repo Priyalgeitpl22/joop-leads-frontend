@@ -34,6 +34,7 @@ import {
 import { useNavigate, useLocation } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import Header from './Header';
+import ConfirmDeleteDialog from '../../pages/ConfirmDeleteDialog';
 
 interface NavigationItem {
   title?: string;
@@ -71,8 +72,10 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
   const [open, setOpen] = useState(true);
   const theme = useTheme();
   const isVerySmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMediumScreen = useMediaQuery("(max-width:1420px)");
   const navigate = useNavigate();
   const location = useLocation();
+  const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
 
   const navigationItems: NavigationItem[] = [
     {
@@ -119,15 +122,17 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
       path: "/logout",
     },
   ];
-  
+
 
   useEffect(() => {
     if (isVerySmallScreen) {
       setOpen(false);
+    } else if (isMediumScreen) {
+      setOpen(false);
     } else {
       setOpen(true);
     }
-  }, [isVerySmallScreen]);
+  }, [isVerySmallScreen, isMediumScreen]);
 
   const handleDrawerToggle = () => {
     setOpen(!open);
@@ -144,10 +149,10 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
       return;
     }
     if (path === '/logout') {
-      handleLogout();
-    } else {
-      navigate(path);
+      setLogoutDialogOpen(true);
+      return;
     }
+    navigate(path);
     if (isVerySmallScreen) {
       setOpen(false);
     }
@@ -452,6 +457,18 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
           </Box>
         </Box>
       </Box>
+      <ConfirmDeleteDialog
+        open={logoutDialogOpen}
+        onClose={() => setLogoutDialogOpen(false)}
+        onConfirm={() => {
+          setLogoutDialogOpen(false);
+          handleLogout();
+        }}
+        title="Logout?"
+        message="Are you sure you want to log out?"
+        confirmText="Logout"
+        cancelText="Cancel"
+      />
     </Box>
   );
 };

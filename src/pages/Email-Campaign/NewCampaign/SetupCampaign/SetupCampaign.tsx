@@ -181,7 +181,8 @@ const SetupCampaign: React.FC<SetupCampaignProps> = ({
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            paddingTop: "15px",
+            borderBottom: "1px solid #E0E0E0",
+            paddingY: "15px",
           }}
         >
           <FormControlLabel
@@ -195,7 +196,7 @@ const SetupCampaign: React.FC<SetupCampaignProps> = ({
             }
             label={
               <Box>
-                <Typography variant="h5">Campaign Settings</Typography>
+                <Typography fontWeight="600">Campaign Settings</Typography>
                 <Typography variant="body2">
                   Configure the settings for this campaign
                 </Typography>

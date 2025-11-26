@@ -5,7 +5,6 @@ import {
   CampaignSection,
   Percentage,
   StatsList,
-  AnalyticsLink,
   TextGray,
 } from "./ViewLeadListCampaign.styled";
 import { useEffect } from "react";
@@ -58,7 +57,6 @@ const ViewPerformanceEmailCampaign: React.FC<
           </li>
         </StatsList>
 
-        <AnalyticsLink href="#">View Detail Analytics</AnalyticsLink>
       </CampaignSection>
 
       <Divider />
