@@ -7,7 +7,12 @@ import { IEmailCampaign } from "../../Email-Campaign/NewCampaign/interfaces";
 import { LoadingContainer, NoDataContainer, StyledTable, StyledTableContainer, StyledTableHead, TableDataCell, TableHeadingCell } from "./EditCampaignEmailAccount.styled";
 
 
-const EditCampaignEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
+
+interface EditCampaignEmailAccountProps {
+  id?: string;
+}
+
+const EditCampaignEmailAccount: React.FC<EditCampaignEmailAccountProps> = ({ id }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [campaigns, setCampaigns] = useState<IEmailCampaign[]>([]);
   const [isLoading, setIsLoading] = useState(false);

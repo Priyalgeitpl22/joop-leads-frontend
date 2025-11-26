@@ -35,14 +35,15 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
         flexDirection: "column",
         overflow: 'auto',
         border:"1px solid var(--border-grey)",
-        borderRadius:"10px"
+        borderRadius:"10px",
+        height: "100%",
       }}>
       <Paper
         className="data-grid-container"
         sx={{
           flexGrow: 1,
           display: "flex",
-          minHeight: "550px",
+          height: "100%",
           borderRadius: "0px",
         }}
       >

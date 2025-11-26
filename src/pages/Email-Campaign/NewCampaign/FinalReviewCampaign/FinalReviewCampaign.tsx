@@ -167,9 +167,9 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
         }}
       >
         <Typography
-          variant="h6"
+          // variant="h6"
           mb={1}
-          style={{ borderBottom: "1px solid var(--border-grey)" }}
+          style={{ borderBottom: "1px solid var(--border-grey)", fontSize: "14px", fontWeight: "600" }}
         >
           Review Your Mail Individually
         </Typography>

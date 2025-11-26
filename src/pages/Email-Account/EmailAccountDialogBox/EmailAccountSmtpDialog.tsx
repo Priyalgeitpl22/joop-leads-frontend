@@ -48,7 +48,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
     smtpHost: "",
     smtpPort: "",
     security: false,
-    msg_per_day: "",
+    limit: "",
     time_gap: "",
     replyToAddressChecked: false,
     replyToAddress: "",
@@ -79,7 +79,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
     password: "",
     smtpHost: "",
     smtpPort: "",
-    msg_per_day: "",
+    limit: "",
     time_gap: "",
     imapHost: "",
     imapPort: "",
@@ -184,7 +184,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
       type: "imap",
       orgId: user?.orgId as string,
       email: formData.fromEmail,
-      msg_per_day: Number(formData.msg_per_day),
+      limit: Number(formData.limit),
       time_gap: Number(formData.time_gap),
       imap: {
         host: formData.imapHost,
@@ -237,8 +237,8 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
       newErrors.smtpPort = "SMTP Port is required";
     }
 
-    if (!formData.msg_per_day || isNaN(Number(formData.msg_per_day)) || Number(formData.msg_per_day) <= 0) {
-      newErrors.msg_per_day = "Message per day must be a positive number";
+    if (!formData.limit || isNaN(Number(formData.limit)) || Number(formData.limit) <= 0) {
+      newErrors.limit = "Message per day must be a positive number";
     }
     if (!formData.time_gap || isNaN(Number(formData.time_gap)) || Number(formData.time_gap) <= 0) {
       newErrors.time_gap = "Minimum time gap must be a positive number";
@@ -265,7 +265,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
         smtpHost: "",
         smtpPort: "",
         security: false,
-        msg_per_day: "",
+        limit: "",
         time_gap: "",
         replyToAddressChecked: false,
         replyToAddress: "",
@@ -435,14 +435,14 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
             <InputLabel>Message Per Day (Warmups not included)</InputLabel>
             <TextField
               fullWidth
-              name="msg_per_day"
+              name="limit"
               placeholder="20"
-              value={formData.msg_per_day}
+              value={formData.limit}
               onChange={handleChange}
-              error={!!errors.msg_per_day}
+              error={!!errors.limit}
               autoComplete="off"
             />
-            {errors.msg_per_day && <Typography color="red" variant="caption">{errors.msg_per_day}</Typography>}
+            {errors.limit && <Typography color="red" variant="caption">{errors.limit}</Typography>}
 
           </Grid2>
           <Grid2 size={{ xs: 6, sm: 6 }}>

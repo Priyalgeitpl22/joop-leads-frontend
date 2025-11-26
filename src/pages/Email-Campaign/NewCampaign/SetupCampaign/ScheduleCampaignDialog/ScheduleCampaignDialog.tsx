@@ -471,6 +471,7 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
                     <DesktopDatePicker
                       value={formData.startDate}
                       onChange={(value) => handleChange("startDate", value)}
+                      disablePast={true}
                       slotProps={{
                         textField: { sx: commonInputSx },
                       }}

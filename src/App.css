@@ -91,6 +91,7 @@ body {
   --shadow-dark: rgba(0, 0, 0, 0.2); /* Darker shadow */
   
   --icon-color: #666666;
+  --delete-icon-color: #dc3545;
   --icon-primary: #000000;
   --icon-hover: #000000;
   --icon-selected: #000000;

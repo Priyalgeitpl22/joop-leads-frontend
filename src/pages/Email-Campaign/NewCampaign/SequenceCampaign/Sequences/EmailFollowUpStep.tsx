@@ -131,7 +131,7 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({
         </BorderConatiner>
         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
           <div style={{ display: "flex", flexDirection: "row", gap: "58px" }}>
-            <Typography fontWeight="bold">
+            <Typography fontWeight="bold" fontSize={14}>
               Email follow-up
             </Typography>
             {variants.length > 1 && (
@@ -146,12 +146,12 @@ const EmailFollowUpStep: React.FC<EmailFollowUpStepProps> = ({
               style={{
                 display: "flex",
                 justifyContent: "space-between",
-                padding: "4px",
+                // padding: "4px",
               }}
             >
               <Typography fontSize={14}>Email</Typography>
               <DeleteOutlineIcon
-                sx={{ color: "var(--icon-color)", cursor: "pointer" }}
+                sx={{ color: "var(--delete-icon-color)", cursor: "pointer" }}
                 onClick={() => onDelete(selectedSequence?.seq_number!)}
               />
             </div>

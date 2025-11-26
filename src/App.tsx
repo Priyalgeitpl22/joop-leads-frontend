@@ -83,7 +83,7 @@ const App=() => {
       return { title: "Email Accounts", subTitle: "Manage your email connections" };
     }
     if (path.startsWith("/email-account/edit-email-account")) {
-      return { title: "Edit Email Account", subTitle: "Modify account settings" };
+      return { title: "Edit Email Account", subTitle: "Modify email account settings (Google, Outlook, SMTP)" };
     }
     if (path.startsWith("/email-campaign/view-email-campaign")) {
       return { title: "View Campaign", subTitle: "Campaign details and insights" };

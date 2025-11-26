@@ -41,7 +41,7 @@ export interface CreateEmailAccountPayload {
   type: string;
   email: string;
   orgId: string;
-  msg_per_day: any, 
+  limit: any, 
   time_gap: any,
   imap: {
     auth: {

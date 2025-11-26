@@ -668,22 +668,23 @@ const EmailCampaign: React.FC = () => {
               </Link>
             </Box>
             <Box sx={{ mt: 2 }}>
+              <Box sx={{ width: "100%" }}>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DesktopDatePicker
                   label="Start Date *"
                   value={dateFilters.startDate}
                   onChange={handleDateChange("startDate")}
-                  sx={{ borderRadius: "8px" }}
+                  sx={{ borderRadius: "8px", width: "100%" }}
                 />
               </LocalizationProvider>
-
-              <Box sx={{ mt: 2 }}>
+              </Box>
+              <Box sx={{ mt: 2, width: "100%" }}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DesktopDatePicker
                     label="End Date *"
                     value={dateFilters.endDate}
                     onChange={handleDateChange("endDate")}
-                    sx={{ borderRadius: "8px" }} // Adding border-radius to the End Date picker
+                    sx={{ borderRadius: "8px", width: "100%" }} // Adding border-radius to the End Date picker
                   />
                 </LocalizationProvider>
               </Box>

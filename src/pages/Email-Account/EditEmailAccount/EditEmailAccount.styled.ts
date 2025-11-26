@@ -29,9 +29,10 @@ export const WarmUpHeading = styled.div `
   gap: 10px,
 `;
 
-export const WarmupBox = styled(Box)
-`  padding: 20px;
-border:1px solid var(--border-grey);
-border-radius:10px;
-color:var(--text-secondary)
+export const WarmupBox = styled(Box)`
+  padding: 20px;
+  border:1px solid var(--border-grey);
+  border-radius:10px;
+  color:var(--text-secondary);
+  height: 100%;
 `;

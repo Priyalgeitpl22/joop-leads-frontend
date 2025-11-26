@@ -1,5 +1,5 @@
 import React from "react";
-import { Divider, Typography, Box } from "@mui/material";
+import { Typography, Box } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import WorkIcon from "@mui/icons-material/Work";
 import { RootState } from "../../../redux/store/store";
@@ -19,13 +19,13 @@ import {
   DraftChip,
   FieldValue,
 } from "./ViewDrawer.styled";
+import { CSV_COLUMNS } from "../../../constants";
+import { CampaignList } from "../../../redux/slice/contactSlice";
 
 interface ViewDrawerProps {
   open: boolean;
   onClose: () => void;
   selectedId: string | null;
-
-
 }
 
 const ViewDrawer: React.FC<ViewDrawerProps> = ({ open, onClose }) => {
@@ -34,8 +34,10 @@ const ViewDrawer: React.FC<ViewDrawerProps> = ({ open, onClose }) => {
   return (
     <StyledDrawer anchor="right" open={open} onClose={onClose}>
       <StyleBox>
-        <TitleContainer sx={{ background:"var(--primary-gradient)" }}>
-          <StyledTypography style={{color: "#ffffff", }}>Lead Details</StyledTypography>
+        <TitleContainer sx={{ background: "var(--primary-gradient)" }}>
+          <StyledTypography style={{ color: "#ffffff" }}>
+            Lead Details
+          </StyledTypography>
 
           <StyledCloseIconButton onClick={onClose}>
             <CloseIcon />
@@ -43,27 +45,20 @@ const ViewDrawer: React.FC<ViewDrawerProps> = ({ open, onClose }) => {
         </TitleContainer>
 
         <ScrollableContent>
-          {/* Contact Info */}
           <SectionTitle>Contact Information</SectionTitle>
-
           <ContactCard>
-            <FieldLabel>Full Name</FieldLabel>
-            <FieldValue>{campaignList?.first_name || "N/A"}</FieldValue>
-            <Divider sx={{ my: 1 }} />
+            {CSV_COLUMNS.map((item) => {
+              const value = campaignList?.[item.key as keyof CampaignList];
 
-            <FieldLabel>Email</FieldLabel>
-            <FieldValue>{campaignList?.email || "N/A"}</FieldValue>
-            <Divider sx={{ my: 1 }} />
-
-            <FieldLabel>Phone</FieldLabel>
-            <FieldValue>{campaignList?.phone_number || "N/A"}</FieldValue>
-            <Divider sx={{ my: 1 }} />
-
-            <FieldLabel>Company</FieldLabel>
-            <FieldValue>{campaignList?.company_name || "N/A"}</FieldValue>
+              return value ? (
+                <div key={item.key}>
+                  <FieldLabel>{item.label}</FieldLabel>
+                  <FieldValue>{value as string || "N/A"}</FieldValue>
+                </div>
+              ) : null;
+            })}
           </ContactCard>
 
-          {/* Campaigns */}
           {campaignList?.emailCampaigns?.length ? (
             <>
               <SectionTitle>Campaigns</SectionTitle>
@@ -71,7 +66,12 @@ const ViewDrawer: React.FC<ViewDrawerProps> = ({ open, onClose }) => {
               {campaignList.emailCampaigns.map((item, index) => (
                 <CampaignCard key={index}>
                   <FieldLabel>Campaign Name</FieldLabel>
-                  <Box style={{ display: "flex", justifyContent: "space-between " }}>
+                  <Box
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between ",
+                    }}
+                  >
                     <FieldValue>
                       {item?.campaign?.campaignName || "Untitled Campaign"}
                     </FieldValue>
@@ -86,12 +86,16 @@ const ViewDrawer: React.FC<ViewDrawerProps> = ({ open, onClose }) => {
           {/* Uploaded By */}
           <SectionTitle>Activity</SectionTitle>
 
-          <UploadedByContainer sx={{ display: "flex", alignItems: "center" }}>
+          <UploadedByContainer>
             <WorkIcon sx={{ marginRight: "6px", color: "#6b7280" }} />
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
             <Typography fontSize={15}>
-              {campaignList?.uploadedUser?.fullName} (
-              {campaignList?.uploadedUser?.email})
+              {campaignList?.uploadedUser?.fullName}
             </Typography>
+            <Typography fontSize={12}>
+              {campaignList?.uploadedUser?.email}
+            </Typography>
+            </Box>
           </UploadedByContainer>
         </ScrollableContent>
       </StyleBox>

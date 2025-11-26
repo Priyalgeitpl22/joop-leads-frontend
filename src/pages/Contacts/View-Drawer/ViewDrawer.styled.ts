@@ -83,6 +83,7 @@ export const CampaignCard = styled(Card)({
   border: "1px solid #e5e7eb",
   boxShadow: "none",
   marginBottom: "10px",
+  marginTop: "10px",
 });
 
 export const DraftChip = styled(Chip)({
@@ -93,13 +94,18 @@ export const DraftChip = styled(Chip)({
   height: "22px",
 });
 
-export const UploadedByContainer = styled(Typography)({
+export const UploadedByContainer = styled(Box)({
+  padding: "10px",
+  borderRadius: "12px",
+  border: "1px solid #e5e7eb",
+  boxShadow: "none",
+  marginBottom: "10px",
+  marginTop: "10px",
   display: "flex",
   alignItems: "center",
   gap: "8px",
-  fontSize: "15px",
-  color: "#444",
 });
+
 export const IconStyle = (color: string) => ({
   verticalAlign: "middle",
   marginRight: "8px",

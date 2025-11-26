@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import {
   Box,
   Menu,
@@ -15,7 +15,6 @@ import {
   useMediaQuery,
   Accordion,
   AccordionSummary,
-
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
@@ -54,10 +53,10 @@ import { ILeadsCounts } from "../Email-Campaign/NewCampaign/interfaces";
 import { useNavigate } from "react-router-dom";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import PersonOffIcon from "@mui/icons-material/PersonOff";
-import HowToRegIcon from '@mui/icons-material/HowToReg'
+import HowToRegIcon from "@mui/icons-material/HowToReg";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
-import toast, { Toaster } from 'react-hot-toast';
+import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
+import toast, { Toaster } from "react-hot-toast";
 import { Button2, SectionTitle } from "../../styles/layout.styled";
 import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -66,9 +65,7 @@ import { Dayjs } from "dayjs";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
 import ActiveFilters from "../Email-Campaign/ActiveFilters";
 import usePageWidth from "../../hooks/usePageWidth";
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-
-
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 export interface ImportedLeadsData {
   csvSettings: csvSettingsType;
@@ -76,15 +73,11 @@ export interface ImportedLeadsData {
 
 const ContactTable: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const width = usePageWidth()
-  const theme = useTheme()
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
-
-
+  const width = usePageWidth();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [contactAccount, setContactAccount] = useState<ContactsAccount[]>([]);
-  // const [loading, setLoading] = useState<boolean>(true);
   const [loading, setLoading] = useState(true);
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
   const [CSVsettings, setCSVsettings] = React.useState<csvSettingsType>();
@@ -103,16 +96,14 @@ const ContactTable: React.FC = () => {
     React.useState<ImportedLeadsData>();
 
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [rows, setRows] = useState<any[]>([]);
+  const [rows, setRows] = useState<(ContactsAccount & { active?: boolean; used_in_campaigns?: number })[]>([]);
   const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
   const { user } = useSelector((state: RootState) => state.user);
-  const [selectedIds, setSelectedIds] = useState<any>([]);
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  const [isCsvUploaded, setIsCsvUploaded] = React.useState(false);
   const [uploadleads, setUploadLeads] = React.useState<boolean>(false);
   const [uploadCounts, setUploadCounts] = React.useState<ILeadsCounts>();
   const [campaignId, setCampaignId] = React.useState("");
@@ -125,7 +116,6 @@ const ContactTable: React.FC = () => {
   }>({
     startDate: null,
     endDate: null,
-
   });
   const [appliedFilters, setAppliedFilters] = useState<{
     status: string;
@@ -137,7 +127,7 @@ const ContactTable: React.FC = () => {
     endDate: null,
   });
 
-  const saveCSVSetting = (settings: any) => {
+  const saveCSVSetting = (settings: csvSettingsType) => {
     setCSVsettings(settings);
   };
 
@@ -160,12 +150,7 @@ const ContactTable: React.FC = () => {
       }));
     };
 
-
   const handleFileChange = (file: File) => {
-    console.log(isCsvUploaded);
-    console.log(selectedFile);
-    console.log(CSVsettings);
-    console.log(emailFieldsToBeAdded);
     setSelectedFile(file);
   };
 
@@ -174,13 +159,13 @@ const ContactTable: React.FC = () => {
   };
 
   const handleCreateCampaign = async () => {
-    if (selectedIds.length > 0) {
-
+    if (rowSelectionModel.length > 0) {
       try {
-        const response = await dispatch(CreateCampaignWithContacts(selectedIds)).unwrap();
-        const campaignId = response.campaignId;
-        navigate(`/email-campaign/new-campaign?campaignId=${campaignId}`);
-      } catch (error) {
+        const response = await dispatch(
+          CreateCampaignWithContacts(rowSelectionModel)
+        ).unwrap();
+        navigate(`/email-campaign/new-campaign?campaignId=${response.campaignId}`);
+      } catch {
         toast.error("Something went wrong with create leads.");
       }
     } else {
@@ -188,9 +173,8 @@ const ContactTable: React.FC = () => {
     }
   };
 
-
-  const handleOpenDeleteDialog = (selectedIds: string[]) => {
-    setSelectedIds(selectedIds);
+  const handleOpenDeleteDialog = (ids: string[]) => {
+    setRowSelectionModel(ids);
     setOpenDeleteDialog(true);
   };
 
@@ -199,25 +183,40 @@ const ContactTable: React.FC = () => {
   };
 
   const handleDeleteContact = async () => {
-    if (selectedIds.length > 0) {
+    if (rowSelectionModel.length > 0) {
       try {
-
-        const response = await dispatch(deleteContact(selectedIds)).unwrap();
+        const response = await dispatch(deleteContact(rowSelectionModel)).unwrap();
         if (response?.message) {
           toast.success(response.message);
-
           setRows((prevRows) =>
-            prevRows.filter((contact) => !selectedIds.includes(contact.id))
+            prevRows.filter((contact) => !rowSelectionModel.includes(contact.id))
           );
+          setRowSelectionModel([]);
         } else {
           toast.error("Failed to delete contacts.");
         }
-      } catch (error) {
+      } catch {
         toast.error("Something went wrong while deleting the contacts.");
       }
     }
     handleCloseDeleteDialog();
   };
+
+  const handleViewClick = useCallback((event: React.MouseEvent, id: string) => {
+    event.stopPropagation();
+    setSelectedId(id);
+    setOpen(true);
+    const payload: VerifyViewContactPayload = { id };
+    dispatch(getCampaignListById(payload));
+  }, [dispatch]);
+
+  const handleEditClick = useCallback((event: React.MouseEvent, id: string) => {
+    event.stopPropagation();
+    setSelectedId(id);
+    setIsAddAccountDialogOPen(true);
+    const payload: VerifyViewContactPayload = { id };
+    dispatch(getCampaignListById(payload));
+  }, [dispatch]);
 
   const columns: GridColDef[] = useMemo(() => {
     const baseColumns: GridColDef[] = [
@@ -247,12 +246,12 @@ const ContactTable: React.FC = () => {
         field: "createdAt",
         headerName: "Uploaded Date",
         width: 200,
-        valueGetter: (params: any) => (params ? formatDateTime(params) : "N/A"),
+        valueGetter: (params: string | undefined) => (params ? formatDateTime(params) : "N/A"),
       },
       {
         field: "active",
         headerName: "Status",
-        renderCell: (params: any) => (
+        renderCell: (params: { row: ContactsAccount & { active?: boolean } }) => (
           <span
             style={{
               display: "flex",
@@ -283,9 +282,9 @@ const ContactTable: React.FC = () => {
         renderCell: (params) => (
           <Tooltip title="View Leads Detail" arrow>
             <IconButton
-              onClick={(event) => handleViewClick(event, params.row.id)}>
+              onClick={(event) => handleViewClick(event, params.row.id)}
+            >
               <VisibilityIcon style={{ color: "var(--primary-light)" }} />
-
             </IconButton>
           </Tooltip>
         ),
@@ -299,7 +298,9 @@ const ContactTable: React.FC = () => {
             <IconButton
               onClick={(event) => handleEditClick(event, params.row.id)}
             >
-              <ModeEditOutlineOutlinedIcon style={{ color: "var(--secondary-light)" }} />
+              <ModeEditOutlineOutlinedIcon
+                style={{ color: "var(--secondary-light)" }}
+              />
             </IconButton>
           </Tooltip>
         ),
@@ -311,11 +312,11 @@ const ContactTable: React.FC = () => {
         field: "delete",
         headerName: "Delete",
         width: 100,
-        renderCell: (_params) => (
+        renderCell: (params: { row: ContactsAccount }) => (
           <Tooltip title="Delete Lead" arrow>
             <IconButton
               color="error"
-              onClick={() => handleOpenDeleteDialog(_params.row.id)}
+              onClick={() => handleOpenDeleteDialog([params.row.id])}
             >
               <Trash2 width="18px" style={{ color: "var(--error-color)" }} />
             </IconButton>
@@ -325,57 +326,37 @@ const ContactTable: React.FC = () => {
     }
 
     return baseColumns;
-  }, [user?.role]);
-
+  }, [user?.role, handleViewClick, handleEditClick]);
 
   useEffect(() => {
-    const getContactsAccounts = async () => {
-      await getFetchAllContacts();
-    };
-
-    getContactsAccounts();
+    getFetchAllContacts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
 
   const handleClearFilters = () => {
     setFilters({ status: "" });
     setDateFilters({ startDate: null, endDate: null });
-    const getContactsAccounts = async () => {
-      await getFetchAllContacts();
-    };
-
-    getContactsAccounts();
-    handleMenuClose()
+    getFetchAllContacts();
+    handleMenuClose();
   };
-
-  // useEffect(() => {
-  //   getFetchAllContacts();
-  // }, [isUploadDialogOpen])
 
   const getFetchAllContacts = async () => {
     try {
       setLoading(true);
       const data = await dispatch(fetchContacts()).unwrap();
-      if (data) {
-        setContactAccount(data);
-        setLoading(false);
-      }
-      setRows(data);
+      setRows(data || []);
     } catch (error) {
-      setLoading(false);
       console.error("Failed to fetch Account:", error);
     } finally {
       setLoading(false);
     }
   };
 
-
-
   const handleSearch = async (query: string) => {
     try {
       const trimmedQuery = query.trim();
       if (trimmedQuery === "") {
-        setRows(contactAccount);
+        await getFetchAllContacts();
       } else {
         const filteredData = await dispatch(
           SearchContacts({ query: trimmedQuery, orgId: user?.orgId || "" })
@@ -397,12 +378,11 @@ const ContactTable: React.FC = () => {
     setAnchorEl(null);
   };
 
-  const handleSelectedRows = (selectedIds: string[]) => {
-    setSelectedIds(selectedIds);
-    setRowSelectionModel(selectedIds);
+  const handleSelectedRows = (ids: string[]) => {
+    setRowSelectionModel(ids);
   };
 
-  const selectedRowsData = rows.filter((row) => selectedIds.includes(row.id));
+  const selectedRowsData = rows.filter((row) => rowSelectionModel.includes(row.id));
 
   const allActive =
     selectedRowsData.length > 0 &&
@@ -412,24 +392,22 @@ const ContactTable: React.FC = () => {
     selectedRowsData.length > 0 &&
     selectedRowsData.every((row) => row.active === false);
 
-
-
-
   const handleDeactivate = async () => {
-    if (selectedIds.length > 0) {
-
+    if (rowSelectionModel.length > 0) {
       try {
-        const response = await dispatch(DeactivateContacts(selectedIds)).unwrap();
+        const response = await dispatch(
+          DeactivateContacts(rowSelectionModel)
+        ).unwrap();
         if (response?.code === 200) {
-          toast.success(response?.message || "Leads have been deactivated successfully.");
+          toast.success(
+            response?.message || "Leads have been deactivated successfully."
+          );
         } else {
           toast.error("Failed to deactivate Leads.");
         }
-        setSelectedIds([]);
-        setRowSelectionModel([])
-
+        setRowSelectionModel([]);
         await getFetchAllContacts();
-      } catch (error) {
+      } catch {
         toast.error("Something went wrong while deactivating leads.");
       }
     } else {
@@ -437,26 +415,8 @@ const ContactTable: React.FC = () => {
     }
   };
 
-  const handleViewClick = (event: React.MouseEvent, id: string) => {
-    event.stopPropagation();
-    setSelectedId(id);
-    setOpen(true);
-    const payload: VerifyViewContactPayload = { id };
-    dispatch(getCampaignListById(payload));
-  };
   const isMenuOpen = Boolean(anchorEl);
 
-  const handleEditClick = (event: React.MouseEvent, id: string) => {
-    event.stopPropagation();
-    setSelectedId(id);
-    setIsAddAccountDialogOPen(true);
-    const payload: VerifyViewContactPayload = { id };
-    dispatch(getCampaignListById(payload));
-  };
-
-
-  const handleOpenDialog = () => setIsUploadDialogOpen(true);
-  const handleCloseDialog = () => setIsUploadDialogOpen(false);
   const handleAccountOpenDialog = () => {
     setSelectedId(null);
     setIsAddAccountDialogOPen(true);
@@ -467,12 +427,7 @@ const ContactTable: React.FC = () => {
     await getFetchAllContacts();
   };
 
-  const handleUploadContacts = async (data: any) => {
-    console.log(emailFieldsToBeAdded);
-    console.log(CSVsettings);
-    console.log;
-    console.log(data);
-
+  const handleUploadContacts = async () => {
     const payload = {
       CSVsettings: CSVsettings,
       csvFile: selectedFile,
@@ -482,10 +437,8 @@ const ContactTable: React.FC = () => {
     const response = await dispatch(addLeadsToCampaign(payload));
 
     if (response.payload.code === 200) {
-      console.log(response);
       setUploadCounts(response.payload.counts);
       setCampaignId(response.payload.campaignId);
-      // setUploadCsv(false);
       setUploadLeads(true);
     }
   };
@@ -567,27 +520,21 @@ const ContactTable: React.FC = () => {
           ? "false"
           : "";
 
-    const filterPayload: any = {};
+    const filterPayload: { status: string; startDate: string; endDate: string } = {
+      status: statusForApi || "",
+      startDate: updatedFilters.startDate || "",
+      endDate: updatedFilters.endDate || "",
+    };
 
-    if (statusForApi) {
-      filterPayload.status = statusForApi;
-    }
-
-    if (updatedFilters.startDate) {
-      filterPayload.startDate = updatedFilters.startDate;
-    }
-
-    if (updatedFilters.endDate) {
-      filterPayload.endDate = updatedFilters.endDate;
-    }
-
-    const allCleared = Object.keys(filterPayload).length === 0;
+    const allCleared = !filterPayload.status && !filterPayload.startDate && !filterPayload.endDate;
 
     if (allCleared) {
       getFetchAllContacts();
     } else {
-      dispatch(filterContacts(filterPayload)).then((res: any) => {
-        setRows(res.payload.data);
+      dispatch(filterContacts(filterPayload)).then((res) => {
+        if (res.payload && typeof res.payload === 'object' && 'data' in res.payload) {
+          setRows((res.payload as { data: (ContactsAccount & { active?: boolean; used_in_campaigns?: number })[] }).data);
+        }
       });
     }
   };
@@ -597,39 +544,41 @@ const ContactTable: React.FC = () => {
       style={{
         width: isMobile ? `${width - 20}px` : "100%",
         border: "1px solid lightgray",
-
       }}
       sx={{
-        px: { xs: "1rem", sm: "1.5rem", md: "2rem" }
+        px: { xs: "1rem", sm: "1.5rem", md: "2rem" },
       }}
     >
       <Toaster position="top-right" />
-      {isMobile?
+      {isMobile ? (
         <ContactsHeader>
-          <Accordion sx={{width:"100%"}}>
+          <Accordion sx={{ width: "100%" }}>
             <AccordionSummary
               expandIcon={<KeyboardArrowDownIcon />}
               aria-controls="panel1-content"
               id="panel1-header"
             >
-              {/* <ContactSectionTitle label="All Leads" value="all" /> */}
-            <SectionTitle style={{fontSize: "1.3rem !important", fontWeight: "600", color: "#35495c" }} >All Leads</SectionTitle>
+              <SectionTitle
+                style={{
+                  fontSize: "1.3rem !important",
+                  fontWeight: "600",
+                  color: "#35495c",
+                }}
+              >
+                All Leads
+              </SectionTitle>
             </AccordionSummary>
             <Box
               sx={{
                 display: "flex",
-            flexDirection:"column",
+                flexDirection: "column",
                 gap: "15px",
-            width:"auto",
+                width: "auto",
                 alignItems: "center",
                 justifyContent: "center",
               }}
             >
-
-          <Box sx={{ display:"flex",
-                gap: "15px",
-
-              }}>
+              <Box sx={{ display: "flex", gap: "15px" }}>
                 <SearchBar>
                   <Search size={20} />
                   <input
@@ -650,43 +599,42 @@ const ContactTable: React.FC = () => {
                 />
               </Box>
 
-
-              <Box sx={{
-                display: "flex",
-                gap: "15px",
-
-              }}
+              <Box
+                sx={{
+                  display: "flex",
+                  gap: "15px",
+                }}
               >
-
-                {selectedIds.length == 0 && (
-                  <Tooltip title="Upload Bulk Leads" arrow>
-                    <IconsButton onClick={handleOpenDialog}>
-                      <CloudUploadIcon />
-                    </IconsButton>
-                  </Tooltip>
-                )}
-                {selectedIds.length == 0 && (
-                  <Tooltip title="Add Lead" arrow>
-                    <IconsButton onClick={handleAccountOpenDialog}>
-                      <PersonAddIcon />
-                    </IconsButton>
-                  </Tooltip>
+                {rowSelectionModel.length === 0 && (
+                  <>
+                    <Tooltip title="Upload Bulk Leads" arrow>
+                      <IconsButton onClick={() => setIsUploadDialogOpen(true)}>
+                        <CloudUploadIcon />
+                      </IconsButton>
+                    </Tooltip>
+                    <Tooltip title="Add Lead" arrow>
+                      <IconsButton onClick={handleAccountOpenDialog}>
+                        <PersonAddIcon />
+                      </IconsButton>
+                    </Tooltip>
+                  </>
                 )}
               </Box>
-
             </Box>
           </Accordion>
         </ContactsHeader>
-
-        : <ContactsHeader>
-
-          {/* <ContactSectionTitle label="All Leads" value="all" sx={{ fontSize: "24px !important", fontWeight: "600", color: "#35495c", }} /> */}
-          <SectionTitle style={{fontSize: "1.3rem", fontWeight: "600", color: "#35495c" }} >All Leads</SectionTitle>
+      ) : (
+        <ContactsHeader>
+          <SectionTitle
+            style={{ fontSize: "1.3rem", fontWeight: "600", color: "#35495c" }}
+          >
+            All Leads
+          </SectionTitle>
           <Box
             sx={{
               display: "flex",
               gap: "15px",
-              width:"auto",
+              width: "auto",
               alignItems: "center",
               justifyContent: "right",
             }}
@@ -710,49 +658,56 @@ const ContactTable: React.FC = () => {
               selectedId={selectedId}
             />
 
-            {selectedIds.length == 0 && (
-              <Tooltip title="Upload Bulk Leads" arrow>
-                <IconsButton onClick={handleOpenDialog} style={{ border: "1px solid var(--secondary-light)" }} >
-                  <CloudUploadIcon
-                    sx={{
-
-                      color: "var(--secondary-dark)",
-                      "&:hover": {
-                        color: "var(--secondary-light)",
-                      },
-                    }}
-                  />
-                </IconsButton>
-
-              </Tooltip>
+            {rowSelectionModel.length === 0 && (
+              <>
+                <Tooltip title="Upload Bulk Leads" arrow>
+                  <IconsButton
+                    onClick={() => setIsUploadDialogOpen(true)}
+                    style={{ border: "1px solid var(--secondary-light)" }}
+                  >
+                    <CloudUploadIcon
+                      sx={{
+                        color: "var(--secondary-dark)",
+                        "&:hover": {
+                          color: "var(--secondary-light)",
+                        },
+                      }}
+                    />
+                  </IconsButton>
+                </Tooltip>
+                <Tooltip title="Add Lead" arrow>
+                  <IconsButton
+                    onClick={handleAccountOpenDialog}
+                    style={{ border: "1px solid var(--primary-light)" }}
+                  >
+                    <PersonAddIcon
+                      sx={{
+                        color: "var(--primary-dark)",
+                        "&:hover": {
+                          color: "var(--primary-light)",
+                        },
+                      }}
+                    />
+                  </IconsButton>
+                </Tooltip>
+              </>
             )}
-            {selectedIds.length == 0 && (
-              <Tooltip title="Add Lead" arrow>
-                <IconsButton onClick={handleAccountOpenDialog} style={{ border: "1px solid var(--primary-light)" }} >
-                  <PersonAddIcon
-                    sx={{
-                      color: "var(--primary-dark)",
-                      "&:hover": {
-                        color: "var(--primary-light)",
-                      },
-                    }} />
-                </IconsButton>
-              </Tooltip>
-            )}
 
-            {selectedIds.length > 0 && allActive && (
+            {rowSelectionModel.length > 0 && allActive && (
               <Tooltip title="Deactivate User" arrow>
-                <IconsButton onClick={handleDeactivate}
+                <IconsButton
+                  onClick={handleDeactivate}
                   style={{
                     color: "var(--error-color)",
-                    border: "1px solid var(--error-color)"
-                  }}>
+                    border: "1px solid var(--error-color)",
+                  }}
+                >
                   <PersonOffIcon />
                 </IconsButton>
               </Tooltip>
             )}
 
-            {selectedIds.length > 0 && allInactive && (
+            {rowSelectionModel.length > 0 && allInactive && (
               <Tooltip title="Activate User" arrow>
                 <IconsButton onClick={handleDeactivate}>
                   <HowToRegIcon />
@@ -760,31 +715,35 @@ const ContactTable: React.FC = () => {
               </Tooltip>
             )}
 
-            {selectedIds.length > 0 && (
-              <Tooltip title="Create Campaign" arrow>
-                <IconsButton onClick={handleCreateCampaign}
-                  style={{
-                    color: "var(--primary-dark)",
-                    border: "1px solid var(--primary-light)"
-                  }}>
-                  <AddCircleIcon />
-                </IconsButton>
-              </Tooltip>
-            )}
-
-            {selectedIds.length > 0 && (
-              <Tooltip title="Delete Contacts" arrow>
-                <IconsButton onClick={() => handleOpenDeleteDialog(selectedIds)}
-                  style={{
-                    color: "var(--error-color)",
-                    border: "1px solid var(--error-color)"
-                  }}>
-                  <Trash2 width="18px" />
-                </IconsButton>
-              </Tooltip>
+            {rowSelectionModel.length > 0 && (
+              <>
+                <Tooltip title="Create Campaign" arrow>
+                  <IconsButton
+                    onClick={handleCreateCampaign}
+                    style={{
+                      color: "var(--primary-dark)",
+                      border: "1px solid var(--primary-light)",
+                    }}
+                  >
+                    <AddCircleIcon />
+                  </IconsButton>
+                </Tooltip>
+                <Tooltip title="Delete Contacts" arrow>
+                  <IconsButton
+                    onClick={() => handleOpenDeleteDialog(rowSelectionModel)}
+                    style={{
+                      color: "var(--error-color)",
+                      border: "1px solid var(--error-color)",
+                    }}
+                  >
+                    <Trash2 width="18px" />
+                  </IconsButton>
+                </Tooltip>
+              </>
             )}
           </Box>
-        </ContactsHeader>}
+        </ContactsHeader>
+      )}
 
       {loading && <ProgressBar />}
       <Menu
@@ -820,27 +779,30 @@ const ContactTable: React.FC = () => {
           </Link>
         </Box>
 
-        <Box sx={{ mt: 2 }}>
+        <Box sx={{ mt: 2, width: "100%" }}>
+          <Box sx={{ width: "100%" }}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DesktopDatePicker
               label="Start Date *"
               value={dateFilters.startDate}
               onChange={handleDateChange("startDate")}
+              sx={{ width: "100%" }}
             />
           </LocalizationProvider>
-
-          <Box sx={{ mt: 2 }}>
+          </Box>
+          <Box sx={{ mt: 2, width: "100%" }}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DesktopDatePicker
                 label="End Date *"
                 value={dateFilters.endDate}
                 onChange={handleDateChange("endDate")}
+                sx={{ width: "100%" }}
               />
             </LocalizationProvider>
           </Box>
         </Box>
         {Object.keys(filterOptions).map((label) => (
-          <FormControl key={label} fullWidth sx={{ mt: 2 }}>
+          <FormControl key={label} fullWidth sx={{ mt: 2, width: "100%" }}>
             <InputLabel>{label}</InputLabel>
             <Select
               value={filters[label.toLowerCase() as keyof typeof filters] || ""}
@@ -902,11 +864,11 @@ const ContactTable: React.FC = () => {
       <UploadContactCsvDialog
         handleUploadContacts={handleUploadContacts}
         open={isUploadDialogOpen}
-        onClose={handleCloseDialog}
+        onClose={() => setIsUploadDialogOpen(false)}
         handleLeadsData={handleLeadsData}
         handleCSVUpload={handleFileChange}
         saveCSVSetting={saveCSVSetting}
-        setIsCsvUploaded={setIsCsvUploaded}
+        setIsCsvUploaded={() => {}}
       />
 
       <UploadLeadsDialog

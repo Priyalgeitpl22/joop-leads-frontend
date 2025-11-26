@@ -144,6 +144,7 @@ export const SecondaryButton = styled.button`
   font-size: 16px;
   white-space: nowrap;
   box-shadow: var(--shadow-dark);
+  border: 1px solid var(--border-color);
 
   &:hover {
     background: var(--hover-color);

@@ -1,17 +1,41 @@
-import { useState } from "react";
-import {
-  Switch,
-  Slider,
-} from "@mui/material";
+import { useState, useEffect, useImperativeHandle, forwardRef } from "react";
+import { Switch, Slider } from "@mui/material";
 import {
   WarmUpBlock,
   WarmUpHeading,
   WarmupBox,
 } from "./EditEmailAccount.styled";
-import {  SmtpUpdateTextField } from "../../../styles/layout.styled";
-import { Button } from "../../../styles/global.styled";
+import { SmtpUpdateTextField } from "../../../styles/layout.styled";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../redux/store/store";
+import { updateEmailAccountSmtpDetail } from "../../../redux/slice/emailAccountSlice";
+import toast from "react-hot-toast";
+import Loader from "../../../components/Loader";
 
-const EditWarmupEmailAccount = () => {
+interface EmailAccountData {
+  warmupEnabled?: boolean;
+  warmupMaxPerDay?: number;
+  warmupDailyRampup?: boolean;
+  warmupRampupIncrement?: number;
+  [key: string]: unknown;
+}
+
+interface EditWarmupEmailAccountProps {
+  id?: string;
+  emailAccount?: EmailAccountData;
+}
+
+export interface EditWarmupEmailAccountRef {
+  handleUpdate: () => Promise<void>;
+  loading: boolean;
+}
+
+const EditWarmupEmailAccount = forwardRef<
+  EditWarmupEmailAccountRef,
+  EditWarmupEmailAccountProps
+>(({ id, emailAccount }, ref) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const [loading, setLoading] = useState(false);
   const [warmupEnabled, setWarmupEnabled] = useState(false);
   const [dailyRampup, setDailyRampup] = useState(false);
   const [warmupEmails, setWarmupEmails] = useState(20);
@@ -22,7 +46,53 @@ const EditWarmupEmailAccount = () => {
   const [firstText, setFirstText] = useState("brain");
   const [secondText, setSecondText] = useState("stone");
 
-  return (
+  useEffect(() => {
+    if (emailAccount) {
+      setWarmupEnabled(emailAccount?.warmupEnabled || false);
+      setWarmupEmails(emailAccount?.warmupMaxPerDay || 20);
+      setDailyRampup(emailAccount?.warmupDailyRampup || false);
+      setRampupday(emailAccount?.warmupRampupIncrement || 5);
+    }
+  }, [emailAccount]);
+
+  const handleUpdateWarmup = async (): Promise<void> => {
+    if (!id) {
+      toast.error("Email account ID is missing");
+      return;
+    }
+
+    setLoading(true);
+
+    const payload = {
+      warmupEnabled,
+      warmupMaxPerDay: warmupEmails,
+      warmupDailyRampup: dailyRampup,
+      warmupRampupIncrement: rampupday,
+    };
+
+    try {
+      const res = await dispatch(
+        updateEmailAccountSmtpDetail({ id, data: payload })
+      ).unwrap();
+      console.log(res);
+      toast.success(res?.message || "Warmup settings updated successfully");
+    } catch (error) {
+      console.log("Failed to update warmup settings: " + error);
+      toast.error(
+        typeof error === "string" ? error : "Failed to update warmup settings"
+      );
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useImperativeHandle(ref, () => ({
+    handleUpdate: handleUpdateWarmup,
+    loading,
+  }));
+
+  return !loading ? (
     <WarmupBox>
       <div>
         Warming up an IP address involves sending low volumes of email on your
@@ -30,34 +100,30 @@ const EditWarmupEmailAccount = () => {
         period of time.
       </div>
       <WarmUpBlock>
-        <WarmUpHeading style={{ marginBottom: "2%" }}>
+        <WarmUpHeading>
           <Switch
-  checked={warmupEnabled}
-  onChange={() => setWarmupEnabled(!warmupEnabled)}
-  sx={{
-    // TRACK (OFF state)
-    "& .MuiSwitch-track": {
-      backgroundColor: "#BDBDBD", // light grey
-      opacity: 1,
-    },
+            checked={warmupEnabled}
+            onChange={() => setWarmupEnabled(!warmupEnabled)}
+            sx={{
+              "& .MuiSwitch-track": {
+                backgroundColor: "#BDBDBD",
+                opacity: 1,
+              },
 
-    // TRACK (ON state)
-    "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
-      backgroundColor: "var(--primary) !important",
-      opacity: 1,
-    },
+              "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+                backgroundColor: "var(--primary) !important",
+                opacity: 1,
+              },
 
-    // THUMB (OFF state)
-    "& .MuiSwitch-thumb": {
-      backgroundColor: "#9E9E9E", // darker grey
-    },
+              "& .MuiSwitch-thumb": {
+                backgroundColor: "#9E9E9E",
+              },
 
-    // THUMB (ON state)
-    "& .MuiSwitch-switchBase.Mui-checked .MuiSwitch-thumb": {
-      backgroundColor: "var(--primary-dark)",
-    },
-  }}
-/>
+              "& .MuiSwitch-switchBase.Mui-checked .MuiSwitch-thumb": {
+                backgroundColor: "var(--primary-dark)",
+              },
+            }}
+          />
 
           <label style={{ fontWeight: "bold", color: "#1d1e22" }}>
             Email Warmup Enabled
@@ -70,7 +136,9 @@ const EditWarmupEmailAccount = () => {
             style={{
               display: "flex",
               gap: "10%",
-              borderBottom: "1px solid #E0E0E0",
+              justifyContent: "space-between",
+              alignItems: "center",
+              // borderBottom: "1px solid #E0E0E0",
             }}
           >
             <div>
@@ -83,7 +151,9 @@ const EditWarmupEmailAccount = () => {
             <SmtpUpdateTextField
               type="number"
               value={warmupEmails}
-              onChange={(e:any) => setWarmupEmails(Number(e.target.value))}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setWarmupEmails(Number(e.target.value))
+              }
               sx={{ width: "8%", marginBottom: "3%" }}
             />
           </div>
@@ -91,32 +161,32 @@ const EditWarmupEmailAccount = () => {
             <WarmUpHeading style={{ marginTop: "-5px", marginBottom: "2%" }}>
               <div>
                 <Switch
-  checked={dailyRampup}
-  onChange={() => setDailyRampup(!dailyRampup)}
-  sx={{
-    // TRACK (OFF state)
-    "& .MuiSwitch-track": {
-      backgroundColor: "#BDBDBD", // light grey
-      opacity: 1,
-    },
+                  checked={dailyRampup}
+                  onChange={() => setDailyRampup(!dailyRampup)}
+                  sx={{
+                    // TRACK (OFF state)
+                    "& .MuiSwitch-track": {
+                      backgroundColor: "#BDBDBD", // light grey
+                      opacity: 1,
+                    },
 
-    // TRACK (ON state)
-    "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
-      backgroundColor: "var(--secondary) !important",
-      opacity: 1,
-    },
+                    // TRACK (ON state)
+                    "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+                      backgroundColor: "var(--secondary) !important",
+                      opacity: 1,
+                    },
 
-    // THUMB (OFF state)
-    "& .MuiSwitch-thumb": {
-      backgroundColor: "#9E9E9E", // darker grey
-    },
+                    // THUMB (OFF state)
+                    "& .MuiSwitch-thumb": {
+                      backgroundColor: "#9E9E9E", // darker grey
+                    },
 
-    // THUMB (ON state)
-    "& .MuiSwitch-switchBase.Mui-checked .MuiSwitch-thumb": {
-      backgroundColor: "var(--secondary-dark)",
-    },
-  }}
-/>
+                    // THUMB (ON state)
+                    "& .MuiSwitch-switchBase.Mui-checked .MuiSwitch-thumb": {
+                      backgroundColor: "var(--secondary-dark)",
+                    },
+                  }}
+                />
                 <label style={{ fontWeight: "bold", color: "#1d1e22" }}>
                   Daily Rampup
                 </label>
@@ -176,7 +246,9 @@ const EditWarmupEmailAccount = () => {
                 <SmtpUpdateTextField
                   type="number"
                   value={replyRate}
-                  onChange={(e:any) => setReplyRate(Number(e.target.value))}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setReplyRate(Number(e.target.value))
+                  }
                   inputProps={{
                     min: 20,
                     max: 100,
@@ -201,7 +273,11 @@ const EditWarmupEmailAccount = () => {
                     setDailyTargetEmails(newValue as number)
                   }
                   valueLabelDisplay="auto"
-                  sx={{ width: "80%", marginBottom: "2%", color: "var(--secondary)" }}
+                  sx={{
+                    width: "80%",
+                    marginBottom: "2%",
+                    color: "var(--secondary)",
+                  }}
                 />
               </WarmUpBlock>
 
@@ -228,14 +304,18 @@ const EditWarmupEmailAccount = () => {
                   <SmtpUpdateTextField
                     type="text"
                     value={firstText}
-                    onChange={(e:any) => setFirstText(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setFirstText(e.target.value)
+                    }
                     sx={{ width: "20%", marginBottom: "2%", marginTop: "1%" }}
                   />
                   -
                   <SmtpUpdateTextField
                     type="text"
                     value={secondText}
-                    onChange={(e:any) => setSecondText(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setSecondText(e.target.value)
+                    }
                     sx={{ width: "20%", marginBottom: "2%", marginTop: "1%" }}
                   />
                   = {firstText} - {secondText}{" "}
@@ -301,19 +381,14 @@ const EditWarmupEmailAccount = () => {
               </WarmUpBlock>
             </>
           )}
-          <Button
-            style={{
-              width: "10%",
-            }}
-            color={"white"}
-            // background={"var(--theme-color)"}
-          >
-            Update
-          </Button>
         </>
       )}
     </WarmupBox>
+  ) : (
+    <Loader />
   );
-};
+});
+
+EditWarmupEmailAccount.displayName = "EditWarmupEmailAccount";
 
 export default EditWarmupEmailAccount;

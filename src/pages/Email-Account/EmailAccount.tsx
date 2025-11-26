@@ -98,13 +98,13 @@ const EmailAccounts: React.FC = () => {
         },
       },
       {
-        field: "warm_up",
+        field: "warmupEnabled",
         headerName: "Warmup Enabled",
         width: 170,
-        renderCell: () => <Box>Yes</Box>,
+        renderCell: (params: any) => <Box>{params.value ? "Yes" : "No"}</Box>,
       },
       {
-        field: "msg_per_day",
+        field: "limit",
         headerName: "Daily Limit",
         width: 150,
         valueGetter: (params: any) => (params ?? "N/A"),
@@ -176,7 +176,7 @@ const EmailAccounts: React.FC = () => {
       const data = await dispatch(fetchEmailAccount({ orgId: user?.orgId || "" })).unwrap();
       setTimeout(() => {
         setLoading(false);
-        const mappedRows = data.map((account: { _id: any }) => ({
+        const mappedRows = data.map((account: EmailAccount) => ({
           ...account,
           id: account._id,
         }));

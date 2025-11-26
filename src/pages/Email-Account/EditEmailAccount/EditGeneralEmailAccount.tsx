@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useImperativeHandle, forwardRef } from "react";
 import {
   RadioGroup,
   Radio,
@@ -23,15 +23,61 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../redux/store/store";
 import { validateEmail } from "../../../utils/Validation";
-import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { PrimaryButton, PrimaryButtonDisabled } from "../../../styles/global.styled";
+import Loader from "../../../components/Loader";
 
-const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
+interface EmailAccountData {
+  _id?: string;
+  name?: string;
+  email?: string;
+  type?: string;
+  smtp?: {
+    host?: string;
+    port?: number;
+    secure?: boolean;
+    auth?: {
+      user?: string;
+      pass?: string;
+    };
+  };
+  imap?: {
+    host?: string;
+    port?: number;
+    secure?: boolean;
+    auth?: {
+      user?: string;
+      pass?: string;
+    };
+  };
+  replyToAddress?: string;
+  bccEmail?: string;
+  trackingDomain?: boolean;
+  tags?: string;
+  clients?: string;
+  signature?: string;
+  limit?: number;
+  time_gap?: number;
+  [key: string]: unknown;
+}
+
+interface EditGeneralEmailAccountProps {
+  id?: string;
+  emailAccount?: EmailAccountData;
+}
+
+export interface EditGeneralEmailAccountRef {
+  handleUpdate: () => Promise<void>;
+  isUpdateDisabled: boolean;
+  loading: boolean;
+}
+
+const EditGeneralEmailAccount = forwardRef<EditGeneralEmailAccountRef, EditGeneralEmailAccountProps>(
+  ({ id, emailAccount: emailAccountProp }, ref) => {
   const dispatch = useDispatch<AppDispatch>();
-  const emailAccount = useSelector((state: RootState) =>
+  const emailAccountFromRedux = useSelector((state: RootState) =>
     id ? state.emailAccount?.accounts?.[id] : null
   );
+  const emailAccount = emailAccountProp || emailAccountFromRedux;
 
   const [formData, setFormData] = useState({
     fromName: "",
@@ -53,17 +99,15 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
     tags: "",
     clients: "",
     signature: "",
-    msg_per_day: 0,
+    limit: 0,
     time_gap: null,
     type: "",
   });
 
-  const [isSaveDisabled, setIsSaveDisabled] = useState(true);
   const [isVerified, setIsVerified] = useState(false);
   const [loading, setLoading] = useState(false);
   const [verificationInProgress, setVerificationInProgress] = useState(false);
   const [verificationFailed, setVerificationFailed] = useState(false);
-  const navigate = useNavigate();
   const [errors, setErrors] = useState({
     fromName: "",
     fromEmail: "",
@@ -71,7 +115,7 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
     password: "",
     smtpHost: "",
     smtpPort: "",
-    msg_per_day: "",
+    limit: "",
     time_gap: "",
     imapHost: "",
     imapPort: "",
@@ -81,16 +125,16 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
     !formData.fromName ||
     !formData.fromEmail ||
     !validateEmail(formData.fromEmail) ||
-    !formData.msg_per_day ||
-    formData.msg_per_day <= 0 ||
+    !formData.limit ||
+    formData.limit <= 0 ||
     !formData.time_gap ||
     formData.time_gap <= 0;
 
   useEffect(() => {
-    if (id) {
+    if (id && !emailAccountProp) {
       dispatch(getEmailAccountSmtpDetail(id));
     }
-  }, [id, dispatch]);
+  }, [id, dispatch, emailAccountProp]);
 
   useEffect(() => {
     if (emailAccount) {
@@ -114,7 +158,7 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
         tags: emailAccount?.tags || "",
         clients: emailAccount?.clients || "",
         signature: emailAccount?.signature || "",
-        msg_per_day: emailAccount?.msg_per_day || "",
+        limit: emailAccount?.limit || "",
         time_gap: emailAccount?.time_gap || "",
         type: emailAccount?.type || "",
       });
@@ -177,20 +221,18 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
       .then(() => {
         setVerificationInProgress(false);
         setIsVerified(true);
-        setIsSaveDisabled(false);
       })
       .catch(() => {
         setVerificationFailed(true);
         setVerificationInProgress(false);
         setIsVerified(false);
-        setIsSaveDisabled(true);
       })
       .finally(() => {
         setVerificationInProgress(false);
       });
   };
   const validateFields = () => {
-    let newErrors: any = {};
+    const newErrors: Record<string, string> = {};
 
     if (!formData.fromName.trim()) newErrors.fromName = "From Name is required";
     if (!formData.fromEmail.trim()) {
@@ -207,11 +249,11 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
     }
 
     if (
-      !formData.msg_per_day ||
-      isNaN(Number(formData.msg_per_day)) ||
-      Number(formData.msg_per_day) <= 0
+      !formData.limit ||
+      isNaN(Number(formData.limit)) ||
+      Number(formData.limit) <= 0
     ) {
-      newErrors.msg_per_day = "Message per day must be a positive number";
+      newErrors.limit = "Message per day must be a positive number";
     }
     if (
       !formData.time_gap ||
@@ -227,15 +269,14 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
       newErrors.imapPort = "Imap port is required";
     }
 
-    setErrors(newErrors);
+    setErrors((prevErrors) => ({ ...prevErrors, ...newErrors }));
 
     console.log("Validation Errors:", newErrors);
 
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleUpdatAccount = () => {
-
+  const handleUpdatAccount = async (): Promise<void> => {
     if (!id) return;
 
     let payload;
@@ -244,7 +285,7 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
       payload = {
         name: formData.fromName,
         email: formData.fromEmail,
-        limit: formData.msg_per_day,
+        limit: formData.limit,
         time_gap: formData.time_gap,
         type: formData.type,
       };
@@ -280,32 +321,29 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
         tags: formData.tags,
         clients: formData.clients,
         signature: formData.signature,
-        limit: formData.msg_per_day,
+        limit: formData.limit,
         time_gap: formData.time_gap,
         type: formData.type,
       };
     }
 
-    dispatch(updateEmailAccountSmtpDetail({ id, data: payload }))
-      .unwrap()
-      .then((res) => {
-        setLoading(false);
-        console.log(res);
-        navigate(`/email-accounts`);
-        toast.success(res?.message);
-        console.log("account updated successfully");
-      })
-      .catch((error) => {
-        setLoading(false);
-        console.log("Failed to update email account: " + error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    try {
+      const res = await dispatch(updateEmailAccountSmtpDetail({ id, data: payload })).unwrap();
+      console.log(res);
+      toast.success(res?.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
+  useImperativeHandle(ref, () => ({
+    handleUpdate: handleUpdatAccount,
+    isUpdateDisabled,
+    loading,
+  }));
+
   return (
-    <div style={{ padding: "3%", border:"1px solid var(--border-grey)", borderRadius:"10px" }}>
+    !loading ? (<div style={{ padding: "3%", border:"1px solid var(--border-grey)", borderRadius:"10px", height:"100%" }}>
       {formData.type === "imap" && (
         <div>
          <Box sx={{paddingBottom:"1rem"}}>
@@ -394,11 +432,11 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
               <InputLabel>Message Per Day (Warmups not included)</InputLabel>
               <SmtpUpdateTextField
                 fullWidth
-                name="msg_per_day"
-                value={formData.msg_per_day}
+                name="limit"
+                value={formData.limit}
                 onChange={handleChange}
-                error={!!errors.msg_per_day}
-                helperText={errors.msg_per_day}
+                error={!!errors.limit}
+                helperText={errors.limit}
               />
             </Grid2>
             <Grid2 size={{ xs: 5, sm: 5 }}>
@@ -557,28 +595,10 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
               <ReactQuill
                 theme="snow"
                 value={formData.signature}
-                onChange={(value: any) =>
+                onChange={(value: string) =>
                   setFormData((prev) => ({ ...prev, signature: value }))
                 }
               />
-            </Grid2>
-            <br />
-            <Grid2 size={{ xs: 3, sm: 3 }}>
-              <Button2
-                disabled={isSaveDisabled}
-                onClick={handleUpdatAccount}
-                color={isSaveDisabled ? "black" : "white"}
-                background={isSaveDisabled ? "#d3d3d3" : "var(--theme-color)"}
-                style={{
-                  cursor: isSaveDisabled ? "not-allowed" : "pointer",
-                }}
-              >
-                {loading ? (
-                  <CircularProgress size={24} sx={{ color: "white" }} />
-                ) : (
-                  "Update Details"
-                )}{" "}
-              </Button2>
             </Grid2>
           </Grid2>
         </div>
@@ -633,18 +653,17 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
               <InputLabel>Message Per Day (Warmups not included) *</InputLabel>
               <SmtpUpdateTextField
                 fullWidth
-                
                 type="number"
-                name="msg_per_day"
+                name="limit"
                 placeholder="12"
-                value={formData.msg_per_day}
+                value={formData.limit}
                 onChange={handleChange}
-                error={!formData.msg_per_day || formData.msg_per_day <= 0}
+                error={!formData.limit || formData.limit <= 0}
                 inputProps={{ min: 1 }}
                 helperText={
-                  !formData.msg_per_day
+                  !formData.limit
                     ? "Msg per day is required"
-                    : formData.msg_per_day <= 0
+                    : formData.limit <= 0
                       ? "Enter a valid positive number"
                       : ""
                 }
@@ -670,69 +689,13 @@ const EditGeneralEmailAccount: React.FC<{ id?: string }> = ({ id }) => {
                 inputProps={{ min: 1 }}
               />
             </Grid2>
-            <Grid2 size={{ xs: 10, sm: 10 }}>
-              {formData.type === "gmail" ? 
-              <>{isUpdateDisabled?<PrimaryButtonDisabled
-                  disabled={isUpdateDisabled}
-                  onClick={handleUpdatAccount}
-                  // color={isUpdateDisabled ? "white" : "white"}
-                  // background={isUpdateDisabled ? "var(--primary-light)" : "var(--primary)"}
-
-                  // style={{
-                  //   cursor: isUpdateDisabled ? "not-allowed" : "pointer",
-                  //   width: "20%",
-                    
-                  // }}
-                >
-                  Update Details
-                </PrimaryButtonDisabled>:<PrimaryButton
-                  disabled={isUpdateDisabled}
-                  onClick={handleUpdatAccount}
-                  // color={isUpdateDisabled ? "white" : "white"}
-                  // background={isUpdateDisabled ? "var(--primary-light)" : "var(--primary)"}
-
-                  // style={{
-                  //   cursor: isUpdateDisabled ? "not-allowed" : "pointer",
-                  //   width: "20%",
-                    
-                  // }}
-                >
-                  Update Details
-                </PrimaryButton>}</>
-                
-               : 
-               <>{isSaveDisabled?<PrimaryButtonDisabled
-                  disabled={isSaveDisabled}
-                  onClick={handleUpdatAccount}
-                  // color={"white"}
-                  // background="green"
-                  // style={{
-                  //   width: "10%",
-                  //   cursor: isSaveDisabled ? "not-allowed" : "pointer",
-                  // }}
-                >
-                  Update Details
-                </PrimaryButtonDisabled>:
-                <PrimaryButton
-                  disabled={isSaveDisabled}
-                  onClick={handleUpdatAccount}
-                  // color={"white"}
-                  // background="green"
-                  // style={{
-                  //   width: "10%",
-                  //   cursor: isSaveDisabled ? "not-allowed" : "pointer",
-                  // }}
-                >
-                  Update Details
-                </PrimaryButton>}</>
-                
-              }
-            </Grid2>
           </Grid2>
         </div>
       )}
-    </div>
+    </div>) : <Loader />
   );
-};
+});
+
+EditGeneralEmailAccount.displayName = "EditGeneralEmailAccount";
 
 export default EditGeneralEmailAccount;
