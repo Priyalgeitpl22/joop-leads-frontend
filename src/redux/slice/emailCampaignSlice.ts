@@ -25,6 +25,7 @@ export const fetchEmailCampaigns = createAsyncThunk(
   "emailCampaign/fetchAll",
   async (_, { rejectWithValue }) => {
     try {
+      const token = Cookies.get("access_token");
       const response = await api.get(`${BASE_URL}`,
         {
           headers: { Authorization: `Bearer ${token}` },

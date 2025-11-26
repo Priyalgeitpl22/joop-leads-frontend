@@ -289,7 +289,19 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
 
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md">
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="md"
+      PaperProps={{
+        sx: {
+          width: "100%",
+          maxHeight: "90vh",
+          m: { xs: 1, sm: 2 },
+          borderRadius: { xs: "12px", sm: "16px" },
+        },
+      }}
+    >
       <Toaster position="top-right" />
       <IconButton
         onClick={onClose}
@@ -309,7 +321,7 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
         <Typography sx={{fontWeight:"bold", fontSize:"1.5rem", color:" #35495c;",paddingTop:"1rem"}}>
           Add Email
         </Typography>
-        
+
         <Typography mt={1} sx={{color:"var(--text-secondary)"}}>
           Read the full tutorial on setting up your email account here
         </Typography>
@@ -333,8 +345,8 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
               autoComplete="off"
             />
             {errors.fromName && <Typography color="red" variant="caption">
-              {errors.fromName}
-            </Typography>
+                {errors.fromName}
+              </Typography>
             }
           </Grid2>
           <Grid2 size={{ xs: 6, sm: 6 }}>
@@ -349,8 +361,8 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
               autoComplete="off"
             />
             {errors.fromEmail && <Typography color="red" variant="caption">
-              {errors.fromEmail}
-            </Typography>
+                {errors.fromEmail}
+              </Typography>
             }
 
           </Grid2>
@@ -605,35 +617,35 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
             />
           </Grid2>
           {isSaveDisabled?<ButtonDisabled
-            disabled={isSaveDisabled}
-            onClick={handleCreateAccount}
-            color={isSaveDisabled ? "white" : "white"}
-            // background={isSaveDisabled ? "var(--secondary)" : "var(--secodary)"}
-            // style={{
-            //   width: "10%",
-            //   cursor: isSaveDisabled ? "not-allowed" : "pointer",
-            // }}
-          >
-            {loading ? (
-              <CircularProgress size={24} sx={{ color: "white" }} />
-            ) : (
-              "Save"
-            )}
+              disabled={isSaveDisabled}
+              onClick={handleCreateAccount}
+              color={isSaveDisabled ? "white" : "white"}
+              // background={isSaveDisabled ? "var(--secondary)" : "var(--secodary)"}
+              // style={{
+              //   width: "10%",
+              //   cursor: isSaveDisabled ? "not-allowed" : "pointer",
+              // }}
+            >
+              {loading ? (
+                <CircularProgress size={24} sx={{ color: "white" }} />
+              ) : (
+                "Save"
+              )}
           </ButtonDisabled>:<Button
-            disabled={isSaveDisabled}
-            onClick={handleCreateAccount}
-            color={isSaveDisabled ? "white" : "white"}
-            // background={isSaveDisabled ? "var(--secondary)" : "var(--secodary)"}
-            // style={{
-            //   width: "10%",
-            //   cursor: isSaveDisabled ? "not-allowed" : "pointer",
-            // }}
-          >
-            {loading ? (
-              <CircularProgress size={24} sx={{ color: "white" }} />
-            ) : (
-              "Save"
-            )}
+              disabled={isSaveDisabled}
+              onClick={handleCreateAccount}
+              color={isSaveDisabled ? "white" : "white"}
+              // background={isSaveDisabled ? "var(--secondary)" : "var(--secodary)"}
+              // style={{
+              //   width: "10%",
+              //   cursor: isSaveDisabled ? "not-allowed" : "pointer",
+              // }}
+            >
+              {loading ? (
+                <CircularProgress size={24} sx={{ color: "white" }} />
+              ) : (
+                "Save"
+              )}
           </Button>}
           
         </Grid2>

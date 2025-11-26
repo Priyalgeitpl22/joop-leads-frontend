@@ -398,28 +398,6 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
                   >
                     View
                   </MenuItem>
-
-                  <MenuItem
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      handleMenuClose();
-                    }}
-                    sx={{
-                      border: "1px solid lightgray",
-                      borderRadius: "6px",
-                      color: "gray",
-                      fontWeight: 500,
-                      fontSize: "14px",
-                      padding: "4px 10px",
-                      minHeight: "32px",
-                      "&:hover": {
-                        backgroundColor: "gray",
-                        color: "#fff !important",
-                      },
-                    }}
-                  >
-                    Details
-                  </MenuItem>
                 </FolderMenu>
 
 

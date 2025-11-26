@@ -43,7 +43,7 @@ const ViewEmailCampaign = () => {
 
   const handleTabChange = (_: any, newValue: string) => {
     if(newValue as string === "back"){
-      navigate("/email-accounts")
+      navigate("/email-campaign/all")
     }
     const validTabs = ["performance", "lead_list", "sequences"];
     setActiveTab(validTabs.includes(newValue) ? newValue : "performance");

@@ -29,7 +29,15 @@ const ConfirmDeleteDialog: React.FC<ConfirmDeleteDialogProps> = ({
   cancelText = "Cancel",
 }) => {
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      PaperProps={{
+        sx: {
+          borderRadius: { xs: "12px", sm: "12px" },
+        },
+      }}
+    >
       <StyledDialogContent>
         <Trash2 style={{ color: "var(--error-color)" }} />
         <StyledDialogTitle>{title}</StyledDialogTitle>
@@ -38,7 +46,7 @@ const ConfirmDeleteDialog: React.FC<ConfirmDeleteDialogProps> = ({
           <Button2
             onClick={onClose}
             color={""}
-            background={"var(--input-placeholder)"}
+            background={"var(--background-slate)"}
           >
             {cancelText}
           </Button2>
