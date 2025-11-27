@@ -75,15 +75,15 @@ export const StyledButton = styled(Button)`
   font-weight: bold;
   text-transform: none;
   transition: all 0.3s ease-in-out;
-  background: var(--theme-color);
+  background: var(--primary-dark);
   color: white;
 
   &:hover {
-    background: var(--theme-color);
+    background: #2563eb;
     opacity: 0.9;
   }
   .MuiOutlinedInput-input {
-    padding: 12px 10px !important; 
+    padding: 12px 10px !important;
   }
 `;
 

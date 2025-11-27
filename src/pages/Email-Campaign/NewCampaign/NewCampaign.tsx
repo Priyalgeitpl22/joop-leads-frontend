@@ -29,6 +29,7 @@ import { CustomizedStepper } from "./stepper";
 import { Button, SecondaryButton } from "../../../styles/global.styled";
 import { useLocation } from "react-router-dom";
 import CircularLoader from "../../../assets/Custom/circularProgress";
+import toast from "react-hot-toast";
 export interface ImportedLeadsData {
   campaignName?: string;
   clientId?: string;
@@ -201,17 +202,21 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
           campaignId: campaignId,
           status: "SCHEDULED",
         })
-      );
-      setIsLoading(true);
-      if (response) {
-        setIsLoading(false);
-        if (response.payload.code === 200) {
+      ).unwrap();
+
+      setIsLoading(false);
+      if (response.code === 200) {
+        toast.success("Campaign scheduled successfully!");
+        setTimeout(() => {
           GoBack();
-        }
+        }, 1200);
+      } else {
+        toast.error("Failed to schedule campaign. Please try again.");
       }
     } catch (error) {
       setIsLoading(false);
       console.error("Error scheduling campaign:", error);
+      toast.error("Failed to schedule campaign. Please try again.");
     }
   };
 
