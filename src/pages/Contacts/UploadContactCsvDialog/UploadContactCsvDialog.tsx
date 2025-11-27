@@ -144,11 +144,21 @@ const UploadContactCsvDialog: React.FC<UploadContactCsvDialog> = ({
           />
         ) : (
           <>
-            <Typography variant="h6" fontWeight="600" textAlign="center">
-              Easily add or update Leads
+            <Typography
+              variant="h5"
+              fontWeight={700}
+              textAlign="center"
+              sx={{ color: "#111827", mb: 1, mt: 5 }}
+            >
+              Easily add or update Leads / Contacts
             </Typography>
-            <Typography variant="body2" textAlign="center" color="gray" mb={3}>
-              How would you like to get leads into your list?
+
+            <Typography
+              variant="body1"
+              textAlign="center"
+              sx={{ color: "#6b7280", mb: 6, mt: 1 }}
+            >
+              How would you like to get contacts into your list?
             </Typography>
 
             <FileUploadContainer
@@ -156,20 +166,27 @@ const UploadContactCsvDialog: React.FC<UploadContactCsvDialog> = ({
               onDragOver={onDragOver}
               onDrop={onDrop}
             >
-              <Typography variant="h6" fontWeight="600" mt={2}>
+              <div className="circle-icon">
+                <UploadFileOutlinedIcon
+                  sx={{ fontSize: 32, color: "var(--primary-dark)" }}
+                />
+              </div>
+              <Typography
+                variant="h6"
+                fontWeight="600"
+                sx={{ color: "#111827", mt: 1 }}
+              >
                 Upload CSV File
               </Typography>
-              <UploadFileOutlinedIcon
-                sx={{
-                  fontSize: 80,
-                  color: "var(--icon-color)",
-                  marginBottom: "10px",
-                }}
-              />
               <Typography
                 variant="body2"
-                color="gray"
-                sx={{ textAlign: "center" }}
+                sx={{
+                  textAlign: "center",
+                  color: "#6b7280",
+                  fontSize: "14px",
+                  lineHeight: "20px",
+                  mt: 1,
+                }}
               >
                 Select a CSV file to import <br /> or <br /> Drag & Drop CSV
                 file here

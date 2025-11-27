@@ -29,7 +29,6 @@ const ColumnVisibilitySelect: React.FC<ColumnVisibilitySelectProps> = ({
   visibleColumns,
   handleColumnVisibilityChange,
   columns,
-  labelId,
   label,
   sx,
   selectSx,
@@ -47,8 +46,6 @@ const ColumnVisibilitySelect: React.FC<ColumnVisibilitySelectProps> = ({
   return (
     <FormControl sx={{ ...sx, }}> {/* Remove margin and padding */}
       <Select
-        labelId={labelId}
-        id="column-visibility"
         multiple
         value={columns.filter((column) => visibleColumns[column])}
         onChange={handleChange}
@@ -60,14 +57,15 @@ const ColumnVisibilitySelect: React.FC<ColumnVisibilitySelectProps> = ({
           borderRadius: "4px",
 
           "& .MuiSelect-select": {
-            fontSize: "13px !important",
+            fontSize: "14px !important",
             fontWeight: 500,
             padding: "0px !important",
+            color: "#9ca3af",
           },
 
           ...selectSx,
         }}
-        renderValue={(selected) => selected.join(", ")}
+        renderValue={() => "Customize Columns"}
       >
         <Typography sx={{ px: 2, py: 1, fontWeight: "bold", }}>
           {label}

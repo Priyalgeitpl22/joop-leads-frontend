@@ -153,7 +153,7 @@ export const Button2 = styled("button", {
     white-space: nowrap;
     padding: 12px;
     color: ${color};
-    background-color: ${background};
+    background: ${background};
     border: none;
     font-weight: 500;
     font-size: 16px;
