@@ -469,6 +469,7 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
                   </Typography>
                   <FormControl fullWidth error={!!errors.startDate}>
                     <DesktopDatePicker
+                      minDate={dayjs()}
                       value={formData.startDate}
                       onChange={(value) => handleChange("startDate", value)}
                       disablePast={true}

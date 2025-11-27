@@ -115,8 +115,13 @@ function Login() {
           />
         </IllustrationSection>
 
-        <FormSection>
-          <Typography variant="h4" fontWeight="bold" mb={1} color="var(--text-black)">
+        <FormSection onKeyDown={(e) => e.key === "Enter" && handleSignIn()}>
+          <Typography
+            variant="h4"
+            fontWeight="bold"
+            mb={1}
+            color="var(--text-black)"
+          >
             Welcome!
           </Typography>
           <Typography variant="body1" color="black" mb={4}>
