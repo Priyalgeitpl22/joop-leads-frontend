@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   CircularProgress,
   DialogContent,
+  FormHelperText,
   IconButton,
   TextField,
   Typography,
@@ -45,6 +46,7 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
   const [toEmail, setToEmail] = useState<string>("");
   const [isLoading, setIsLoading] = React.useState(false);
   const [loading, setLoading] = useState(false);
+  const [emailError, setEmailError] = useState<string>("");
   const { user } = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
@@ -96,6 +98,20 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
       setLoading(false);
     }
   };
+
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setToEmail(value);
+
+    if (!emailRegex.test(value) && value !== "") {
+      setEmailError("Please enter a valid email address.");
+    } else {
+      setEmailError("");
+    }
+  };
+
   return (
     <DialogBox open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogHeader>
@@ -109,10 +125,10 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
       </DialogHeader>
 
       <DialogContent>
-      <Typography fontWeight="600">Sender Account</Typography>
+        <Typography fontWeight="600">Sender Account</Typography>
         <MultiSelectDropdown
           width="550px"
-          label="Select Account"
+          label=""
           selectedValues={selectedEmailAccount}
           onChange={setSelectedEmailAccount}
           multiple={false}
@@ -132,12 +148,15 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
           name="toEmail"
           fullWidth
           variant="outlined"
-          onChange={(e) => setToEmail(e.target.value)}
+          onChange={handleEmailChange}
+          value={toEmail}
           placeholder="Add email"
+          error={!!emailError}
           InputProps={{
             sx: { height: "40px" },
           }}
         />
+        {emailError && <FormHelperText error>{emailError}</FormHelperText>}
         <Typography fontWeight={500} fontSize={14} mt={1}>
           PS: <b>Do not </b> use this as a mechanism for testing email
           deliverability. Use this for testing formatting and copy.
