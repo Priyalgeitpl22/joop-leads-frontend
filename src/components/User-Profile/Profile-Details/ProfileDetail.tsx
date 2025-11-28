@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Dialog, TextField, Box } from "@mui/material";
+import { Dialog, TextField, Box, FormHelperText } from "@mui/material";
 import {
   DialogHeader,
   StyledTitle,
@@ -40,6 +40,11 @@ const ProfileDetail: React.FC<ProfileDetailProps> = ({ open, onClose }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
 
+  const [errors, setErrors] = useState({
+    name: "",
+    email: "",
+  });
+
   useEffect(() => {
     setFormData({
       name: userData?.fullName || "",
@@ -52,6 +57,7 @@ const ProfileDetail: React.FC<ProfileDetailProps> = ({ open, onClose }) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,11 +69,30 @@ const ProfileDetail: React.FC<ProfileDetailProps> = ({ open, onClose }) => {
   };
 
   const handleSave = async () => {
-    setLoading(false);
+    const trimmedName = formData.name.trim();
+    const trimmedEmail = formData.email.trim();
+
+    const newErrors = { name: "", email: "" };
+
+    if (!trimmedName) {
+      newErrors.name = "Name cannot be empty!";
+    }
+
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    if (!emailRegex.test(trimmedEmail)) {
+      newErrors.email = "Please enter a valid email address!";
+    }
+
+    if (newErrors.name || newErrors.email) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setLoading(true);
     const formDataToSend = new FormData();
     formDataToSend.append("id", userData?.id || "");
-    formDataToSend.append("name", formData.name);
-    formDataToSend.append("email", formData.email);
+    formDataToSend.append("name", trimmedName);
+    formDataToSend.append("email", trimmedEmail);
     formDataToSend.append("role", formData.role);
 
     if (newProfilePicture) {
@@ -79,7 +104,6 @@ const ProfileDetail: React.FC<ProfileDetailProps> = ({ open, onClose }) => {
       toast.success("User details updated successfully!");
       onClose();
       window.location.reload();
-      // setLoading(false);
     } catch (error) {
       toast.error("Failed to update user details!");
     }
@@ -155,7 +179,9 @@ const ProfileDetail: React.FC<ProfileDetailProps> = ({ open, onClose }) => {
             name="name"
             value={formData.name}
             onChange={handleInputChange}
+            error={Boolean(errors.name)}
           />
+          {errors.name && <FormHelperText error>{errors.name}</FormHelperText>}
         </FieldWrapper>
 
         <FieldWrapper>
@@ -166,7 +192,11 @@ const ProfileDetail: React.FC<ProfileDetailProps> = ({ open, onClose }) => {
             name="email"
             value={formData.email}
             onChange={handleInputChange}
+            error={Boolean(errors.email)}
           />
+          {errors.email && (
+            <FormHelperText error>{errors.email}</FormHelperText>
+          )}
         </FieldWrapper>
 
         <FieldWrapper>

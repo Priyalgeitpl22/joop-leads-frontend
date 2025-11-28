@@ -155,11 +155,6 @@ export const SecondaryButton = styled.button`
     color: var(--text-white);
   }
 
-  &:active {
-    background: var(--active-color);
-    color: var(--text-white);
-  }
-
   &:active .input {
     color: var(--text-white);
   }

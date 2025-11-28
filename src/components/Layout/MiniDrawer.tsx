@@ -239,7 +239,14 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
       </Box>
 
       {/* Navigation Items */}
-      <List sx={{ flexGrow: 1, px: open ? 1.5 : 0.5, py: 1 }}>
+      <List
+        sx={{
+          flexGrow: 1,
+          px: open ? 1.5 : 0.5,
+          py: 1,
+          overflow: "visible!important",
+        }}
+      >
         {navigationItems.map((item) => (
           <ListItem key={item.title} disablePadding>
             <ListItemButton
@@ -264,15 +271,15 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
               }}
             >
               <ListItemIcon
-                    sx={{
-                      minWidth: 0,
-                      mr: open ? 1.5 : 0,
+                sx={{
+                  minWidth: 0,
+                  mr: open ? 1.5 : 0,
                       justifyContent: 'center',
                       display: 'flex',
                       width: open ? 'auto' : '100%',  
                       color: 'inherit',
-                    }}
-                  >
+                }}
+              >
                 {item.hasBadge ? (
                   <Badge badgeContent={item.badgeCount} color="warning">
                     {item.icon}
@@ -298,72 +305,77 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
       {/* Bottom Navigation Buttons */}
       <Divider sx={{ bgcolor: "var(--border-color) !important" }} />
      {open? <List sx={{ px: open ? 1 : 0.5, py: 1, display: 'flex', justifyContent: "space-evenly" }}>
-  {navigateButtons.map((item) => (
-    <ListItem key={item.path} disablePadding>
-      <Tooltip title={item.title} placement="right" arrow>
-        <ListItemButton
+          {navigateButtons.map((item) => (
+            <ListItem key={item.path} disablePadding>
+              <Tooltip
+                title={item.title}
+                placement="top"
+                arrow
+                slotProps={{ popper: { style: { zIndex: 30000 } } }}
+              >
+                <ListItemButton
           onClick={() => handleNavigation(item.path, item.isThemeToggle)}
-          selected={isActiveRoute(item.path)}
-          sx={{
-            borderRadius: "10px",
-            justifyContent: "center", // Always center icon for clean look
-            color: "#666666 ",
-            transition: "all 0.3s ease",
-            "&:hover": {
-              bgcolor: "rgba(0,0,0,0.05) !important",
-              color: "#1a1a1a !important",
-            },
-          }}
-        >
-          <ListItemIcon
-            sx={{
-              justifyContent: "center",
-              color: "#000000",
-            }}
-          >
-            {item.icon}
-          </ListItemIcon>
-        </ListItemButton>
-      </Tooltip>
-    </ListItem>
-  ))}
+                  selected={isActiveRoute(item.path)}
+                  sx={{
+                    borderRadius: "10px",
+                    justifyContent: "center", // Always center icon for clean look
+                    color: "#666666 ",
+                    transition: "all 0.3s ease",
+                    "&:hover": {
+                      bgcolor: "rgba(0,0,0,0.05) !important",
+                      color: "#1a1a1a !important",
+                    },
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      justifyContent: "center",
+                      color: "#000000",
+                    }}
+                  >
+                    {item.icon}
+                  </ListItemIcon>
+                </ListItemButton>
+              </Tooltip>
+            </ListItem>
+          ))}
 </List>: <List sx={{ px: open ? 1 : 0.5, py: 1, display: 'flex', justifyContent: "space-evenly", flexDirection:"column" }}>
-  {navigateButtons.map((item) => (
-    <ListItem key={item.path} disablePadding>
-      <Tooltip title={item.title} placement="right" arrow>
-        <ListItemButton
+          {navigateButtons.map((item) => (
+            <ListItem key={item.path} disablePadding>
+              <Tooltip title={item.title} placement="right" arrow>
+                <ListItemButton
           onClick={() => handleNavigation(item.path, item.isThemeToggle)}
-          selected={isActiveRoute(item.path)}
-          sx={{
-            borderRadius: "10px",
-            justifyContent: "center", // Always center icon for clean look
-            color: "#666666",
-            transition: "all 0.3s ease",
-            "&:hover": {
-              bgcolor: "rgba(0,0,0,0.05)",
-              color: "#1a1a1a",
-            },
-          }}
-        >
-          <ListItemIcon
-            sx={{
-              justifyContent: "center",
-              color: "#000000",
-            }}
-          >
-            {item.icon}
-          </ListItemIcon>
-        </ListItemButton>
-      </Tooltip>
-    </ListItem>
-  ))}
+                  selected={isActiveRoute(item.path)}
+                  sx={{
+                    borderRadius: "10px",
+                    justifyContent: "center", // Always center icon for clean look
+                    color: "#666666",
+                    transition: "all 0.3s ease",
+                    "&:hover": {
+                      bgcolor: "rgba(0,0,0,0.05)",
+                      color: "#1a1a1a",
+                    },
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      justifyContent: "center",
+                      color: "#000000",
+                    }}
+                  >
+                    {item.icon}
+                  </ListItemIcon>
+                </ListItemButton>
+              </Tooltip>
+            </ListItem>
+          ))}
 </List>}
 
     </Box>
   );
 
   return (
-    <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
+    <Box sx={{ display: 'flex', height: '100vh', overflow: 'visible' }}>
       <Drawer
         variant={isVerySmallScreen ? 'temporary' : 'permanent'}
         open={open}
@@ -379,7 +391,8 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
               easing: theme.transitions.easing.sharp,
               duration: theme.transitions.duration.enteringScreen,
             }),
-            overflowX: 'hidden',
+            overflow: 'visible !important',
+            zIndex: 20000,
             bgcolor: isDarkMode ? '#1e1e2e' : '#ffffff',
             borderRight: '1px solid',
             borderColor: isDarkMode ? 'rgba(255,255,255,0.1)' : '#e8e8e8',

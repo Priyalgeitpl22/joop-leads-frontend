@@ -519,7 +519,9 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
             <SecondaryButton onClick={handleTestEmail}>
               Send Test Email
             </SecondaryButton>
-            <Button onClick={handleNext}>Schedule Campaign</Button>
+            <Button onClick={handleNext} style={{ marginRight: "5%" }}>
+              Schedule Campaign
+            </Button>
           </>
         ) : (
           <Button
