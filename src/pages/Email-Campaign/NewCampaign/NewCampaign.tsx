@@ -532,6 +532,7 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
               background: isNextDisabled()
                 ? "#d1d5db"
                 : "var(--secondary-gradient)",
+              marginRight: "5%"
             }}
           >
             Save and Next

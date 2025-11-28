@@ -37,7 +37,7 @@ function Login() {
       (async () => {
         try {
           const response = await dispatch(
-            loginUser({ email, password })
+            loginUser({ email: email.toLowerCase(), password })
           ).unwrap();
 
           if (response?.code === 200) {
@@ -63,11 +63,12 @@ function Login() {
 
   const handleSignIn = () => {
     let valid = true;
+    const normalizedEmail = email.toLowerCase();
 
-    if (!email.trim()) {
+    if (!normalizedEmail.trim()) {
       setEmailError("Email is required.");
       valid = false;
-    } else if (!validateEmail(email)) {
+    } else if (!validateEmail(normalizedEmail)) {
       setEmailError("Enter a valid email address.");
       valid = false;
     } else {

@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../redux/store/store";
 import { getEmailAccountSmtpDetail } from "../../../redux/slice/emailAccountSlice";
 import { PrimaryButton } from "../../../styles/global.styled";
+import EditOverviewEmailAccount from "./EditOverviewEmailAccount";
 
 interface EmailAccountData {
   _id?: string;
@@ -31,7 +32,7 @@ interface EmailAccountData {
 const EditEmailAccount = ({ id }: { id?: string }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const [activeTab, setActiveTab] = useState<string>("general");
+  const [activeTab, setActiveTab] = useState<string>("overview");
   const generalRef = useRef<EditGeneralEmailAccountRef>(null);
   const warmupRef = useRef<EditWarmupEmailAccountRef>(null);
 
@@ -54,8 +55,8 @@ const EditEmailAccount = ({ id }: { id?: string }) => {
     if ((newValue as string) === "back") {
       navigate("/email-accounts");
     }
-    const validTabs = ["general", "warmUp", "campaign"];
-    setActiveTab(validTabs.includes(newValue as string) ? newValue : "general");
+    const validTabs = ["overview", "general", "warmUp", "campaign"];
+    setActiveTab(validTabs.includes(newValue as string) ? newValue : "overview");
   };
 
   const handleUpdate = async () => {
@@ -88,12 +89,16 @@ const EditEmailAccount = ({ id }: { id?: string }) => {
           }}
         >
           <CustomTab label={<ArrowLeft />} value="back" />
+          <CustomTab label="Overview" value="overview" />
           <CustomTab label="General" value="general" />
           <CustomTab label="Warm Up" value="warmUp" />
           <CustomTab label="Campaign" value="campaign" />
         </CustomTabs>
 
         <ScrollableContent>
+          {activeTab === "overview" && (
+            <EditOverviewEmailAccount/>
+          )}
           {activeTab === "general" && (
             <EditGeneralEmailAccount
               ref={generalRef}
@@ -125,7 +130,7 @@ const EditEmailAccount = ({ id }: { id?: string }) => {
             }}
           ><PrimaryButton onClick={handleUpdate} style={{ minWidth: "150px" }}>
               Update
-              </PrimaryButton>
+            </PrimaryButton>
           </Box>
         )}
       </ContentContainer>

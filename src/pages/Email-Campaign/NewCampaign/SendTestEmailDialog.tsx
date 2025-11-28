@@ -109,6 +109,7 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
       </DialogHeader>
 
       <DialogContent>
+      <Typography fontWeight="600">Sender Account</Typography>
         <MultiSelectDropdown
           width="550px"
           label="Select Account"
@@ -123,17 +124,16 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
               label: account.email,
             }))}
         />
-        <Typography fontWeight={500} fontSize={16} mt={2}>
+        <Typography fontWeight={500} fontSize={16} mt={2} mb={2}>
           Edit the email account if you want to send to a different email.
         </Typography>
-
+        <Typography fontWeight="600">Receiver Account</Typography>
         <TextField
           name="toEmail"
           fullWidth
           variant="outlined"
           onChange={(e) => setToEmail(e.target.value)}
-          placeholder="Type here"
-          sx={{ marginTop: "15px" }}
+          placeholder="Add email"
           InputProps={{
             sx: { height: "40px" },
           }}

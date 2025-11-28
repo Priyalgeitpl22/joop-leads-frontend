@@ -8,7 +8,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
-import DeleteIcon from "@mui/icons-material/Delete";
+import CloseIcon from "@mui/icons-material/Close";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CampaignIcon from "@mui/icons-material/Campaign";
@@ -223,7 +223,7 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
                 "&:hover": { background: "#fee2e2" },
               }}
             >
-              <DeleteIcon sx={{ fontSize: 20 }} />
+              <CloseIcon sx={{ fontSize: 20 }} />
             </IconButton>
           </Tooltip>
         </Box>
@@ -368,7 +368,8 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
         <Button2
           onClick={handleUploadContacts}
           color="white"
-          background="var(--theme-color)"
+          background="var(--secondary-gradient)"
+          style={{alignSelf: "end"}}
         >
           Save and Next
         </Button2>
