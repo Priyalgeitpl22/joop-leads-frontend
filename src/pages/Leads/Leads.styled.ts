@@ -147,10 +147,6 @@ export const CustomForwardIcon = styled(IconButton)`
   padding: 0px;
 `;
 
-export const FilterIcon = styled(IconButton)`
-  height: 2em;
-`;
-
 export const CustomDangerIcon = styled(IconButton)`
   color: #fbc61e;
 `;

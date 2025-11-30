@@ -32,6 +32,7 @@ body {
   /* New Global Colors Variables */
   --primary: #2463EB;
   --primary-light: #6093eb;
+  --primary-lighter: #dbe8ff;
   --primary-dark: #0d47a1;
   --secondary: #00B877;
   --secondary-light: #7fc97e;
@@ -255,7 +256,7 @@ input:-webkit-autofill {
 
 /* Consistent Component Styling */
 .MuiAppBar-root {
-  height: 80px !important;
+  height: 70px !important;
 }
 
 .MuiToolbar-root {

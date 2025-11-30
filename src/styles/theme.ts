@@ -98,10 +98,14 @@ const theme = createTheme({
     MuiInputLabel: {
       styleOverrides: {
         root: {
+          fontSize: "10px",         // Label font size
           color: "var(--theme-color-dark)",
           "&.Mui-focused": {
             color: "var(--active-color) !important",
           },
+        },
+        shrink: {
+          fontSize: "13px",         // Label when it moves up
         },
       },
     },
@@ -224,8 +228,27 @@ const theme = createTheme({
     MuiTextField: {
       styleOverrides: {
         root: {
+          fontSize: "12px",         // Text inside input
+          height: "2px",           // Field height
           width: "100%",
           backgroundColor: "var(--input-bg)",
+        },
+      },
+    },
+    
+    MuiInputBase: {
+      styleOverrides: {
+        root: {
+          fontSize: "14px",         // Text inside input
+          height: "42px",           // Field height
+        },
+        input: {
+          padding: "10px 12px",     // Inner padding
+          fontSize: "14px",         // Input text size
+          "&::placeholder": {
+            fontSize: "14px",       // Placeholder size
+            opacity: 0.7,
+          },
         },
       },
     },

@@ -50,7 +50,6 @@ export const FooterContent = styled(Typography)(`
     font-size: 14px;
     font-weight: 400;
     line-height: 18px;
-    font-family: "DM Sans", sans-serif !important;
     white-space: normal; /* Allows text wrapping */
     word-wrap: break-word; /* Ensures long words break */
     overflow-wrap: break-word; /* Alternative for breaking */

@@ -33,6 +33,7 @@ import {
   clearFilters,
   markThreadAsRead,
 } from "../../../redux/slice/emailInboxSlice";
+import { FilterIcon } from "../../../styles/global.styled";
 
 const filterConfig = [
   { key: "allReplies", label: "All Replies" },
@@ -243,7 +244,7 @@ const EmailInboxAreaComponent: React.FC<EmailInboxAreaProps> = ({ onMessageSelec
             <Tooltip title="Filter Emails">
               <Button
                 onClick={handleFilterClick}
-                sx={{ marginLeft: "5px", color: "var(--primary)", border: "1px solid var(--primary)"}}
+                sx={{ marginLeft: "5px", color: "var(--primary)", border: "1px solid var(--primary)", minWidth: "30px", minHeight: "28px"}}
               >
                 <FilterAltOutlinedIcon style={{color:"var(--primary)"}} />
               </Button>
@@ -337,24 +338,27 @@ const EmailInboxAreaComponent: React.FC<EmailInboxAreaProps> = ({ onMessageSelec
                 }}
               >
                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "12px" }}>
-                    <h4>{message.subject || "No Subject"}</h4>
+                    <h6>{message.subject || "No Subject"}</h6>
+                    <div style={{ fontSize: "12px", color: "#777", marginTop: "5px" }}>
+                      Date: {new Date(message.date).toLocaleString()}
+                    </div>
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                       <Avatar src="https://ssl.gstatic.com/ui/v1/icons/mail/profile_placeholder.png" />
                       <div>
-                        <strong>{message.from?.[0]?.name}</strong>
-                        <div style={{ fontSize: "15px", color: "#555" }}>
+                        <p style={{ fontSize: "12px", fontWeight: "600" }}>{message.from?.[0]?.name}</p>
+                        <div style={{ fontSize: "12px", color: "#555", display: "flex", alignItems: "center", gap: "5px" }}>
                           {message.from?.[0]?.address || "No Email"}
                         </div>
                       </div>
                     </div>
-                    <div style={{ fontSize: "15px", color: "#777", marginTop: "5px" }}>
+                    {/* <div style={{ fontSize: "12px", color: "#777", marginTop: "5px" }}>
                       Date: {new Date(message.date).toLocaleString()}
-                    </div>
+                    </div> */}
                   </div>
-                  <div style={{ fontSize: "15px", color: "#777" }}>
-                    To: <strong>{message.to?.[0]?.name}</strong> ({message.to?.[0]?.address || "No Email"})
+                  <div style={{ fontSize: "12px", color: "#777", display: "flex", alignItems: "center", gap: "5px" }}>
+                    To: <p style={{ fontSize: "12px", fontWeight: "600" }}>{message.to?.[0]?.name}</p> ({message.to?.[0]?.address || "No Email"})
                   </div>
                 </EmailInboxMessagesHeading>
               ))}

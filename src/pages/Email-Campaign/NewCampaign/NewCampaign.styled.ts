@@ -8,16 +8,6 @@ export const Container = styled.div(`
   overflow: hidden;
 `);
 
-export const HeaderContainer = styled.div`
-  align-items: center;
-  box-shadow: none;
-  border-bottom: 1px solid #e5e7eb;
-  display: flex;
-  padding: 8px 24px;
-  gap: 20px;
-  background-color: #ffffff;
-`;
-
 export const FooterContainer = styled.div`
   display: flex;
   flex-direction: row;

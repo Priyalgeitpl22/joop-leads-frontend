@@ -4,7 +4,6 @@ import {
   DialogContent,
   FormHelperText,
   IconButton,
-  TextField,
   Typography,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
@@ -20,6 +19,7 @@ import { fetchEmailAccount } from "../../../redux/slice/emailAccountSlice";
 import { SendTestEmail } from "../../../redux/slice/emailCampaignSlice";
 import toast from "react-hot-toast";
 import { Button } from "../../../styles/global.styled";
+import { TextField } from "../../../styles/layout.styled";
 
 interface SendTestEmailDialogProps {
   open: boolean;
@@ -52,7 +52,9 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
   useEffect(() => {
     const getEmailAccounts = async () => {
       try {
-        const data = await dispatch(fetchEmailAccount({ orgId: user?.orgId || "" })).unwrap();
+        const data = await dispatch(
+          fetchEmailAccount({ orgId: user?.orgId || "" })
+        ).unwrap();
         setRows(data);
         if (data.length > 0) {
           setSelectedEmailAccount(data[0].id);
@@ -88,7 +90,7 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
       const response = await dispatch(SendTestEmail(payload)).unwrap();
       if (response) {
         toast.success(response?.message);
-      } 
+      }
       onClose();
       setLoading(false);
     } catch (error) {
@@ -115,7 +117,7 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
   return (
     <DialogBox open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogHeader>
-        <Typography fontWeight="600">Send Test Email</Typography>
+        <Typography fontWeight="500" fontSize={16}>Send Test Email</Typography>
         <IconButton
           onClick={onClose}
           sx={{ position: "absolute", right: 16, top: 12, padding: "0px" }}
@@ -125,48 +127,47 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
       </DialogHeader>
 
       <DialogContent>
-        <Typography fontWeight="600">Sender Account</Typography>
+        {/* <Typography fontWeight="500" fontSize={14}>Sender Account</Typography> */}
         <MultiSelectDropdown
           width="550px"
-          label=""
+          label="Sender Account"
           selectedValues={selectedEmailAccount}
           onChange={setSelectedEmailAccount}
           multiple={false}
           options={rows
-            .filter((account) => account.email)
+            ?.filter((account) => account.email)
             .map((account) => ({
-              key: account._id,
+              key: account.id,
               value: account.email,
               label: account.email,
             }))}
         />
-        <Typography fontWeight={500} fontSize={16} mt={2} mb={2}>
+        <Typography fontWeight={500} fontSize={12} mt={2} mb={2}>
           Edit the email account if you want to send to a different email.
         </Typography>
-        <Typography fontWeight="600">Receiver Account</Typography>
+        {/* <Typography fontWeight="500">Receiver Account</Typography> */}
         <TextField
+          label="Receiver Account"
           name="toEmail"
           fullWidth
           variant="outlined"
           onChange={handleEmailChange}
           value={toEmail}
-          placeholder="Add email"
+          placeholder="Enter email"
           error={!!emailError}
           InputProps={{
             sx: { height: "40px" },
           }}
         />
         {emailError && <FormHelperText error>{emailError}</FormHelperText>}
-        <Typography fontWeight={500} fontSize={14} mt={1}>
+        <Typography fontWeight={500} fontSize={12} mt={1}>
           PS: <b>Do not </b> use this as a mechanism for testing email
           deliverability. Use this for testing formatting and copy.
         </Typography>
       </DialogContent>
 
       <DialogFooter>
-        <Button
-          onClick={sendTestEmail}
-        >
+        <Button onClick={sendTestEmail}>
           {loading ? (
             <CircularProgress size={24} sx={{ color: "white" }} />
           ) : (

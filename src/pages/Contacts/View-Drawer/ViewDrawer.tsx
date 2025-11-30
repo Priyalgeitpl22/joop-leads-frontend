@@ -11,7 +11,6 @@ import {
   StyledCloseIconButton,
   ContactCard,
   CampaignCard,
-  SectionTitle,
   UploadedByContainer,
   StyleBox,
   ScrollableContent,
@@ -21,6 +20,7 @@ import {
 } from "./ViewDrawer.styled";
 import { CSV_COLUMNS } from "../../../constants";
 import { CampaignList } from "../../../redux/slice/contactSlice";
+import { SectionTitle } from "../../../styles/layout.styled";
 
 interface ViewDrawerProps {
   open: boolean;

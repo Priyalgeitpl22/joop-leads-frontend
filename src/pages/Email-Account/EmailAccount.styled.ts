@@ -28,14 +28,6 @@ export const EmailAccountsContainer = styled.div`
   }
 }
 `;
-export const EmailAccountHeader = styled.section`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px;
-  background: var(--background-light);
-`;
 
 export const CreateEmailAccount = styled(motion.button)`
   font-weight: bold;
@@ -151,14 +143,6 @@ export const CustomEditIconButton = styled(IconButton)`
 
 export const CustomForwardIcon = styled(IconButton)`
   padding: 0px
-`;
-
-export const FilterIcon = styled(IconButton)`
-  height: 40px;
-  background: var(--background-color);
-  border-radius: 5px;
-  border: 1px solid var(--border-color);
-  padding: 5px;
 `;
 
 export const CustomDangerIcon = styled(IconButton)`

@@ -43,13 +43,6 @@ export const SettingSection = styled.div`
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   }
 `;
-
-export const SectionTitle = styled(Typography)`
-  font-size: 14px;
-  letter-spacing: 0.5px;
-  margin-bottom: 4px;
-`;
-
 export const SectionDescription = styled(Typography)`
   color: #6b7280;
   font-size: 13px;

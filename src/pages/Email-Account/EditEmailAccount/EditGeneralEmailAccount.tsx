@@ -1,4 +1,9 @@
-import React, { useEffect, useState, useImperativeHandle, forwardRef } from "react";
+import React, {
+  useEffect,
+  useState,
+  useImperativeHandle,
+  forwardRef,
+} from "react";
 import {
   RadioGroup,
   Radio,
@@ -6,63 +11,29 @@ import {
   CircularProgress,
   Box,
   Typography,
-
 } from "@mui/material";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import Grid2 from "@mui/material/Grid2";
 import { Button2, TextField, InputLabel } from "../../../styles/layout.styled";
-import { SmtpUpdateTextField } from "../../../styles/layout.styled";
 
 import ReactQuill from "react-quill";
 import {
   getEmailAccountSmtpDetail,
-  updateEmailAccountSmtpDetail,
+  updateEmailAccount,
   verifyEmailAccount,
   VerifyEmailAccountPayload,
+  EmailAccount,
 } from "../../../redux/slice/emailAccountSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../redux/store/store";
 import { validateEmail } from "../../../utils/Validation";
 import toast from "react-hot-toast";
 import Loader from "../../../components/Loader";
-
-interface EmailAccountData {
-  _id?: string;
-  name?: string;
-  email?: string;
-  type?: string;
-  smtp?: {
-    host?: string;
-    port?: number;
-    secure?: boolean;
-    auth?: {
-      user?: string;
-      pass?: string;
-    };
-  };
-  imap?: {
-    host?: string;
-    port?: number;
-    secure?: boolean;
-    auth?: {
-      user?: string;
-      pass?: string;
-    };
-  };
-  replyToAddress?: string;
-  bccEmail?: string;
-  trackingDomain?: boolean;
-  tags?: string;
-  clients?: string;
-  signature?: string;
-  limit?: number;
-  time_gap?: number;
-  [key: string]: unknown;
-}
+import { Button } from "../../../styles/global.styled";
 
 interface EditGeneralEmailAccountProps {
   id?: string;
-  emailAccount?: EmailAccountData;
+  emailAccount: EmailAccount;
 }
 
 export interface EditGeneralEmailAccountRef {
@@ -71,8 +42,10 @@ export interface EditGeneralEmailAccountRef {
   loading: boolean;
 }
 
-const EditGeneralEmailAccount = forwardRef<EditGeneralEmailAccountRef, EditGeneralEmailAccountProps>(
-  ({ id, emailAccount: emailAccountProp }, ref) => {
+const EditGeneralEmailAccount = forwardRef<
+  EditGeneralEmailAccountRef,
+  EditGeneralEmailAccountProps
+>(({ id, emailAccount: emailAccountProp }, ref) => {
   const dispatch = useDispatch<AppDispatch>();
   const emailAccountFromRedux = useSelector((state: RootState) =>
     id ? state.emailAccount?.accounts?.[id] : null
@@ -82,26 +55,17 @@ const EditGeneralEmailAccount = forwardRef<EditGeneralEmailAccountRef, EditGener
   const [formData, setFormData] = useState({
     fromName: "",
     fromEmail: "",
-    userName: "",
-    password: "",
-    smtpHost: "",
-    smtpPort: null,
-    security: false,
-    imapHost: "",
-    imapPort: null,
-    imapUserName: "",
-    imapPassword: "",
-    imapSecurity: false,
-    replyToAddressChecked: false,
-    replyToAddress: "",
-    bccEmail: "",
-    trackingDomainChecked: false,
-    tags: "",
-    clients: "",
-    signature: "",
     limit: 0,
-    time_gap: null,
-    type: "",
+    timeGap: 0,
+  });
+
+  const [smtpFormData, setSmtpFormData] = useState({
+    warmup: {
+      enabled: false,
+      maxPerDay: 0,
+      dailyRampup: false,
+      rampupIncrement: 0,
+    },
   });
 
   const [isVerified, setIsVerified] = useState(false);
@@ -121,15 +85,6 @@ const EditGeneralEmailAccount = forwardRef<EditGeneralEmailAccountRef, EditGener
     imapPort: "",
   });
 
-  const isUpdateDisabled =
-    !formData.fromName ||
-    !formData.fromEmail ||
-    !validateEmail(formData.fromEmail) ||
-    !formData.limit ||
-    formData.limit <= 0 ||
-    !formData.time_gap ||
-    formData.time_gap <= 0;
-
   useEffect(() => {
     if (id && !emailAccountProp) {
       dispatch(getEmailAccountSmtpDetail(id));
@@ -141,29 +96,19 @@ const EditGeneralEmailAccount = forwardRef<EditGeneralEmailAccountRef, EditGener
       setFormData({
         fromName: emailAccount?.name || "",
         fromEmail: emailAccount?.email || "",
-        userName: emailAccount?.smtp?.auth?.user || "",
-        password: emailAccount?.smtp?.auth?.pass || "",
-        smtpHost: emailAccount?.smtp?.host || "",
-        smtpPort: emailAccount?.smtp?.port || 0,
-        security: emailAccount?.smtp?.secure || false,
-        imapHost: emailAccount?.imap?.host || "",
-        imapPort: emailAccount?.imap?.port || 0,
-        imapUserName: emailAccount?.imap?.auth?.user || "",
-        imapPassword: emailAccount?.imap?.auth?.pass || "",
-        imapSecurity: emailAccount?.imap?.secure || false,
-        replyToAddressChecked: !!emailAccount?.replyToAddress,
-        replyToAddress: emailAccount?.replyToAddress || "",
-        bccEmail: emailAccount?.bccEmail || "",
-        trackingDomainChecked: !!emailAccount?.trackingDomain,
-        tags: emailAccount?.tags || "",
-        clients: emailAccount?.clients || "",
-        signature: emailAccount?.signature || "",
-        limit: emailAccount?.limit || "",
-        time_gap: emailAccount?.time_gap || "",
-        type: emailAccount?.type || "",
+        limit: emailAccount?.limit || 0,
+        timeGap: emailAccount?.time_gap || 0,
       });
+      // setSmtpFormData({
+      //   fromName: emailAccount?.name || "",
+      //   fromEmail: emailAccount?.email || "",
+      //   limit: emailAccount?.limit || 0,
+      //   timeGap: emailAccount?.time_gap || 0
+      // });
     }
   }, [emailAccount]);
+
+  const isUpdateDisabled =  false;
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -231,6 +176,7 @@ const EditGeneralEmailAccount = forwardRef<EditGeneralEmailAccountRef, EditGener
         setVerificationInProgress(false);
       });
   };
+
   const validateFields = () => {
     const newErrors: Record<string, string> = {};
 
@@ -328,7 +274,9 @@ const EditGeneralEmailAccount = forwardRef<EditGeneralEmailAccountRef, EditGener
     }
 
     try {
-      const res = await dispatch(updateEmailAccountSmtpDetail({ id, data: payload })).unwrap();
+      const res = await dispatch(
+        updateEmailAccount({ id, data: payload })
+      ).unwrap();
       console.log(res);
       toast.success(res?.message);
     } finally {
@@ -342,17 +290,28 @@ const EditGeneralEmailAccount = forwardRef<EditGeneralEmailAccountRef, EditGener
     loading,
   }));
 
-  return (
-    !loading ? (<div style={{ padding: "3%", border:"1px solid var(--border-grey)", borderRadius:"10px", height:"100%" }}>
-      {formData.type === "imap" && (
+  return !loading ? (
+    <div
+      style={{
+        padding: "3%",
+        border: "1px solid var(--border-grey)",
+        borderRadius: "10px",
+        height: "100%",
+      }}
+    >
+      {emailAccount?.type === "imap" && (
         <div>
-         <Box sx={{paddingBottom:"1rem"}}>
-            <Typography sx={{fontWeight:"bold", color:"var(--text-secondary)"}}>SMTP Settings (sending emails)</Typography>
+          <Box sx={{ paddingBottom: "1rem" }}>
+            <Typography
+              sx={{ fontWeight: "bold", color: "var(--text-secondary)" }}
+            >
+              SMTP Settings (sending emails)
+            </Typography>
           </Box>
           <Grid2 container spacing={2} sx={{ justifyContent: "left", mt: 1 }}>
             <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel>From Name</InputLabel>
-              <SmtpUpdateTextField
+              <TextField
                 fullWidth
                 name="fromName"
                 value={formData.fromName}
@@ -363,7 +322,7 @@ const EditGeneralEmailAccount = forwardRef<EditGeneralEmailAccountRef, EditGener
             </Grid2>
             <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel>From Email</InputLabel>
-              <SmtpUpdateTextField
+              <TextField
                 fullWidth
                 name="fromEmail"
                 value={formData.fromEmail}
@@ -374,7 +333,7 @@ const EditGeneralEmailAccount = forwardRef<EditGeneralEmailAccountRef, EditGener
             </Grid2>
             <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel>User Name</InputLabel>
-              <SmtpUpdateTextField
+              <TextField
                 fullWidth
                 name="userName"
                 value={formData.userName}
@@ -385,7 +344,7 @@ const EditGeneralEmailAccount = forwardRef<EditGeneralEmailAccountRef, EditGener
             </Grid2>
             <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel>Password</InputLabel>
-              <SmtpUpdateTextField
+              <TextField
                 fullWidth
                 name="password"
                 value={formData.password}
@@ -396,7 +355,7 @@ const EditGeneralEmailAccount = forwardRef<EditGeneralEmailAccountRef, EditGener
             </Grid2>
             <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel>SMTP host</InputLabel>
-              <SmtpUpdateTextField
+              <TextField
                 fullWidth
                 name="smtpHost"
                 value={formData.smtpHost}
@@ -407,7 +366,7 @@ const EditGeneralEmailAccount = forwardRef<EditGeneralEmailAccountRef, EditGener
             </Grid2>
             <Grid2 size={{ xs: 2, sm: 2 }}>
               <InputLabel>SMTP Port</InputLabel>
-              <SmtpUpdateTextField
+              <TextField
                 fullWidth
                 name="smtpPort"
                 value={formData.smtpPort}
@@ -430,7 +389,7 @@ const EditGeneralEmailAccount = forwardRef<EditGeneralEmailAccountRef, EditGener
             </Grid2>
             <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel>Message Per Day (Warmups not included)</InputLabel>
-              <SmtpUpdateTextField
+              <TextField
                 fullWidth
                 name="limit"
                 value={formData.limit}
@@ -441,7 +400,7 @@ const EditGeneralEmailAccount = forwardRef<EditGeneralEmailAccountRef, EditGener
             </Grid2>
             <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel>Minimum time gap (min)</InputLabel>
-              <SmtpUpdateTextField
+              <TextField
                 fullWidth
                 name="time_gap"
                 value={formData.time_gap}
@@ -493,7 +452,7 @@ const EditGeneralEmailAccount = forwardRef<EditGeneralEmailAccountRef, EditGener
               <>
                 <Grid2 size={{ xs: 5, sm: 5 }}>
                   <InputLabel>IMAP User Name</InputLabel>
-                  <SmtpUpdateTextField
+                  <TextField
                     fullWidth
                     name="imapUserName"
                     value={formData.imapUserName}
@@ -502,7 +461,7 @@ const EditGeneralEmailAccount = forwardRef<EditGeneralEmailAccountRef, EditGener
                 </Grid2>
                 <Grid2 size={{ xs: 5, sm: 5 }}>
                   <InputLabel>IMAP Password</InputLabel>
-                  <SmtpUpdateTextField
+                  <TextField
                     fullWidth
                     name="imapPassword"
                     value={formData.imapPassword}
@@ -514,7 +473,7 @@ const EditGeneralEmailAccount = forwardRef<EditGeneralEmailAccountRef, EditGener
 
             <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel>IMAP Host</InputLabel>
-              <SmtpUpdateTextField
+              <TextField
                 fullWidth
                 name="imapHost"
                 value={formData.imapHost}
@@ -525,7 +484,7 @@ const EditGeneralEmailAccount = forwardRef<EditGeneralEmailAccountRef, EditGener
             </Grid2>
             <Grid2 size={{ xs: 2, sm: 2 }}>
               <InputLabel>IMAP Port</InputLabel>
-              <SmtpUpdateTextField
+              <TextField
                 fullWidth
                 name="imapPort"
                 value={formData.imapPort}
@@ -548,7 +507,7 @@ const EditGeneralEmailAccount = forwardRef<EditGeneralEmailAccountRef, EditGener
             </Grid2>
 
             <Grid2 size={{ xs: 10, sm: 10 }}>
-              <Button2
+              <Button
                 onClick={handleVerifyAccount}
                 color={"white"}
                 disabled={verificationInProgress}
@@ -560,7 +519,7 @@ const EditGeneralEmailAccount = forwardRef<EditGeneralEmailAccountRef, EditGener
                 ) : (
                   "Verify Email Account"
                 )}
-              </Button2>
+              </Button>
             </Grid2>
             {isVerified && (
               <Grid2
@@ -604,23 +563,27 @@ const EditGeneralEmailAccount = forwardRef<EditGeneralEmailAccountRef, EditGener
         </div>
       )}
 
-      {(formData.type === "gmail" || formData.type === "outlook") && (
-        <div >
-          <Box sx={{paddingBottom:"2rem"}}>
-            <Typography sx={{fontWeight:"bold", color:"var(--text-secondary)"}}>SMTP Settings (sending emails)</Typography>
+      {(emailAccount?.type === "gmail" || emailAccount?.type === "outlook") && (
+        <div>
+          <Box sx={{ paddingBottom: "2rem" }}>
+            <Typography
+              sx={{ fontWeight: "bold", color: "var(--text-secondary)" }}
+            >
+              SMTP Settings (sending emails)
+            </Typography>
           </Box>
-          
+
           <Grid2 container spacing={5} sx={{ justifyContent: "left" }}>
             <Grid2 size={{ xs: 5, sm: 5 }}>
-              <InputLabel >From Name</InputLabel>
+              <InputLabel>From Name</InputLabel>
 
               <TextField
                 fullWidth
                 name="fromName"
-                value={formData.fromName}
+                value={smtpFormData.fromName}
                 onChange={handleChange}
-                error={!formData.fromName}
-                helperText={!formData.fromName ? "From Name is required" : ""}
+                error={!smtpFormData.fromName}
+                helperText={!smtpFormData.fromName ? "From Name is required" : ""}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -632,15 +595,15 @@ const EditGeneralEmailAccount = forwardRef<EditGeneralEmailAccountRef, EditGener
               <TextField
                 fullWidth
                 name="fromEmail"
-                value={formData.fromEmail}
+                value={smtpFormData.fromEmail}
                 onChange={handleChange}
                 error={
-                  !formData.fromEmail || !validateEmail(formData.fromEmail)
+                  !smtpFormData.fromEmail || !validateEmail(smtpFormData.fromEmail)
                 }
                 helperText={
-                  !formData.fromEmail
+                  !smtpFormData.fromEmail
                     ? "From Email is required"
-                    : !validateEmail(formData.fromEmail)
+                    : !validateEmail(smtpFormData.fromEmail)
                       ? "Enter a valid email address"
                       : ""
                 }
@@ -651,19 +614,19 @@ const EditGeneralEmailAccount = forwardRef<EditGeneralEmailAccountRef, EditGener
             </Grid2>
             <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel>Message Per Day (Warmups not included) *</InputLabel>
-              <SmtpUpdateTextField
+              <TextField
                 fullWidth
                 type="number"
                 name="limit"
                 placeholder="12"
-                value={formData.limit}
+                value={smtpFormData.limit}
                 onChange={handleChange}
-                error={!formData.limit || formData.limit <= 0}
+                error={!smtpFormData.limit || smtpFormData.limit <= 0}
                 inputProps={{ min: 1 }}
                 helperText={
-                  !formData.limit
+                  !smtpFormData.limit
                     ? "Msg per day is required"
-                    : formData.limit <= 0
+                    : smtpFormData.limit <= 0
                       ? "Enter a valid positive number"
                       : ""
                 }
@@ -671,7 +634,7 @@ const EditGeneralEmailAccount = forwardRef<EditGeneralEmailAccountRef, EditGener
             </Grid2>
             <Grid2 size={{ xs: 5, sm: 5 }}>
               <InputLabel>Minimum time gap (min) *</InputLabel>
-              <SmtpUpdateTextField
+              <TextField
                 fullWidth
                 type="number"
                 name="time_gap"
@@ -692,7 +655,9 @@ const EditGeneralEmailAccount = forwardRef<EditGeneralEmailAccountRef, EditGener
           </Grid2>
         </div>
       )}
-    </div>) : <Loader />
+    </div>
+  ) : (
+    <Loader />
   );
 });
 

@@ -175,7 +175,6 @@ const UploadLeadsDialog: React.FC<UploadCsvDialogProps> = ({
             fontSize: "13px",
             fontWeight: "600",
             color: "#6b7280",
-            textTransform: "uppercase",
             letterSpacing: "0.5px",
             marginBottom: "16px",
           }}

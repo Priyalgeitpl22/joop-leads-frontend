@@ -1,13 +1,14 @@
 import styled from "@emotion/styled";
-
+import { IconButton } from "@mui/material";
 interface CustomDialogFooterProps {
   justifyContent?: string;
 }
 
 export const Button = styled.button`
   font-weight: 600;
+  height: 32px;
   width: fit-content;
-  padding: 12px 30px;
+  padding: 8px 16px;
   border: none;
   border-radius: 6px;
   color: var(--text-white);
@@ -17,7 +18,7 @@ export const Button = styled.button`
     var(--secondary-dark) 100%
   );
   cursor: pointer;
-  font-size: 16px;
+  font-size: 14px;
   white-space: nowrap;
   transition: 0.2s ease-in-out;
 
@@ -68,15 +69,16 @@ export const PrimaryButton = styled.button`
 `;
 export const ButtonDisabled = styled.button`
   font-weight: 600;
+  height: 32px;
   width: fit-content;
-  padding: 12px 30px;
+  padding: 8px 16px;
   border: none;
   border-radius: 6px;
   color: var(--text-white);
   background: linear-gradient(
     135deg,
-    var(--secondary) 0%,
-    var(--secondary-light) 100%
+    var(--text-secondary) 0%,
+    var(--text-light) 100%
   );
   cursor: pointer;
   font-size: 16px;
@@ -97,7 +99,6 @@ export const ButtonDisabled = styled.button`
     color: var(--text-white);
   }
 `;
-
 export const PrimaryButtonDisabled = styled.button`
   font-weight: 600;
   width: fit-content;
@@ -129,26 +130,40 @@ export const PrimaryButtonDisabled = styled.button`
     color: var(--text-white);
   }
 `;
-
-
-
 export const SecondaryButton = styled.button`
-  font-weight: semibold;
+  font-weight: 600;
+  height: 32px;
   width: fit-content;
-  padding: 12px 30px;
+  padding: 8px 16px;
   border: none;
   border-radius: 6px;
-  color: var(--theme-color);
-  background-color: var(--text-white);
+  color: var(--text-white);
+  background: linear-gradient(
+    135deg,
+    var(--secondary) 0%,
+    var(--secondary-dark) 100%
+  );
   cursor: pointer;
-  font-size: 16px;
+  font-size: 14px;
   white-space: nowrap;
-  box-shadow: var(--shadow-dark);
-  border: 1px solid var(--border-color);
-
+  transition: all 0.2s ease-in-out;
+  
   &:hover {
-    background: var(--hover-color);
-    color: var(--text-black);
+    background: linear-gradient(
+      135deg,
+       var(--secondary-light) 0%,
+       var(--secondary-dark) 100%
+    );
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active {
+    background: var(--secondary);
+    color: var(--text-white);
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   &:hover .input {
@@ -160,11 +175,10 @@ export const SecondaryButton = styled.button`
   }
 `;
 
-
 export const IconsButton = styled.button`
   font-weight: semibold;
   width: fit-content;
-  padding: 6px 16px;
+  padding: 2px 8px;
   border: none;
   border-radius: 6px;
   color: var(--theme-color);
@@ -173,31 +187,7 @@ export const IconsButton = styled.button`
   font-size: 16px;
   white-space: nowrap;
   box-shadow: var(--shadow-dark);
-
-  // &:hover svg {
-  //   color: var(--theme-color);
-  //   fill: var(--theme-color);
-  // }
-
-  // &:hover {
-  //   background: var(--hover-color);
-  //   color: var(--theme-color);
-  // }
-
-  // &:hover .input {
-  //   color: var(--theme-color);
-  // }
-
-  // &:active {
-  //   background: var(--active-color);
-  //   color: var(--theme-color);
-  // }
-
-  // &:active .input {
-  //   color: var(--theme-color);
-  // }
 `;
-
 export const CustomDialogFooter = styled.div<CustomDialogFooterProps>`
   color: var(--theme-color);
   text-align: center;
@@ -210,7 +200,6 @@ export const CustomDialogFooter = styled.div<CustomDialogFooterProps>`
   border-radius: 0px 0px 10px 10px;
   background: var(--background-head);
 `;
-
 export const CustomDialogHeader = styled.div`
   color: var(--theme-color);
   text-align: center;
@@ -262,4 +251,64 @@ export const TitleBody = styled.input`
     background-color: inherit !important;
   }
 `;
+export const Container = styled.div`
+  display: flex;
+  width: 100%;
+  gap: 10px;
+  background-color: white;
+  padding: 10px;
+  height: 100%;
+  overflow-x: hidden;
+  
+  flex-direction: column;
+  border: 1px solid var(--border-grey);
+  border-radius: 10px;  
+  justify-content: space-between;
+`;
 
+export const SectionFooter = styled.div`
+  display: flex;
+  position: sticky;
+  bottom: 0;
+  justify-content: flex-end;
+  padding: 10px;
+  background: var(--background-light);
+  border-radius: 0px 0px 10px 10px;
+`;
+
+export const HeaderContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+  background: var(--background-light);
+
+  svg {
+    height: 20px;
+    width: 20px;
+  }
+`;
+
+export const FilterIcon = styled(IconButton)`
+  height: 32px;
+  background: var(--background-color);
+  border-radius: 5px;
+  border: 1px solid var(--border-color);
+  padding: 10px;
+`;
+
+export const ReloadButton = styled(IconButton)`
+  height: 32px;
+  background: none;
+  color: var(--primary-dark);
+  padding: 10px;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--background-color);
+    color: var(--primary-dark);
+    padding: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+`;

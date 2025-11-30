@@ -17,7 +17,6 @@ import {
   StyledTableHead,
   CustomEditIconButton,
   StyledTableCheckbox,
-  FilterIcon,
 } from "./Leads.styled";
 import React, { useState } from "react";
 import SendIcon from "@mui/icons-material/Send";
@@ -28,6 +27,7 @@ import { SearchBar } from "../../components/Header/header.styled";
 import MailOutlineSharpIcon from "@mui/icons-material/MailOutlineSharp";
 import { Search } from "lucide-react";
 import { SectionTitle } from "../../styles/layout.styled";
+import { FilterIcon } from "../../styles/global.styled";
 
 
 const Leads: React.FC = () => {

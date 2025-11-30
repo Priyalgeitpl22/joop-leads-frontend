@@ -107,7 +107,7 @@ export const NoMailboxMessage = styled(Box)`
 `;
 
 export const EmailInbox = styled(Box)`
-padding:1.5rem;
+  padding: 10px;
   width: 100%;
   height: 100%;
   display: flex;
@@ -122,7 +122,7 @@ padding:1.5rem;
 
 export const EmailInboxHeader = styled(Box)`
   background: var(--background-primary);
-  padding: 0px 16px 16px 16px;
+  padding: 0px 10px;
   display: flex;
   align-items: center; 
   justify-content: space-between;

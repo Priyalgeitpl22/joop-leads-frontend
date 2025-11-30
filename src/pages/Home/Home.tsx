@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   Box,
   Container,
-  Grid,
   Card,
   CardContent,
   CircularProgress,
@@ -116,10 +115,14 @@ const Home = () => {
 
   const graphData = dashboardData?.graph_data || [];
 
-
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="100vh"
+      >
         <CircularProgress sx={{ color: "#667eea" }} />
       </Box>
     );
@@ -127,23 +130,49 @@ const Home = () => {
 
   if (error) {
     return (
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Paper elevation={0} sx={{ p: 3, bgcolor: "#FEE2E2", border: "1px solid #FECACA", borderRadius: "12px" }}>
+      <Container maxWidth="lg">
+        <Paper
+          elevation={0}
+          sx={{
+            p: 3,
+            bgcolor: "#FEE2E2",
+            border: "1px solid #FECACA",
+            borderRadius: "12px",
+          }}
+        >
           <Typography color="error">Error: {error}</Typography>
         </Paper>
       </Container>
     );
   }
 
-
   return (
-    <Box sx={{ bgcolor: "#F9FAFB", minHeight: "100vh", py: 4 }}>
+    <Box
+      sx={{
+        bgcolor: "#F9FAFB",
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        gap: "24px",
+      }}
+    >
       <Container maxWidth="xl">
-
-        {/* ---------------------- Top Metrics ---------------------- */}
-        <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 3,
+            mb: 3,
+          }}
+        >
           {metrics.map((m) => (
-            <Grid item xs={12} sm={6} md={3} key={m.label}>
+            <Box
+              key={m.label}
+              sx={{
+                flex: { xs: "1 1 100%", sm: "1 1 calc(50% - 12px)", md: "1 1 calc(25% - 18px)" },
+                minWidth: { xs: "100%", sm: "calc(50% - 12px)", md: "calc(25% - 18px)" },
+              }}
+            >
               <Card
                 sx={{
                   background: "#FFFFFF",
@@ -158,14 +187,17 @@ const Home = () => {
                   },
                 }}
               >
-                <CardContent sx={{ p: 3 }}>
-                  <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
+                <CardContent>
+                  <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="flex-start"
+                  >
                     <Typography
                       variant="body2"
                       sx={{
                         color: "#6B7280",
                         fontWeight: 500,
-                        mb: 1,
                         fontSize: "13px",
                         display: "flex",
                         alignItems: "center",
@@ -173,18 +205,25 @@ const Home = () => {
                       }}
                     >
                       {m.label}
-                      </Typography>
+                    </Typography>
 
-                    <Typography sx={{ fontSize: "24px", opacity: 0.8, color:m.color }}>
+                    <Typography
+                      sx={{ fontSize: "20px", opacity: 0.8, color: m.color }}
+                    >
                       {m.icon}
                     </Typography>
                   </Box>
 
-                  <Typography variant="h4" sx={{ fontWeight: 700, mb: 1.5 }}>
+                  <Typography variant="h4" sx={{ fontWeight: 700 }}>
                     {m.value.toLocaleString()}
                   </Typography>
 
-                  <Box display="flex" alignItems="center" gap={0.5} sx={{ color: m.color }}>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    gap={0.5}
+                    sx={{ color: m.color }}
+                  >
                     <TrendingUpIcon fontSize="small" />
                     <Typography variant="caption" sx={{ fontSize: "12px" }}>
                       Updated today
@@ -192,39 +231,88 @@ const Home = () => {
                   </Box>
                 </CardContent>
               </Card>
-            </Grid>
+            </Box>
           ))}
-        </Grid>
-
-        {/* ---------------------- Chart + Status Metrics ---------------------- */}
-        <Grid container spacing={3}>
-
-          {/* Chart Section */}
-          <Grid item xs={12} lg={8}>
-            <Card sx={{ background: "#FFFFFF", border: "1px solid #E5E7EB", borderRadius: "12px" }}>
-              <CardContent sx={{ p: 3 }}>
-                <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 3,
+          }}
+        >
+          <Box
+            sx={{
+              flex: 1,
+              minWidth: { xs: "70%", md: 0 },
+            }}
+          >
+            <Card
+              sx={{
+                background: "#FFFFFF",
+                border: "1px solid #E5E7EB",
+                borderRadius: "12px",
+                height: "100%",
+              }}
+            >
+              <CardContent>
+                <Typography variant="h6" sx={{ fontWeight: 500, fontSize: "16px" }}>
                   Leads Overview
                 </Typography>
-                <Typography variant="caption" sx={{ color: "#9CA3AF", mb: 3, display: "block" }}>
+                <Typography
+                  variant="caption"
+                  sx={{ color: "#9CA3AF", display: "block" }}
+                >
                   Performance metrics over time
                 </Typography>
 
-                <ResponsiveContainer width="100%" height={350}>
+                <ResponsiveContainer width="100%" height={300}>
                   <AreaChart data={graphData}>
                     <defs>
-                      <linearGradient id="colorToday" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#667eea" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="#667eea" stopOpacity={0} />
+                      <linearGradient
+                        id="colorToday"
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                      >
+                        <stop
+                          offset="5%"
+                          stopColor="#667eea"
+                          stopOpacity={0.3}
+                        />
+                        <stop
+                          offset="95%"
+                          stopColor="#667eea"
+                          stopOpacity={0}
+                        />
                       </linearGradient>
 
-                      <linearGradient id="colorYesterday" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#E5E7EB" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="#E5E7EB" stopOpacity={0} />
+                      <linearGradient
+                        id="colorYesterday"
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                      >
+                        <stop
+                          offset="5%"
+                          stopColor="#E5E7EB"
+                          stopOpacity={0.3}
+                        />
+                        <stop
+                          offset="95%"
+                          stopColor="#E5E7EB"
+                          stopOpacity={0}
+                        />
                       </linearGradient>
                     </defs>
 
-                    <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" vertical={false} />
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      stroke="#E5E7EB"
+                      vertical={false}
+                    />
                     <XAxis dataKey="date" stroke="#9CA3AF" />
                     <YAxis stroke="#9CA3AF" />
 
@@ -236,16 +324,32 @@ const Home = () => {
                       }}
                     />
 
-                    <Area type="monotone" dataKey="today" stroke="#667eea" fill="url(#colorToday)" strokeWidth={2} />
-                    <Area type="monotone" dataKey="yesterday" stroke="#D1D5DB" fill="url(#colorYesterday)" strokeWidth={1} />
+                    <Area
+                      type="monotone"
+                      dataKey="today"
+                      stroke="#667eea"
+                      fill="url(#colorToday)"
+                      strokeWidth={2}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="yesterday"
+                      stroke="#D1D5DB"
+                      fill="url(#colorYesterday)"
+                      strokeWidth={1}
+                    />
                   </AreaChart>
                 </ResponsiveContainer>
               </CardContent>
             </Card>
-          </Grid>
+          </Box>
 
-          {/* Status Metrics */}
-          <Grid item xs={12} lg={4}>
+          <Box
+            sx={{
+              flex: { xs: "1 1 100%", md: "1" },
+              minWidth: { xs: "25%", md: 0 },
+            }}
+          >
             <Stack spacing={2}>
               {statusMetrics.map((m) => (
                 <Card
@@ -261,13 +365,23 @@ const Home = () => {
                     },
                   }}
                 >
-                  <CardContent sx={{ p: 2.5 }}>
-                    <Box display="flex" justifyContent="space-between" alignItems="center">
+                  <CardContent>
+                    <Box
+                      display="flex"
+                      justifyContent="space-between"
+                      alignItems="center"
+                    >
                       <Box>
-                        <Typography variant="body2" sx={{ color: "#6B7280", fontWeight: 500, mb: 0.5 }}>
+                        <Typography
+                          variant="body2"
+                          sx={{ color: "#6B7280", fontWeight: 500 }}
+                        >
                           {m.label}
                         </Typography>
-                        <Typography variant="h5" sx={{ fontWeight: 700, color: m.color }}>
+                        <Typography
+                          variant="h5"
+                          sx={{ fontWeight: 700, color: m.color }}
+                        >
                           {m.value.toLocaleString()}
                         </Typography>
                       </Box>
@@ -280,9 +394,8 @@ const Home = () => {
                 </Card>
               ))}
             </Stack>
-          </Grid>
-
-        </Grid>
+          </Box>
+        </Box>
       </Container>
     </Box>
   );

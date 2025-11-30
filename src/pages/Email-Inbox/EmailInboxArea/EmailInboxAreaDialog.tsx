@@ -110,7 +110,6 @@ const EmailThreadView: React.FC<EmailThreadViewProps> = ({ messages, onClose }) 
   return (
     <Box
       sx={{
-        padding: 3,
         borderRadius: 3,
         position: "relative",
       }}
@@ -119,9 +118,9 @@ const EmailThreadView: React.FC<EmailThreadViewProps> = ({ messages, onClose }) 
         <CloseIcon />
       </IconButton>
 
-      <Typography variant="h5" fontWeight={700} mb={3}>
+      <p style={{ fontSize: "14px", fontWeight: "600", marginBottom: "10px" }}>
         {messages[0]?.subject || "No Subject"}
-      </Typography>
+      </p>
 
       {messages.length === 1 ? (
         renderMessage(messages[0])
@@ -195,7 +194,7 @@ const EmailThreadView: React.FC<EmailThreadViewProps> = ({ messages, onClose }) 
             </Box>
           </Box>
         ) : (
-          <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
+          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
             <Button variant="contained" style={{background:"var(--secondary-gradient)"}} onClick={() => setIsReplying(true)}>
               Reply
             </Button>

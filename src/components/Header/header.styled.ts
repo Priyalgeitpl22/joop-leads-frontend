@@ -3,15 +3,15 @@ import styled from '@emotion/styled';
 export const SearchBar = styled.div`
   display: flex;
   align-items: center;
-  padding: 10px 12px;
+  padding: 8px 12px;
   border: 1px solid var(--border-color);
   background-color: white;
   border-radius: 5px;
   flex-grow: 1;
-  max-width: 250px;
+  max-width: 350px;
   width: 100%;
   gap: 10px;
-  height: 42px;
+  height: 32px;
   
   input {
     background: none;
@@ -19,7 +19,7 @@ export const SearchBar = styled.div`
     outline: none;
     color: var(--theme-color);
     flex-grow: 1;
-    font-size: 14px;
+    font-size: 12px;
 
     &::placeholder {
       color: #94a3b8;
@@ -28,9 +28,10 @@ export const SearchBar = styled.div`
 
   svg {
     color: var(--border-color);
+    width: 16px;
+    height: 16px;
   }
 `;
-
 
 export const NotificationBell = styled.button`
   background: none;

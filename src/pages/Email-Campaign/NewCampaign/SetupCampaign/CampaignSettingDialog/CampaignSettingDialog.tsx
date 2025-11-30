@@ -20,9 +20,9 @@ import {
 import { getCampaignById } from "../../../../../redux/slice/emailCampaignSlice";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../../redux/store/store";
-import ProgressBar from "../../../../../assets/Custom/linearProgress";
-import { FormField, SectionDescription, SectionTitle, SettingsContainer, SettingSection } from "./CampaignSetting.styled";
+import { FormField, SectionDescription, SettingsContainer, SettingSection } from "./CampaignSetting.styled";
 import CampaignOutlinedIcon from "@mui/icons-material/CampaignOutlined";
+import { SectionTitle } from "../../../../../styles/layout.styled";
 
 interface SettingCampaignProps {
   open: boolean;
@@ -167,7 +167,6 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
           </IconButton>
         </CustomDialogHeader>
 
-        {loading && <ProgressBar />}
 
         <SettingsContainer>
           <SettingSection>

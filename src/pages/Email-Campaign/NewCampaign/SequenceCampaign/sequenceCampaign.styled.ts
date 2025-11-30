@@ -19,7 +19,7 @@ export const DialogHeader = styled(Box)(`
     z-index: 2;
     1px solid #e5e6ef;
     padding: 12px;
-    background: #f1f2fb;
+    background: var(--primary-lighter);
     border-bottom: 1px solid #e5e6ef;
 `)
 
@@ -29,7 +29,7 @@ export const DialogFooter = styled(Box)(`
     z-index: 2;
     1px solid #e5e6ef;
     padding: 12px;
-    background: #f1f2fb;
+    background: var(--primary-lighter);
     border-bottom: 1px solid #e5e6ef;
     align-items: flex-end;
     display: flex;

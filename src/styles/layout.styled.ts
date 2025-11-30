@@ -31,14 +31,6 @@ export const SidebarContainer = styled(motion.aside)`
   -ms-overflow-style: none;
 `;
 
-export const HeaderContainer = styled.header`
-  height: 100px;
-  gap: 20px;
-  display: flex;
-  align-items: center;
-  background: var(--theme-color);
-`;
-
 export const Logo = styled.div`
   font-size: 1.5rem;
   font-weight: 600;
@@ -161,23 +153,8 @@ export const Button2 = styled("button", {
 `
 );
 
-export const TextField = styled(MuiTextField)`
-  border-radius: 5px;
-  // box-shadow: 1px 1px 1px 1px #bebebe;
-
-  & .MuiInputBase-root {
-    height: 3rem;
-  }
-
-  &:hover {
-    marginTop: 1px;
-  }
-    
-`;
-
 export const InputLabel = styled(MuiInputLabel)`
   color:"var(--text-secondary)";
-  font-family: sans-serif;
 `;
 
 export const TableItem = styled(Box)(`
@@ -196,17 +173,35 @@ export const TableIcons = styled(Box)(`
 `)
 
 export const SectionTitle = styled.h2`
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   color: #35495c;
   display: flex;
   white-space: nowrap;
 `;
 
-export const SmtpUpdateTextField = styled(MuiTextField)`
+export const TextField = styled(MuiTextField)`
   box-shadow: none !important;
+  font-size: 12px;
+  // max-width: 300px;
+
+  &:disabled {
+    background-color: var(--input-disabled-bg) !important;
+    color: var(--input-disabled-text) !important;
+  }
+
+  & .disabled {
+    background-color: var(--input-disabled-bg) !important;
+    color: var(--input-disabled-text) !important;
+  }
+
   & .MuiOutlinedInput-root {
     box-shadow: none !important;
-    height:2.3rem;
+    height: 35px;
+    font-size: 12px;
+  }
+
+  & .MuiInputLabel-root {
+    font-size: 14px;
   }
 `;

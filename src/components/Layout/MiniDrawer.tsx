@@ -432,8 +432,6 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
           drawerWidth={drawerWidth}
           miniDrawerWidth={miniDrawerWidth}
         />
-
-
         {/* Main Content Area */}
         <Box
           component="main"
@@ -442,14 +440,16 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
               xs: "auto",   // mobile/tablet scroll
               lg: "visible" // desktop NO scroll
             },
+            height: '100%',
             backgroundColor: '#f9fafb',
             marginTop: '72px',
           }}
         >
           <Box
             sx={{
-              padding:" 0rem 1.5rem",
-              minHeight: 'calc(100vh - 130px)',
+              padding:"1rem",
+              height: '100%',
+              // minHeight: 'calc(100vh - 130px)',
               // overflow: 'auto',
               '&::-webkit-scrollbar': {
                 width: '8px',

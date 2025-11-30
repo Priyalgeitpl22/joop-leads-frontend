@@ -12,10 +12,11 @@ import {
   ContactCard,
   CampaignCard,
   IconStyle,
-  SectionTitle,
   StyleBox,
   ScrollableContent,
 } from "../../Contacts/View-Drawer/ViewDrawer.styled";
+import { SectionTitle } from "../../../styles/layout.styled";
+import { IEmailCampaign } from "../NewCampaign/interfaces";
 
 interface ViewDrawerProps {
   open: boolean;
@@ -71,9 +72,9 @@ const ViewDrawer: React.FC<ViewDrawerProps> = ({
               </ContactCard>
 
               <Divider sx={{ my: 2 }} />
-              <SectionTitle variant="subtitle1">📢 Campaigns:</SectionTitle>
+              <SectionTitle>Campaigns</SectionTitle>
               {folderDetail.campaigns.length > 0 ? (
-                folderDetail.campaigns.map((campaign: any) => (
+                folderDetail.campaigns.map((campaign: IEmailCampaign) => (
                   <CampaignCard key={campaign.id}>
                     <Typography>
                       <CampaignIcon sx={IconStyle("#FF5722")} />

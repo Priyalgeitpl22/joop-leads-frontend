@@ -198,12 +198,13 @@ export const InboxMessageBody = styled(Box)<{ isExpanded: boolean }>(
 export const TotalPageCount = styled(Box)`
   border-top: 1px solid #ddd;
   padding: 5px 0;
+  font-size: 12px;
   display: flex;
+  align-items: center;
   justify-content: space-between;
   background-color: #fff;
   position: sticky;
   bottom: 0;
-  // z-index: 10;
 `;
 
 export const NoMailboxMessage = styled(Box)({
