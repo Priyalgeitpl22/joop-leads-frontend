@@ -199,6 +199,7 @@ export const verifyEmailAccount = createAsyncThunk<
   }
 );
 
+// CREATE EMAIL ACCOUNT
 export const CreateEmailAccount = createAsyncThunk<
   string,
   CreateEmailAccountPayload,
