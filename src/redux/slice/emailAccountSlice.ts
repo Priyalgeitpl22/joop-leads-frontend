@@ -12,22 +12,7 @@ export interface EmailAccount {
   name: string;
   email: string;
   type: string;
-  warmup: {
-    enabled?: boolean;
-    maxPerDay?: number;
-    dailyRampup?: boolean;
-    rampupIncrement?: number;
-    startDate?: Date;
-    maxEmailsPerDay?: number;
-    replyRate?: number;
-    dailyReplyTarget?: number;
-    identifierTag?: string;
-    autoAdjust?: boolean;
-    customDomainTracking?: boolean;
-    weekdaysOnly?: boolean;
-    reputation?: number;
-    reputationLastCalculated?: Date;
-  };
+  warmup: WarmUp | null;
   imap?: {
     host?: string;
     port?: number;

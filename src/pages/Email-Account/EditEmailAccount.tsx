@@ -61,7 +61,7 @@ const EditEmailAccount = ({ id }: { id?: string }) => {
           <EditWarmupEmailAccount
             ref={warmupRef}
             id={id}
-            emailAccount={emailAccount || undefined}
+            emailAccount={emailAccount}
           />
         )}
         {activeTab === "campaign" && <EditCampaignEmailAccount id={id} />}
