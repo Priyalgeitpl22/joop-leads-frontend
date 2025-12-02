@@ -24,6 +24,7 @@ export const ButtonDisabled = styled(Button)({
   background: "#d1d5db",
   fontSize: "16px",
   whiteSpace: "nowrap",
+  textTransform: "none",
 
   "&.Mui-disabled": {
     cursor: "not-allowed !important",
