@@ -12,7 +12,7 @@ export interface EmailAccount {
   name: string;
   email: string;
   type: string;
-  warmup: WarmUp | null;
+  warmup?: WarmUp | null;
   imap?: {
     host?: string;
     port?: number;
