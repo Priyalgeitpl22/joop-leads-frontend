@@ -312,7 +312,6 @@ export default function EmailInboxs() {
         </EmailInboxContainer>
       </EmailInbox>
 
-      {/* Account selector popover */}
       <Popover
         open={open}
         anchorEl={accountSelectorAnchor}
