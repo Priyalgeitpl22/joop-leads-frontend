@@ -1,7 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
-  Accordion,
-  AccordionSummary,
   Box,
   FormControl,
   InputLabel,
@@ -10,14 +8,9 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
-  Tabs,
   Tooltip,
   Typography,
-  useMediaQuery,
-  useTheme,
 } from "@mui/material";
-import { motion } from "framer-motion";
-import { EmailCampaignContainer } from "./EmailCampaign.styled";
 import { SearchBar } from "../../components/Header/header.styled";
 import { Search } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
@@ -29,7 +22,7 @@ import {
   updateCampaignName,
   UpdateCampaignStatus,
 } from "../../redux/slice/emailCampaignSlice";
-import { AppDispatch } from "../../redux/store/store";
+import { AppDispatch, RootState } from "../../redux/store/store";
 import { IEmailCampaign } from "./NewCampaign/interfaces";
 import {
   Button,
@@ -52,15 +45,11 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { showFolders } from "../../redux/slice/emailCampaignFolderSlice";
 import FolderOpenOutlinedIcon from "@mui/icons-material/FolderOpenOutlined";
 import RenameEmailCampaignDialog from "./RenameEmailCampaignDialog";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import ColumnVisibilitySelect from "../../assets/Custom/customVisibilitySeletc";
 
-import ActiveFilters from "./ActiveFilters";
-import MultiSelectDropdown from "../../assets/Custom/cutomSelectOption";
+import ActiveFilters from "./ActiveFilters";  
 
 const EmailCampaign: React.FC = () => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const dispatch = useDispatch<AppDispatch>();
   const location = useLocation();
   const pathParts = location.pathname.split("/");
@@ -131,7 +120,7 @@ const EmailCampaign: React.FC = () => {
   });
 
   const isFilterOpen = Boolean(filterOpen);
-  const folders = useSelector((state: any) => state.folder.folders);
+  const folders = useSelector((state: RootState) => state.folder.folders);
   console.log("folderrr", folders.length);
 
   useEffect(() => {
@@ -151,22 +140,6 @@ const EmailCampaign: React.FC = () => {
 
   const handleColumnVisibilityChange = (newVisibleColumns: any) => {
     setVisibleColumns(newVisibleColumns);
-  };
-
-  const handleTabChange = (_event: React.SyntheticEvent, newValue: string) => {
-    if (typeof newValue !== "string") {
-      return;
-    }
-    setActiveTab(newValue);
-
-    if (newValue === "all") {
-      setSelectedFolder(null);
-    } else if (newValue === "folders") {
-      setSelectedFolder(null);
-      navigate(`/email-campaign/folders`, { replace: true });
-      return;
-    }
-    navigate(`/email-campaign/${newValue}`, { replace: true });
   };
 
   const handleFilterChange =

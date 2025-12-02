@@ -11,9 +11,9 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CloseIcon from "@mui/icons-material/Close";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../redux/store/store";
-import { Account, sentEmailReply } from "../../../redux/slice/emailInboxSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../redux/store/store";
+import { sentEmailReply } from "../../../redux/slice/emailInboxSlice";
 import { Button, SecondaryButton } from "../../../styles/global.styled";
 import { TextArea } from "../../../styles/layout.styled";
 import { formatDateTimeWithRelative } from "../../../utils/utils";
@@ -43,6 +43,11 @@ const EmailThreadView: React.FC<EmailThreadViewProps> = ({
   const [replyContent, setReplyContent] = useState("");
   const [isReplying, setIsReplying] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
+  const selectedAccount = useSelector((state: RootState) =>
+    state.emailInbox.accounts.find(
+      (account) => account._id === selectedAccountId
+    )
+  );
 
   const handleSend = () => {
     if (replyContent.trim()) {
@@ -50,7 +55,10 @@ const EmailThreadView: React.FC<EmailThreadViewProps> = ({
       const firstMessage = messages[0];
 
       const replyPayload = {
-        accountId: selectedAccountId,
+        from: {
+          name: selectedAccount?.name || "Unknown",
+          address: selectedAccount?.email || "",
+        },
         to: {
           name: lastMessage?.from?.[0]?.name || "Unknown",
           address: lastMessage?.from?.[0]?.address || "",
@@ -234,10 +242,8 @@ const EmailThreadView: React.FC<EmailThreadViewProps> = ({
               value={replyContent}
               onChange={(e) => setReplyContent(e.target.value)}
               placeholder="Type your reply here..."
-              multiline
               minRows={4}
-              fullWidth
-              sx={{ borderRadius: "10px", fontSize: "12px" }}
+              style={{ borderRadius: "10px", fontSize: "12px", width: "100%" }}
             />
             <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
               <SecondaryButton
@@ -246,7 +252,6 @@ const EmailThreadView: React.FC<EmailThreadViewProps> = ({
                 Discard
               </SecondaryButton>
               <Button
-                variant="contained"
                 onClick={handleSend}
                 disabled={!replyContent.trim()}
                 style={{

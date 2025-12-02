@@ -5,11 +5,10 @@ import {
   Checkbox,
   CircularProgress,
   Box,
-  Typography,
 } from "@mui/material";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import Grid2 from "@mui/material/Grid2";
-import { Button2, TextField, InputLabel } from "../../../styles/layout.styled";
+import { TextField, InputLabel } from "../../../styles/layout.styled";
 import ReactQuill from "react-quill";
 import {
   verifyEmailAccount,
@@ -22,7 +21,6 @@ import { AppDispatch } from "../../../redux/store/store";
 import toast from "react-hot-toast";
 import {
   Button,
-  ButtonDisabled,
   Container,
   SectionFooter,
 } from "../../../styles/global.styled";
@@ -744,10 +742,13 @@ const GeneralAccount = ({ emailAccount }: { emailAccount: EmailAccount }) => {
               <Grid2 size={{ xs: 10, sm: 10 }}>
                 <Button
                   onClick={handleVerifyAccount}
-                  color={"white"}
                   disabled={verificationInProgress}
-                  background={"var(--theme-color)"}
-                  style={{ width: "100%", cursor: "pointer" }}
+                  style={{ 
+                    width: "100%", 
+                    cursor: "pointer",
+                    background: "var(--theme-color)",
+                    color: "white"
+                  }}
                 >
                   {verificationInProgress ? (
                     <CircularProgress size={24} sx={{ color: "white" }} />

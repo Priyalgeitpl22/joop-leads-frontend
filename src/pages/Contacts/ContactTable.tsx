@@ -11,10 +11,10 @@ import {
   IconButton,
   Tooltip,
   SelectChangeEvent,
-  useTheme,
   useMediaQuery,
   Accordion,
   AccordionSummary,
+  useTheme,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
@@ -58,7 +58,6 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Dayjs } from "dayjs";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
 import ActiveFilters from "../Email-Campaign/ActiveFilters";
-import usePageWidth from "../../hooks/usePageWidth";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { HeaderContainer, FilterIcon } from "../../styles/global.styled";
 import { SectionTitle } from "../../styles/layout.styled";
@@ -69,12 +68,9 @@ export interface ImportedLeadsData {
 
 const ContactTable: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const width = usePageWidth();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
+  const isMobile = useMediaQuery(useTheme().breakpoints.down("sm"));
+  const [, setLoading] = useState(true);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [loading, setLoading] = useState(true);
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
   const [CSVsettings, setCSVsettings] = React.useState<csvSettingsType>();
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);

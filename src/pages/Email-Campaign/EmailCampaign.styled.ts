@@ -194,7 +194,7 @@ export const CustomTableBody = styled(TableBody)(() => ({
 export const CustomTableRow = styled(TableRow)(() => ({
   height: "80px",
   borderRadius: 0,
-  overflowX: "auto",
+  overflowX: "auto" as const,
 
   "&:nth-of-type(even)": {
     backgroundColor: "var(--background-secondary)", // Alternate row color
@@ -241,7 +241,7 @@ export const CustomTableCell = styled(TableCell)(() => ({
   },
 
   "&:last-of-type": {
-    textAlign: "start",
+    textAlign: "start" as const,
   },
 
   "&.MuiTableCell-root": {

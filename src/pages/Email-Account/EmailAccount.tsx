@@ -40,7 +40,7 @@ const EmailAccounts: React.FC = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const dispatch = useDispatch<AppDispatch>();
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
   const [isSettingOpen, setIsSettingOpen] = useState<boolean>(false);
   const [emailAccounts, setEmailAccounts] = useState<EmailAccount[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -239,7 +239,7 @@ const EmailAccounts: React.FC = () => {
       setEmailAccounts((prevAccounts) =>
         prevAccounts.filter((account) => account._id !== selectedEmailAccount)
       );
-      handleCloseDeleteDialog();
+      handleCloseDeleteDialogBox();
     } catch (error) {
       console.error("Failed to delete email account:", error);
     }

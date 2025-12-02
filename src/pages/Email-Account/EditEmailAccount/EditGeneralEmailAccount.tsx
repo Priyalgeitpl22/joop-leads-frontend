@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import Grid2 from "@mui/material/Grid2";
-import { Button2, TextField, InputLabel } from "../../../styles/layout.styled";
+import { TextField, InputLabel } from "../../../styles/layout.styled";
 
 import ReactQuill from "react-quill";
 import {
@@ -57,9 +57,31 @@ const EditGeneralEmailAccount = forwardRef<
     fromEmail: "",
     limit: 0,
     timeGap: 0,
+    time_gap: 0,
+    userName: "",
+    password: "",
+    smtpHost: "",
+    smtpPort: null as number | null,
+    security: true,
+    imapHost: "",
+    imapPort: null as number | null,
+    imapSecurity: true,
+    imapUserName: "",
+    imapPassword: "",
+    replyToAddressChecked: false,
+    replyToAddress: "",
+    bccEmail: "",
+    trackingDomainChecked: false,
+    tags: "",
+    clients: "",
+    signature: "",
+    type: "",
   });
 
   const [smtpFormData, setSmtpFormData] = useState({
+    fromName: "",
+    fromEmail: "",
+    limit: 0,
     warmup: {
       enabled: false,
       maxPerDay: 0,
@@ -93,18 +115,70 @@ const EditGeneralEmailAccount = forwardRef<
 
   useEffect(() => {
     if (emailAccount) {
+      const account = emailAccount as EmailAccount & {
+        limit?: number;
+        time_gap?: number;
+        smtp?: {
+          host?: string;
+          port?: number;
+          secure?: boolean;
+          auth?: {
+            user?: string;
+            pass?: string;
+          };
+        };
+        imap?: {
+          host?: string;
+          port?: number;
+          secure?: boolean;
+          auth?: {
+            user?: string;
+            pass?: string;
+          };
+        };
+        signature?: string;
+        replyToAddress?: string;
+        bccEmail?: string;
+        trackingDomain?: boolean;
+        tags?: string;
+        clients?: string;
+      };
       setFormData({
-        fromName: emailAccount?.name || "",
-        fromEmail: emailAccount?.email || "",
-        limit: emailAccount?.limit || 0,
-        timeGap: emailAccount?.time_gap || 0,
+        fromName: account?.name || "",
+        fromEmail: account?.email || "",
+        limit: account?.limit || 0,
+        timeGap: account?.time_gap || 0,
+        time_gap: account?.time_gap || 0,
+        userName: account?.smtp?.auth?.user || "",
+        password: account?.smtp?.auth?.pass || "",
+        smtpHost: account?.smtp?.host || "",
+        smtpPort: account?.smtp?.port ?? null,
+        security: account?.smtp?.secure ?? true,
+        imapHost: account?.imap?.host || "",
+        imapPort: account?.imap?.port ?? null,
+        imapSecurity: account?.imap?.secure ?? true,
+        imapUserName: account?.imap?.auth?.user || "",
+        imapPassword: account?.imap?.auth?.pass || "",
+        replyToAddressChecked: !!account?.replyToAddress,
+        replyToAddress: account?.replyToAddress || "",
+        bccEmail: account?.bccEmail || "",
+        trackingDomainChecked: account?.trackingDomain || false,
+        tags: account?.tags || "",
+        clients: account?.clients || "",
+        signature: account?.signature || "",
+        type: account?.type || "",
       });
-      // setSmtpFormData({
-      //   fromName: emailAccount?.name || "",
-      //   fromEmail: emailAccount?.email || "",
-      //   limit: emailAccount?.limit || 0,
-      //   timeGap: emailAccount?.time_gap || 0
-      // });
+      setSmtpFormData({
+        fromName: account?.name || "",
+        fromEmail: account?.email || "",
+        limit: account?.limit || 0,
+        warmup: {
+          enabled: account?.warmup?.enabled ?? false,
+          maxPerDay: account?.warmup?.maxPerDay ?? 0,
+          dailyRampup: account?.warmup?.dailyRampup ?? false,
+          rampupIncrement: account?.warmup?.rampupIncrement ?? 0,
+        },
+      });
     }
   }, [emailAccount]);
 
@@ -119,11 +193,24 @@ const EditGeneralEmailAccount = forwardRef<
       [name]:
         type === "checkbox"
           ? (e.target as HTMLInputElement).checked
-          : name === "smtpPort" || name === "imapPort"
+          : name === "smtpPort" || name === "imapPort" || name === "timeGap"
             ? Number(value)
             : value,
     }));
     setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
+  };
+
+  const handleSmtpFormDataChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value, type } = e.target;
+    setSmtpFormData((prev) => ({
+      ...prev,
+      [name]:
+        type === "number" || name === "limit"
+          ? Number(value)
+          : value,
+    }));
   };
 
   const handleSelectChange = (
@@ -190,7 +277,7 @@ const EditGeneralEmailAccount = forwardRef<
     if (!formData.password.trim()) newErrors.password = "Password is required";
     if (!formData.smtpHost.trim()) newErrors.smtpHost = "SMTP Host is required";
 
-    if (formData.smtpPort === null || formData.smtpPort === "") {
+    if (formData.smtpPort === null || formData.smtpPort === undefined) {
       newErrors.smtpPort = "SMTP Port is required";
     }
 
@@ -202,16 +289,16 @@ const EditGeneralEmailAccount = forwardRef<
       newErrors.limit = "Message per day must be a positive number";
     }
     if (
-      !formData.time_gap ||
-      isNaN(Number(formData.time_gap)) ||
-      Number(formData.time_gap) <= 0
+      !formData.timeGap ||
+      isNaN(Number(formData.timeGap)) ||
+      Number(formData.timeGap) <= 0
     ) {
       newErrors.time_gap = "Minimum time gap must be a positive number";
     }
 
     if (!formData.imapHost.trim()) newErrors.imapHost = "IMAP Host is required";
 
-    if (formData.imapPort === null || formData.imapPort === "") {
+    if (formData.imapPort === null || formData.imapPort === undefined) {
       newErrors.imapPort = "Imap port is required";
     }
 
@@ -232,7 +319,7 @@ const EditGeneralEmailAccount = forwardRef<
         name: formData.fromName,
         email: formData.fromEmail,
         limit: formData.limit,
-        time_gap: formData.time_gap,
+        time_gap: formData.timeGap,
         type: formData.type,
       };
     } else {
@@ -268,7 +355,7 @@ const EditGeneralEmailAccount = forwardRef<
         clients: formData.clients,
         signature: formData.signature,
         limit: formData.limit,
-        time_gap: formData.time_gap,
+        time_gap: formData.timeGap,
         type: formData.type,
       };
     }
@@ -402,8 +489,8 @@ const EditGeneralEmailAccount = forwardRef<
               <InputLabel>Minimum time gap (min)</InputLabel>
               <TextField
                 fullWidth
-                name="time_gap"
-                value={formData.time_gap}
+                name="timeGap"
+                value={formData.timeGap}
                 onChange={handleChange}
                 error={!!errors.time_gap}
                 helperText={errors.time_gap}
@@ -509,10 +596,13 @@ const EditGeneralEmailAccount = forwardRef<
             <Grid2 size={{ xs: 10, sm: 10 }}>
               <Button
                 onClick={handleVerifyAccount}
-                color={"white"}
                 disabled={verificationInProgress}
-                background={"var(--theme-color)"}
-                style={{ width: "100%", cursor: "pointer" }}
+                style={{ 
+                  width: "100%", 
+                  cursor: "pointer",
+                  background: "var(--theme-color)",
+                  color: "white"
+                }}
               >
                 {verificationInProgress ? (
                   <CircularProgress size={24} sx={{ color: "white" }} />
@@ -581,7 +671,6 @@ const EditGeneralEmailAccount = forwardRef<
                 fullWidth
                 name="fromName"
                 value={smtpFormData.fromName}
-                onChange={handleChange}
                 error={!smtpFormData.fromName}
                 helperText={!smtpFormData.fromName ? "From Name is required" : ""}
                 InputProps={{
@@ -596,7 +685,6 @@ const EditGeneralEmailAccount = forwardRef<
                 fullWidth
                 name="fromEmail"
                 value={smtpFormData.fromEmail}
-                onChange={handleChange}
                 error={
                   !smtpFormData.fromEmail || !validateEmail(smtpFormData.fromEmail)
                 }
@@ -620,7 +708,7 @@ const EditGeneralEmailAccount = forwardRef<
                 name="limit"
                 placeholder="12"
                 value={smtpFormData.limit}
-                onChange={handleChange}
+                onChange={handleSmtpFormDataChange}
                 error={!smtpFormData.limit || smtpFormData.limit <= 0}
                 inputProps={{ min: 1 }}
                 helperText={
@@ -637,15 +725,15 @@ const EditGeneralEmailAccount = forwardRef<
               <TextField
                 fullWidth
                 type="number"
-                name="time_gap"
+                name="timeGap"
                 placeholder="12"
-                value={formData.time_gap}
+                value={formData.timeGap}
                 onChange={handleChange}
-                error={!formData.time_gap || formData.time_gap <= 0}
+                error={!formData.timeGap || formData.timeGap <= 0}
                 helperText={
-                  !formData.time_gap
+                  !formData.timeGap
                     ? " Minimum time gap is required"
-                    : formData.time_gap <= 0
+                    : formData.timeGap <= 0
                       ? "Enter a valid positive number"
                       : ""
                 }

@@ -27,8 +27,6 @@ import { FolderMenu } from "./Folder/CampaignFolder.styled";
 import { CustomTableBody, CustomTableCell, CustomTableRow, TableCellHead } from "./EmailCampaign.styled";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store/store";
-import TablePagination from "@mui/material/TablePagination";
-import { Container } from "../../styles/global.styled";
 
 
 export interface EmailCampaignTableProps {
@@ -69,8 +67,8 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
   visibleColumns,
 }) => {
   const { user } = useSelector((state: RootState) => state.user);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [page] = useState(0);
+  const [rowsPerPage] = useState(10);
 
   const paginatedCampaigns = campaigns.slice(
     page * rowsPerPage,
@@ -79,25 +77,12 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
 
 
 
-  const handleChangePage = (
-    _event: React.MouseEvent<HTMLButtonElement> | null,
-    newPage: number
-  ) => {
-    setPage(newPage);
-  };
-
   const structureName = (name: string): string => {
     const tempName = name.split(" ")
     const nameArray = tempName.map((elem) => elem.charAt(0).toUpperCase() + elem.slice(1))
     const result: string = nameArray.join(" ")
     return result;
   }
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
 
   const tableData = [
     {

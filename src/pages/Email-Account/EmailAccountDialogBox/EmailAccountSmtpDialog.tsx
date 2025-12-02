@@ -29,7 +29,6 @@ import toast, { Toaster } from "react-hot-toast";
 import {
   Button,
   ButtonDisabled,
-  PrimaryButton,
 } from "../../../styles/global.styled";
 
 interface EmailAccountSmtpDialogProps {
@@ -671,8 +670,10 @@ const EmailAccountSmtpDialog: React.FC<EmailAccountSmtpDialogProps> = ({
             <ButtonDisabled
               disabled={isSaveDisabled}
               onClick={handleCreateAccount}
-              color={isSaveDisabled ? "white" : "white"}
-              background={isSaveDisabled ? "var(--secondary)" : "var(--secodary)"}
+              style={{
+                color: "white",
+                background: isSaveDisabled ? "var(--secondary)" : "var(--secodary)"
+              }}
               // style={{
               //   width: "10%",
               //   cursor: isSaveDisabled ? "not-allowed" : "pointer",

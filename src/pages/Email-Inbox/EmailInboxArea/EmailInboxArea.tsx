@@ -32,7 +32,6 @@ import {
   clearFilters,
   markThreadAsRead,
 } from "../../../redux/slice/emailInboxSlice";
-import { FilterIcon } from "../../../styles/global.styled";
 import { AccountAvatar } from "../EmailInboxSidebar/EmailInboxSidebar.styled";
 
 const filterConfig = [

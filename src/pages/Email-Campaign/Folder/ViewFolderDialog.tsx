@@ -16,7 +16,6 @@ import {
   ScrollableContent,
 } from "../../Contacts/View-Drawer/ViewDrawer.styled";
 import { SectionTitle } from "../../../styles/layout.styled";
-import { IEmailCampaign } from "../NewCampaign/interfaces";
 
 interface ViewDrawerProps {
   open: boolean;
@@ -74,11 +73,11 @@ const ViewDrawer: React.FC<ViewDrawerProps> = ({
               <Divider sx={{ my: 2 }} />
               <SectionTitle>Campaigns</SectionTitle>
               {folderDetail.campaigns.length > 0 ? (
-                folderDetail.campaigns.map((campaign: IEmailCampaign) => (
-                  <CampaignCard key={campaign.id}>
+                folderDetail.campaigns.map((campaign: any, index: number) => (
+                  <CampaignCard key={campaign.id || index}>
                     <Typography>
                       <CampaignIcon sx={IconStyle("#FF5722")} />
-                      <strong>Name:</strong> {campaign.name}
+                      <strong>Name:</strong> {campaign.campaign_name || campaign.campaignName || "Unnamed"}
                     </Typography>
                   </CampaignCard>
                 ))

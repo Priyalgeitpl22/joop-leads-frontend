@@ -1,5 +1,4 @@
 import styled from "@emotion/styled";
-import { IconButton } from "@mui/material";
 
 export const UsersContainer = styled.div`
   width: 100%;

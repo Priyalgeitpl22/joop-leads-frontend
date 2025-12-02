@@ -54,7 +54,7 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
   });
 
   const dispatch = useDispatch<AppDispatch>();
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
   const [errors, setErrors] = useState({ campaignName: "" });
   const [isFormValid, setIsFormValid] = useState(false);
 
