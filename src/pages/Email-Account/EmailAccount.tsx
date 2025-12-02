@@ -94,7 +94,7 @@ const EmailAccounts: React.FC = () => {
         field: "enabled",
         headerName: "Warmup Enabled",
         width: 150,
-        renderCell: (params: GridRenderCellParams<EmailAccount>) => <Box>{params.row.warmup.enabled ? "Yes" : "No"}</Box>,
+        renderCell: (params: GridRenderCellParams<EmailAccount>) => <Box>{params.row.warmup?.enabled ? "Yes" : "No"}</Box>,
       },
       {
         field: "limit",

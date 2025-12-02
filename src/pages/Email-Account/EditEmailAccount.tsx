@@ -51,13 +51,13 @@ const EditEmailAccount = ({ id }: { id?: string }) => {
         </div>
       </div>
       <ScrollableContent>
-        {activeTab === "overview" && (
+        {activeTab === "overview" && emailAccount && (
           <EmailAccountOverview emailAccount={emailAccount} />
         )}
-        {activeTab === "general" && (
+        {activeTab === "general" && emailAccount && (
           <GeneralAccount emailAccount={emailAccount} />
         )}
-        {activeTab === "warmUp" && (
+        {activeTab === "warmUp" && emailAccount && (
           <EditWarmupEmailAccount
             ref={warmupRef}
             id={id}
