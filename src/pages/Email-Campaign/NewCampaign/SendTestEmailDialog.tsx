@@ -171,7 +171,7 @@ const SendTestEmailDialog: React.FC<SendTestEmailDialogProps> = ({
           {loading ? (
             <CircularProgress size={24} sx={{ color: "white" }} />
           ) : (
-            "Send Test Email"
+            "Send"
           )}
         </Button>
       </DialogFooter>

@@ -122,6 +122,9 @@ const Home = () => {
         justifyContent="center"
         alignItems="center"
         minHeight="100vh"
+        sx={{
+          backgroundColor: "blue",
+        }}
       >
         <CircularProgress sx={{ color: "#667eea" }} />
       </Box>
@@ -236,8 +239,8 @@ const Home = () => {
         </Box>
         <Box
           sx={{
-            display: "flex",
-            flexDirection: "column",
+            display: "grid",
+            gridTemplateColumns: "78% 20%",
             gap: 3,
           }}
         >

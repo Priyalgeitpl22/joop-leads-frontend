@@ -517,9 +517,9 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
               onClose={() => setTestEmailDialog(false)}
               sequence={newSequnce}
             />
-            <SecondaryButton onClick={handleTestEmail}>
+            <Button onClick={handleTestEmail}>
               Send Test Email
-            </SecondaryButton>
+            </Button>
             <Button onClick={handleNext} style={{ marginRight: "5%" }}>
               Schedule Campaign
             </Button>

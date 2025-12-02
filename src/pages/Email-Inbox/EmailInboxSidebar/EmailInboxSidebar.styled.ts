@@ -146,12 +146,17 @@ export const AccountSelectorButton = styled(Box)`
 `;
 
 export const AccountAvatar = styled(Avatar)`
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   background: var(--primary-gradient);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: bold;
-  border:0px;
+  border: 0px;
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
 `;
 
 export const PopupContainer = styled(Box)`

@@ -136,33 +136,28 @@ export const SecondaryButton = styled.button`
   width: fit-content;
   padding: 8px 16px;
   border: none;
-  border-radius: 6px;
+  border-radius: 5px;
   color: var(--text-white);
-  background: linear-gradient(
-    135deg,
-    var(--secondary) 0%,
-    var(--secondary-dark) 100%
+  background-image: linear-gradient(
+    to right,
+    #757F9A 0%,
+    #696c70 51%,
+    #757F9A 100%
   );
+  background-size: 200% auto;
   cursor: pointer;
   font-size: 14px;
   white-space: nowrap;
-  transition: all 0.2s ease-in-out;
+  box-shadow: 0 0 20px #eee;
+  display: block;
   
   &:hover {
-    background: linear-gradient(
-      135deg,
-       var(--secondary-light) 0%,
-       var(--secondary-dark) 100%
-    );
-    color: white;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    color: #fff;
+    text-decoration: none;
   }
 
   &:active {
-    background: var(--secondary);
     color: var(--text-white);
-    transform: translateY(0);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 

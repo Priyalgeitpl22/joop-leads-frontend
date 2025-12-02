@@ -169,8 +169,14 @@ export const EmailPagination = styled(Pagination)({
   "& .MuiPaginationItem-root:hover": {
     backgroundColor: "rgba(7, 111, 248, 0.23)",
   },
-  
- 
+  "& .MuiSvgIcon-root": {
+    width: "20px",
+    height: "20px",
+  },
+  "& .MuiPaginationItem-root": {
+    fontSize: "12px",
+    fontWeight: "400",
+  },
 });
 
 export const InboxMessageBody = styled(Box)<{ isExpanded: boolean }>(
@@ -197,7 +203,7 @@ export const InboxMessageBody = styled(Box)<{ isExpanded: boolean }>(
 
 export const TotalPageCount = styled(Box)`
   border-top: 1px solid #ddd;
-  padding: 5px 0;
+  padding: 5px;
   font-size: 12px;
   display: flex;
   align-items: center;
@@ -212,11 +218,11 @@ export const NoMailboxMessage = styled(Box)({
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
-  padding: "20px",
+  padding: "10px",
   borderRadius: "8px",
   backgroundColor: "#f8f9fa",
   color: "#555",
-  fontSize: "16px",
+  fontSize: "12px",
   fontWeight: "bold",
   height: "100%",
   width: "100%",  
@@ -240,7 +246,7 @@ export const EmailInboxListHeader = styled(Box)({
 });
 
 export const StyledDivider = styled(Divider)`
-  margin-bottom: 10px;
+  // margin-bottom: 10px;
 `;
 
 export const SearchBar = styled(Box)`

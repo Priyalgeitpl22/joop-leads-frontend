@@ -116,8 +116,8 @@ const EmailInboxList: React.FC<EmailInboxListProps> = ({ onAccountSelect, accoun
               >
                 <AccountAvatar>{selectedAccount.name[0]?.toUpperCase()}</AccountAvatar>
                 <AccountDetails>
-                  <strong>{selectedAccount.name}</strong>
-                  <div>{selectedAccount.email}</div>
+                  <strong style={{ fontSize: "12px" }}>{selectedAccount.name}</strong>
+                  <div style={{ fontSize: "12px", fontWeight: "400" }}>{selectedAccount.email}</div>
                 </AccountDetails>
               </AccountItem>
             )}

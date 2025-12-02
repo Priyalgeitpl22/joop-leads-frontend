@@ -86,32 +86,30 @@ export default function EmailInboxs() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // <= 600px
 
-  // Load email accounts
   useEffect(() => {
-    const loadEmailAccounts = async () => {
-      try {
-        const data = await dispatch(
-          fetchEmailAccount({ orgId: user?.orgId || "" })
-        ).unwrap();
-        setEmailAccounts(data);
-        if (selectedAccountId) {
-          await dispatch(getAllEmailThreads({ accountId: selectedAccountId }));
-        }
-        if (data.length > 0 && !selectedAccountId) {
-          const firstAccountId = data[0]._id;
-          dispatch(setSelectedAccount(firstAccountId));
-        }
-      } catch (error) {
-        console.error("Failed to fetch email accounts:", error);
-      }
-    };
-
     if (user?.orgId) {
       loadEmailAccounts();
     }
   }, [dispatch, user?.orgId, selectedAccountId]);
 
-  // Fetch Mailboxes when account is selected
+  const loadEmailAccounts = async () => {
+    try {
+      const data = await dispatch(
+        fetchEmailAccount({ orgId: user?.orgId || "" })
+      ).unwrap();
+      if (data.length > 0) {
+        setEmailAccounts(data);
+        if (!selectedAccountId) {
+          const firstAccountId = data[0]._id as string;
+          dispatch(setSelectedAccount(firstAccountId));
+          await dispatch(getAllEmailThreads({ accountId: firstAccountId }));
+        }
+      }
+    } catch (error) {
+      console.error("Failed to fetch email accounts:", error);
+    }
+  };
+
   useEffect(() => {
     const fetchMailboxes = async () => {
       if (!selectedAccountId) return;
@@ -122,39 +120,30 @@ export default function EmailInboxs() {
       try {
         const res = await dispatch(getAllMailBox(selectedAccountId)).unwrap();
         const unique = res.filter(
-          (mailbox: any, index: number, self: any[]) =>
-            index === self.findIndex((m) => m.name === mailbox.name)
+          (
+            mailbox: { _id: string; name: string },
+            index: number,
+            self: { _id: string; name: string }[]
+          ) => index === self.findIndex((m) => m.name === mailbox.name)
         );
         if (unique.length > 0 && !selectedMailboxId) {
           const firstMailbox = unique[0];
           dispatch(setSelectedMailbox(firstMailbox._id));
           await dispatch(getAllEmailThreads({ accountId: selectedAccountId }));
+          setLoadingMailboxes(false);
         }
       } catch (err) {
+        setLoadingMailboxes(false);
         console.error("Failed to fetch mailboxes:", err);
       }
-
-      setLoadingMailboxes(false);
     };
 
     fetchMailboxes();
   }, [selectedAccountId, dispatch, selectedMailboxId]);
 
-  // Initial chats fetch
   useEffect(() => {
     dispatch(getAllChats({ orgId: user?.orgId || "" }));
   }, [dispatch, user?.orgId]);
-
-  // Auto reload
-  useEffect(() => {
-    const interval = setInterval(
-      () => {
-        handleReload();
-      },
-      5 * 60 * 1000
-    );
-    return () => clearInterval(interval);
-  }, [selectedAccountId, accounts]);
 
   const handleAccountSelectorClick = (event: React.MouseEvent<HTMLElement>) => {
     setAccountSelectorAnchor(event.currentTarget);
@@ -165,8 +154,10 @@ export default function EmailInboxs() {
   };
 
   const handleMessageSelect = useCallback((message: string) => {
-    setSelectedMessage(message);
-    setOpenDialog(true);
+    if (message) {
+      setSelectedMessage(message);
+      setOpenDialog(true);
+    }
   }, []);
 
   const open = Boolean(accountSelectorAnchor);
@@ -186,29 +177,28 @@ export default function EmailInboxs() {
     try {
       setRefreshLoading(true);
       const res = await dispatch(
-        reloadAccountMailboxes({ accountId: selectedAccountId })
+        reloadAccountMailboxes({ accountId: selectedAccountId || "" })
       ).unwrap();
       if (res) {
-        await dispatch(reloadAccountMessages({ accountId: selectedAccountId }));
-        await dispatch(getAllEmailThreads({ accountId: selectedAccountId }));
+        await dispatch(reloadAccountMessages({ accountId: selectedAccountId || "" }));
+        await dispatch(getAllEmailThreads({ accountId: selectedAccountId || "" }));
         if (selectedMessage) {
           await dispatch(
             getAllThreadsMessages({
-              accountId: selectedAccountId,
+              accountId: selectedAccountId || "",
               threadId: selectedMessage,
             })
           );
         }
       }
     } catch (error) {
-      console.error("❌ Error while reloading account mailboxes:", error);
+      console.error("Error while reloading account mailboxes:", error);
     } finally {
       setRefreshLoading(false);
     }
   };
 
   return (
-    // <Box sx={{paddingTop:"3rem"}}>
     <Box
       sx={{
         height: "85vh",
@@ -219,9 +209,7 @@ export default function EmailInboxs() {
     >
       <EmailInbox>
         <EmailInboxHeader>
-          <SectionTitle>
-            Email Inbox
-          </SectionTitle>
+          <SectionTitle>Email Inbox</SectionTitle>
           <AccountSelectorContainer>
             <ReloadIcon
               style={{ color: "var(--text-secondary)" }}
@@ -256,10 +244,13 @@ export default function EmailInboxs() {
                   style={{
                     flex: isMobile ? "1" : "0 0 50%",
                     overflowY: "auto",
+                    height: "100%",
                   }}
                 >
                   <EmailInboxArea
-                    onMessageSelect={handleMessageSelect}
+                    onMessageSelect={(messageId) =>
+                      handleMessageSelect(messageId)
+                    }
                     selectedMessage={selectedMessage}
                   />
                 </div>
@@ -283,6 +274,7 @@ export default function EmailInboxs() {
                             setSelectedMessage(null);
                           }}
                           messages={threadMessages as unknown as Message[]}
+                          selectedAccountId={selectedAccount?._id || ""}
                         />
                       </>
                     ) : (
