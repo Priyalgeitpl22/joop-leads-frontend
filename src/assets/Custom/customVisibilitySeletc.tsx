@@ -52,17 +52,16 @@ const ColumnVisibilitySelect: React.FC<ColumnVisibilitySelectProps> = ({
         inputProps={{ "aria-label": label }}
         sx={{
           background: "white !important",
-          padding: "0px 10px",
-          height: "40px",
+          height: "32px",
+          width: "100%",
           borderRadius: "4px",
 
           "& .MuiSelect-select": {
-            fontSize: "14px !important",
+            fontSize: "12px !important",
             fontWeight: 500,
-            padding: "0px !important",
+            padding: "8px !important",
             color: "#9ca3af",
           },
-
           ...selectSx,
         }}
         renderValue={() => "Customize Columns"}
@@ -92,7 +91,7 @@ const ColumnVisibilitySelect: React.FC<ColumnVisibilitySelectProps> = ({
             <ListItemText primary={column} sx={{
               '& .MuiListItemText-primary': {
                 color: '#000000 !important',
-                fontSize: '14px',
+                fontSize: '12px',
                 fontWeight: 500,
               },
             }} />

@@ -22,13 +22,6 @@ export const UserHeader = styled.section`
   padding: 12px;
   background: white;
 `;
-export const FilterIcon = styled(IconButton)`
-  height: 40px;
-  background: var(--background-color);
-  border-radius: 5px;
-  border: 1px solid var(--border-color);
-  padding: 5px;
-`;
 
 export const UserTable = styled.div`
 // padding-top:1rem;

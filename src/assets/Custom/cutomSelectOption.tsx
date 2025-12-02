@@ -50,7 +50,7 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
           },
         }}
         sx={{
-          height: 50,
+          height: "45px",
           width: "100%",
         }}
       >

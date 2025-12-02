@@ -17,7 +17,6 @@ import {
 } from "@mui/material";
 import {toast } from "react-hot-toast";
 import {
-  FilterIcon,
   UserHeader,
   UsersContainer,
   UserTable,
@@ -26,7 +25,7 @@ import { Button2, SectionTitle } from "../../styles/layout.styled";
 import { SearchBar } from "../../components/Header/header.styled";
 import { Search, Trash2 } from "lucide-react";
 import { CustomDataTable } from "../../assets/Custom/customDataGrid";
-import { Button } from "../../styles/global.styled";
+import { Button, FilterIcon } from "../../styles/global.styled";
 import { GridColDef } from "@mui/x-data-grid";
 import { useEffect, useMemo, useState } from "react";
 import AddUserDialog from "./AddUser/AddUserDialog";

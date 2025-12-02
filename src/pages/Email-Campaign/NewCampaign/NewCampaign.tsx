@@ -3,7 +3,6 @@ import Box from "@mui/material/Box";
 import {
   Container,
   FooterContainer,
-  HeaderContainer,
   MainContainer,
 } from "./NewCampaign.styled";
 import WestOutlinedIcon from "@mui/icons-material/WestOutlined";
@@ -30,6 +29,8 @@ import { Button, SecondaryButton } from "../../../styles/global.styled";
 import { useLocation } from "react-router-dom";
 import CircularLoader from "../../../assets/Custom/circularProgress";
 import toast from "react-hot-toast";
+import { HeaderContainer } from "../../../styles/global.styled";
+
 export interface ImportedLeadsData {
   campaignName?: string;
   clientId?: string;
@@ -516,9 +517,9 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
               onClose={() => setTestEmailDialog(false)}
               sequence={newSequnce}
             />
-            <SecondaryButton onClick={handleTestEmail}>
+            <Button onClick={handleTestEmail}>
               Send Test Email
-            </SecondaryButton>
+            </Button>
             <Button onClick={handleNext} style={{ marginRight: "5%" }}>
               Schedule Campaign
             </Button>

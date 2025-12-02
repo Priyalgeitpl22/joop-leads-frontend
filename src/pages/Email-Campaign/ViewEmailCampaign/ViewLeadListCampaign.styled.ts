@@ -34,7 +34,6 @@ export const HeaderCell = styled(TableCell)`
   color: black;
   background: var(--background-slate);
   padding: 14px;
-  text-transform: uppercase;
   position: sticky;
   top: 0;
   z-index: 10;
@@ -100,9 +99,6 @@ export const CampaignCard = styled.div`
   box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
   border: 1px solid #e0e0e0;
-  margin-top: 5% !important;
-  // width: 80%;
-  margin: 5%;
 `;
 
 export const CampaignSection = styled.div`

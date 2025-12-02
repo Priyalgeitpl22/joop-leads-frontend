@@ -107,7 +107,7 @@ export const NoMailboxMessage = styled(Box)`
 `;
 
 export const EmailInbox = styled(Box)`
-padding:1.5rem;
+  padding: 10px;
   width: 100%;
   height: 100%;
   display: flex;
@@ -122,7 +122,7 @@ padding:1.5rem;
 
 export const EmailInboxHeader = styled(Box)`
   background: var(--background-primary);
-  padding: 0px 16px 16px 16px;
+  padding: 0px 10px;
   display: flex;
   align-items: center; 
   justify-content: space-between;
@@ -146,12 +146,17 @@ export const AccountSelectorButton = styled(Box)`
 `;
 
 export const AccountAvatar = styled(Avatar)`
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   background: var(--primary-gradient);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: bold;
-  border:0px;
+  border: 0px;
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
 `;
 
 export const PopupContainer = styled(Box)`

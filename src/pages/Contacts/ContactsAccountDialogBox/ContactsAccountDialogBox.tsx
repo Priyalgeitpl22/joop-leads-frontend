@@ -10,8 +10,8 @@ import {
   FormHelperText,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../redux/store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../redux/store/store";
 import {
   CreateContactsAccount,
   CreateContactsAccountPayload,
@@ -37,6 +37,7 @@ const ContactsAccountDialogBox: React.FC<ContactsAccountDialogProps> = ({
   selectedId,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
+  const { user } = useSelector((state: RootState) => state.user);
 
   const [formData, setFormData] = useState({
     first_name: "",
@@ -60,11 +61,26 @@ const ContactsAccountDialogBox: React.FC<ContactsAccountDialogProps> = ({
 
   useEffect(() => {
     if (open && selectedId) {
-      dispatch(getCampaignListById({ id: selectedId })).then((res: any) => {
-        if (res?.payload) {
-          setFormData(res.payload);
-        }
-      });
+      dispatch(getCampaignListById({ id: selectedId }))
+        .then((res) => {
+          if (res.payload && typeof res.payload === "object" && "first_name" in res.payload) {
+            const payload = res.payload;
+            setFormData({
+              first_name: payload.first_name ?? "",
+              last_name: payload.last_name ?? "",
+              email: payload.email ?? "",
+              phone_number: payload.phone_number ?? "",
+              company_name: payload.company_name ?? "",
+              linkedin_profile: payload.linkedin_profile ?? "",
+              website: payload.website ?? "",
+              location: payload.location ?? "",
+              orgId: payload.orgId ?? user?.orgId ?? "",
+            });
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching contact:", error);
+        });
     } else if (open && !selectedId) {
       setFormData({
         first_name: "",
@@ -75,7 +91,7 @@ const ContactsAccountDialogBox: React.FC<ContactsAccountDialogProps> = ({
         linkedin_profile: "",
         website: "",
         location: "",
-        orgId: "",
+        orgId: user?.orgId ?? "",
       });
       setFormErrors({
         first_name: "",
@@ -83,13 +99,14 @@ const ContactsAccountDialogBox: React.FC<ContactsAccountDialogProps> = ({
         phone_number: "",
       });
     }
-  }, [open, selectedId]);
+  }, [open, selectedId, dispatch, user?.orgId]);
 
-  const validateField = (name: string, value: string) => {
+  const validateField = (name: string, value: string | null | undefined) => {
     let error = "";
-    if (!value.trim()) {
+    const stringValue = value ?? "";
+    if (!stringValue.trim()) {
       error = `${name.replace("_", " ")} is required`;
-    } else if (name === "email" && !validateEmail(value)) {
+    } else if (name === "email" && !validateEmail(stringValue)) {
       error = "Invalid email format";
     }
     return error;
@@ -109,17 +126,24 @@ const ContactsAccountDialogBox: React.FC<ContactsAccountDialogProps> = ({
   };
 
   const isFormValid = () => {
-    const errors: any = {};
-    Object.keys(formErrors).forEach((field) => {
-      errors[field] = validateField(field, formData[field as keyof typeof formData]);
-    });
+    const errors: { first_name: string; email: string; phone_number: string } = {
+      first_name: "",
+      email: "",
+      phone_number: "",
+    };
+    errors.first_name = validateField("first_name", formData.first_name ?? "");
+    errors.email = validateField("email", formData.email ?? "");
+    errors.phone_number = validateField("phone_number", formData.phone_number ?? "");
     setFormErrors(errors);
     return Object.values(errors).every((error) => error === "");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isFormValid()) return;
+    if (!isFormValid()) {
+      toast.error("Please fill all the required fields");
+      return
+    };
     setLoading(true);
 
     const payload: CreateContactsAccountPayload = {
@@ -148,8 +172,10 @@ const ContactsAccountDialogBox: React.FC<ContactsAccountDialogProps> = ({
 
       dispatch(fetchContacts());
       onClose();
-    } catch (error: any) {
-      toast.error(error.message || "Something went wrong.");
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Something went wrong.";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

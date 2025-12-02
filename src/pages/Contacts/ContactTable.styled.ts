@@ -18,7 +18,7 @@ export const ContactsContainer = styled(Box)`
   background: white;
   position: relative;
   flex-direction: column;
-  margin-top:3rem;
+  // margin-top:3rem;
   padding: 10px;
 `;
 export const ContactSectionTitle = styled(Tab)({
@@ -152,14 +152,6 @@ export const CustomEditIconButton = styled(IconButton)`
 
 export const CustomForwardIcon = styled(IconButton)`
   padding: 0px
-`;
-
-export const FilterIcon = styled(IconButton)`
-  height: 40px;
-  background: var(--background-color);
-  border-radius: 5px;
-  border: 1px solid var(--border-color);
-  padding: 5px;
 `;
 
 export const CustomDangerIcon = styled(IconButton)`

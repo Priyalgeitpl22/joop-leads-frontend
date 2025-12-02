@@ -28,6 +28,7 @@ import { CustomTableBody, CustomTableCell, CustomTableRow, TableCellHead } from 
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store/store";
 import TablePagination from "@mui/material/TablePagination";
+import { Container } from "../../styles/global.styled";
 
 
 export interface EmailCampaignTableProps {
@@ -144,7 +145,7 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
         boxShadow: "none",
         borderRadius: "10px",
         overflowY: "auto",
-        height: "calc(100vh - 320px)",
+        height: "100%",
         border: "1px solid lightgray",
       }}
     >
@@ -406,7 +407,7 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
           </CustomTableBody>
         ))}
       </Table>
-      <TablePagination
+      {/* <TablePagination
         component="div"
         count={campaigns.length}
         page={page}
@@ -426,11 +427,15 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
             color: "black !important",
           },
         }}
-      />
+      /> */}
 
       {campaigns.length === 0 && (
         <div style={{ padding: "18px", textAlign: "center", color: "#888" }}>
-          No campaigns found
+          {loading ? (
+            <CircularProgress size={24} sx={{ color: "#888" }} />
+          ) : (
+            "No campaigns found"
+          )}
         </div>
       )}
     </TableContainer>

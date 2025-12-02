@@ -12,7 +12,7 @@ export const OverviewContainer = styled.div`
 export const OverviewSummary = styled.div`
   background: white;
   border-radius: 12px;
-  padding: 20px;
+  padding: 8px;
   box-shadow: 0 1px 3px var(--shadow-color);
 `;
 
@@ -30,7 +30,7 @@ export const MetricsGrid = styled.div`
 
 export const MetricCard = styled.div`
   background: var(--background-head);
-  border: 1px solid var(--border-grey);
+  // border: 1px solid var(--border-grey);
   border-radius: 8px;
   padding: 24px;
   text-align: center;
@@ -39,16 +39,20 @@ export const MetricCard = styled.div`
 
 export const TwoColumn = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: 40% 60%;
   gap: 24px;
   margin-top: 20px;
+  
+  @media (max-width: 960px) {
+    grid-template-columns: 1fr;
+  }
 `
 
 export const PerformanceHeader = styled.div`
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 12px;
+  // margin-bottom: 12px;
 `
 
 export const OutboundHeader = styled.div`
@@ -61,11 +65,12 @@ export const OutboundHeader = styled.div`
 export const StatusCard = styled.div`
   display: flex;
   gap: 5px;
-  align-items: flex-start;
   background: #f0f9ff;
   border-left: 4px solid var(--success-color);
-  padding: 16px;
+  padding: 10px;
+  align-items: center;
   border-radius: 4px;
+  font-size: 12px;
 `;
 
 export const NoteBox = styled.div`
@@ -74,7 +79,7 @@ export const NoteBox = styled.div`
   border-radius: 4px;
   display: flex;
   gap: 16px;
-  margin: 20px 2px;
+  font-size: 12px;
 `;
 
 export const NoteBorder = styled.div`
@@ -89,25 +94,85 @@ export const NoteContent =styled.div`
 
 export const ChartsContainer = styled.div`
   display: grid;
-  grid-template-columns: 38% 60%;
-  gap: 24px;
+  grid-template-columns: 35% 65%;
+  gap: 10px;
+  box-sizing: border-box;
+  @media (max-width: 960px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 export const ChartBox = styled.div`
   background: var(--text-white);
   border-radius: 12px;
-  padding: 24px;
+  padding: 8px;
   box-shadow: 0 1px 3px var(--shadow-color);
+  box-sizing: border-box;
 `;
 
 export const PieStats = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 `
 
 export const PieStat = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
+  background: white;
+  padding: 0;
+`
+
+export const PieStatBar = styled.div<{ color: string }>`
+  width: 4px;
+  min-height: 100%;
+  background: ${props => props.color};
+  border-radius: 2px;
+`
+
+export const PieStatContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+`
+
+export const PieStatNumbers = styled.div<{ color: string }>`
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  color: ${props => props.color};
+  
+  .percentage {
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1;
+  }
+  
+  .count {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1;
+  }
+`
+
+export const PieStatLabel = styled.p`
+  font-size: 10px;
+  color: #666;
+  margin: 0;
+  line-height: 1.2;
+  white-space: nowrap;
+`
+
+export const SectionSubTitle = styled.h4`
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 10px 0;
+  
+  svg {
+    font-size: 12px !important;
+    font-weight: 400;
+    color: var(--text-secondary);
+  }
 `

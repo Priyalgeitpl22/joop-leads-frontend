@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
-import { Box, IconButton, Tab, TableBody, TableCell, TableRow, Tabs } from "@mui/material";
+import { Box, TableBody, TableCell, TableRow } from "@mui/material";
+import { ArrowLeft } from "lucide-react";
 import { MuiColorInput } from "mui-color-input";
 
 export const EmailCampaignContainer = styled.div`
@@ -93,7 +94,6 @@ export const CodeInput = styled.textarea`
   height: 470px;
   font-size: 14px;
   white-space: pre-wrap;
-  font-family: monospace;
   resize: none;
 `;
 
@@ -142,42 +142,26 @@ export const CopyButton = styled.button`
   }
 `;
 
-export const CustomTabs = styled(Tabs)`
-  min-height: 46px;
-  padding: 5px 5px 30px 5px;
-  background: var(--background-primary);
+// Re-export CustomTabs, CustomTab, and TabsHeader from the component
+export { CustomTabs, CustomTab } from "../../components/CustomTabs/CustomTabs";
+export { default as TabsHeader } from "../../components/CustomTabs/TabsHeader";
+export type { TabsHeaderProps, TabItem } from "../../components/CustomTabs/TabsHeader";
 
-  .MuiTabs-indicator {
-    background-color: #33475b;
-    height: 4px;
-    border-radius: 4px;
-  }
+export const BackButton = styled(ArrowLeft)`
+  font-size: 20px;
+  font-weight: 500;
+  text-transform: none;
+  color: #33475b;
+  padding: 5px;
+  height: 30px;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
 `;
 
 export const SectionHeader = styled(Box)`
   padding: 12px 0px;
   .MuiTabs-indicator {
    display:none;
-  }
-`;
-
-export const CustomTab = styled(Tab)`
-  font-size: 18px;
-  font-weight: 600;
-  text-transform: none;
-  color: #33475b;
-  padding: 8px 16px;
-  min-height: 40px;
-  transition: all 0.3s ease-in-out;
-
-  &.Mui-selected {
-    color: #33475b;
-    font-weight: bold;
-  }
-
-  &:hover {
-    color: #33475b;
-    opacity: 0.8;
   }
 `;
 
@@ -189,7 +173,7 @@ export const ContentContainer = styled(Box)`
   background: white;
   position: relative;
   flex-direction: column;
-  margin-top:3rem;
+  // margin-top:3rem;
   padding: 10px;
 `;
 
@@ -197,15 +181,8 @@ export const ScrollableContent = styled("div")`
   flex: 1;
   overflow-y: auto;
 `;
-export const FilterIcon = styled(IconButton)`
-  height: 40px;
-  background: var(--background-color);
-  border-radius: 5px;
-  border: 1px solid var(--border-color);
-  padding: 5px;
-`;
 
-export const CustomTableBody = styled(TableBody)(({ }) => ({
+export const CustomTableBody = styled(TableBody)(() => ({
   backgroundColor: "var(--background-primary)",
   "& .MuiTableCell-root": {
     padding: "12px",
@@ -214,7 +191,7 @@ export const CustomTableBody = styled(TableBody)(({ }) => ({
   },
 }));
 
-export const CustomTableRow = styled(TableRow)(({ }) => ({
+export const CustomTableRow = styled(TableRow)(() => ({
   height: "80px",
   borderRadius: 0,
   overflowX: "auto",
@@ -250,16 +227,7 @@ export const CustomTableRow = styled(TableRow)(({ }) => ({
   // },
 }));
 
-export const SectionTitle = styled(Tab)({
-  fontSize: "16px",
-  fontWeight: "600",
-  color: "#35495c",
-  display: "flex",
-  whiteSpace: "nowrap",
-  textTransform: "none",
-});
-
-export const CustomTableCell = styled(TableCell)(({ }) => ({
+export const CustomTableCell = styled(TableCell)(() => ({
   fontSize: "12px",
   fontWeight: "500",
   color: "var(--error-color)",
@@ -280,4 +248,3 @@ export const CustomTableCell = styled(TableCell)(({ }) => ({
     borderBottom: "1px solid var(--border-color-sec)",
   },
 }));
-

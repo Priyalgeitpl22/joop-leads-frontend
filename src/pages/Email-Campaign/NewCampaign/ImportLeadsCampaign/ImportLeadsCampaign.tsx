@@ -135,7 +135,7 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
         alignItems: "center",
         flexDirection: "column",
         width: "100%",
-        padding: "40px 20px",
+        // padding: "40px 20px",
       }}
     >
       {showDetail ? (
@@ -151,8 +151,8 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
       ) : (
         <>
           <Typography
-            variant="h5"
-            fontWeight={700}
+            variant="h6"
+            fontWeight={600}
             textAlign="center"
             sx={{ color: "#111827", mb: 1, mt:5 }}
           >
@@ -162,7 +162,7 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
           <Typography
             variant="body1"
             textAlign="center"
-            sx={{ color: "#6b7280", mb: 6, mt: 1 }}
+            sx={{ color: "#6b7280", mt: 1 }}
           >
             How would you like to get contacts into your list?
           </Typography>

@@ -22,7 +22,7 @@ import PasswordResetConfirmation from "./pages/Forgot-Password/PasswordResetConf
 import ResetPassword from "./pages/Forgot-Password/ResetPassword";
 import VerifyOtp from "./pages/Verify-OTP/VerifyOtp";
 import ContactTable from "./pages/Contacts/ContactTable";
-import EditEmailAccount from "./pages/Email-Account/EditEmailAccount/EditEmailAccount";
+import EditEmailAccount from "./pages/Email-Account/EditEmailAccount";
 import ViewEmailCampaign from "./pages/Email-Campaign/ViewEmailCampaign/ViewEmailCampaign";
 import { Toaster } from "react-hot-toast";
 import Users from "./pages/Users/User";
@@ -180,13 +180,16 @@ const App=() => {
           subTitle={subTitle}
         >
           {router.pathname === "/" && <Home />}
-          {router.pathname.startsWith("/email-campaign") && <EmailCampaign />}
+          {router.pathname.startsWith("/email-campaign/view-email-campaign") &&
+            <ViewEmailCampaign />
+          }
+          {router.pathname.startsWith("/email-campaign") && 
+            !router.pathname.startsWith("/email-campaign/view-email-campaign") &&
+            <EmailCampaign />
+          }
           {router.pathname === "/email-accounts" && <EmailAccount />}
           {router.pathname.startsWith("/email-account/edit-email-account/") &&
             <EditEmailAccount id={router.pathname.split("/").pop()} />
-          }
-          {router.pathname.startsWith("/email-campaign/view-email-campaign") &&
-            <ViewEmailCampaign />
           }
           {router.pathname === "/inbox" && <EmailInboxs />}
           {router.pathname === "/user" && <Users />}

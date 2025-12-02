@@ -1,4 +1,4 @@
-import {memo, useCallback, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../redux/store/store";
 import {
@@ -13,7 +13,6 @@ import {
   SearchBar,
 } from "./EmailInboxArea.styled";
 import {
-  Avatar,
   Button,
   Checkbox,
   Chip,
@@ -33,6 +32,8 @@ import {
   clearFilters,
   markThreadAsRead,
 } from "../../../redux/slice/emailInboxSlice";
+import { FilterIcon } from "../../../styles/global.styled";
+import { AccountAvatar } from "../EmailInboxSidebar/EmailInboxSidebar.styled";
 
 const filterConfig = [
   { key: "allReplies", label: "All Replies" },
@@ -42,7 +43,7 @@ const filterConfig = [
   { key: "byUser", label: "By User" },
 ] as const;
 
-type FilterKey = typeof filterConfig[number]["key"];
+type FilterKey = (typeof filterConfig)[number]["key"];
 type FilterOptions = Record<FilterKey, boolean>;
 
 interface Message {
@@ -61,7 +62,10 @@ interface EmailInboxAreaProps {
   selectedMessage?: string | null;
 }
 
-const EmailInboxAreaComponent: React.FC<EmailInboxAreaProps> = ({ onMessageSelect, selectedMessage }) => {
+const EmailInboxAreaComponent: React.FC<EmailInboxAreaProps> = ({
+  onMessageSelect,
+  selectedMessage,
+}) => {
   const dispatch = useDispatch<AppDispatch>();
   const [searchTerm, setSearchTerm] = useState("");
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -72,16 +76,32 @@ const EmailInboxAreaComponent: React.FC<EmailInboxAreaProps> = ({ onMessageSelec
     repliedWithin7Days: false,
     byUser: false,
   });
-  const appliedFilters = useSelector((state: RootState) => state.emailInbox.appliedFilters);
+  const appliedFilters = useSelector(
+    (state: RootState) => state.emailInbox.appliedFilters
+  );
 
-  const selectedMailboxId = useSelector((state: RootState) => state.emailInbox.selectedMailboxId);
-  const selectedAccountId = useSelector((state: RootState) => state.emailInbox.selectedAccountId);
-  const totalMessages = useSelector((state: RootState) => state.emailInbox.totalMessages);
-  const mailboxMessages = useSelector((state: RootState) => state.emailInbox.mailboxMessages);
-  const currentPage = useSelector((state: RootState) => state.emailInbox.currentPage);
+  const selectedMailboxId = useSelector(
+    (state: RootState) => state.emailInbox.selectedMailboxId
+  );
+  const selectedAccountId = useSelector(
+    (state: RootState) => state.emailInbox.selectedAccountId
+  );
+  const totalMessages = useSelector(
+    (state: RootState) => state.emailInbox.totalMessages
+  );
+  const mailboxMessages = useSelector(
+    (state: RootState) => state.emailInbox.mailboxMessages
+  );
+  const currentPage = useSelector(
+    (state: RootState) => state.emailInbox.currentPage
+  );
   const loading = useSelector((state: RootState) => state.emailInbox.loading);
-  const searchLoading = useSelector((state: RootState) => state.emailInbox.searchLoading);
-  const searchResults = useSelector((state: RootState) => state.emailInbox.searchResults);
+  const searchLoading = useSelector(
+    (state: RootState) => state.emailInbox.searchLoading
+  );
+  const searchResults = useSelector(
+    (state: RootState) => state.emailInbox.searchResults
+  );
 
   const messagesPerPage = 10;
   const totalPages = Math.ceil(totalMessages / messagesPerPage);
@@ -97,7 +117,10 @@ const EmailInboxAreaComponent: React.FC<EmailInboxAreaProps> = ({ onMessageSelec
     }
   }, [appliedFilters, anchorEl]);
 
-  const handlePageChange = (_event: React.ChangeEvent<unknown>, page: number) => {
+  const handlePageChange = (
+    _event: React.ChangeEvent<unknown>,
+    page: number
+  ) => {
     dispatch(setCurrentPage(page));
     if (selectedAccountId && selectedMailboxId) {
       dispatch(
@@ -140,7 +163,6 @@ const EmailInboxAreaComponent: React.FC<EmailInboxAreaProps> = ({ onMessageSelec
   const messagesToShow = useMemo(() => {
     return isSearchDone ? searchResults : mailboxMessages;
   }, [isSearchDone, searchResults, mailboxMessages]);
-  
 
   const handleFilterClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -203,7 +225,9 @@ const EmailInboxAreaComponent: React.FC<EmailInboxAreaProps> = ({ onMessageSelec
   };
 
   const handleRemoveFilter = (filterToRemove: string) => {
-    const updatedFilters = appliedFilters.filter((filter) => filter !== filterToRemove);
+    const updatedFilters = appliedFilters.filter(
+      (filter) => filter !== filterToRemove
+    );
     dispatch(setAppliedFilters(updatedFilters));
 
     if (selectedAccountId && selectedMailboxId) {
@@ -229,23 +253,46 @@ const EmailInboxAreaComponent: React.FC<EmailInboxAreaProps> = ({ onMessageSelec
           <img
             src="https://cdn-icons-png.flaticon.com/512/2748/2748558.png"
             alt="No Messages"
-            style={{ width: "80px", height: "80px", marginBottom: "10px", opacity: 0.6 }}
+            style={{
+              width: "80px",
+              height: "80px",
+              marginBottom: "10px",
+              opacity: 0.6,
+            }}
           />
           No mail found.
         </NoMailboxMessage>
       ) : (
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" , padding: "5px"}}>
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden",
+            padding: "5px",
+          }}
+        >
           <EmailInboxListHeader>
-            <SearchBar >
+            <SearchBar>
               <Search />
-              <input placeholder="Search Email" value={searchTerm} onChange={onSearchChange} />
+              <input
+                placeholder="Search Email"
+                value={searchTerm}
+                onChange={onSearchChange}
+              />
             </SearchBar>
             <Tooltip title="Filter Emails">
               <Button
                 onClick={handleFilterClick}
-                sx={{ marginLeft: "5px", color: "var(--primary)", border: "1px solid var(--primary)"}}
+                sx={{
+                  marginLeft: "5px",
+                  color: "var(--primary)",
+                  border: "1px solid var(--primary)",
+                  minWidth: "30px",
+                  minHeight: "28px",
+                }}
               >
-                <FilterAltOutlinedIcon style={{color:"var(--primary)"}} />
+                <FilterAltOutlinedIcon style={{ color: "var(--primary)" }} />
               </Button>
             </Tooltip>
             <Menu
@@ -257,19 +304,18 @@ const EmailInboxAreaComponent: React.FC<EmailInboxAreaProps> = ({ onMessageSelec
             >
               {filterConfig.map(({ key, label }) => (
                 <MenuItem key={key}>
-                <Checkbox
-                  checked={filterOptions[key]}
-                  onChange={() => handleFilterChange(key)}
-                  sx={{
-                    color: "var(--primary-light)", // unchecked color
-                    "&.Mui-checked": {
-                      color: "var(--primary-light)", // checked color
-                    },
-                  }}
-                />
-                {label}
-              </MenuItem>
-
+                  <Checkbox
+                    checked={filterOptions[key]}
+                    onChange={() => handleFilterChange(key)}
+                    sx={{
+                      color: "var(--primary-light)", // unchecked color
+                      "&.Mui-checked": {
+                        color: "var(--primary-light)", // checked color
+                      },
+                    }}
+                  />
+                  {label}
+                </MenuItem>
               ))}
               <div
                 style={{
@@ -289,7 +335,11 @@ const EmailInboxAreaComponent: React.FC<EmailInboxAreaProps> = ({ onMessageSelec
                 >
                   Cancel
                 </Button>
-                <Button variant="contained" sx={{background:"var(--primary-gradient)"}} onClick={handleApplyFilters}>
+                <Button
+                  variant="contained"
+                  sx={{ background: "var(--primary-gradient)" }}
+                  onClick={handleApplyFilters}
+                >
                   Apply
                 </Button>
               </div>
@@ -326,35 +376,90 @@ const EmailInboxAreaComponent: React.FC<EmailInboxAreaProps> = ({ onMessageSelec
             <div style={{ flex: 1, overflowY: "auto" }}>
               {messagesToShow.map((message: Message) => (
                 <EmailInboxMessagesHeading
-                key={message._id}
-                isSelected={message?.threadId === selectedMessage}
-                isUnread={message?.flags?.includes("UNREAD")}
-                onClick={() => {
-                  if (onMessageSelect) onMessageSelect(message?.threadId);
-                  if (message?.flags?.includes("UNREAD")) {
-                    dispatch(markThreadAsRead({ threadId: message.threadId }));
-                  }
-                }}
-              >
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "12px" }}>
-                    <h4>{message.subject || "No Subject"}</h4>
+                  key={message._id}
+                  isSelected={message?.threadId === selectedMessage}
+                  isUnread={message?.flags?.includes("UNREAD")}
+                  onClick={() => {
+                    if (onMessageSelect && message?.threadId) {
+                      onMessageSelect(message.threadId);
+                    }
+                    if (
+                      message?.flags?.includes("UNREAD") &&
+                      message?.threadId
+                    ) {
+                      dispatch(
+                        markThreadAsRead({ threadId: message.threadId })
+                      );
+                    }
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      marginBottom: "12px",
+                    }}
+                  >
+                    <h6>{message.subject || "No Subject"}</h6>
+                    <div
+                      style={{
+                        fontSize: "12px",
+                        color: "#777",
+                        marginTop: "5px",
+                      }}
+                    >
+                      Date: {new Date(message.date).toLocaleString()}
+                    </div>
                   </div>
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                      <Avatar src="https://ssl.gstatic.com/ui/v1/icons/mail/profile_placeholder.png" />
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      marginBottom: "10px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "10px",
+                      }}
+                    >
+                      <AccountAvatar>
+                        {message.from?.[0]?.name?.[0]?.toUpperCase()}
+                      </AccountAvatar>
                       <div>
-                        <strong>{message.from?.[0]?.name}</strong>
-                        <div style={{ fontSize: "15px", color: "#555" }}>
+                        <p style={{ fontSize: "12px", fontWeight: "600" }}>
+                          {message.from?.[0]?.name}
+                        </p>
+                        <div
+                          style={{
+                            fontSize: "12px",
+                            color: "#555",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "5px",
+                          }}
+                        >
                           {message.from?.[0]?.address || "No Email"}
                         </div>
                       </div>
                     </div>
-                    <div style={{ fontSize: "15px", color: "#777", marginTop: "5px" }}>
-                      Date: {new Date(message.date).toLocaleString()}
-                    </div>
                   </div>
-                  <div style={{ fontSize: "15px", color: "#777" }}>
-                    To: <strong>{message.to?.[0]?.name}</strong> ({message.to?.[0]?.address || "No Email"})
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      color: "#777",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "5px",
+                    }}
+                  >
+                    To:{" "}
+                    <p style={{ fontSize: "12px", fontWeight: "600" }}>
+                      {message.to?.[0]?.name}
+                    </p>{" "}
+                    ({message.to?.[0]?.address || "No Email"})
                   </div>
                 </EmailInboxMessagesHeading>
               ))}
@@ -364,26 +469,34 @@ const EmailInboxAreaComponent: React.FC<EmailInboxAreaProps> = ({ onMessageSelec
               <img
                 src="https://cdn-icons-png.flaticon.com/512/2748/2748558.png"
                 alt="No Messages"
-                style={{ width: "80px", height: "80px", marginBottom: "10px", opacity: 0.6 }}
+                style={{
+                  width: "80px",
+                  height: "80px",
+                  marginBottom: "10px",
+                  opacity: 0.6,
+                }}
               />
               No mail found.
             </NoMailboxMessage>
           )}
 
           <TotalPageCount>
-            <div>
+            <div style={{ fontSize: "12px", fontWeight: "400" }}>
               Total Threads:{" "}
-              {searchTerm.trim().length > 0 ? searchResults.length : totalMessages}
+              {searchTerm.trim().length > 0
+                ? searchResults.length
+                : totalMessages}
             </div>
-            {searchTerm.trim().length === 0 && totalMessages > messagesPerPage && (
-              <EmailPagination
-              siblingCount={0}
-              boundaryCount={1}
-                count={totalPages}
-                page={currentPage}
-                onChange={handlePageChange}
-              />
-            )}
+            {searchTerm.trim().length === 0 &&
+              totalMessages > messagesPerPage && (
+                <EmailPagination
+                  siblingCount={0}
+                  boundaryCount={1}
+                  count={totalPages}
+                  page={currentPage}
+                  onChange={handlePageChange}
+                />
+              )}
           </TotalPageCount>
         </div>
       )}

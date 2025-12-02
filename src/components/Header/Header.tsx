@@ -1,5 +1,5 @@
 import { Search } from "lucide-react";
-import { HeaderContainer } from "../../styles/layout.styled";
+import { HeaderContainer } from "../../styles/global.styled";
 import {
   AppTitle,
   LogoContainer,

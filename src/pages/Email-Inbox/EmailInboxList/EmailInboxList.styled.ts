@@ -185,8 +185,8 @@ export const AccountItem = styled(ListItem)({
 });
 
 export const AccountAvatar = styled(Box)({
-  width: "35px",
-  height: "35px",
+  width: "32px",
+  height: "32px",
   borderRadius: "50%",
   background: "var(--primary-gradient)",
   color: "var(--icon-light)",

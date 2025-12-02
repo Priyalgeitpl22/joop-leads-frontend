@@ -6,11 +6,20 @@ import { getCampaignBySender } from "../../../redux/slice/emailCampaignSlice";
 import { IEmailCampaign } from "../../Email-Campaign/NewCampaign/interfaces";
 import { LoadingContainer, NoDataContainer, StyledTable, StyledTableContainer, StyledTableHead, TableDataCell, TableHeadingCell } from "./EditCampaignEmailAccount.styled";
 
-
-
 interface EditCampaignEmailAccountProps {
   id?: string;
 }
+
+const tableColumns = [{
+  label: "Campaign Name",
+  key: "campaignName",
+}, {
+  label: "Campaign Status",
+  key: "status",
+}, {
+  label: "Time Added",
+  key: "createdAt",
+}]
 
 const EditCampaignEmailAccount: React.FC<EditCampaignEmailAccountProps> = ({ id }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -40,12 +49,12 @@ const EditCampaignEmailAccount: React.FC<EditCampaignEmailAccountProps> = ({ id 
       <StyledTable>
         <StyledTableHead>
           <TableRow>
-            <TableHeadingCell>Campaign Name</TableHeadingCell>
-            <TableHeadingCell>Campaign Status</TableHeadingCell>
-            <TableHeadingCell>Time Added</TableHeadingCell>
+          {tableColumns.map((column) => (
+              <TableHeadingCell key={column.key}>{column.label}</TableHeadingCell>
+            ))}
           </TableRow>
         </StyledTableHead>
-        <TableBody>
+        <TableBody sx={{ height: "100%" }}>
           {isLoading ? (
             <TableRow>
               <td colSpan={3}>
@@ -57,17 +66,17 @@ const EditCampaignEmailAccount: React.FC<EditCampaignEmailAccountProps> = ({ id 
           ) : campaigns.length > 0 ? (
             campaigns.map((campaign) => (
               <TableRow key={campaign.id}>
-                <TableDataCell>{campaign?.campaign_name}</TableDataCell>
-                <TableDataCell>{campaign?.campaign_status}</TableDataCell>
+                <TableDataCell>{campaign?.campaignName}</TableDataCell>
+                <TableDataCell>{campaign?.status}</TableDataCell>
                 <TableDataCell>
-                  {campaign?.created_at
-                    ? `${new Date(campaign.created_at).toLocaleDateString(
+                  {campaign?.createdAt
+                    ? `${new Date(campaign.createdAt).toLocaleDateString(
                         "en-GB",
                         {
                           day: "2-digit",
                           month: "short",
                         }
-                      )}, ${new Date(campaign.created_at).toLocaleTimeString(
+                      )}, ${new Date(campaign.createdAt).toLocaleTimeString(
                         "en-GB",
                         {
                           hour: "2-digit",

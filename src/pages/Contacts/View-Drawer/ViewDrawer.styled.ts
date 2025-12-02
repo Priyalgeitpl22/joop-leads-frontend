@@ -49,13 +49,6 @@ export const StyledCloseIconButton = styled(IconButton)({
   },
 });
 
-export const SectionTitle = styled(Typography)({
-  fontSize: "13px",
-  fontWeight: 600,
-  color: "#6b7280",
-  textTransform: "uppercase",
-});
-
 export const ContactCard = styled(Card)({
   margin: "10px 0",
   padding: "10px",
@@ -67,7 +60,6 @@ export const ContactCard = styled(Card)({
 export const FieldLabel = styled(Typography)({
   fontSize: "12px",
   color: "#6b7280",
-  textTransform: "uppercase",
   marginBottom: "2px",
 });
 

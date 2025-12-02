@@ -18,11 +18,6 @@ import {
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import {
-  ContactsContainer,
-  ContactsHeader,
-  FilterIcon,
-} from "./ContactTable.styled";
 import { useDispatch, useSelector } from "react-redux";
 import {
   ContactsAccount,
@@ -42,7 +37,6 @@ import { CustomDataTable } from "../../assets/Custom/customDataGrid";
 import { GridColDef } from "@mui/x-data-grid";
 import { formatDateTime } from "../../utils/utils";
 import { Button, IconsButton } from "../../styles/global.styled";
-import ProgressBar from "../../assets/Custom/linearProgress";
 import ContactsAccountDialogBox from "./ContactsAccountDialogBox/ContactsAccountDialogBox";
 import ViewDrawer from "./View-Drawer/ViewDrawer";
 import UploadContactCsvDialog from "./UploadContactCsvDialog/UploadContactCsvDialog";
@@ -57,7 +51,7 @@ import HowToRegIcon from "@mui/icons-material/HowToReg";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import toast, { Toaster } from "react-hot-toast";
-import { Button2, SectionTitle } from "../../styles/layout.styled";
+import { Button2 } from "../../styles/layout.styled";
 import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -66,7 +60,9 @@ import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutl
 import ActiveFilters from "../Email-Campaign/ActiveFilters";
 import usePageWidth from "../../hooks/usePageWidth";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-
+import { HeaderContainer, FilterIcon } from "../../styles/global.styled";
+import { SectionTitle } from "../../styles/layout.styled";
+import { Container } from "../../styles/global.styled";
 export interface ImportedLeadsData {
   csvSettings: csvSettingsType;
 }
@@ -540,44 +536,21 @@ const ContactTable: React.FC = () => {
   };
 
   return (
-    <ContactsContainer
-      style={{
-        width: isMobile ? `${width - 20}px` : "100%",
-        border: "1px solid lightgray",
-      }}
-      sx={{
-        px: { xs: "1rem", sm: "1.5rem", md: "2rem" },
-      }}
-    >
+    <Container>
       <Toaster position="top-right" />
       {isMobile ? (
-        <ContactsHeader>
+        <HeaderContainer>
           <Accordion sx={{ width: "100%" }}>
             <AccordionSummary
               expandIcon={<KeyboardArrowDownIcon />}
               aria-controls="panel1-content"
               id="panel1-header"
             >
-              <SectionTitle
-                style={{
-                  fontSize: "1.3rem !important",
-                  fontWeight: "600",
-                  color: "#35495c",
-                }}
-              >
+              <SectionTitle>
                 All Leads
               </SectionTitle>
             </AccordionSummary>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "15px",
-                width: "auto",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
+            <Box>
               <Box sx={{ display: "flex", gap: "15px" }}>
                 <SearchBar>
                   <Search size={20} />
@@ -622,21 +595,14 @@ const ContactTable: React.FC = () => {
               </Box>
             </Box>
           </Accordion>
-        </ContactsHeader>
+        </HeaderContainer>
       ) : (
-        <ContactsHeader>
-          <SectionTitle
-            style={{ fontSize: "1.3rem", fontWeight: "600", color: "#35495c" }}
-          >
-            All Leads
-          </SectionTitle>
+        <HeaderContainer>
+          <SectionTitle>All Leads</SectionTitle>
           <Box
             sx={{
               display: "flex",
-              gap: "15px",
-              width: "auto",
-              alignItems: "center",
-              justifyContent: "right",
+              gap: "10px",
             }}
           >
             <SearchBar>
@@ -742,10 +708,9 @@ const ContactTable: React.FC = () => {
               </>
             )}
           </Box>
-        </ContactsHeader>
+        </HeaderContainer>
       )}
 
-      {loading && <ProgressBar />}
       <Menu
         anchorEl={anchorEl}
         open={isMenuOpen}
@@ -884,7 +849,7 @@ const ContactTable: React.FC = () => {
         onClose={() => setOpen(false)}
         selectedId={selectedId}
       />
-    </ContactsContainer>
+    </Container>
   );
 };
 

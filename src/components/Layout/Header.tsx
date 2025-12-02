@@ -48,9 +48,7 @@ interface HeaderProps {
     <AppBar
         position="fixed"
         sx={{
-            width: {
-            sm: `calc(100% - ${drawerOpen ? drawerWidth : miniDrawerWidth}px)`
-            },
+            width: { sm: `calc(100% - ${drawerOpen ? drawerWidth : miniDrawerWidth}px)` },
             marginLeft: {
             sm: `${drawerOpen ? drawerWidth : miniDrawerWidth}px`
             },
@@ -60,11 +58,9 @@ interface HeaderProps {
             borderBottom: isDarkMode ? 'none' : '1px solid #e8e8e8',
             height: '72px',
             zIndex: theme.zIndex.drawer + 1,
-            padding: "10px"
         }}
     >
       <Toolbar sx={{ height: '72px !important' }}>
-        {/* Menu Toggle Button for Mobile */}
         <IconButton
           color="inherit"
           aria-label="toggle sidebar"
@@ -81,7 +77,7 @@ interface HeaderProps {
             variant="h6"
             sx={{
               fontWeight: 700,
-              fontSize: { xs: '1rem', md:'1.25rem' },
+              fontSize: { xs: '14px', md:'16px' },
               color: "black !important",
               opacity:"0.8"
             }}
@@ -92,7 +88,7 @@ interface HeaderProps {
             <Typography
             variant="body2"
             sx={{
-                fontSize: {xs: '0.75rem' ,md:'1rem'},
+                fontSize: {xs: '12px',md:'14px'},
                 color: "gray",
             }}
             >

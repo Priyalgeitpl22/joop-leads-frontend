@@ -62,10 +62,14 @@ export const getCampaignById = createAsyncThunk(
 );
 
 export const getCampaignBySender = createAsyncThunk(
-  "emailAccount/campaignSenderAccount",
+  "emailCampaign/campaignSenderAccount",
   async (id: string, { rejectWithValue }) => {
     try {
-      const response = await api.get(`${BASE_URL}/get-campaigns-by-sender?sender_account_id=${id}`)
+      const response = await api.get(`${BASE_URL}/account/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      )
       return response.data;
     } catch (error: unknown) {
       let errorMessage = "Something went wrong";

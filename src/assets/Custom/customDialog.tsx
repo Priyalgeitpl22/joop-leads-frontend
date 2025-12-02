@@ -26,7 +26,6 @@ export const CustomDialog: React.FC<CustomDialogProps> = ({
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md">
       <Box sx={{ minWidth: "80%", padding: "16px" }}>
-        {/* Dialog Header */}
         <CustomDialogHeader>
           <Typography variant="h5">
             Campaign Settings
