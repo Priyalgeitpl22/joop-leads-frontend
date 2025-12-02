@@ -121,10 +121,7 @@ const Home = () => {
         display="flex"
         justifyContent="center"
         alignItems="center"
-        minHeight="100vh"
-        sx={{
-          backgroundColor: "blue",
-        }}
+        // minHeight="100vh"
       >
         <CircularProgress sx={{ color: "#667eea" }} />
       </Box>
