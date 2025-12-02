@@ -453,3 +453,9 @@ input:-webkit-autofill {
 .MuiClockNumber-root {
   color: #000000 !important;
 }
+
+.ql-toolbar button.ql-active {
+  background-color: #D0D0D0 !important;
+  color: black !important;
+  border-radius: 4px;
+}
