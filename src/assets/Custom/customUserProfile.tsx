@@ -79,20 +79,16 @@ const UserProfileMenu: React.FC = () => {
             Profile
           </StyledMenuItem>
 
-          {/* Change Password - using client-side routing */}
-            <StyledMenuItem
-              onClick={() => {
-                handleMenuClose();
-                navigate("/change-password",{ state: { email: user?.email } });
-              }}
-            >
-              Change Password
-            </StyledMenuItem>
-
-          {/* Logout */}
-          <StyledMenuItem onClick={handleLogout}>
-            Logout
+          <StyledMenuItem
+            onClick={() => {
+              handleMenuClose();
+              navigate("/change-password", { state: { email: user?.email } });
+            }}
+          >
+            Change Password
           </StyledMenuItem>
+
+          <StyledMenuItem onClick={handleLogout}>Logout</StyledMenuItem>
         </Menu>
 
         <ProfileDetail

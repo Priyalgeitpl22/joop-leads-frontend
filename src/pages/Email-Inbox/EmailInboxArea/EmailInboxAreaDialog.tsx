@@ -11,12 +11,13 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CloseIcon from "@mui/icons-material/Close";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../../redux/store/store";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../redux/store/store";
 import { sentEmailReply } from "../../../redux/slice/emailInboxSlice";
 import { Button, SecondaryButton } from "../../../styles/global.styled";
 import { TextArea } from "../../../styles/layout.styled";
 import { formatDateTimeWithRelative } from "../../../utils/utils";
+import { EmailAccount } from "../../../redux/slice/emailAccountSlice";
 
 interface Message {
   id: string;
@@ -32,22 +33,17 @@ interface Message {
 interface EmailThreadViewProps {
   messages: Message[];
   onClose: () => void;
-  selectedAccountId: string;
+  selectedAccount: EmailAccount;
 }
 
 const EmailThreadView: React.FC<EmailThreadViewProps> = ({
   messages,
   onClose,
-  selectedAccountId
+  selectedAccount
 }) => {
   const [replyContent, setReplyContent] = useState("");
   const [isReplying, setIsReplying] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
-  const selectedAccount = useSelector((state: RootState) =>
-    state.emailInbox.accounts.find(
-      (account) => account._id === selectedAccountId
-    )
-  );
 
   const handleSend = () => {
     if (replyContent.trim()) {
@@ -55,6 +51,7 @@ const EmailThreadView: React.FC<EmailThreadViewProps> = ({
       const firstMessage = messages[0];
 
       const replyPayload = {
+        accountId: selectedAccount?._id as string,
         from: {
           name: selectedAccount?.name || "Unknown",
           address: selectedAccount?.email || "",
@@ -103,7 +100,7 @@ const EmailThreadView: React.FC<EmailThreadViewProps> = ({
         />
         <Box>
           <Typography fontSize={12} fontWeight={400}>
-            {msg.from?.[0]?.name || "Unknown Sender"}
+            {msg.from?.[0]?.address || "Unknown Sender"}
           </Typography>
           <Typography fontSize={12} color="text.secondary" fontWeight={400}>
             {formatDateTimeWithRelative(msg.date)}
@@ -192,7 +189,7 @@ const EmailThreadView: React.FC<EmailThreadViewProps> = ({
                     />
                     <Box>
                       <Typography fontSize={12} fontWeight={400}>
-                        {msg.from?.[0]?.name || "Unknown Sender"}
+                        {msg.from?.[0]?.address || "Unknown Sender"}
                       </Typography>
                       <Typography
                         fontSize={12}

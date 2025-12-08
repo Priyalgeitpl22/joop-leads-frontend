@@ -125,13 +125,13 @@ const StyledTabs = styled(Tabs, {
         : props.tabBorderRadius || "0"};
 
     &:hover {
-      color: ${(props) => props.tabHoverColor || props.tabSelectedColor || "rgb(61, 31, 190)"};
+      color: ${(props) => props.tabHoverColor || props.tabSelectedColor || "var(--primary)"};
       background-color: ${(props) => props.tabBackground || "transparent"};
       opacity: 0.8;
     }
 
     &.Mui-selected {
-      color: ${(props) => props.tabSelectedColor || "rgb(61, 31, 190)"};
+      color: ${(props) => props.tabSelectedColor || "var(--primary)"};
       font-weight: ${(props) => props.tabFontWeight || "bold"};
     }
 
@@ -171,8 +171,8 @@ const StyledTab = styled(Tab, {
 })<CustomTabProps>`
   font-size: ${(props) =>
     typeof props.customFontSize === "number"
-      ? `${props.customFontSize}px`
-      : props.customFontSize || "inherit"};
+      ? `${props.customFontSize}px !important`
+      : props.customFontSize || "inherit !important"};
   font-weight: ${(props) => props.customFontWeight || "inherit"};
   color: ${(props) => props.customColor || "inherit"};
   padding: ${(props) => props.customPadding || "inherit"};

@@ -29,6 +29,8 @@ import Users from "./pages/Users/User";
 import Unsubscribe from "./pages/Unsubscribe/Unsubscribe";
 import MiniDrawer from "./components/Layout/MiniDrawer";
 import { useTheme } from "./context/ThemeContext";
+import Subscription from "./components/Subscription/subscription";
+import Settings from "./components/Settings/settings";
 
 const UNPROTECTED_ROUTES = [
   "/login",
@@ -100,8 +102,13 @@ const App=() => {
     if (path === "/organization") {
       return { title: "Organization", subTitle: "Manage organization settings" };
     }
-  
-    return { title: "Settings", subTitle: "" };
+    if (path === "/subscription") {
+      return { title: "Subscription", subTitle: "Manage your subscription" };
+    }
+    if (path === "/settings") {
+      return { title: "Settings", subTitle: "Manage your settings" };
+    }
+    return { title: "", subTitle: "" };
   };
   const { title, subTitle } = getPageInfo();
 
@@ -197,6 +204,8 @@ const App=() => {
           {router.pathname === "/chats" && <Chats />}
           {router.pathname === "/all-leads" && <ContactTable />}
           {router.pathname === "/organization" && <Organization />}
+          {router.pathname === "/subscription" && <Subscription />}
+          {router.pathname === "/settings" && <Settings />}
         </MiniDrawer>
       )}
     </>

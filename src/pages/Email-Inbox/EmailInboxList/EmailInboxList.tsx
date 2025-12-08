@@ -31,13 +31,11 @@ interface EmailInboxListProps {
 const EmailInboxList: React.FC<EmailInboxListProps> = ({ onAccountSelect, accounts }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [rows, setRows] = useState<any[]>(accounts);
-
+  const [rows, setRows] = useState<EmailAccount[]>(accounts);
   const selectedAccountId = useSelector(
     (state: RootState) => state.emailInbox.selectedAccountId
   );
 
-  // Update rows when accounts prop changes
   useEffect(() => {
     setRows(accounts);
   }, [accounts]);
@@ -52,7 +50,6 @@ const EmailInboxList: React.FC<EmailInboxListProps> = ({ onAccountSelect, accoun
       dispatch(
         getAllEmailThreads({
           accountId,
-          // mailBoxId: firstMailbox._id,
           page: 1,
           limit: 10,
         })
@@ -86,16 +83,13 @@ const EmailInboxList: React.FC<EmailInboxListProps> = ({ onAccountSelect, accoun
     handleSearch(query);
   };
 
-
-
-  // Separate selected account and other accounts
   const selectedAccount = rows.find(account => account._id === selectedAccountId);
   const otherAccounts = rows.filter(account => account._id !== selectedAccountId);
   
   return (
     <EmailInboxListContainer>
       <EmailInboxHeading>
-        <SearchBar>
+        <SearchBar style={{ maxWidth: "100%" }}>
           <Search />
           <input
             placeholder="Search Account"
@@ -125,7 +119,7 @@ const EmailInboxList: React.FC<EmailInboxListProps> = ({ onAccountSelect, accoun
             {otherAccounts.length > 0 && (
               <>
                 <AccountSelectorDivider>
-                  <AccountSelectorText variant="body2">
+                  <AccountSelectorText>
                     Select another account
                   </AccountSelectorText>
                 </AccountSelectorDivider>

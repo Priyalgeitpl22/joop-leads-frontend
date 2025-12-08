@@ -22,6 +22,10 @@ export const Button = styled.button`
   white-space: nowrap;
   transition: 0.2s ease-in-out;
 
+  p {
+    color: var(--text-white);
+  }
+    
   &:hover {
     background: linear-gradient(
       135deg,
@@ -151,6 +155,10 @@ export const SecondaryButton = styled.button`
   box-shadow: 0 0 20px #eee;
   display: block;
   
+  p {
+    color: var(--text-white);
+  }
+  
   &:hover {
     color: #fff;
     text-decoration: none;
@@ -194,31 +202,73 @@ export const CustomDialogFooter = styled.div<CustomDialogFooterProps>`
   padding: 16px;
   border-radius: 0px 0px 10px 10px;
   background: var(--background-head);
+  min-height: 50px;
 `;
 export const CustomDialogHeader = styled.div`
+  color: var(--text-white);
+  text-align: center;
+  position: sticky;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10px;
+  background: var(--primary-gradient);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+  p {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-white);
+  }
+
+  svg {
+    height: 20px;
+    width: 20px;
+    color: var(--text-white);
+
+    :hover {
+      color: var(--primary-gradient);
+    }
+  }
+`
+
+export const CustomDialogBody = styled.div`
   color: var(--theme-color);
   text-align: center;
   position: sticky;
   box-sizing: border-box;
   width: 100%;
-  padding: 12px;
+  padding: 24px 10px;
   background: var(--background-head);
+  min-height: 150px;
+  max-height: 200px;
+  max-width: 400px;
+  overflow-y: auto;
+  gap: 10px;
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-`
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+
+  p {
+    font-size: 14px;
+    font-weight: 400;
+  }
+`;
+
 export const CustomDialogContainer = styled.div`
   color: var(--theme-color);
+  background: var(--primary-gradient);
   text-align: center;
   justify-content: center;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   background: white;
-  padding: 16px;
   width: 100%;
-  // overflow: auto;
+  min-width: 400px;
 `
 export const TitleBody = styled.input`
   border: 1px solid #e1e2ef;

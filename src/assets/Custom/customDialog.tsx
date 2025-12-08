@@ -1,66 +1,91 @@
 import React from "react";
 import {
   IconButton,
-  Box,
-  Typography,
-  Button,
   Dialog,
+  CircularProgress,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import {
-  CustomDialogFooter,
+  Button,
   CustomDialogHeader,
+  CustomDialogContainer,
+  CustomDialogBody,
+  SecondaryButton,
 } from "../../styles/global.styled";
 
 interface CustomDialogProps {
+  title: string;
+  description?: string;
+  buttonText?: string;
   open: boolean;
   onClose: () => void;
-  handleSave?: (data: any) => void;
+  handleSave?: () => void;
+  loading?: boolean;
+  showCancelButton?: boolean;
+  cancelButtonText?: string;
+  showOkButton?: boolean;
 }
 
 export const CustomDialog: React.FC<CustomDialogProps> = ({
+  title,
+  description,
+  buttonText,
   open,
   onClose,
   handleSave,
+  loading,
+  showCancelButton = true,
+  cancelButtonText = "Cancel",
+  showOkButton = true,
 }) => {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md">
-      <Box sx={{ minWidth: "80%", padding: "16px" }}>
+      <CustomDialogContainer>
         <CustomDialogHeader>
-          <Typography variant="h5">
-            Campaign Settings
-          </Typography>
+          <p>{title}</p>
           <IconButton onClick={onClose}>
             <CloseIcon />
           </IconButton>
         </CustomDialogHeader>
 
-        <Box
-          sx={{
-            padding: "12px 15px",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <Typography fontWeight="600">Email Account</Typography>
-        </Box>
-
-        <CustomDialogFooter>
-          <Button
-            variant="contained"
-            onClick={handleSave}
-            sx={{
-              background: "var(--theme-color)",
-              color: "white",
-              padding: "8px 16px",
-              fontWeight: "bold",
+        <CustomDialogBody>
+          <p>{description}</p>
+          <div
+            style={{
+              display: "flex",
+              width: "100%",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "20px",
+              color: "var(--text-white)",
             }}
           >
-            Save Email Accounts
-          </Button>
-        </CustomDialogFooter>
-      </Box>
+            {showCancelButton && (
+              <SecondaryButton onClick={onClose}>
+                <p>{cancelButtonText}</p>
+              </SecondaryButton>
+            )}
+            {showOkButton && (
+              <Button
+                style={{
+                  minWidth: "122px",
+                }}
+                onClick={handleSave}
+                disabled={loading}
+              >
+                {!loading && <p>{buttonText}</p>}
+                {loading && (
+                  <CircularProgress size={20} sx={{ color: "white" }} />
+                )}
+              </Button>
+            )}
+          </div>
+        </CustomDialogBody>
+
+        {/* <CustomDialogFooter>
+        </CustomDialogFooter> */}
+      </CustomDialogContainer>
     </Dialog>
   );
 };

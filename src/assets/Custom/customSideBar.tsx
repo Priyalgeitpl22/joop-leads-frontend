@@ -5,6 +5,7 @@ import ContactMailIcon from "@mui/icons-material/ContactMail";
 import ArchiveIcon from "@mui/icons-material/Archive";
 import ContactPhoneIcon from "@mui/icons-material/ContactPhone";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
+import { CreditCardIcon } from "lucide-react";
 
 export const NAVIGATION: Navigation = [
   {
@@ -44,11 +45,11 @@ export const NAVIGATION: Navigation = [
     title: "Master Inbox",
     icon: <ArchiveIcon style={{ color: "var(--icon-hover)" }} />,
   },
-  // {
-  //   segment: "leads",
-  //   title: "All Leads",
-  //   icon: <FollowTheSignsIcon style={{ color: "var(--icon-hover)" }}/>,
-  // },
+  {
+    segment: "subscription",
+    title: "Manage Subscription",
+    icon: <CreditCardIcon style={{ color: "var(--icon-hover)" }}/>,
+  },
   {
     kind: "divider",
   },

@@ -15,17 +15,13 @@ import {
   Accordion,
   AccordionSummary,
 } from "@mui/material";
-import {toast } from "react-hot-toast";
-import {
-  UserHeader,
-  UsersContainer,
-  UserTable,
-} from "./User.styled";
+import { toast } from "react-hot-toast";
+import { UserHeader, UsersContainer, UserTable } from "./User.styled";
 import { Button2, SectionTitle } from "../../styles/layout.styled";
 import { SearchBar } from "../../components/Header/header.styled";
 import { Search, Trash2 } from "lucide-react";
 import { CustomDataTable } from "../../assets/Custom/customDataGrid";
-import { Button, FilterIcon } from "../../styles/global.styled";
+import { Button, Container, FilterIcon, HeaderContainer } from "../../styles/global.styled";
 import { GridColDef } from "@mui/x-data-grid";
 import { useEffect, useMemo, useState } from "react";
 import AddUserDialog from "./AddUser/AddUserDialog";
@@ -40,7 +36,8 @@ import {
 } from "../../redux/slice/userSlice";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
-import { SelectChangeEvent } from "@mui/material";import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
+import { SelectChangeEvent } from "@mui/material";
+import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
 import { formatDateTime } from "../../utils/utils";
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -48,9 +45,8 @@ import { Dayjs } from "dayjs";
 import EditUserDialog from "./EditUser/EditUserRoleDialogue";
 import { ModeEditOutlineOutlined } from "@mui/icons-material";
 import ActiveFilters from "../Email-Campaign/ActiveFilters";
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import usePageWidth from "../../hooks/usePageWidth";
-
 
 const Users = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -69,25 +65,23 @@ const Users = () => {
     Role: ["Admin", "User"],
   };
 
-  const [dateFilters, setDateFilters] = useState<{ 
-        startDate: Dayjs | null; 
-        endDate: Dayjs | null; 
-        [key: string]: string | Dayjs | null; 
-      }>({
-        startDate: null,
-        endDate: null,
-    
-      });
-   
-      const [openEditDialog, setOpenEditDialog] = useState(false);
-      const [editUserData, setEditUserData] = useState<any>(null);
-      
+  const [dateFilters, setDateFilters] = useState<{
+    startDate: Dayjs | null;
+    endDate: Dayjs | null;
+    [key: string]: string | Dayjs | null;
+  }>({
+    startDate: null,
+    endDate: null,
+  });
+
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [editUserData, setEditUserData] = useState<any>(null);
 
   const handleOpenEditDialog = (userData: any) => {
     setEditUserData(userData);
     setOpenEditDialog(true);
   };
-      
+
   const handleSaveEdit = async (updatedUserData: {
     id: string;
     role: string;
@@ -102,8 +96,10 @@ const Users = () => {
       ).unwrap();
 
       if (response?.code === 200) {
-        toast.success(response?.message ||"User details updated successfully!");
-        handleCloseEditDialog()
+        toast.success(
+          response?.message || "User details updated successfully!"
+        );
+        handleCloseEditDialog();
       }
     } catch (err: any) {
       toast.error(err?.message || "Failed to update user details.");
@@ -116,7 +112,7 @@ const Users = () => {
     setOpenEditDialog(false);
     setEditUserData(null);
   };
-            
+
   const handleFilterChange =
     (field: keyof typeof filters) => (event: SelectChangeEvent<string>) => {
       setFilters((prev) => ({
@@ -133,20 +129,20 @@ const Users = () => {
       }));
     };
 
-  const handleClearFilters = () => { 
-    setFilters({ role: ""});
+  const handleClearFilters = () => {
+    setFilters({ role: "" });
     setDateFilters({ startDate: null, endDate: null });
-    dispatch(getAllUsers())   
-    .unwrap()             
-    .then((response) => {
-      setRows(response.data);       
-      setFilteredRows(response.data); 
-      handleMenuClose()
-    })
-    .catch((error) => {
-      console.error("Error fetching users:", error);  
-      toast.error("Failed to fetch users.");
-    });
+    dispatch(getAllUsers())
+      .unwrap()
+      .then((response) => {
+        setRows(response.data);
+        setFilteredRows(response.data);
+        handleMenuClose();
+      })
+      .catch((error) => {
+        console.error("Error fetching users:", error);
+        toast.error("Failed to fetch users.");
+      });
   };
 
   const isMenuOpen = Boolean(anchorEl);
@@ -156,22 +152,22 @@ const Users = () => {
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
-  const width = usePageWidth()
-  const theme = useTheme()
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"))
+  const width = usePageWidth();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [searchTerm, setSearchTerm] = useState<string>("");
 
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState<{
-      status: string;
-      startDate: string | null;
-      endDate: string | null;
-    }>({
-      status: "",
-      startDate: null,
-      endDate: null,
-    });
+    status: string;
+    startDate: string | null;
+    endDate: string | null;
+  }>({
+    status: "",
+    startDate: null,
+    endDate: null,
+  });
 
   useEffect(() => {
     dispatch(getAllUsers())
@@ -181,7 +177,7 @@ const Users = () => {
         setFilteredRows(response.data);
       })
       .catch(() => {});
-  }, [dispatch, addUser,editUserData]);
+  }, [dispatch, addUser, editUserData]);
 
   useEffect(() => {
     if (searchTerm.trim() === "") {
@@ -207,7 +203,7 @@ const Users = () => {
   const handleCloseDeleteDialog = () => {
     setSelectedUser(null);
     setOpenDeleteDialog(false);
-  };  
+  };
 
   const handleDeleteUser = async () => {
     if (!selectedUser) {
@@ -235,7 +231,6 @@ const Users = () => {
       setRows(rows);
     }
   };
-
 
   const handleApplyFilter = async () => {
     try {
@@ -332,7 +327,7 @@ const Users = () => {
         valueGetter: (params: any) => (params ? formatDateTime(params) : "N/A"),
       },
     ];
-    
+
     if (user?.role === "Admin" || user?.role === "admin") {
       baseColumns.push({
         field: "edit",
@@ -344,7 +339,9 @@ const Users = () => {
               color="primary"
               onClick={() => handleOpenEditDialog(params.row)}
             >
-              <ModeEditOutlineOutlined sx={{color:"var(--secondary-light)"}} />
+              <ModeEditOutlineOutlined
+                sx={{ color: "var(--secondary-light)" }}
+              />
             </IconButton>
           </Tooltip>
         ),
@@ -366,7 +363,7 @@ const Users = () => {
         ),
       });
     }
-  
+
     return baseColumns;
   }, [user?.role, handleOpenEditDialog, handleOpenDeleteDialog]);
 
@@ -378,7 +375,7 @@ const Users = () => {
     }),
     [appliedFilters]
   );
-  
+
   const handleRemoveFilter = (key: keyof typeof activeFilters) => {
     let newRole = filters.role;
     let newStartDate = dateFilters.startDate;
@@ -439,53 +436,9 @@ const Users = () => {
   };
 
   return (
-    <Box sx={{paddingTop:"3rem", height: "calc(100vh - 100px)", border: "var()--border-color"}}>
-    <UsersContainer style={{width:isMobile?`${width-20}px`:"100%", padding:"1rem"}}>
-      {isMobile?
-      <UserHeader>
-       <Accordion style={{width:"100%",backgroundColor: "var(--background-secondary);"}}>
-        <AccordionSummary
-          expandIcon={<KeyboardArrowDownIcon />}
-          aria-controls="panel1-content"
-          id="panel1-header"
-        >
-            <SectionTitle >Users</SectionTitle>
-         
-        </AccordionSummary>
-         <Box
-          sx={{
-            display: "flex",
-            flexDirection:"column",
-            gap: "15px",
-            width: "100%",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-         <Box sx={{display:"flex",gap:"15px"}}>
-           <SearchBar>
-            <Search size={20} />
-            <input
-              placeholder="Search by Email or Name"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </SearchBar>
-          <Tooltip title="Filter" arrow>
-            <FilterIcon onClick={handleMenuOpen}>
-              <FilterAltOutlinedIcon />
-            </FilterIcon>
-          </Tooltip>
-         </Box>
-         <Box>
-           <AddUserDialog open={addUser} onClose={() => setAddUser(false)} />
-          <Button onClick={() => setAddUser(true)}>Add User</Button>
-         </Box>
-        </Box>
-      </Accordion>
-      </UserHeader>
-      :<UserHeader>
-        <SectionTitle style={{fontSize:"1.3rem"}}>Users</SectionTitle>
+    <Container>
+      <HeaderContainer>
+        <SectionTitle style={{ fontSize: "1.3rem" }}>Users</SectionTitle>
         <Box
           sx={{
             display: "flex",
@@ -511,7 +464,7 @@ const Users = () => {
           <AddUserDialog open={addUser} onClose={() => setAddUser(false)} />
           <Button onClick={() => setAddUser(true)}>Add User</Button>
         </Box>
-      </UserHeader>}
+      </HeaderContainer>
       <Menu
         anchorEl={anchorEl}
         open={isMenuOpen}
@@ -639,12 +592,8 @@ const Users = () => {
         loading={loading}
         onSave={handleSaveEdit}
       />
-    </UsersContainer>
-    </Box>
+    </Container>
   );
-  
 };
 
 export default Users;
-
-

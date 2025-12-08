@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Drawer,
@@ -14,12 +14,8 @@ import {
   useMediaQuery,
   Divider,
   Tooltip,
-} from '@mui/material';
-import {
-  Menu as MenuIcon,
-  ChevronLeft,
-  Campaign,
-} from '@mui/icons-material';
+} from "@mui/material";
+import { Menu as MenuIcon, ChevronLeft, Campaign } from "@mui/icons-material";
 import {
   LayoutDashboard,
   Mail,
@@ -28,13 +24,14 @@ import {
   Inbox,
   UserCog,
   Settings,
-  LogOut
+  LogOut,
+  CreditCardIcon,
 } from "lucide-react";
 
-import { useNavigate, useLocation } from 'react-router-dom';
-import Cookies from 'js-cookie';
-import Header from './Header';
-import ConfirmDeleteDialog from '../../pages/ConfirmDeleteDialog';
+import { useNavigate, useLocation } from "react-router-dom";
+import Cookies from "js-cookie";
+import Header from "./Header";
+import ConfirmDeleteDialog from "../../pages/ConfirmDeleteDialog";
 
 interface NavigationItem {
   title?: string;
@@ -50,7 +47,7 @@ interface MiniDrawerProps {
   onThemeToggle: () => void;
   isDarkMode: boolean;
   pageTitle: string | undefined;
-  subTitle:string | undefined;
+  subTitle: string | undefined;
   userProfile?: {
     name?: string;
     email?: string;
@@ -71,7 +68,7 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
 }) => {
   const [open, setOpen] = useState(true);
   const theme = useTheme();
-  const isVerySmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const isVerySmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const isMediumScreen = useMediaQuery("(max-width:1420px)");
   const navigate = useNavigate();
   const location = useLocation();
@@ -85,7 +82,7 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
     },
     {
       title: "Email Campaigns",
-      icon: <MailSearch size={18} />,   // Represents analytics + email
+      icon: <MailSearch size={18} />, // Represents analytics + email
       path: "/email-campaign/all",
     },
     {
@@ -103,13 +100,18 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
       icon: <Inbox size={18} />,
       path: "/inbox",
     },
+    {
+      title: "Manage Subscription",
+      icon: <CreditCardIcon size={18} />,
+      path: "/subscription",
+    },
   ];
-  
+
   const navigateButtons: NavigationItem[] = [
     {
       title: "Settings",
       icon: <Settings size={18} />,
-      path: "/setting",
+      path: "/settings",
     },
     {
       title: "Users",
@@ -122,7 +124,6 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
       path: "/logout",
     },
   ];
-
 
   useEffect(() => {
     if (isVerySmallScreen) {
@@ -139,8 +140,8 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
   };
 
   const handleLogout = () => {
-    Cookies.remove('access_token');
-    navigate('/login');
+    Cookies.remove("access_token");
+    navigate("/login");
   };
 
   const handleNavigation = (path: string, isThemeToggle?: boolean) => {
@@ -148,7 +149,7 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
       onThemeToggle();
       return;
     }
-    if (path === '/logout') {
+    if (path === "/logout") {
       setLogoutDialogOpen(true);
       return;
     }
@@ -159,25 +160,31 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
   };
 
   const isActiveRoute = (path: string) => {
-    if (path === '/') {
-      return location.pathname === '/';
+    if (path === "/") {
+      return location.pathname === "/";
     }
     return location.pathname.startsWith(path);
   };
 
   const drawerContent = (
-    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column',
-      background: "linear-gradient(45deg, #d3d3f8ff 0%, #ecf8ff 100%) !important"
-    }}>
+    <Box
+      sx={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        background:
+          "linear-gradient(45deg, #d3d3f8ff 0%, #ecf8ff 100%) !important",
+      }}
+    >
       <Box
         sx={{
-          padding: open ? '16px 20px' : '12px',
-          borderBottom: '1px solid var(--border-color)',
+          padding: open ? "16px 20px" : "12px",
+          borderBottom: "1px solid var(--border-color)",
           // borderColor: isDarkMode ? 'rgba(255,255,255,0.1)' : '#e8e8e8',
-          display: 'flex',
-          alignItems: 'center',
+          display: "flex",
+          alignItems: "center",
           gap: 1,
-          minHeight: '72px',
+          minHeight: "72px",
         }}
       >
         {open ? (
@@ -186,23 +193,24 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
               sx={{
                 width: 36,
                 height: 36,
-                borderRadius: '50%',
-                background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                borderRadius: "50%",
+                background:
+                  "linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
-              <Campaign sx={{ fontSize: 20, color: '#ffffff' }} />
+              <Campaign sx={{ fontSize: 20, color: "#ffffff" }} />
             </Box>
             <Box sx={{ flexGrow: 1 }}>
               <Typography
                 variant="h6"
                 sx={{
                   fontWeight: 700,
-                  fontSize: '1.5rem',
-                  color: '#1a1a1a !important',
-                  letterSpacing: '0.5px',
+                  fontSize: "1.5rem",
+                  color: "#1a1a1a !important",
+                  letterSpacing: "0.5px",
                   opacity: 0.8,
                 }}
               >
@@ -213,9 +221,9 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
               size="small"
               onClick={handleDrawerToggle}
               sx={{
-                color:'#1a1a1a !important',
-                '&:hover': {
-                  bgcolor:'rgba(0,0,0,0.05) !important',
+                color: "#1a1a1a !important",
+                "&:hover": {
+                  bgcolor: "rgba(0,0,0,0.05) !important",
                 },
               }}
             >
@@ -226,10 +234,10 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
           <IconButton
             onClick={handleDrawerToggle}
             sx={{
-              color: '#1a1a1a !important',
-              margin: 'auto',
-              '&:hover': {
-                bgcolor: 'rgba(0,0,0,0.05) !important',
+              color: "#1a1a1a !important",
+              margin: "auto",
+              "&:hover": {
+                bgcolor: "rgba(0,0,0,0.05) !important",
               },
             }}
           >
@@ -253,20 +261,20 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
               onClick={() => handleNavigation(item.path, item.isThemeToggle)}
               selected={isActiveRoute(item.path)}
               sx={{
-                borderRadius: '10px',
+                borderRadius: "10px",
                 height: "20px",
-                justifyContent: open ? 'initial' : 'center',
+                justifyContent: open ? "initial" : "center",
                 color: isActiveRoute(item.path)
-                  ? 'var(--primary) !important'
-                  : '#666666',
+                  ? "var(--primary) !important"
+                  : "#666666",
                 bgcolor: isActiveRoute(item.path)
-                  ?'rgba(99, 102, 241, 0.08)'
-                  : 'transparent',
-                transition: 'all 0.3s ease',
-                '&:hover': {
+                  ? "rgba(99, 102, 241, 0.08)"
+                  : "transparent",
+                transition: "all 0.3s ease",
+                "&:hover": {
                   bgcolor: isActiveRoute(item.path)
-                    ? 'rgba(99, 102, 241, 0.12)'
-                    : 'rgba(0,0,0,0.05)',
+                    ? "rgba(99, 102, 241, 0.12)"
+                    : "rgba(0,0,0,0.05)",
                 },
               }}
             >
@@ -274,10 +282,10 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
                 sx={{
                   minWidth: 0,
                   mr: open ? 1.5 : 0,
-                      justifyContent: 'center',
-                      display: 'flex',
-                      width: open ? 'auto' : '100%',  
-                      color: 'inherit',
+                  justifyContent: "center",
+                  display: "flex",
+                  width: open ? "auto" : "100%",
+                  color: "inherit",
                 }}
               >
                 {item.hasBadge ? (
@@ -292,7 +300,7 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
                 <ListItemText
                   primary={item.title}
                   primaryTypographyProps={{
-                    fontSize: '0.875rem',
+                    fontSize: "0.875rem",
                     fontWeight: isActiveRoute(item.path) ? 600 : 500,
                   }}
                 />
@@ -304,7 +312,15 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
 
       {/* Bottom Navigation Buttons */}
       <Divider sx={{ bgcolor: "var(--border-color) !important" }} />
-     {open? <List sx={{ px: open ? 1 : 0.5, py: 1, display: 'flex', justifyContent: "space-evenly" }}>
+      {open ? (
+        <List
+          sx={{
+            px: open ? 1 : 0.5,
+            py: 1,
+            display: "flex",
+            justifyContent: "space-evenly",
+          }}
+        >
           {navigateButtons.map((item) => (
             <ListItem key={item.path} disablePadding>
               <Tooltip
@@ -314,11 +330,13 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
                 slotProps={{ popper: { style: { zIndex: 30000 } } }}
               >
                 <ListItemButton
-          onClick={() => handleNavigation(item.path, item.isThemeToggle)}
+                  onClick={() =>
+                    handleNavigation(item.path, item.isThemeToggle)
+                  }
                   selected={isActiveRoute(item.path)}
                   sx={{
                     borderRadius: "10px",
-                    justifyContent: "center", // Always center icon for clean look
+                    justifyContent: "center",
                     color: "#666666 ",
                     transition: "all 0.3s ease",
                     "&:hover": {
@@ -339,12 +357,24 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
               </Tooltip>
             </ListItem>
           ))}
-</List>: <List sx={{ px: open ? 1 : 0.5, py: 1, display: 'flex', justifyContent: "space-evenly", flexDirection:"column" }}>
+        </List>
+      ) : (
+        <List
+          sx={{
+            px: open ? 1 : 0.5,
+            py: 1,
+            display: "flex",
+            justifyContent: "space-evenly",
+            flexDirection: "column",
+          }}
+        >
           {navigateButtons.map((item) => (
             <ListItem key={item.path} disablePadding>
               <Tooltip title={item.title} placement="right" arrow>
                 <ListItemButton
-          onClick={() => handleNavigation(item.path, item.isThemeToggle)}
+                  onClick={() =>
+                    handleNavigation(item.path, item.isThemeToggle)
+                  }
                   selected={isActiveRoute(item.path)}
                   sx={{
                     borderRadius: "10px",
@@ -369,39 +399,39 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
               </Tooltip>
             </ListItem>
           ))}
-</List>}
-
+        </List>
+      )}
     </Box>
   );
 
   return (
-    <Box sx={{ display: 'flex', height: '100vh', overflow: 'visible' }}>
+    <Box sx={{ display: "flex", height: "100vh", overflow: "visible" }}>
       <Drawer
-        variant={isVerySmallScreen ? 'temporary' : 'permanent'}
+        variant={isVerySmallScreen ? "temporary" : "permanent"}
         open={open}
         onClose={isVerySmallScreen ? handleDrawerToggle : undefined}
         sx={{
           width: open ? drawerWidth : miniDrawerWidth,
           flexShrink: 0,
           zIndex: 10000,
-          '& .MuiDrawer-paper': {
+          "& .MuiDrawer-paper": {
             width: open ? drawerWidth : miniDrawerWidth,
-            boxSizing: 'border-box',
-            transition: theme.transitions.create('width', {
+            boxSizing: "border-box",
+            transition: theme.transitions.create("width", {
               easing: theme.transitions.easing.sharp,
               duration: theme.transitions.duration.enteringScreen,
             }),
-            overflow: 'visible !important',
+            overflow: "visible !important",
             zIndex: 20000,
-            bgcolor: isDarkMode ? '#1e1e2e' : '#ffffff',
-            borderRight: '1px solid',
-            borderColor: isDarkMode ? 'rgba(255,255,255,0.1)' : '#e8e8e8',
+            bgcolor: isDarkMode ? "#1e1e2e" : "#ffffff",
+            borderRight: "1px solid",
+            borderColor: isDarkMode ? "rgba(255,255,255,0.1)" : "#e8e8e8",
             borderRadius: 0,
             margin: 0,
-            height: '100%',
+            height: "100%",
             boxShadow: isDarkMode
-              ? '2px 0 8px rgba(0,0,0,0.3)'
-              : '2px 0 8px rgba(0,0,0,0.08)',
+              ? "2px 0 8px rgba(0,0,0,0.3)"
+              : "2px 0 8px rgba(0,0,0,0.08)",
           },
         }}
       >
@@ -411,11 +441,13 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
       {/* Main Content Wrapper */}
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: 'column',
+          display: "flex",
+          flexDirection: "column",
           flexGrow: 1,
-          width: { sm: `calc(100% - ${open ? drawerWidth : miniDrawerWidth}px)` },
-          transition: theme.transitions.create(['margin', 'width'], {
+          width: {
+            sm: `calc(100% - ${open ? drawerWidth : miniDrawerWidth}px)`,
+          },
+          transition: theme.transitions.create(["margin", "width"], {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen,
           }),
@@ -437,31 +469,31 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({
           component="main"
           sx={{
             overflow: {
-              xs: "auto",   // mobile/tablet scroll
-              lg: "visible" // desktop NO scroll
+              xs: "auto", // mobile/tablet scroll
+              lg: "visible", // desktop NO scroll
             },
-            height: '100%',
-            backgroundColor: '#f9fafb',
-            marginTop: '72px',
+            height: "100%",
+            backgroundColor: "#f9fafb",
+            marginTop: "72px",
           }}
         >
           <Box
             sx={{
-              padding:"1rem",
-              height: '100%',
+              padding: "1rem",
+              height: "100%",
               // minHeight: 'calc(100vh - 130px)',
               // overflow: 'auto',
-              '&::-webkit-scrollbar': {
-                width: '8px',
+              "&::-webkit-scrollbar": {
+                width: "8px",
               },
-              '&::-webkit-scrollbar-track': {
-                bgcolor: isDarkMode ? '#1e1e2e' : '#f0f0f0',
+              "&::-webkit-scrollbar-track": {
+                bgcolor: isDarkMode ? "#1e1e2e" : "#f0f0f0",
               },
-              '&::-webkit-scrollbar-thumb': {
-                bgcolor: isDarkMode ? '#4a4a6a' : '#d0d0d0',
-                borderRadius: '4px',
-                '&:hover': {
-                  bgcolor: isDarkMode ? '#5a5a7a' : '#b0b0b0',
+              "&::-webkit-scrollbar-thumb": {
+                bgcolor: isDarkMode ? "#4a4a6a" : "#d0d0d0",
+                borderRadius: "4px",
+                "&:hover": {
+                  bgcolor: isDarkMode ? "#5a5a7a" : "#b0b0b0",
                 },
               },
             }}

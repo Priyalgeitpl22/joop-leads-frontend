@@ -1,5 +1,6 @@
 import { useState, useEffect, useImperativeHandle, forwardRef } from "react";
-import { Switch, Slider, Checkbox, Box } from "@mui/material";
+import { Switch, Slider, Checkbox, Box, FormHelperText } from "@mui/material";
+import { useForm, Controller } from "react-hook-form";
 import {
   HeadingText,
   InfoText,
@@ -20,7 +21,12 @@ import {
 import toast from "react-hot-toast";
 import Loader from "../../../components/Loader";
 import { EmailAccount } from "../../../redux/slice/emailAccountSlice";
-import { Button, Container, SectionFooter } from "../../../styles/global.styled";
+import {
+  Button,
+  Container,
+  SectionFooter,
+} from "../../../styles/global.styled";
+
 interface EditWarmupEmailAccountProps {
   id?: string;
   emailAccount?: EmailAccount;
@@ -31,7 +37,7 @@ export interface EditWarmupEmailAccountRef {
   loading: boolean;
 }
 
-interface WarmupState {
+interface WarmupFormData {
   enabled: boolean;
   maxPerDay: number;
   dailyRampup: boolean;
@@ -71,6 +77,21 @@ const switchStyles = {
   },
 };
 
+const defaultValues: WarmupFormData = {
+  enabled: false,
+  maxPerDay: 20,
+  dailyRampup: false,
+  rampupIncrement: 5,
+  maxEmailsPerDay: [1, 50],
+  replyRate: 20,
+  dailyReplyTarget: 10,
+  identifierTagFirst: "",
+  identifierTagSecond: "",
+  autoAdjust: false,
+  customDomainTracking: false,
+  weekdaysOnly: false,
+};
+
 const EditWarmupEmailAccount = forwardRef<
   EditWarmupEmailAccountRef,
   EditWarmupEmailAccountProps
@@ -81,28 +102,25 @@ const EditWarmupEmailAccount = forwardRef<
   );
   const emailAccount = emailAccountProp || emailAccountFromRedux;
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState<WarmupState>({
-    enabled: false,
-    maxPerDay: 0,
-    dailyRampup: false,
-    rampupIncrement: 0,
-    maxEmailsPerDay: [0, 0],
-    replyRate: 0,
-    dailyReplyTarget: 0,
-    identifierTagFirst: "",
-    identifierTagSecond: "",
-    autoAdjust: false,
-    customDomainTracking: false,
-    weekdaysOnly: false,
+
+  const {
+    control,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<WarmupFormData>({
+    defaultValues,
+    mode: "onChange",
   });
 
+  const enabled = watch("enabled");
+  const dailyRampup = watch("dailyRampup");
+  const maxPerDay = watch("maxPerDay");
+  const identifierTagFirst = watch("identifierTagFirst");
+  const identifierTagSecond = watch("identifierTagSecond");
+
   const checkBoxSettings = [
-    // {
-    //   key: "autoAdjust" as const,
-    //   label: "Enable Auto-adjust warmup/sending ratio",
-    //   description:
-    //     "Would you like us to adjust the warmups to optimize for email deliverability",
-    // },
     {
       key: "customDomainTracking" as const,
       label: "Warmup the Custom Domain tracking Link",
@@ -116,6 +134,7 @@ const EditWarmupEmailAccount = forwardRef<
         "To emulate human sending patterns, Jooper AI will automatically pause sending warmup emails on weekends.",
     },
   ];
+
   useEffect(() => {
     if (id && !emailAccountProp) {
       dispatch(getEmailAccountSmtpDetail(id));
@@ -133,16 +152,16 @@ const EditWarmupEmailAccount = forwardRef<
       const identifierTagFirst = warmup.identifierTag?.split("-")[0] || "";
       const identifierTagSecond = warmup.identifierTag?.split("-")[1] || "";
 
-      setFormData({
+      reset({
         enabled: warmup.enabled ?? false,
-        maxPerDay: warmup.maxPerDay ?? 0,
+        maxPerDay: warmup.maxPerDay || 20,
         dailyRampup: warmup.dailyRampup ?? false,
-        rampupIncrement: warmup.rampupIncrement ?? 0,
+        rampupIncrement: warmup.rampupIncrement ?? 5,
         maxEmailsPerDay: Array.isArray(warmup.maxEmailsPerDay)
           ? warmup.maxEmailsPerDay
-          : [0, 0],
+          : [1, 50],
         replyRate: warmup.replyRate ?? 20,
-        dailyReplyTarget: warmup.dailyReplyTarget ?? 0,
+        dailyReplyTarget: warmup.dailyReplyTarget ?? 10,
         identifierTagFirst: identifierTagFirst,
         identifierTagSecond: identifierTagSecond,
         autoAdjust: warmup.autoAdjust ?? false,
@@ -150,31 +169,11 @@ const EditWarmupEmailAccount = forwardRef<
         weekdaysOnly: warmup.weekdaysOnly ?? false,
       });
     } else {
-      setFormData({
-        enabled: false,
-        maxPerDay: 0,
-        dailyRampup: false,
-        rampupIncrement: 0,
-        maxEmailsPerDay: [0, 0],
-        replyRate: 20,
-        dailyReplyTarget: 0,
-        identifierTagFirst: "",
-        identifierTagSecond: "",
-        autoAdjust: false,
-        customDomainTracking: false,
-        weekdaysOnly: false,
-      });
+      reset(defaultValues);
     }
-  }, [emailAccount]);
+  }, [emailAccount, reset]);
 
-  const handleChange = <K extends keyof WarmupState>(
-    field: K,
-    value: WarmupState[K]
-  ) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleUpdateWarmup = async (): Promise<void> => {
+  const onSubmit = async (formData: WarmupFormData): Promise<void> => {
     if (!id) {
       toast.error("Email account ID is missing");
       return;
@@ -220,6 +219,8 @@ const EditWarmupEmailAccount = forwardRef<
     }
   };
 
+  const handleUpdateWarmup = handleSubmit(onSubmit);
+
   useImperativeHandle(ref, () => ({
     handleUpdate: handleUpdateWarmup,
     loading,
@@ -233,46 +234,77 @@ const EditWarmupEmailAccount = forwardRef<
           dedicated IP and then systematically increasing your email volume over
           a period of time.
         </InfoText>
+
         <WarmUpBlock>
           <WarmUpHeading>
-            <Switch
-              checked={formData.enabled}
-              onChange={(e) => handleChange("enabled", e.target.checked)}
-              sx={switchStyles.primary}
+            <Controller
+              name="enabled"
+              control={control}
+              render={({ field }) => (
+                <Switch
+                  checked={field.value}
+                  onChange={(e) => field.onChange(e.target.checked)}
+                  sx={switchStyles.primary}
+                />
+              )}
             />
             <HeadingText>
               <h3>Email Warmup Enabled</h3>
             </HeadingText>
           </WarmUpHeading>
         </WarmUpBlock>
-        {formData.enabled && (
+
+        {enabled && (
           <>
             <SettingBlock>
               <HeadingText>
                 <h3>Total number of warm-up emails per day</h3>
                 <p>
                   Maximum number of warm-up emails that could be sent via this
-                  email account per day{" "}
+                  email account per day
                 </p>
               </HeadingText>
 
-              <TextField
-                type="number"
-                value={formData.maxPerDay}
-                onChange={(e) =>
-                  handleChange("maxPerDay", Number(e.target.value))
-                }
+              <Controller
+                name="maxPerDay"
+                control={control}
+                rules={{
+                  required: "This field is required",
+                  min: { value: 1, message: "Minimum value is 1" },
+                  max: { value: 50, message: "Maximum value is 50" },
+                }}
+                render={({ field }) => (
+                  <Box>
+                    <TextField
+                      // type="number"
+                      value={field.value}
+                      defaultValue={20}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      error={!!errors.maxPerDay}
+                      inputProps={{ min: 1, max: 50 }}
+                    />
+                    {errors.maxPerDay && (
+                      <FormHelperText error>
+                        {errors.maxPerDay.message}
+                      </FormHelperText>
+                    )}
+                  </Box>
+                )}
               />
             </SettingBlock>
 
             <WarmUpBlock>
               <WarmUpHeading>
-                <Switch
-                  checked={formData.dailyRampup}
-                  onChange={(e) =>
-                    handleChange("dailyRampup", e.target.checked)
-                  }
-                  sx={switchStyles.secondary}
+                <Controller
+                  name="dailyRampup"
+                  control={control}
+                  render={({ field }) => (
+                    <Switch
+                      checked={field.value}
+                      onChange={(e) => field.onChange(e.target.checked)}
+                      sx={switchStyles.secondary}
+                    />
+                  )}
                 />
                 <HeadingText>
                   <h3>Daily Rampup</h3>
@@ -280,7 +312,7 @@ const EditWarmupEmailAccount = forwardRef<
               </WarmUpHeading>
             </WarmUpBlock>
 
-            {formData.dailyRampup && (
+            {dailyRampup && (
               <>
                 <SettingBlock>
                   <HeadingText>
@@ -288,15 +320,35 @@ const EditWarmupEmailAccount = forwardRef<
                     <p>(suggested 5 per day)</p>
                   </HeadingText>
 
-                  <TextField
-                    type="number"
-                    value={formData.rampupIncrement}
-                    onChange={(e) =>
-                      handleChange("rampupIncrement", Number(e.target.value))
-                    }
-                    inputProps={{ min: 5, max: 100 }}
+                  <Controller
+                    name="rampupIncrement"
+                    control={control}
+                    rules={{
+                      required: "This field is required",
+                      min: { value: 1, message: "Minimum value is 1" },
+                      max: { value: 100, message: "Maximum value is 100" },
+                    }}
+                    render={({ field }) => (
+                      <Box>
+                        <TextField
+                          type="number"
+                          value={field.value}
+                          onChange={(e) =>
+                            field.onChange(Number(e.target.value))
+                          }
+                          error={!!errors.rampupIncrement}
+                          inputProps={{ min: 1, max: 100 }}
+                        />
+                        {errors.rampupIncrement && (
+                          <FormHelperText error>
+                            {errors.rampupIncrement.message}
+                          </FormHelperText>
+                        )}
+                      </Box>
+                    )}
                   />
                 </SettingBlock>
+
                 <WarmupBox>
                   <HeadingText>
                     <h3>Randomise number of warm-up emails per day</h3>
@@ -305,20 +357,38 @@ const EditWarmupEmailAccount = forwardRef<
                       account per day
                     </p>
                   </HeadingText>
-                  <Slider
-                    value={formData.maxEmailsPerDay}
-                    min={1}
-                    max={100}
-                    onChange={(_e, newValue) =>
-                      handleChange("maxEmailsPerDay", newValue as number[])
-                    }
-                    valueLabelDisplay="auto"
-                    sx={{
-                      marginLeft: "12px",
-                      color: "var(--primary)",
-                      marginRight: "12px",
-                      width: "90%",
+                  <Controller
+                    name="maxEmailsPerDay"
+                    control={control}
+                    rules={{
+                      validate: (value) =>
+                        value[0] < value[1] ||
+                        "Min value must be less than max value",
                     }}
+                    render={({ field }) => (
+                      <Box sx={{ width: "100%" }}>
+                        <Slider
+                          value={field.value}
+                          min={1}
+                          max={maxPerDay}
+                          onChange={(_e, newValue) =>
+                            field.onChange(newValue as number[])
+                          }
+                          valueLabelDisplay="auto"
+                          sx={{
+                            marginLeft: "12px",
+                            color: "var(--primary)",
+                            marginRight: "12px",
+                            width: "90%",
+                          }}
+                        />
+                        {errors.maxEmailsPerDay && (
+                          <FormHelperText error>
+                            {errors.maxEmailsPerDay.message}
+                          </FormHelperText>
+                        )}
+                      </Box>
+                    )}
                   />
                 </WarmupBox>
 
@@ -327,15 +397,35 @@ const EditWarmupEmailAccount = forwardRef<
                     <h3>Reply Rate (%)</h3>
                     <p>Suggested - 20, Maximum - 100</p>
                   </HeadingText>
-                  <TextField
-                    type="number"
-                    value={formData.replyRate}
-                    onChange={(e) =>
-                      handleChange("replyRate", Number(e.target.value))
-                    }
-                    inputProps={{ min: 20, max: 100 }}
+                  <Controller
+                    name="replyRate"
+                    control={control}
+                    rules={{
+                      required: "This field is required",
+                      min: { value: 1, message: "Minimum value is 1%" },
+                      max: { value: 100, message: "Maximum value is 100%" },
+                    }}
+                    render={({ field }) => (
+                      <Box>
+                        <TextField
+                          type="number"
+                          value={field.value}
+                          onChange={(e) =>
+                            field.onChange(Number(e.target.value))
+                          }
+                          error={!!errors.replyRate}
+                          inputProps={{ min: 1, max: 100 }}
+                        />
+                        {errors.replyRate && (
+                          <FormHelperText error>
+                            {errors.replyRate.message}
+                          </FormHelperText>
+                        )}
+                      </Box>
+                    )}
                   />
                 </SettingBlock>
+
                 <WarmupBox>
                   <HeadingText>
                     <h3>Daily Target for Replies to Inbound Warmup Emails</h3>
@@ -344,20 +434,37 @@ const EditWarmupEmailAccount = forwardRef<
                       warmup emails each day.
                     </p>
                   </HeadingText>
-                  <Slider
-                    value={formData.dailyReplyTarget}
-                    min={1}
-                    max={50}
-                    onChange={(_e, newValue) =>
-                      handleChange("dailyReplyTarget", newValue as number)
-                    }
-                    valueLabelDisplay="auto"
-                    sx={{
-                      marginLeft: "12px",
-                      marginRight: "12px",
-                      color: "var(--secondary)",
-                      width: "90%",
+                  <Controller
+                    name="dailyReplyTarget"
+                    control={control}
+                    rules={{
+                      min: { value: 1, message: "Minimum value is 1" },
+                      max: { value: 50, message: "Maximum value is 50" },
                     }}
+                    render={({ field }) => (
+                      <Box sx={{ width: "100%" }}>
+                        <Slider
+                          value={field.value}
+                          min={1}
+                          max={50}
+                          onChange={(_e, newValue) =>
+                            field.onChange(newValue as number)
+                          }
+                          valueLabelDisplay="auto"
+                          sx={{
+                            marginLeft: "12px",
+                            marginRight: "12px",
+                            color: "var(--secondary)",
+                            width: "90%",
+                          }}
+                        />
+                        {errors.dailyReplyTarget && (
+                          <FormHelperText error>
+                            {errors.dailyReplyTarget.message}
+                          </FormHelperText>
+                        )}
+                      </Box>
+                    )}
                   />
                 </WarmupBox>
 
@@ -376,37 +483,96 @@ const EditWarmupEmailAccount = forwardRef<
                       gap: "10px",
                     }}
                   >
-                    <TextField
-                      type="text"
-                      value={formData.identifierTagFirst}
-                      onChange={(e) =>
-                        handleChange("identifierTagFirst", e.target.value)
-                      }
+                    <Controller
+                      name="identifierTagFirst"
+                      control={control}
+                      rules={{
+                        required: "First tag is required",
+                        pattern: {
+                          value: /^[a-zA-Z0-9]+$/,
+                          message: "Only alphanumeric characters allowed",
+                        },
+                        minLength: {
+                          value: 2,
+                          message: "Minimum 2 characters",
+                        },
+                        maxLength: {
+                          value: 20,
+                          message: "Maximum 20 characters",
+                        },
+                      }}
+                      render={({ field }) => (
+                        <Box>
+                          <TextField
+                            type="text"
+                            value={field.value}
+                            onChange={field.onChange}
+                            error={!!errors.identifierTagFirst}
+                            placeholder="Tag1"
+                          />
+                          {errors.identifierTagFirst && (
+                            <FormHelperText error>
+                              {errors.identifierTagFirst.message}
+                            </FormHelperText>
+                          )}
+                        </Box>
+                      )}
                     />
                     -
-                    <TextField
-                      type="text"
-                      value={formData.identifierTagSecond}
-                      onChange={(e) =>
-                        handleChange("identifierTagSecond", e.target.value)
-                      }
+                    <Controller
+                      name="identifierTagSecond"
+                      control={control}
+                      rules={{
+                        required: "Second tag is required",
+                        pattern: {
+                          value: /^[a-zA-Z0-9]+$/,
+                          message: "Only alphanumeric characters allowed",
+                        },
+                        minLength: {
+                          value: 2,
+                          message: "Minimum 2 characters",
+                        },
+                        maxLength: {
+                          value: 20,
+                          message: "Maximum 20 characters",
+                        },
+                      }}
+                      render={({ field }) => (
+                        <Box>
+                          <TextField
+                            type="text"
+                            value={field.value}
+                            onChange={field.onChange}
+                            error={!!errors.identifierTagSecond}
+                            placeholder="Tag2"
+                          />
+                          {errors.identifierTagSecond && (
+                            <FormHelperText error>
+                              {errors.identifierTagSecond.message}
+                            </FormHelperText>
+                          )}
+                        </Box>
+                      )}
                     />
-                    = {formData.identifierTagFirst} -{" "}
-                    {formData.identifierTagSecond}
+                    = {identifierTagFirst} - {identifierTagSecond}
                   </div>
                 </WarmupBox>
 
                 {checkBoxSettings.map(({ key, label, description }) => (
                   <SettingBlock2 key={key}>
-                    <Checkbox
-                      checked={formData[key]}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        handleChange(key, e.target.checked)
-                      }
-                      sx={{
-                        color: "#d1d5db",
-                        "&.Mui-checked": { color: "#3b82f6" },
-                      }}
+                    <Controller
+                      name={key}
+                      control={control}
+                      render={({ field }) => (
+                        <Checkbox
+                          checked={field.value}
+                          onChange={(e) => field.onChange(e.target.checked)}
+                          sx={{
+                            color: "#d1d5db",
+                            "&.Mui-checked": { color: "#3b82f6" },
+                          }}
+                        />
+                      )}
                     />
                     <HeadingText>
                       <h3>{label}</h3>

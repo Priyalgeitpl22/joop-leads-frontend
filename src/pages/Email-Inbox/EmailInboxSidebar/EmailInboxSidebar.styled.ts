@@ -126,6 +126,12 @@ export const EmailInboxHeader = styled(Box)`
   display: flex;
   align-items: center; 
   justify-content: space-between;
+
+  p {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-secondary);
+  }
 `;
 
 export const AccountSelectorContainer = styled(Box)`

@@ -68,18 +68,17 @@ export default function EmailInboxs() {
   const selectedMailboxId = useSelector(
     (state: RootState) => state.emailInbox.selectedMailboxId
   );
-  const accounts = useSelector((state: RootState) => state.emailInbox.accounts);
+  // const accounts = useSelector((state: RootState) => state.emailInbox.accounts);
   const loading = useSelector((state: RootState) => state.emailInbox.loading);
   const [emailAccounts, setEmailAccounts] = useState<EmailAccount[]>([]);
-  const [loadingMailboxes, setLoadingMailboxes] = useState<boolean>(true);
   const threadMessages = useSelector(
     (state: RootState) => state.threadMessage.threadMessages
   );
   const threadMessageLoading = useSelector(
     (state: RootState) => state.threadMessage.loading
   );
-  const [refreshLoading, setRefreshLoading] = useState<boolean>(false);
-  const selectedAccount = accounts.find(
+  // const [refreshLoading, setRefreshLoading] = useState<boolean>(false);
+  const selectedAccount = emailAccounts.find(
     (account) => account._id === selectedAccountId
   );
 
@@ -113,7 +112,6 @@ export default function EmailInboxs() {
   useEffect(() => {
     const fetchMailboxes = async () => {
       if (!selectedAccountId) return;
-      setLoadingMailboxes(true);
       setSelectedMessage(null);
       setOpenDialog(false);
 
@@ -130,10 +128,8 @@ export default function EmailInboxs() {
           const firstMailbox = unique[0];
           dispatch(setSelectedMailbox(firstMailbox._id));
           await dispatch(getAllEmailThreads({ accountId: selectedAccountId }));
-          setLoadingMailboxes(false);
         }
       } catch (err) {
-        setLoadingMailboxes(false);
         console.error("Failed to fetch mailboxes:", err);
       }
     };
@@ -210,12 +206,14 @@ export default function EmailInboxs() {
       <EmailInbox>
         <EmailInboxHeader>
           <SectionTitle>Email Inbox</SectionTitle>
+          
           <AccountSelectorContainer>
-            <ReloadIcon
+            {/* <ReloadIcon
               style={{ color: "var(--text-secondary)" }}
               onClick={handleReload}
               loading={refreshLoading}
-            />
+            /> */}
+            <p>({selectedAccount?.email})</p>
             <AccountSelectorButton onClick={handleAccountSelectorClick}>
               <AccountAvatar>
                 {selectedAccount?.name?.[0]?.toUpperCase() || <Person />}
@@ -225,7 +223,7 @@ export default function EmailInboxs() {
         </EmailInboxHeader>
 
         <EmailInboxContainer>
-          {loadingMailboxes || loading ? (
+          {loading ? (
             <EmailInboxMessagesBox>
               <CircularProgress />
             </EmailInboxMessagesBox>
@@ -274,7 +272,8 @@ export default function EmailInboxs() {
                             setSelectedMessage(null);
                           }}
                           messages={threadMessages as unknown as Message[]}
-                          selectedAccountId={selectedAccount?._id || ""}
+                          selectedAccountId={selectedAccount?._id}
+                          selectedAccount={selectedAccount}
                         />
                       </>
                     ) : (
@@ -336,6 +335,5 @@ export default function EmailInboxs() {
         </PopupContainer>
       </Popover>
     </Box>
-    // </Box>
   );
 }

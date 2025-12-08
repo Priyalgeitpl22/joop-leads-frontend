@@ -32,7 +32,7 @@ body {
   /* New Global Colors Variables */
   --primary: #2463EB;
   --primary-light: #6093eb;
-  --primary-lighter: #dbe8ff;
+  --primary-selected: #d9e7ff;
   --primary-dark: #0d47a1;
   --secondary: #00B877;
   --secondary-light: #7fc97e;

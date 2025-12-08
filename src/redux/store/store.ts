@@ -11,6 +11,8 @@ import emailAccountReducer from "../slice/emailAccountSlice";
 import dashboardReducer from "../slice/dashboardSlice";
 import folderReducer from "../slice/emailCampaignFolderSlice"
 import threadMessageThreadReducer from "../slice/emailInboxThreadMessage"
+import planReducer from "../slice/planSlice";
+import orgPlanReducer from "../slice/orgPlanSlice";
 
 
 export const store = configureStore({
@@ -27,6 +29,8 @@ export const store = configureStore({
     dashboard: dashboardReducer,
     folder: folderReducer,
     threadMessage:threadMessageThreadReducer,
+    plan: planReducer,
+    orgPlan: orgPlanReducer,
   },
 });
 

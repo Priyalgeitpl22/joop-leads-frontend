@@ -44,7 +44,7 @@ export const SearchBar = styled(Box)`
     outline: none;
     color: var(--theme-color);
     flex-grow: 1;
-    font-size: 14px;
+    font-size: 12px;
 
     &::placeholder {
       color: #94a3b8;
@@ -148,7 +148,6 @@ export const AccountList = styled(List)({
   maxHeight: "calc(100vh - 120px)",
   marginTop: "5px",
   
-  // Popup mode adjustments
   "&.popup-mode": {
     maxHeight: "320px",
     marginTop: "0px",
@@ -161,6 +160,7 @@ export const AccountItem = styled(ListItem)({
   alignItems: "center",
   gap: "10px",
   padding: "10px",
+  fontSize: "12px",
   borderBottom: "1px solid #eee",
   cursor: "pointer",
   transition: "background 0.2s",
@@ -168,7 +168,7 @@ export const AccountItem = styled(ListItem)({
   marginBottom: "5px",
   backgroundColor: "var(--icon-light)",
   '&[data-selected="true"]': {
-    backgroundColor: "var(--background-hover)",
+    backgroundColor: "var(--primary-selected)",
     fontWeight: "bold",
   },
 
@@ -209,7 +209,7 @@ export const AccountDetails = styled(Box)({
   flexDirection: "column",
 
   "& strong": {
-    fontSize: "15px",
+    fontSize: "12px",
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
@@ -217,12 +217,12 @@ export const AccountDetails = styled(Box)({
 
     "@media (max-width: 600px)": {
       maxWidth: "150px",
-      fontSize: "14px",
+      fontSize: "12px",
     },
   },
 
   "& div": {
-    fontSize: "14px",
+    fontSize: "12px",
     color: "#777",
     whiteSpace: "nowrap",
     overflow: "hidden",
@@ -245,9 +245,8 @@ export const NoAccount = styled(Box)`
   border-radius: 8px;
   background-color: var(--icon-light);
   color: #555;
-  font-size: 16px;
-  font-weight: bold;
-  margin-top: 20px;
+  font-size: 12px;
+  font-weight: 500;
   height: 100%;
   width: 100%;
 `;
@@ -278,6 +277,5 @@ export const AccountSelectorText = styled(Typography)`
   color: #666;
   font-size: 12px;
   font-weight: 500;
-  text-transform: uppercase;
   letter-spacing: 0.5px;
 `;
