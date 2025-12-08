@@ -15,7 +15,7 @@ export interface OrgPlan {
   assignedAt?: string;
   expiresAt?: string;
   status?: "ACTIVE" | "INACTIVE" | "EXPIRED";
-  [key: string]: any;
+  [key: string]: string | Plan | undefined;
 }
 
 interface OrgPlanState {
@@ -56,7 +56,7 @@ export const assignPlanToOrg = createAsyncThunk<
 
 // Fetch current plan for organization
 export const fetchCurrentOrgPlan = createAsyncThunk<
-  { data: OrgPlan },
+  OrgPlan,
   string,
   { rejectValue: string }
 >("orgPlan/fetchCurrentOrgPlan", async (orgId, { rejectWithValue }) => {
@@ -124,9 +124,9 @@ const orgPlanSlice = createSlice({
       })
       .addCase(
         assignPlanToOrg.fulfilled,
-        (state, action: PayloadAction<{ data: OrgPlan }>) => {
+        (state, action) => {
           state.loading = false;
-          state.currentPlan = action.payload.data;
+          state.currentPlan = action.payload as unknown as OrgPlan;
         }
       )
       .addCase(
@@ -143,9 +143,9 @@ const orgPlanSlice = createSlice({
       })
       .addCase(
         fetchCurrentOrgPlan.fulfilled,
-        (state, action: PayloadAction<{ data: OrgPlan }>) => {
+        (state, action: PayloadAction<OrgPlan>) => {
           state.loading = false;
-          state.currentPlan = action.payload.data;
+          state.currentPlan = action.payload;
         }
       )
       .addCase(

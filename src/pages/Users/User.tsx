@@ -10,13 +10,9 @@ import {
   FormControl,
   InputLabel,
   Select,
-  useTheme,
-  useMediaQuery,
-  Accordion,
-  AccordionSummary,
 } from "@mui/material";
 import { toast } from "react-hot-toast";
-import { UserHeader, UsersContainer, UserTable } from "./User.styled";
+import { UserTable } from "./User.styled";
 import { Button2, SectionTitle } from "../../styles/layout.styled";
 import { SearchBar } from "../../components/Header/header.styled";
 import { Search, Trash2 } from "lucide-react";
@@ -45,8 +41,6 @@ import { Dayjs } from "dayjs";
 import EditUserDialog from "./EditUser/EditUserRoleDialogue";
 import { ModeEditOutlineOutlined } from "@mui/icons-material";
 import ActiveFilters from "../Email-Campaign/ActiveFilters";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import usePageWidth from "../../hooks/usePageWidth";
 
 const Users = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -152,9 +146,6 @@ const Users = () => {
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
-  const width = usePageWidth();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [searchTerm, setSearchTerm] = useState<string>("");
 
   const [selectedUser, setSelectedUser] = useState<string | null>(null);

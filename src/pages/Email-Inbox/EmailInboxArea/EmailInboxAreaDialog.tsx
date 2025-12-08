@@ -33,7 +33,7 @@ interface Message {
 interface EmailThreadViewProps {
   messages: Message[];
   onClose: () => void;
-  selectedAccount: EmailAccount;
+  selectedAccount: EmailAccount | null;
 }
 
 const EmailThreadView: React.FC<EmailThreadViewProps> = ({

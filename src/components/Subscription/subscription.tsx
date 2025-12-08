@@ -41,10 +41,10 @@ const Subscription = () => {
   };
 
   const getOrganizationPlan = async () => {
-    const response = await dispatch(fetchCurrentOrgPlan(user?.orgId)).unwrap();
-    if (response && response.data) {
-      setSelectedPlanCode(response.data?.planCode);
-      setOffer(response.data?.offer ?? 0);
+    const response = await dispatch(fetchCurrentOrgPlan(user?.orgId ?? "")).unwrap();
+    if (response && response.plan) {
+      setSelectedPlanCode(response.plan?.code ?? "");
+      setOffer(response.plan?.offer ?? 0);
     }
   };
 
@@ -58,7 +58,7 @@ const Subscription = () => {
       conatctSales({ planCode: planCode, billingPeriod: "MONTHLY" })
     ).unwrap();
 
-    if (result?.code === 200) {
+    if (result) {
       setOpenRequestSentDialog(true);
       setOpenContactAdminDialog(false);
     }

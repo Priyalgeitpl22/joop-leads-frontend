@@ -19,8 +19,6 @@ import {
   getAllMailBox,
   getAllEmailThreads,
   setSelectedMailbox,
-  reloadAccountMailboxes,
-  reloadAccountMessages,
   getAllChats,
 } from "../../redux/slice/emailInboxSlice";
 import { getAllThreadsMessages } from "../../redux/slice/emailInboxThreadMessage";
@@ -41,7 +39,6 @@ import {
   EmailInboxMessagesBox,
   NoMailboxMessage,
 } from "./EmailInboxArea/EmailInboxArea.styled";
-import { ReloadIcon } from "./EmailInboxList/EmailInboxList.styled";
 
 interface Message {
   id: string;
@@ -68,7 +65,6 @@ export default function EmailInboxs() {
   const selectedMailboxId = useSelector(
     (state: RootState) => state.emailInbox.selectedMailboxId
   );
-  // const accounts = useSelector((state: RootState) => state.emailInbox.accounts);
   const loading = useSelector((state: RootState) => state.emailInbox.loading);
   const [emailAccounts, setEmailAccounts] = useState<EmailAccount[]>([]);
   const threadMessages = useSelector(
@@ -77,7 +73,6 @@ export default function EmailInboxs() {
   const threadMessageLoading = useSelector(
     (state: RootState) => state.threadMessage.loading
   );
-  // const [refreshLoading, setRefreshLoading] = useState<boolean>(false);
   const selectedAccount = emailAccounts.find(
     (account) => account._id === selectedAccountId
   );
@@ -168,31 +163,6 @@ export default function EmailInboxs() {
     );
   }, [selectedMessage, selectedAccountId, dispatch]);
 
-  const handleReload = async () => {
-    if (!accounts || accounts.length === 0 || !selectedAccountId) return;
-    try {
-      setRefreshLoading(true);
-      const res = await dispatch(
-        reloadAccountMailboxes({ accountId: selectedAccountId || "" })
-      ).unwrap();
-      if (res) {
-        await dispatch(reloadAccountMessages({ accountId: selectedAccountId || "" }));
-        await dispatch(getAllEmailThreads({ accountId: selectedAccountId || "" }));
-        if (selectedMessage) {
-          await dispatch(
-            getAllThreadsMessages({
-              accountId: selectedAccountId || "",
-              threadId: selectedMessage,
-            })
-          );
-        }
-      }
-    } catch (error) {
-      console.error("Error while reloading account mailboxes:", error);
-    } finally {
-      setRefreshLoading(false);
-    }
-  };
 
   return (
     <Box
@@ -272,8 +242,7 @@ export default function EmailInboxs() {
                             setSelectedMessage(null);
                           }}
                           messages={threadMessages as unknown as Message[]}
-                          selectedAccountId={selectedAccount?._id}
-                          selectedAccount={selectedAccount}
+                          selectedAccount={selectedAccount as EmailAccount}
                         />
                       </>
                     ) : (
