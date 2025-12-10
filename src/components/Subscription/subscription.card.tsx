@@ -83,7 +83,7 @@ const SubscriptionCard = ({
 
     return billingPeriod === BillingPeriod.MONTHLY
       ? priceUsd ?? 0
-      : (priceUsd ? (priceUsd * 12 * (1 - offer / 100)).toFixed(2) : 0);
+      : (priceUsd ? Math.round(priceUsd * 12 * (1 - offer / 100)) : 0);
   };
 
   return (
@@ -106,11 +106,16 @@ const SubscriptionCard = ({
             }}
           >
             <SubscriptionPrice>
-              $
-              {getBiilingAmount(plan.priceUsd)}
-              <span>
-                {billingPeriod === BillingPeriod.MONTHLY ? "/month" : "/year"}
-              </span>
+              {plan.priceUsd ? (
+                <>
+                  ${getBiilingAmount(plan.priceUsd)}
+                  <span>
+                    {billingPeriod === BillingPeriod.MONTHLY ? "/month" : "/year"}
+                  </span>
+                </>
+              ) : (
+                "Free"
+              )}
             </SubscriptionPrice>
           </div>
           <SubscriptionFeatures>

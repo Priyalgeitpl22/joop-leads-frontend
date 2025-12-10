@@ -1,4 +1,4 @@
-import { fetchPlans } from "../../redux/slice/planSlice";
+import { fetchPlans, Plan } from "../../redux/slice/planSlice";
 import { Container } from "../../styles/global.styled";
 import {
   GetStartedButton,
@@ -42,9 +42,9 @@ const Subscription = () => {
 
   const getOrganizationPlan = async () => {
     const response = await dispatch(fetchCurrentOrgPlan(user?.orgId ?? "")).unwrap();
-    if (response && response.plan) {
-      setSelectedPlanCode(response.plan?.code ?? "");
-      setOffer(response.plan?.offer ?? 0);
+    if (response && response.data) {
+      setSelectedPlanCode((response.data as Plan)?.code ?? "");
+      setOffer((response.data as Plan)?.offer ?? 0);
     }
   };
 
@@ -80,6 +80,8 @@ const Subscription = () => {
         
       <CustomTabs
         value={billingPeriod}
+        defaultValue={BillingPeriod.MONTHLY}
+        defaultChecked={true}
         onChange={handleBiilingPeriodChange}
         sx={{
           display: "flex",
@@ -87,8 +89,8 @@ const Subscription = () => {
           borderColor: "divider",
         }}
       >
-        <CustomTab customFontSize={18} label="Monthly" value="monthly" />
-        <CustomTab customFontSize={18} label={`Yearly (Save ${offer}%)`} value="yearly" />
+        <CustomTab customFontSize={18} label="Monthly" value={BillingPeriod.MONTHLY} />
+        <CustomTab customFontSize={18} label={`Yearly (Save ${offer}%)`} value={BillingPeriod.YEARLY} />
       </CustomTabs>
 
         <PlansContainer>
