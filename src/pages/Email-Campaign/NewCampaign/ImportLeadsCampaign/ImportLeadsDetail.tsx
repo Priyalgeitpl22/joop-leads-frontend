@@ -64,7 +64,7 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
 
       onEmailFieldsChange(updatedFields);
 
-      const requiredKeys = ["First Name", "Last Name", "Email"];
+      const requiredKeys = ["Email"];
       const allRequiredMapped = requiredKeys.every((key) =>
         Object.values(updatedFields).includes(
           CSV_COLUMNS.find((col) => col.label === key)?.key ?? ""
@@ -267,7 +267,7 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
         Map CSV columns to the variables you want to add to the campaign.
         <Box component="span" sx={{ fontWeight: "600", color: "#1f2937" }}>
           {" "}
-          First Name, Last Name and Email are required.
+          Email is required.
         </Box>
       </Typography>
       <Box
