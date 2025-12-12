@@ -26,6 +26,10 @@ const theme = createTheme({
         root: {
           textTransform: "none",
           borderRadius: "8px",
+          "&:hover": {
+            backgroundColor: "none !important",
+            cursor: "pointer",
+          },
         },
       },
     },
@@ -340,34 +344,34 @@ const theme = createTheme({
           borderRadius: "8px",
           marginBottom: "8px",
           // padding: "10px !important",
-          "& .MuiSvgIcon-root": {
-            color: "var(--theme-color) !important",
-            fontSize: "30px !important"
-          },
-          "&:hover": {
-            backgroundColor: "var(--background-secondary)",
-            padding: "10px !important"
-          },
-          "&:active": {
-            backgroundColor: "var(--background-secondary)",
-            padding: "10px !important"
-          },
-          "&.Mui-selected": {
-            backgroundColor: "var(--selected) !important",
-            color: "white",
-            padding: "10px !important"
-          },
-          "& a": {
-            textDecoration: "none !important",
-            color: "inherit !important",
-            backgroundColor: "transparent !important",
-          },
-          "& a:hover, & a:focus, & a:active, & a.Mui-focusVisible": {
-            backgroundColor: "transparent !important",
-            textDecoration: "none !important",
-            color: "inherit !important",
-            outline: "none !important",
-          },
+          // "& .MuiSvgIcon-root": {
+          //   color: "var(--theme-color) !important",
+          //   fontSize: "30px !important"
+          // },
+          // "&:hover": {
+          //   backgroundColor: "var(--background-secondary)",
+          //   padding: "10px !important"
+          // },
+          // "&:active": {
+          //   backgroundColor: "var(--background-secondary)",
+          //   padding: "10px !important"
+          // },
+          // "&.Mui-selected": {
+          //   backgroundColor: "var(--selected) !important",
+          //   color: "white",
+          //   padding: "10px !important"
+          // },
+          // "& a": {
+          //   textDecoration: "none !important",
+          //   color: "inherit !important",
+          //   backgroundColor: "transparent !important",
+          // },
+          // "& a:hover, & a:focus, & a:active, & a.Mui-focusVisible": {
+          //   backgroundColor: "transparent !important",
+          //   textDecoration: "none !important",
+          //   color: "inherit !important",
+          //   outline: "none !important",
+          // },
         },
       },
     },
@@ -375,9 +379,9 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           color: "#FFFFFF !important",
-          "&:active": {
-            color: "var(--background-secondary)",
-          },
+          // "&:active": {
+          //   color: "var(--background-secondary)",
+          // },
         },
       },
     },

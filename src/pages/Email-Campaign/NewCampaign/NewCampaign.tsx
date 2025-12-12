@@ -168,6 +168,8 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
       setUploadCounts(response.payload.counts);
       setCampaignId(response.payload.campaignId);
       setUploadLeads(true);
+    } else {
+      toast.error(response.payload.message);
     }
   };
 
@@ -426,7 +428,7 @@ const NewCampaign: React.FC<NewCampaignProps> = () => {
             display: "flex",
             alignItems: "center",
             gap: "40px",
-            px: 2,
+            p: 2,
           }}
         >
           <WestOutlinedIcon

@@ -33,6 +33,7 @@ import {
   markThreadAsRead,
 } from "../../../redux/slice/emailInboxSlice";
 import { AccountAvatar } from "../EmailInboxSidebar/EmailInboxSidebar.styled";
+import { SecondaryButton } from "../../../styles/global.styled";
 
 const filterConfig = [
   { key: "allReplies", label: "All Replies" },
@@ -323,17 +324,9 @@ const EmailInboxAreaComponent: React.FC<EmailInboxAreaProps> = ({
                   padding: "20px",
                 }}
               >
-                <Button
-                  onClick={handleCancelFilters}
-                  sx={{
-                    marginRight: "10px",
-                    color: "red !important",
-                    backgroundColor: "#fff !important",
-                    outline: "1px solid red",
-                  }}
-                >
+                <SecondaryButton onClick={handleCancelFilters}>
                   Cancel
-                </Button>
+                </SecondaryButton>
                 <Button
                   variant="contained"
                   sx={{ background: "var(--primary-gradient)" }}

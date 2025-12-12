@@ -21,9 +21,9 @@ export const SubscriptionCardContainer = styled(Box)<{ isSelected?: boolean }>`
   height: 100%;
   cursor: pointer;
   background-color: var(--theme-background-light);
-  border: 0.5px solid #00000033;
+  border: ${props => props.isSelected ? "1px solid var(--primary)" : "0.5px solid #00000033"};
   border-radius: 20px;
-  box-shadow: 0px 1px 5px 1px #00000040;
+  box-shadow: 0px 1px 5px 1px #00000040
   box-sizing: border-box;
   gap: 24px;
   transition: ${props => props.isSelected ? "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out" : "transform 0.3s ease-in-out"};

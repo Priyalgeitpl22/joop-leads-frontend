@@ -52,7 +52,7 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
   );
   const { user } = useSelector((state: RootState) => state.user);
   const isSaveDisabled = selectedEmailAccounts.length === 0;
-
+  const [loading, setLoading] = useState<boolean>(true);
 
   const columns: GridColDef[] = useMemo(
     () => [
@@ -188,6 +188,7 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
 
   const getAllEmailAccounts = async () => {
     try {
+      setLoading(true);
       const data = await dispatch(
         fetchEmailAccount({ orgId: user?.orgId || "" })
       ).unwrap();
@@ -199,8 +200,10 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
 
       setEmailAccounts(formattedData);
       setRows(formattedData);
+      setLoading(false);
     } catch (error) {
       console.error("Failed to fetch Account:", error);
+      setLoading(false);
     }
   };
 
@@ -243,7 +246,7 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
       sx={{ overflowX: "hidden" }}
     >
       <CustomDialogHeader>
-        <Typography variant="h5">Choose Sender Accounts</Typography>
+        <Typography sx={{ fontSize: "16px", fontWeight: 600 }}>Choose Sender Accounts</Typography>
         {
           <IconButton>
             <CloseIcon onClick={onClose} />
@@ -281,6 +284,7 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
         </Box>
         <Box sx={{ maxHeight:"calc(100vh-300px)", overflow: "auto" }}>
           <CustomDataTable
+            loading={loading}
             columns={columns}
             rows={rows}
             pageSizeOptions={[15, 10, 5]}

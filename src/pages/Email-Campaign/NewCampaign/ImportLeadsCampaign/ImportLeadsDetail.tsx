@@ -153,7 +153,7 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
         >
           1
         </Box>
-        <Typography fontWeight="600" variant="h6" sx={{ color: "#1f2937" }}>
+        <Typography sx={{ color: "#1f2937", fontSize: "14px", fontWeight: 600 }}>
           CSV File
         </Typography>
       </Box>
@@ -203,7 +203,7 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
             </span>
           </Tooltip>
 
-          <Tooltip title="Reupload">
+          <Tooltip title="Re-upload">
             <IconButton
               onClick={handleReupload}
               sx={{
@@ -259,7 +259,7 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
         >
           2
         </Box>
-        <Typography fontWeight="600" variant="h6" sx={{ color: "#1f2937" }}>
+        <Typography sx={{ color: "#1f2937", fontSize: "14px", fontWeight: 600 }}>
           Map Fields
         </Typography>
       </Box>
@@ -279,7 +279,7 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
           boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
         }}
       >
-        <Box sx={{ display: "flex", gap: 3, alignItems: "center", mb: 4 }}>
+        <Box sx={{ display: "flex", gap: 3, alignItems: "center" }}>
           <InsertDriveFileIcon
             sx={{
               fontSize: 26,
@@ -301,8 +301,9 @@ const ImportLeadsDetail: React.FC<ImportLeadsDetailProps> = ({
               display: "flex",
               alignItems: "center",
               gap: 2,
-              mb: index === columns.length - 1 ? 0 : 3,
-              pb: index === columns.length - 1 ? 0 : 3,
+              py: 1.5,
+              // mb: index === columns.length - 1 ? 0 : 3,
+              // pb: index === columns.length - 1 ? 0 : 3,
               borderBottom:
                 index === columns.length - 1 ? "none" : "1px solid #e5e7eb",
             }}

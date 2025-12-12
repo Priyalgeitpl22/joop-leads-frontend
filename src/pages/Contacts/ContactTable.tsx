@@ -36,7 +36,7 @@ import { CheckCircle, Search, Trash2, XCircle } from "lucide-react";
 import { CustomDataTable } from "../../assets/Custom/customDataGrid";
 import { GridColDef } from "@mui/x-data-grid";
 import { formatDateTime } from "../../utils/utils";
-import { Button, IconsButton } from "../../styles/global.styled";
+import { Button, IconsButton, SecondaryButton } from "../../styles/global.styled";
 import ContactsAccountDialogBox from "./ContactsAccountDialogBox/ContactsAccountDialogBox";
 import ViewDrawer from "./View-Drawer/ViewDrawer";
 import UploadContactCsvDialog from "./UploadContactCsvDialog/UploadContactCsvDialog";
@@ -51,7 +51,6 @@ import HowToRegIcon from "@mui/icons-material/HowToReg";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import toast, { Toaster } from "react-hot-toast";
-import { Button2 } from "../../styles/layout.styled";
 import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -69,7 +68,7 @@ export interface ImportedLeadsData {
 const ContactTable: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const isMobile = useMediaQuery(useTheme().breakpoints.down("sm"));
-  const [, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
   const [CSVsettings, setCSVsettings] = React.useState<csvSettingsType>();
@@ -333,13 +332,13 @@ const ContactTable: React.FC = () => {
   };
 
   const getFetchAllContacts = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
       const data = await dispatch(fetchContacts()).unwrap();
       setRows(data || []);
+      setLoading(false);
     } catch (error) {
       console.error("Failed to fetch Account:", error);
-    } finally {
       setLoading(false);
     }
   };
@@ -354,9 +353,11 @@ const ContactTable: React.FC = () => {
           SearchContacts({ query: trimmedQuery, orgId: user?.orgId || "" })
         ).unwrap();
         setRows(filteredData);
+        setLoading(false);
       }
     } catch (error) {
       console.error("Search failed:", error);
+      setLoading(false);
     }
   };
 
@@ -432,6 +433,8 @@ const ContactTable: React.FC = () => {
       setUploadCounts(response.payload.counts);
       setCampaignId(response.payload.campaignId);
       setUploadLeads(true);
+    } else {
+      toast.error(response.payload.message);
     }
   };
 
@@ -785,9 +788,9 @@ const ContactTable: React.FC = () => {
         ))}
 
         <Box display="flex" justifyContent="space-between" mt={2}>
-          <Button2 onClick={handleMenuClose} color={""} background={""}>
+          <SecondaryButton onClick={handleMenuClose}>
             Cancel
-          </Button2>
+          </SecondaryButton>
           <Button onClick={handleApplyFilter}>Apply</Button>
         </Box>
       </Menu>
@@ -804,6 +807,7 @@ const ContactTable: React.FC = () => {
           />
         </Box>
         <CustomDataTable
+          loading={loading}
           columns={columns}
           rows={rows}
           pageSizeOptions={[15, 10, 5]}

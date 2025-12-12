@@ -154,7 +154,7 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
             variant="h6"
             fontWeight={600}
             textAlign="center"
-            sx={{ color: "#111827", mb: 1, mt:5 }}
+            sx={{ color: "#111827", mt: 3 }}
           >
             Easily add or update Leads / Contacts
           </Typography>
@@ -162,7 +162,7 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
           <Typography
             variant="body1"
             textAlign="center"
-            sx={{ color: "#6b7280", mt: 1 }}
+            sx={{ color: "#6b7280", mt: 1, mb: 3 }}
           >
             How would you like to get contacts into your list?
           </Typography>
@@ -178,11 +178,7 @@ const ImportLeadsCampaign: React.FC<ImportLeadsCampaignProps> = ({
               />
             </div>
 
-            <Typography
-              variant="h6"
-              fontWeight="600"
-              sx={{ color: "#111827", mt: 1 }}
-            >
+            <Typography sx={{ color: "#111827", mt: 1, fontSize: "14px", fontWeight: 600 }}>
               Upload CSV File
             </Typography>
             <Typography

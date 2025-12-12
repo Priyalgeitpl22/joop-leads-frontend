@@ -1,17 +1,26 @@
 import { Container } from "../../styles/global.styled";
-import { SectionTitle } from "../../styles/layout.styled";
-import { Box } from "@mui/material";
-
+import SettingsList from "./settingsList";
+import { useState } from "react";
+import { SettingsContainer } from "./styled";
+import BillingSettings from "./billingSettings";
+  
 const Settings = () => {
+
+  const [selectedTab, setSelectedTab] = useState<string>("Manage Billing");
+  
   return (
     <Container>
-      <Box sx={{ padding: "20px", width: "100%" }}>
-        <SectionTitle>Settings</SectionTitle>
-        <Box sx={{ marginTop: "20px" }}>
-          <h1>Settings</h1>
-          <p>Settings page content will go here.</p>
-        </Box>
-      </Box>
+      {/* <Box sx={{ width: "100%", height: "100%" }}> */}
+        <SettingsContainer> 
+          <SettingsList
+            selectedTab={selectedTab}
+            setSelectedTab={setSelectedTab}
+          />
+
+          {selectedTab === "Manage Billing" && <BillingSettings />}
+          {selectedTab === "Manage Security" && <BillingSettings />}
+        </SettingsContainer>
+      {/* </Box> */}
     </Container>
   );
 };

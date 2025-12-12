@@ -155,6 +155,9 @@ export const CustomDataTable: React.FC<CustomDataTableProps> = ({
                 height: "40px !important",
                 outline: "none",
               },
+            "& .MuiDataGrid-columnHeader.MuiDataGrid-columnHeader--sortable.MuiDataGrid-withBorderColor": {
+                height: "40px !important",
+            },
 
             "& .MuiDataGrid-footerContainer .MuiTablePagination-selectLabel, \
       & .MuiDataGrid-footerContainer .MuiTablePagination-displayedRows, \

@@ -7,6 +7,7 @@ import {
   Box,
   Divider,
   IconButton,
+  CircularProgress,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CloseIcon from "@mui/icons-material/Close";
@@ -18,6 +19,7 @@ import { Button, SecondaryButton } from "../../../styles/global.styled";
 import { TextArea } from "../../../styles/layout.styled";
 import { formatDateTimeWithRelative } from "../../../utils/utils";
 import { EmailAccount } from "../../../redux/slice/emailAccountSlice";
+import { toast } from "react-hot-toast";
 
 interface Message {
   id: string;
@@ -39,14 +41,16 @@ interface EmailThreadViewProps {
 const EmailThreadView: React.FC<EmailThreadViewProps> = ({
   messages,
   onClose,
-  selectedAccount
+  selectedAccount,
 }) => {
   const [replyContent, setReplyContent] = useState("");
   const [isReplying, setIsReplying] = useState(false);
+  const [isSending, setIsSending] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
 
-  const handleSend = () => {
-    if (replyContent.trim()) {
+  const handleSend = async () => {
+    if (replyContent.trim() && !isSending) {
+      setIsSending(true);
       const lastMessage = messages[messages.length - 1];
       const firstMessage = messages[0];
 
@@ -68,10 +72,21 @@ const EmailThreadView: React.FC<EmailThreadViewProps> = ({
         threadId: lastMessage?.threadId || "",
       };
 
-      dispatch(sentEmailReply(replyPayload));
+      try {
+        const response = await dispatch(sentEmailReply(replyPayload)).unwrap();
 
-      setReplyContent("");
-      setIsReplying(false);
+        if (response.code === 200) {
+          toast.success(response.message);
+          setReplyContent("");
+          setIsReplying(false);
+        } else {
+          toast.error(response.message);
+        }
+      } catch (error: any) {
+        toast.error(error.message);
+      } finally {
+        setIsSending(false);
+      }
     }
   };
 
@@ -243,20 +258,26 @@ const EmailThreadView: React.FC<EmailThreadViewProps> = ({
               style={{ borderRadius: "10px", fontSize: "12px", width: "100%" }}
             />
             <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
-              <SecondaryButton
-                onClick={handleDiscard}
-              >
-                Discard
-              </SecondaryButton>
+              <SecondaryButton onClick={handleDiscard}>Discard</SecondaryButton>
               <Button
                 onClick={handleSend}
-                disabled={!replyContent.trim()}
+                disabled={!replyContent.trim() || isSending}
                 style={{
                   background: "var(--secondary-gradient)",
                   color: "white",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
                 }}
               >
-                Send
+                {isSending ? (
+                  <>
+                    <CircularProgress size={16} sx={{ color: "white" }} />
+                    Sending...
+                  </>
+                ) : (
+                  "Send"
+                )}
               </Button>
             </Box>
           </Box>

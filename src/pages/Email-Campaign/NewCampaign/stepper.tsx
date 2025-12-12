@@ -39,8 +39,8 @@ const ColorlibStepIconRoot = styled("div")<{
   zIndex: 1,
   padding: "6px",
   color: "#6b7280",
-  width: 40,
-  height: 40,
+  width: 20,
+  height: 20,
   display: "flex",
   borderRadius: "50%",
   justifyContent: "center",
@@ -101,7 +101,7 @@ export const CustomizedStepper: React.FC<CustomizedStepperProps> = ({
   setActiveStep,
 }) => {
   return (
-    <Stack sx={{ width: "100%" }} spacing={3}>
+    <Stack sx={{ width: "100%" }} spacing={1}>
       <Stepper
         alternativeLabel
         activeStep={activeStep}

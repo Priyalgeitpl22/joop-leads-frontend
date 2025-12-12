@@ -40,7 +40,7 @@ const EmailAccounts: React.FC = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const dispatch = useDispatch<AppDispatch>();
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
-  const [, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [isSettingOpen, setIsSettingOpen] = useState<boolean>(false);
   const [emailAccounts, setEmailAccounts] = useState<EmailAccount[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -175,7 +175,6 @@ const EmailAccounts: React.FC = () => {
           ...account,
           id: account._id,
         }));
-        console.log("Mapped Rows:", mappedRows);
         setEmailAccounts(data);
         setRows(mappedRows);
       }, 1000);
@@ -364,6 +363,7 @@ const EmailAccounts: React.FC = () => {
             <CustomDataTable
               columns={columns}
               rows={rows}
+              loading={loading}
               handleRowSelection={handleEditEmailAccount}
               pageSizeOptions={[15, 10, 5]}
               enableCheckboxSelection={false}

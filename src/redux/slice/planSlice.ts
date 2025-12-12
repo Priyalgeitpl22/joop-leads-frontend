@@ -27,6 +27,7 @@ export interface Plan {
   createdAt: string;
   updatedAt: string;
   offer: number | null;
+  endsAt?: string;
   featureNames?: { name: string; value: boolean | number | null }[];
 }
 

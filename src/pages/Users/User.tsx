@@ -46,7 +46,7 @@ const Users = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  const { loading } = useSelector((state: RootState) => state.user);
+  const [loading, setLoading] = useState<boolean>(true);
   const { user } = useSelector((state: RootState) => state.user);
 
   const [rows, setRows] = useState<any[]>([]);
@@ -161,13 +161,17 @@ const Users = () => {
   });
 
   useEffect(() => {
+    setLoading(true);
     dispatch(getAllUsers())
       .unwrap()
       .then((response) => {
         setRows(response.data);
         setFilteredRows(response.data);
+        setLoading(false);
       })
-      .catch(() => {});
+      .catch(() => {
+        setLoading(false);
+      });
   }, [dispatch, addUser, editUserData]);
 
   useEffect(() => {
@@ -179,8 +183,14 @@ const Users = () => {
     const delayDebounceFn = setTimeout(() => {
       dispatch(SearchUsers({ query: searchTerm, orgId: user?.orgId || "" }))
         .unwrap()
-        .then((response) => setFilteredRows(response))
-        .catch(() => setFilteredRows([]));
+        .then((response) => {
+          setFilteredRows(response);
+          setLoading(false);
+        })
+        .catch(() => {
+          setLoading(false);
+          setFilteredRows([]);
+        });
     }, 500);
 
     return () => clearTimeout(delayDebounceFn);
@@ -557,6 +567,7 @@ const Users = () => {
         ) : (
           <UserTable>
             <CustomDataTable
+              loading={loading} 
               columns={columns}
               rows={filteredRows}
               pageSizeOptions={[15, 10, 5]}

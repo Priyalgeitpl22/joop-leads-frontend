@@ -288,18 +288,18 @@ const ScheduleCampaignDialog: React.FC<ScheduleCampaignProps> = ({
           <ScheduleIcon
             sx={{
               fontSize: 30,
-              color: "var(--primary-dark)",
+              color: "var(--text-white)",
               padding: "5px",
               background: "#e3eaeeff",
               borderRadius: "20px",
             }}
           />
-          <Typography variant="h5">Schedule Settings</Typography>
+          <Typography sx={{ fontSize: "16px", fontWeight: 600 }}>Schedule Settings</Typography>
         </Box>
 
         <IconButton
           onClick={onClose}
-          sx={{ position: "absolute", right: 12, top: 12, color: "#6b7280" }}
+          sx={{ position: "absolute", right: 8, top: 6, color: "#6b7280" }}
         >
           <CloseIcon />
         </IconButton>

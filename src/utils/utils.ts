@@ -51,6 +51,17 @@ export const formatDateTime = (timestamp: string | number | Date): any => {
     .replace(" at", " at "); // Ensures spacing is correct
 };
 
+export const formatDateOnly = (timestamp: string | number | Date): string => {
+  if (!timestamp) return "";
+  const date = new Date(timestamp);
+  return new Intl.DateTimeFormat("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "2-digit",
+    year: "numeric",
+  }).format(date).replace(",", "") // Remove extra comma
+};
+
 /**
  * Formats a date/time string in the format: "Sat 29 Nov, 17:12 (1 day ago)"
  * @param timestamp - Date string, number, or Date object

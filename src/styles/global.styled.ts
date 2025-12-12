@@ -214,6 +214,7 @@ export const CustomDialogHeader = styled.div`
   background: var(--primary-gradient);
   display: flex;
   flex-direction: row;
+  color: var(--text-white);
   align-items: center;
   justify-content: space-between;
 
@@ -227,10 +228,6 @@ export const CustomDialogHeader = styled.div`
     height: 20px;
     width: 20px;
     color: var(--text-white);
-
-    :hover {
-      color: var(--primary-gradient);
-    }
   }
 `
 
@@ -269,6 +266,7 @@ export const CustomDialogContainer = styled.div`
   background: white;
   width: 100%;
   min-width: 400px;
+  // padding: 10px;
 `
 export const TitleBody = styled.input`
   border: 1px solid #e1e2ef;
@@ -299,6 +297,7 @@ export const TitleBody = styled.input`
 export const Container = styled.div`
   display: flex;
   width: 100%;
+  height: 100%;
   gap: 10px;
   background-color: white;
   padding: 10px;

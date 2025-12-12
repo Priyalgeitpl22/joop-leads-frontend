@@ -138,10 +138,10 @@ export const CustomThemeProvider: React.FC<ThemeProviderProps> = ({ children }) 
           root: {
             color: "#000000",
             padding: "8px",
-            "&:hover": {
-              backgroundColor: "#f5f5f5",
-              color: "#000000",
-            },
+            // "&:hover": {
+            //   backgroundColor: "#f5f5f5",
+            //   color: "#000000",
+            // },
           },
         },
       },
@@ -261,10 +261,10 @@ export const CustomThemeProvider: React.FC<ThemeProviderProps> = ({ children }) 
           root: {
             color: "#000000",
             padding: "8px",
-            "&:hover": {
-              backgroundColor: "#f5f5f5",
-              color: "#000000",
-            },
+            // "&:hover": {
+            //   backgroundColor: "#f5f5f5",
+            //   color: "#000000",
+            // },
           },
         },
       },

@@ -29,8 +29,9 @@ import {
   Container,
   HeaderContainer,
   FilterIcon,
+  SecondaryButton,
 } from "../../styles/global.styled";
-import { Button2, SectionTitle } from "../../styles/layout.styled";
+import { SectionTitle } from "../../styles/layout.styled";
 import { useLocation, useNavigate } from "react-router-dom";
 import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
 import toast from "react-hot-toast";
@@ -552,9 +553,9 @@ const EmailCampaign: React.FC = () => {
             ))}
 
             <Box display="flex" justifyContent="space-between" mt={2}>
-              <Button2 onClick={handleFilterClose} color={""} background={""}>
+              <SecondaryButton onClick={handleFilterClose}>
                 Cancel
-              </Button2>
+              </SecondaryButton>
               <Button onClick={handleApplyFilters}>Apply</Button>
             </Box>
           </Menu>
@@ -651,19 +652,11 @@ const EmailCampaign: React.FC = () => {
                       open={createFolder}
                       onClose={() => setCreateFolder(false)}
                     />
-                    <Button2
-                      background="var(--theme-color)"
-                      color="white"
-                      style={{
-                        width: "25%",
-                        height: "25%",
-                        marginTop: "10px",
-                        padding: "0px",
-                      }}
-                      onClick={(event) => handleCreateFolder(event)}
+                    <SecondaryButton
+                      onClick={handleCreateFolder}
                     >
                       Create Folder
-                    </Button2>
+                    </SecondaryButton>
                   </Box>
                 </Box>
               )}
