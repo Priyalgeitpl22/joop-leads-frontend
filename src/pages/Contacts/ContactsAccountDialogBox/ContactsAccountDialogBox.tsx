@@ -49,12 +49,24 @@ const ContactsAccountDialogBox: React.FC<ContactsAccountDialogProps> = ({
     website: "",
     location: "",
     orgId: "",
+    company_location: "",
+    industry_type: "",
+    designation: "",
   });
 
   const [formErrors, setFormErrors] = useState({
     first_name: "",
+    last_name: "",
     email: "",
     phone_number: "",
+    company_name: "",
+    linkedin_profile: "",
+    website: "",
+    location: "",
+    orgId: "",
+    company_location: "",
+    industry_type: "",
+    designation: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -75,6 +87,9 @@ const ContactsAccountDialogBox: React.FC<ContactsAccountDialogProps> = ({
               website: payload.website ?? "",
               location: payload.location ?? "",
               orgId: payload.orgId ?? user?.orgId ?? "",
+              company_location: payload.company_location ?? "",
+              industry_type: payload.industry_type ?? "",
+              designation: payload.designation ?? "",
             });
           }
         })
@@ -92,9 +107,21 @@ const ContactsAccountDialogBox: React.FC<ContactsAccountDialogProps> = ({
         website: "",
         location: "",
         orgId: user?.orgId ?? "",
+        company_location: "",
+        industry_type: "",
+        designation: "",
       });
       setFormErrors({
         first_name: "",
+        last_name: "",
+        company_name: "",
+        linkedin_profile: "",
+        website: "",
+        location: "",
+        orgId: "",
+        company_location: "",
+        industry_type: "",
+        designation: "",
         email: "",
         phone_number: "",
       });
@@ -126,14 +153,32 @@ const ContactsAccountDialogBox: React.FC<ContactsAccountDialogProps> = ({
   };
 
   const isFormValid = () => {
-    const errors: { first_name: string; email: string; phone_number: string } = {
+    const errors: { first_name: string; email: string; phone_number: string; last_name: string; company_name: string; linkedin_profile: string; website: string; location: string; orgId: string; company_location: string; industry_type: string; designation: string } = {
       first_name: "",
       email: "",
       phone_number: "",
+      last_name: "",
+      company_name: "",
+      linkedin_profile: "",
+      website: "",
+      location: "",
+      orgId: "",
+      company_location: "",
+      industry_type: "",
+      designation: "",
     };
     errors.first_name = validateField("first_name", formData.first_name ?? "");
     errors.email = validateField("email", formData.email ?? "");
     errors.phone_number = validateField("phone_number", formData.phone_number ?? "");
+    errors.last_name = validateField("last_name", formData.last_name ?? "");
+    errors.company_name = validateField("company_name", formData.company_name ?? "");
+    errors.linkedin_profile = validateField("linkedin_profile", formData.linkedin_profile ?? "");
+    errors.website = validateField("website", formData.website ?? "");
+    errors.location = validateField("location", formData.location ?? "");
+    errors.orgId = validateField("orgId", formData.orgId ?? "");
+    errors.company_location = validateField("company_location", formData.company_location ?? "");
+    errors.industry_type = validateField("industry_type", formData.industry_type ?? "");
+    errors.designation = validateField("designation", formData.designation ?? "");
     setFormErrors(errors);
     return Object.values(errors).every((error) => error === "");
   };
@@ -152,6 +197,9 @@ const ContactsAccountDialogBox: React.FC<ContactsAccountDialogProps> = ({
       email: formData.email,
       phone_number: formData.phone_number,
       company_name: formData.company_name,
+      company_location: formData.company_location,
+      industry_type: formData.industry_type,
+      designation: formData.designation,
       website: formData.website,
       linkedin_profile: formData.linkedin_profile,
       location: formData.location,

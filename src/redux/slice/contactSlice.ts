@@ -28,6 +28,9 @@ export interface CampaignList {
   email: string;
   phone_number: string | null;
   company_name: string | null;
+  company_location: string | null;
+  industry_type: string | null;
+  designation: string | null;
   website: string | null;
   linkedin_profile: string | null;
   campaign_id: string | null;
