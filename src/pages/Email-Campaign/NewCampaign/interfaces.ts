@@ -47,4 +47,7 @@ export interface IContacts {
   blocked: boolean;
   website: string;
   file_name: string;
+  designation: string;
+  company_location: string;
+  industry_type: string;
 }

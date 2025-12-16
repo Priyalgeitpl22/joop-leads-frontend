@@ -72,7 +72,14 @@ const FinalReviewCampaign: React.FC<FinalReviewCampaignProps> = ({
       first_name: selectedContact?.first_name,
       last_name: selectedContact?.last_name,
       email: selectedContact?.email,
+      designation: selectedContact?.designation,
+      phone_number: selectedContact?.phone_number,
+      company_name: selectedContact?.company_name,
+      company_location: selectedContact?.company_location,
+      industry_type: selectedContact?.industry_type,
       website: selectedContact?.website,
+      linkedin_profile: selectedContact?.linkedin_profile,
+      location: selectedContact?.location,
     };
 
     const compiledSubject = compileTemplate(

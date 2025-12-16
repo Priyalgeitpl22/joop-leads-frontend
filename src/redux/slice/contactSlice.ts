@@ -88,10 +88,13 @@ export interface CreateContactsAccountPayload {
   email: string;
   phone_number: string;
   company_name: string;
+  company_location: string;
+  industry_type: string;
   website: string;
   linkedin_profile: string;
   location: string;
   orgId: string;
+  designation: string;
 }
 
 const token = Cookies.get("access_token");

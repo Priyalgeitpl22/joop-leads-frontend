@@ -31,10 +31,16 @@ const variableOptions = [
   "first_name",
   "last_name",
   "email",
+  "designation",
+  "phone_number",
+  "company_name",
+  "company_location",
+  "industry_type",
   "website",
-  // "day of week",
-  // "time of day",
+  "linkedin_profile",
+  "location",
 ];
+
 interface EmailTemplateProps {
   handleEmailTemplateData: (data: {
     subject: string;
