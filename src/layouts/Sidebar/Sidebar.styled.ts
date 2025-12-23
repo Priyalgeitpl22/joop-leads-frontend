@@ -9,10 +9,7 @@ export const SidebarContainer = styled.aside<{ $collapsed: boolean }>`
   top: 0;
   height: 100vh;
   width: ${({ $collapsed }) => ($collapsed ? SIDEBAR_COLLAPSED_WIDTH : SIDEBAR_WIDTH)}px;
-  background: linear-gradient(180deg, 
-    ${({ theme }) => theme.colors.sidebar.background} 0%, 
-    ${({ theme }) => theme.colors.background.secondary} 100%
-  );
+  background: ${({ theme }) => theme.colors.sidebar.background};
   display: flex;
   flex-direction: column;
   transition: width ${({ theme }) => theme.transitions.normal};
@@ -106,8 +103,8 @@ export const NavLink = styled.button<{ $active?: boolean; $collapsed?: boolean }
   padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.md};
   border-radius: ${({ theme }) => theme.borderRadius.md};
   background: ${({ $active, theme }) =>
-    $active ? theme.colors.primary.main + '10' : 'transparent'};
-  color: ${({ $active, theme }) => ($active ? theme.colors.primary.main : theme.colors.text.secondary)};
+    $active ? theme.colors.primary.main + '20' : 'transparent'};
+  color: ${({ $active, theme }) => ($active ? theme.colors.primary.main : 'rgba(255, 255, 255, 0.7)')};
   border: none;
   cursor: pointer;
   transition: all ${({ theme }) => theme.transitions.fast};
@@ -120,7 +117,7 @@ export const NavLink = styled.button<{ $active?: boolean; $collapsed?: boolean }
 
   &:hover {
     background: ${({ $active, theme }) =>
-      $active ? theme.colors.primary.main + '20' : theme.colors.background.tertiary};
+      $active ? theme.colors.primary.main + '30' : 'rgba(255, 255, 255, 0.1)'};
     color: white;
   }
 `;
@@ -129,8 +126,7 @@ export const NavIcon = styled.span<{ $active?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${({ $active, theme }) =>
-    $active ? theme.colors.primary.main : theme.colors.text.secondary};
+  color: inherit;
   flex-shrink: 0;
 `;
 
@@ -142,12 +138,12 @@ export const NavText = styled.span`
 
 export const NavDivider = styled.div`
   height: 1px;
-  background: ${({ theme }) => theme.colors.border.light};
+  background: rgba(255, 255, 255, 0.08);
   margin: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.md};
 `;
 
 export const BottomNav = styled.div`
   padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.sm};
-  border-top: 1px solid ${({ theme }) => theme.colors.border.light};
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 `;
 
