@@ -1,0 +1,2 @@
+export { ActivateAccount } from './ActivateAccount';
+
