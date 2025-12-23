@@ -31,7 +31,7 @@ import {
 import { fetchTriggerLogs, fetchUpcomingTriggers } from '../../../../store/slices/campaignSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { type AppDispatch, type RootState } from '../../../../store';
-import { convertUtcToTimezone } from '../../../../../../joop-leads-frontend/src/utils/utils';
+import { convertUtcToTimezone } from '../../../../utils/date';
 
 export interface Logs {
   id: string;
