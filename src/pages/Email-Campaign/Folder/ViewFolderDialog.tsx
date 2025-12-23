@@ -77,7 +77,7 @@ const ViewDrawer: React.FC<ViewDrawerProps> = ({
                   <CampaignCard key={campaign.id || index}>
                     <Typography>
                       <CampaignIcon sx={IconStyle("#FF5722")} />
-                      <strong>Name:</strong> {campaign.campaign_name || campaign.campaignName || "Unnamed"}
+                      <strong>Name:</strong> {campaign.campaign_name || campaign.campaign_name || "Unnamed"}
                     </Typography>
                   </CampaignCard>
                 ))

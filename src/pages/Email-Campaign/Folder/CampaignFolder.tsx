@@ -26,6 +26,8 @@ import { IEmailCampaign } from "../NewCampaign/interfaces";
 import EmailCampaignTable from "../EmailCampaignTable";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import type { RootState } from "../../../redux/store/store";
+import type { Campaign } from "../../../store/slices/campaignSlice";
 
 const CampaignFolder = ({
   loading,
@@ -60,7 +62,7 @@ const CampaignFolder = ({
     campaignId: string
   ) => void;
   handleMenuClose: () => void;
-  handleRenameOpen: (campaignId: string, campaignName: string) => void;
+  handleRenameOpen: (campaignId: string, campaign_name: string) => void;
   handleRenameClose: () => void;
   anchorEl: null | HTMLElement;
   selectedCampaign: string | null;
@@ -80,8 +82,8 @@ const CampaignFolder = ({
   const navigate = useNavigate();
   console.log(loadingCampaigns);
 
-  const folders = useSelector((state: any) => state.folder.folders);
-  const folderDetail = useSelector((state:any)=> state.folder.folderDetail)
+  const folders = useSelector((state: RootState) => state.folder.folders);
+  const folderDetail = useSelector((state: RootState) => state.folder.folderDetail)
 
   useEffect(() => {
     if (folderCampaignDel && selectedFolderId) {
@@ -103,26 +105,19 @@ const CampaignFolder = ({
   useEffect(() => {
     if (folderDetail && Array.isArray(folderDetail.campaigns)) {
       const transformedCampaigns: IEmailCampaign[] = folderDetail.campaigns.map(
-        (campaign: any) => ({
-          id: campaign?.analytics?.campaignId,
+        (campaign: Campaign) => ({
+          id: campaign?.id,
           sequence_count: campaign?.sequence_count,
-          campaignName: campaign?.campaignName,
+          campaign_name: campaign?.name,
           created_at: campaign?.createdAt || "",
           campaign_status: campaign?.status || "Unknown",
-          campaign_name: campaign?.name || "",
           status: campaign?.status,
-          contacts: campaign?.contacts || [],
+          contacts: campaign?.campaignLeads || [],
           sequences: campaign?.sequences || [],
-          createdAt: campaign?.createdAt || "",
-          analytics_count: campaign?.analytics || {
-            campaignId: campaign?.id,
-            bounced_count: campaign?.bounced_count,
-            opened_count: campaign?.opened_count,
-            clicked_count: campaign?.clicked_count,
-            sent_count: campaign?.sent_count,
-          },
-          contact_count: campaign?.contact_count,
-          campaignStats: campaign?.campaignStats || {},
+          createdAt: campaign?.createdAt,
+          analytics_count: campaign?.analytics,
+          contact_count: campaign?.campaignLeads?.length,
+          campaignStats: campaign?.campaignStats,
         })
       );
 

@@ -20,7 +20,7 @@ interface RenameEmailCampaignDialogProps {
   open: boolean;
   onClose: () => void;
   campaignId: string | null;
-  campaignName: string;
+  campaign_name: string;
   fetchEmailCampaign: ()=> void;
   folderId: string | null;
 }
@@ -29,17 +29,17 @@ const RenameEmailCampaignDialog: React.FC<RenameEmailCampaignDialogProps> = ({
   open,
   onClose,
   campaignId,
-  campaignName,
+  campaign_name,
   fetchEmailCampaign,
   folderId,
 }) => {
-  const [newName, setNewName] = useState(campaignName);
+  const [newName, setNewName] = useState(campaign_name);
   const dispatch = useDispatch<AppDispatch>();
   
 
   useEffect(() => {
-    setNewName(campaignName);
-  }, [campaignName]);
+    setNewName(campaign_name);
+  }, [campaign_name]);
 
 
   const handleSaveName = () => {

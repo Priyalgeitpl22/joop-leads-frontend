@@ -23,7 +23,6 @@ import ResetPassword from "./pages/Forgot-Password/ResetPassword";
 import VerifyOtp from "./pages/Verify-OTP/VerifyOtp";
 import ContactTable from "./pages/Contacts/ContactTable";
 import EditEmailAccount from "./pages/Email-Account/EditEmailAccount";
-import ViewEmailCampaign from "./pages/Email-Campaign/ViewEmailCampaign/ViewEmailCampaign";
 import { Toaster } from "react-hot-toast";
 import Users from "./pages/Users/User";
 import Unsubscribe from "./pages/Unsubscribe/Unsubscribe";
@@ -31,6 +30,7 @@ import MiniDrawer from "./components/Layout/MiniDrawer";
 import { useTheme } from "./context/ThemeContext";
 import Subscription from "./components/Subscription/subscription";
 import Settings from "./components/Settings/settings";
+import CampaignDetails from "./pages/Email-Campaign/CampaignDetails/CampaignDetails";
 
 const UNPROTECTED_ROUTES = [
   "/login",
@@ -57,7 +57,7 @@ function useDemoRouter(initialPath: string): Router {
   return {
     pathname,
     searchParams: new URLSearchParams(window.location.search),
-    navigate: (path: any) => {
+    navigate: (path: string) => {
       navigate(path);
     },
   };
@@ -188,7 +188,8 @@ const App=() => {
         >
           {router.pathname === "/" && <Home />}
           {router.pathname.startsWith("/email-campaign/view-email-campaign") &&
-            <ViewEmailCampaign />
+            // <ViewEmailCampaign />
+            <CampaignDetails />
           }
           {router.pathname.startsWith("/email-campaign") && 
             !router.pathname.startsWith("/email-campaign/view-email-campaign") &&

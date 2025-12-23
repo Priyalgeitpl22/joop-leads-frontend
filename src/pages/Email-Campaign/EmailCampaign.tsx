@@ -77,7 +77,7 @@ const EmailCampaign: React.FC = () => {
   >(null);
 
   const filterOptions: Record<"status", string[]> = {
-    status: ["SCHEDULED", "RUNNING", "PAUSED", "DRAFT", "COMPLETED"],
+    status: ["SCHEDULED", "ACTIVE", "PAUSED", "DRAFT", "COMPLETED"],
   };
   const [renameDialogOpen, setRenameDialogOpen] = useState(false);
   const [selectedRenameCampaignId, setSelectedRenameCampaignId] = useState<
@@ -175,9 +175,9 @@ const EmailCampaign: React.FC = () => {
     setSelectedCampaign(null);
   };
 
-  const handleRenameOpen = (campaignId: string, campaignName: string) => {
+  const handleRenameOpen = (campaignId: string, campaign_name: string) => {
     setSelectedRenameCampaignId(campaignId);
-    setSelectedRenameCampaignName(campaignName);
+    setSelectedRenameCampaignName(campaign_name);
     setRenameDialogOpen(true);
     handleMenuClose();
   };
@@ -313,7 +313,7 @@ const EmailCampaign: React.FC = () => {
 
     try {
       await dispatch(
-        UpdateCampaignStatus({ campaignId, status: "RUNNING" })
+        UpdateCampaignStatus({ campaignId, status: "ACTIVE" })
       ).unwrap();
       await getAllEmailCampaigns();
       console.log("Campaign resumed successfully");
@@ -683,7 +683,7 @@ const EmailCampaign: React.FC = () => {
         open={renameDialogOpen}
         onClose={() => setRenameDialogOpen(false)}
         campaignId={selectedRenameCampaignId}
-        campaignName={selectedRenameCampaignName}
+        campaign_name={selectedRenameCampaignName}
         fetchEmailCampaign={getAllEmailCampaigns}
         folderId={selectedFolderId}
       />

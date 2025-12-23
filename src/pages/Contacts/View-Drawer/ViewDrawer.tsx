@@ -73,7 +73,7 @@ const ViewDrawer: React.FC<ViewDrawerProps> = ({ open, onClose }) => {
                     }}
                   >
                     <FieldValue>
-                      {item?.campaign?.campaignName || "Untitled Campaign"}
+                      {item?.campaign?.campaign_name || "Untitled Campaign"}
                     </FieldValue>
 
                     <DraftChip label="DRAFT" />

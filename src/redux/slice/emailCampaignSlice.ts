@@ -11,6 +11,20 @@ interface Campaign {
   name: string;
 }
 
+const initialState: EmailCampaignState = {
+  campaigns: [],
+  selectedCampaign: null,
+  loading: false,
+  error: null,
+};
+
+interface EmailCampaignState {
+  campaigns: Campaign[];
+  selectedCampaign: Campaign | null;
+  loading: boolean;
+  error: string | null;
+}
+
 interface EmailTemplatePayload {
   email: string | string[];
   toEmail: string;
@@ -263,14 +277,14 @@ export const filterCamapign = createAsyncThunk(
   async ({ status, startDate, endDate }: { status: string; startDate: string; endDate: string }) => {
     try {
       const response = await api.get(`${BASE_URL}/filter`, {
-      params:{status,startDate,endDate},
+        params: { status, startDate, endDate },
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
       return response.data;
-    } catch (error:any) {
-      throw error.response?.data || error.message; 
+    } catch (error: any) {
+      throw error.response?.data || error.message;
     }
   }
 );
@@ -326,8 +340,12 @@ export const DeleteEmailCampaign = createAsyncThunk<
     }
 
     return response.data;
-  } catch (error: any) {
-    return rejectWithValue(error.response?.data?.message || "Network error");
+  } catch (error: unknown) {
+    let errorMessage = "Something went wrong";
+    if (error instanceof AxiosError) {
+      errorMessage = error.response?.data?.message || errorMessage;
+    }
+    return rejectWithValue(errorMessage);
   }
 });
 
@@ -354,49 +372,34 @@ export const UpdateCampaignStatus = createAsyncThunk<
 
 const emailCampaignSlice = createSlice({
   name: "emailCampaigns",
-  initialState: {
-    campaigns: [] as Campaign[],
-    loading: false,
-    error: null as string | null,
-  },
+  initialState: initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchEmailCampaigns.pending, (state) => {
+      // ---- GET BY ID ----
+      .addCase(getCampaignById.pending, (state) => {
         state.loading = true;
         state.error = null;
+      })
+      .addCase(getCampaignById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.selectedCampaign = action.payload;
+      })
+      .addCase(getCampaignById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+
+      // ---- FETCH ALL ----
+      .addCase(fetchEmailCampaigns.pending, (state) => {
+        state.loading = true;
       })
       .addCase(fetchEmailCampaigns.fulfilled, (state, action) => {
         state.loading = false;
         state.campaigns = action.payload;
-      })
-      .addCase(fetchEmailCampaigns.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
-      })
-      .addCase(DeleteEmailCampaign.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(DeleteEmailCampaign.fulfilled, (state, action) => {
-        state.loading = false;
-        if (action.payload) {
-          state.campaigns = state.campaigns.filter(
-            (campaign) => campaign.id !== action.payload
-          );
-        }
-      })
-      .addCase(DeleteEmailCampaign.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
-      })
-      .addCase(updateCampaignName.fulfilled, (state, action) => {
-        const { campaignId, newName } = action.meta.arg;
-        const campaign = state.campaigns.find((c) => c.id === campaignId);
-        if (campaign) {
-          campaign.name = newName;
-        }
       });
-  },
+  }
+
 });
 
 export default emailCampaignSlice.reducer;

@@ -9,7 +9,7 @@ export enum ThreadType {
 export enum CampaignStatus {
     DRAFT = 'DRAFT',
     SCHEDULED = 'SCHEDULED',
-    RUNNING = 'RUNNING',
+    ACTIVE = 'ACTIVE',
     COMPLETED = 'COMPLETED',
     PAUSED = 'PAUSED'
 }

@@ -41,7 +41,7 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
   handleSettingsValid,
 }) => {
   const [formData, setFormData] = useState({
-    campaignName: "",
+    campaign_name: "",
     stopSending: "replies",
     emailDeliveryOptimization: false,
     trackEmailOpens: false,
@@ -55,33 +55,33 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
 
   const dispatch = useDispatch<AppDispatch>();
   const [, setLoading] = useState(true);
-  const [errors, setErrors] = useState({ campaignName: "" });
+  const [errors, setErrors] = useState({ campaign_name: "" });
   const [isFormValid, setIsFormValid] = useState(false);
 
 
   useEffect(() => {
-    let isValid = errors.campaignName === "" && formData.campaignName.trim().length >= 3;
+    let isValid = errors.campaign_name === "" && formData.campaign_name.trim().length >= 3;
     setIsFormValid(isValid);
     handleSettingsValid(isValid);
-  }, [errors, formData.campaignName]);
+  }, [errors, formData.campaign_name]);
 
   const handleChange = (field: keyof typeof formData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
 
-    if (field === "campaignName") {
+    if (field === "campaign_name") {
       const trimmedValue = value.trim();
       if (!trimmedValue) {
         setErrors((prev) => ({
           ...prev,
-          campaignName: "Campaign Name is required",
+          campaign_name: "Campaign Name is required",
         }));
       } else if (trimmedValue.length < 3) {
         setErrors((prev) => ({
           ...prev,
-          campaignName: "Must be at least 3 characters",
+          campaign_name: "Must be at least 3 characters",
         }));
       } else {
-        setErrors((prev) => ({ ...prev, campaignName: "" }));
+        setErrors((prev) => ({ ...prev, campaign_name: "" }));
       }
     }
   };
@@ -97,7 +97,7 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
         fetchCampaignDetails(id);
       } else {
         setLoading(false);
-        setErrors({ campaignName: "" });
+        setErrors({ campaign_name: "" });
       }
     }
   }, [open]);
@@ -111,7 +111,7 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
       if (campaignSetting) {
         setFormData((prev) => ({
           ...prev,
-          campaignName: campaignSetting.campaignName || "",
+          campaign_name: campaignSetting.campaign_name || "",
           stopSending: campaignSetting.stopSending || "replies",
           emailDeliveryOptimization:
             campaignSetting.emailDeliveryOptimization ?? false,
@@ -125,7 +125,7 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
         }));
         setLoading(false);
       }
-      setErrors({ campaignName: "" });
+      setErrors({ campaign_name: "" });
       return response.campaign;
     } catch (error) {
       setLoading(false);
@@ -176,10 +176,10 @@ const CampaignSettingDialog: React.FC<SettingCampaignProps> = ({
                 fullWidth
                 size="small"
                 placeholder="Enter campaign name"
-                value={formData.campaignName}
-                onChange={(e) => handleChange("campaignName", e.target.value)}
-                error={!!errors.campaignName}
-                helperText={errors.campaignName}
+                value={formData.campaign_name}
+                onChange={(e) => handleChange("campaign_name", e.target.value)}
+                error={!!errors.campaign_name}
+                helperText={errors.campaign_name}
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     backgroundColor: "#ffffff",

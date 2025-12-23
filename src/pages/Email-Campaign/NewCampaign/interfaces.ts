@@ -16,7 +16,7 @@ export interface IEmailCampaign {
   campaign_name: ReactNode;
   status: any;
   id: string;
-  campaignName: string;
+  campaign_name: string;
   contacts: any;
   sequences: Sequence[];
   createdAt: string;

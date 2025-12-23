@@ -60,9 +60,12 @@ export interface CampaignSettings {
 }
 
 export interface EmailAccount {
-  name?: any;
-  email?: any;
+  name?: string;
+  email?: string;
   account_id: string;
+  limit?: number;
+  time_gap?: number;
+  last_sent?: Date;
   user?: string;
   pass?: string;
   oauth2?: any;
@@ -72,6 +75,9 @@ export interface Account {
   oauth2?: any;
   email: string
   type: string,
+  limit?: number;
+  time_gap?: number;
+  last_sent?: Date;
   imap: {
     host: string;
     port: string;
@@ -92,7 +98,6 @@ export interface Account {
   },
   proxy: null,
   smtpEhloName: "localhost",
-  limit:string
 }
 
 

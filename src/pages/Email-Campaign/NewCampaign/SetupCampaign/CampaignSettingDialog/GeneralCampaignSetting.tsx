@@ -18,7 +18,7 @@ interface GeneralCampaignSettingProps {
 
 const GeneralCampaignSetting: React.FC<GeneralCampaignSettingProps> = ({}) => {
   const [formData, setFormData] = useState({
-    campaignName: "",
+    campaign_name: "",
     timeZone: "",
     selectedDays: [],
     startTime: dayjs().hour(9).minute(0),
@@ -48,8 +48,8 @@ const GeneralCampaignSetting: React.FC<GeneralCampaignSettingProps> = ({}) => {
         <Typography variant="h6">Campaign Name</Typography>
         <TextField
           fullWidth
-          value={formData.campaignName}
-          onChange={(e) => handleChange("campaignName", e.target.value)}
+          value={formData.campaign_name}
+          onChange={(e) => handleChange("campaign_name", e.target.value)}
         />
       </Box>
       <Typography variant="h6" mt={2}>

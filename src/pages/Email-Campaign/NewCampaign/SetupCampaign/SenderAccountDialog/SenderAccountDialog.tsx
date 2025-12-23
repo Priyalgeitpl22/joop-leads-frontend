@@ -37,7 +37,7 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
   onClose,
   campaign_id,
   handleSave,
-  handleSenderAccountValid
+  handleSenderAccountValid,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [emailAccounts, setEmailAccounts] = useState<EmailAccount[]>([]);
@@ -98,7 +98,7 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
         field: "daily_limit",
         headerName: "Daily Limit",
         width: 120,
-        valueGetter: (params: any) => (params ?? "N/A"),
+        valueGetter: (params: any) => params ?? "N/A",
       },
       {
         field: "reputation",
@@ -156,12 +156,10 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
   };
 
   const handleSelectedAccounts = (newSelection: any[]) => {
-    console.log("selectedEmailAccounts", selectedEmailAccounts);
     setSelectedEmailAccounts(newSelection);
 
-    // Ensure we get correct details for each selected account
     const formattedSelection: EmailAccounts = newSelection.map((id) => {
-      const account = rows.find((o) => o._id === id) as Account; // Find correct account for each ID
+      const account = rows.find((o) => o._id === id) as Account;
 
       return {
         account_id: id,
@@ -171,7 +169,9 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
         user: account.type === "imap" ? account.smtp.auth.user : undefined,
         pass: account.type === "imap" ? account.smtp.auth.pass : undefined,
         oauth2: account.type !== "imap" ? account.oauth2 : undefined,
-        limit:account.limit
+        limit: account.limit,
+        time_gap: account.time_gap,
+        last_sent: account.last_sent,
       };
     });
 
@@ -209,7 +209,6 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
 
   const handleSearch = async (query: string) => {
     try {
-
       const trimmedQuery = query.trim();
       if (trimmedQuery === "") {
         setRows(senderAccounts);
@@ -246,7 +245,9 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
       sx={{ overflowX: "hidden" }}
     >
       <CustomDialogHeader>
-        <Typography sx={{ fontSize: "16px", fontWeight: 600 }}>Choose Sender Accounts</Typography>
+        <Typography sx={{ fontSize: "16px", fontWeight: 600 }}>
+          Choose Sender Accounts
+        </Typography>
         {
           <IconButton>
             <CloseIcon onClick={onClose} />
@@ -282,7 +283,7 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
             </SearchBar>
           </Box>
         </Box>
-        <Box sx={{ maxHeight:"calc(100vh-300px)", overflow: "auto" }}>
+        <Box sx={{ maxHeight: "calc(100vh-300px)", overflow: "auto" }}>
           <CustomDataTable
             loading={loading}
             columns={columns}
@@ -305,15 +306,16 @@ const SenderAccountDialog: React.FC<SenderAccountDialogProps> = ({
           }}
           disabled={isSaveDisabled}
           style={{
-            backgroundColor: isSaveDisabled ? "#878484" : "var(--secondary-light)",
-            color: isSaveDisabled ? "lightgray" : "white"
-
+            backgroundColor: isSaveDisabled
+              ? "#878484"
+              : "var(--secondary-light)",
+            color: isSaveDisabled ? "lightgray" : "white",
           }}
         >
           Save Email Accounts
         </Button>
       </CustomDialogFooter>
-    </Dialog >
+    </Dialog>
   );
 };
 

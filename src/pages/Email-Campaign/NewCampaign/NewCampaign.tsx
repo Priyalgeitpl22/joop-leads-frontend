@@ -32,7 +32,7 @@ import toast from "react-hot-toast";
 import { HeaderContainer } from "../../../styles/global.styled";
 
 export interface ImportedLeadsData {
-  campaignName?: string;
+  campaign_name?: string;
   clientId?: string;
   csvSettings: csvSettingsType;
   customFields: Record<string, any>;

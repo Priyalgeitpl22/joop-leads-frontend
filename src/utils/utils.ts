@@ -1,3 +1,5 @@
+import { dayjs } from "./day.js";
+
 export const formatTimestamp = (createdAt: string): string => {
   const messageTime = new Date(createdAt);
   const now = new Date();
@@ -33,7 +35,7 @@ export const formatDate = (dateString: string) => {
 };
 
 export const formatDateTime = (timestamp: string | number | Date): any => {
-  if(!timestamp) return null
+  if (!timestamp) return null
 
   const date = new Date(timestamp);
 
@@ -61,7 +63,6 @@ export const formatDateOnly = (timestamp: string | number | Date): string => {
     year: "numeric",
   }).format(date).replace(",", "") // Remove extra comma
 };
-
 /**
  * Formats a date/time string in the format: "Sat 29 Nov, 17:12 (1 day ago)"
  * @param timestamp - Date string, number, or Date object
@@ -72,17 +73,17 @@ export const formatDateTimeWithRelative = (timestamp: string | number | Date): s
 
   const date = new Date(timestamp);
   const now = new Date();
-  
+
   // Format date part: "Sat 29 Nov"
   const dayOfWeek = date.toLocaleDateString("en-US", { weekday: "short" });
   const dayOfMonth = date.getDate();
   const month = date.toLocaleDateString("en-US", { month: "short" });
-  
+
   // Format time in 24-hour format: "17:12"
   const hours = date.getHours().toString().padStart(2, "0");
   const minutes = date.getMinutes().toString().padStart(2, "0");
   const time = `${hours}:${minutes}`;
-  
+
   // Calculate relative time
   const diffInMs = now.getTime() - date.getTime();
   const diffInSeconds = Math.floor(diffInMs / 1000);
@@ -92,9 +93,9 @@ export const formatDateTimeWithRelative = (timestamp: string | number | Date): s
   const diffInWeeks = Math.floor(diffInDays / 7);
   const diffInMonths = Math.floor(diffInDays / 30);
   const diffInYears = Math.floor(diffInDays / 365);
-  
+
   let relativeTime = "";
-  
+
   if (diffInSeconds < 60) {
     relativeTime = "just now";
   } else if (diffInMinutes < 60) {
@@ -110,7 +111,12 @@ export const formatDateTimeWithRelative = (timestamp: string | number | Date): s
   } else {
     relativeTime = `${diffInYears} ${diffInYears === 1 ? "year" : "years"} ago`;
   }
-  
+
   return `${dayOfWeek} ${dayOfMonth} ${month}, ${time} (${relativeTime})`;
 };
+
+export function convertUtcToTimezone(utcDate: string | Date, timezone: string, format: string = "YYYY-MM-DD HH:mm:ss") {
+  return dayjs.utc(utcDate).tz(timezone).format(format);
+}
+
 

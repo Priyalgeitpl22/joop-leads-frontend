@@ -5,7 +5,7 @@ import { EmailCampaignTableProps } from "../../pages/Email-Campaign/EmailCampaig
 
 interface Campaign {
   id: string;
-  campaignName: string;
+  campaign_name: string;
 }
 interface Folder {
   id: string;
@@ -60,7 +60,7 @@ export const showFolderDetail = createAsyncThunk<
     const campaigns =
       folder.campaigns?.map((campaign: any) => ({
         id: campaign?.id,
-        name: campaign?.campaign?.campaignName,
+        name: campaign?.campaign?.campaign_name,
         createdAt: campaign?.campaign?.createdAt,
         status: campaign?.campaign?.status,
         analytics: campaign?.campaign?.CampaignAnalytics?.[0] || {},

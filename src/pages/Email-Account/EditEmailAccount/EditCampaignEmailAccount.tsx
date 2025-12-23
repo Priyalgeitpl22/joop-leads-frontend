@@ -12,7 +12,7 @@ interface EditCampaignEmailAccountProps {
 
 const tableColumns = [{
   label: "Campaign Name",
-  key: "campaignName",
+  key: "campaign_name",
 }, {
   label: "Campaign Status",
   key: "status",
@@ -66,7 +66,7 @@ const EditCampaignEmailAccount: React.FC<EditCampaignEmailAccountProps> = ({ id 
           ) : campaigns.length > 0 ? (
             campaigns.map((campaign) => (
               <TableRow key={campaign.id}>
-                <TableDataCell>{campaign?.campaignName}</TableDataCell>
+                <TableDataCell>{campaign?.campaign_name}</TableDataCell>
                 <TableDataCell>{campaign?.status}</TableDataCell>
                 <TableDataCell>
                   {campaign?.createdAt

@@ -76,14 +76,6 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
   );
 
 
-
-  const structureName = (name: string): string => {
-    const tempName = name.split(" ")
-    const nameArray = tempName.map((elem) => elem.charAt(0).toUpperCase() + elem.slice(1))
-    const result: string = nameArray.join(" ")
-    return result;
-  }
-
   const tableData = [
     {
       label: "Leads",
@@ -178,7 +170,7 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
                     height: 36,
                   }}
                 >
-                  {campaign.status === "RUNNING" && !loading && (
+                  {campaign.status === "ACTIVE" && !loading && (
                     <Tooltip title="Pause">
                       <PauseIcon
                         style={{ fontSize: 18, color: "#acacac" }}
@@ -236,11 +228,10 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
 
                 <div onClick={(event) => { event.stopPropagation(); handleDetailCampaign(campaign.id) }}>
                   <h6>
-                    {structureName(campaign?.campaignName)}
-                    {campaign?.campaign_name}
+                    {campaign?.campaign_name ?? "Untitled Campaign"}
                   </h6>
                   <p>
-                    {campaign.status === "COMPLETED" ? `✅ ${campaign.status}` : campaign.status === "SCHEDULED" ? `⏳ ${campaign.status}` : campaign.status === "DRAFT" ? `⏳ ${campaign.status}` : campaign.status === "RUNNING" ? `▶️ ${campaign.status}` : campaign.status}
+                    {campaign.status === "COMPLETED" ? `✅ ${campaign.status}` : campaign.status === "SCHEDULED" ? `⏳ ${campaign.status}` : campaign.status === "DRAFT" ? `⏳ ${campaign.status}` : campaign.status === "ACTIVE" ? `▶️ ${campaign.status}` : campaign.status}
                     | {`${formatDateTime(campaign.createdAt).split(",")[0]}, ${formatDateTime(campaign.createdAt).split(",")[1]}`} |{" "}
                     {campaign.sequences && campaign.sequences.length > 0
                       ? campaign.sequences.length
@@ -341,7 +332,7 @@ const EmailCampaignTable: React.FC<EmailCampaignTableProps> = ({
                       event.stopPropagation();
                       handleRenameOpen(
                         campaign.id,
-                        campaign.campaignName ?? campaign.campaign_name ?? ""
+                        campaign.campaign_name ?? campaign.campaign_name ?? ""
                       );
                     }}
                     sx={{

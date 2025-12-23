@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import {
-  BackButton,
+BackButton,
   ScrollableContent,
   TabItem,
 } from "../Email-Campaign/EmailCampaign.styled";
