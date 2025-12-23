@@ -44,7 +44,7 @@ const getPageConfig = (pathname: string): PageConfig => {
     return { title: 'Dashboard', subtitle: 'Overview of your performance' };
   }
   if (pathname.startsWith('/campaigns')) {
-    return { title: 'Email Campaigns', subtitle: 'Manage and analyze campaigns' };
+    return { title: 'Email Campaigns', subtitle: 'Manageeeeee and analyze campaigns' };
   }
   if (pathname.startsWith('/accounts')) {
     return { title: 'Email Accounts', subtitle: 'Manage your email connections' };
