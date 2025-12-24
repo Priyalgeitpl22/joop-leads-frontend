@@ -48,12 +48,12 @@ import {
   ErrorText,
   SubmitButton,
   ButtonLoader,
-  TwoFactorSection,
-  TwoFactorTitle,
-  TwoFactorDescription,
-  CheckboxWrapper,
-  Checkbox,
-  CheckboxLabel,
+  // TwoFactorSection,
+  // TwoFactorTitle,
+  // TwoFactorDescription,
+  // CheckboxWrapper,
+  // Checkbox,
+  // CheckboxLabel,
   ThemeSection,
   ThemeModeToggle,
   ModeButton,
@@ -118,7 +118,7 @@ export const Settings: React.FC = () => {
     newPassword: '',
   });
   const [isChangingPassword, setIsChangingPassword] = useState(false);
-  const [enable2FA, setEnable2FA] = useState(false);
+  // const [enable2FA, setEnable2FA] = useState(false);
   useEffect(() => {
     if (currentUser) {
       setEditFormData({
@@ -245,12 +245,12 @@ export const Settings: React.FC = () => {
     }
   };
 
-  const handle2FAToggle = async () => {
-    const newValue = !enable2FA;
-    setEnable2FA(newValue);
-    // API call would go here
-    toast.success(newValue ? '2FA enabled successfully!' : '2FA disabled');
-  };
+  // const handle2FAToggle = async () => {
+  //   const newValue = !enable2FA;
+  //   setEnable2FA(newValue);
+  //   // API call would go here
+  //   toast.success(newValue ? '2FA enabled successfully!' : '2FA disabled');
+  // };
 
   const renderContent = () => {
     switch (activeTab) {
@@ -371,7 +371,7 @@ export const Settings: React.FC = () => {
 
             <Divider />
 
-            <TwoFactorSection>
+            {/* <TwoFactorSection>
               <TwoFactorTitle>Two-Factor Authentication (2FA)</TwoFactorTitle>
               <TwoFactorDescription>
                 Enable two-factor authentication for enhanced security. This will apply to you and 
@@ -389,7 +389,7 @@ export const Settings: React.FC = () => {
               <SubmitButton type="button" onClick={handle2FAToggle}>
                 Update
               </SubmitButton>
-            </TwoFactorSection>
+            </TwoFactorSection> */}
           </ContentCard>
         );
 

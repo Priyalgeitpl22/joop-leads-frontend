@@ -58,7 +58,7 @@ const CampaignDetailsPage: React.FC = () => {
     { label: "Lead List", value: "lead_list", count: campaign?.leads?.length || 0},
     { label: "Sequences", value: "sequences", count: campaign?.sequences?.length || 0 },
     { label: "Trigger logs", value: "trigger_logs" },
-    { label: "Sender Accounts", value: "sender_accounts", count: campaign?.senders?.length || 0 },
+    { label: "Sender Accounts", value: "sender_accounts", count: campaign?.sender_accounts?.length || 0 },
   ];
 
   const renderTabContent = () => {
