@@ -1,4 +1,4 @@
-export { SequencesStep } from './SequencesStep';
-export { SetupStep } from './SetupStep';
-export { FinalReviewStep } from './FinalReviewStep';
+export { SequencesStep } from './Sequences/SequencesStep';
+export { SetupStep } from './SetupStep/SetupStep';
+export { FinalReviewStep } from './FinalReview/FinalReviewStep';
 

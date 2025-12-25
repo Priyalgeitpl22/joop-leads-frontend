@@ -1,8 +1,26 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Search, Filter, X, ChevronLeft, ChevronRight, Send, Mail, Reply, ArrowLeft } from 'lucide-react';
-import toast from 'react-hot-toast';
-import { useAppDispatch, useAppSelector } from '../../store';
-import { fetchEmailAccounts } from '../../store/slices/emailAccountSlice';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import {
+  Search,
+  Filter,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  Send,
+  Mail,
+  Reply,
+  ArrowLeft,
+  LoaderIcon,
+  RefreshCcw,
+} from "lucide-react";
+import toast from "react-hot-toast";
+import { useAppDispatch, useAppSelector } from "../../store";
+import { fetchEmailAccounts } from "../../store/slices/emailAccountSlice";
 import {
   fetchMailboxes,
   fetchEmailThreads,
@@ -16,22 +34,28 @@ import {
   setAppliedFilters,
   clearFilters,
   clearThreadMessages,
-} from '../../store/slices/inboxSlice';
-import type { IEmailThread, IThreadMessage, IReplyPayload } from '../../services/inbox.service';
-import type { Account } from '../../types/emailAccount.types';
-import * as S from './Inbox.styled';
+} from "../../store/slices/inboxSlice";
+import type {
+  IEmailThread,
+  IThreadMessage,
+  IReplyPayload,
+} from "../../services/inbox.service";
+import type { Account } from "../../types/emailAccount.types";
+import * as S from "./Inbox.styled";
+import { Button } from "@mui/material";
+import { emailAccountService } from "../../services/email.account.service";
 
 const MESSAGES_PER_PAGE = 10;
 
 const filterConfig = [
-  { key: 'allReplies', label: 'All Replies' },
-  { key: 'repliedToCampaigns', label: 'Replied to Campaigns' },
-  { key: 'unreadOnly', label: 'Unread Only' },
-  { key: 'repliedWithin7Days', label: 'Replied within 7 days' },
-  { key: 'byUser', label: 'By User' },
+  { key: "allReplies", label: "All Replies" },
+  { key: "repliedToCampaigns", label: "Replied to Campaigns" },
+  { key: "unreadOnly", label: "Unread Only" },
+  { key: "repliedWithin7Days", label: "Replied within 7 days" },
+  { key: "byUser", label: "By User" },
 ] as const;
 
-type FilterKey = (typeof filterConfig)[number]['key'];
+type FilterKey = (typeof filterConfig)[number]["key"];
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
@@ -44,15 +68,15 @@ const formatDate = (dateString: string) => {
   if (diffMins < 60) return `${diffMins}m ago`;
   if (diffHours < 24) return `${diffHours}h ago`;
   if (diffDays < 7) return `${diffDays}d ago`;
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 };
 
 const getInitials = (name: string) => {
-  if (!name) return '?';
+  if (!name) return "?";
   return name
-    .split(' ')
+    .split(" ")
     .map((n) => n[0])
-    .join('')
+    .join("")
     .toUpperCase()
     .slice(0, 2);
 };
@@ -76,18 +100,20 @@ export const Inbox: React.FC = () => {
   } = useAppSelector((state) => state.inbox);
 
   const [selectedThreadId, setSelectedThreadId] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [showAccountPopup, setShowAccountPopup] = useState(false);
-  const [accountSearchQuery, setAccountSearchQuery] = useState('');
+  const [accountSearchQuery, setAccountSearchQuery] = useState("");
   const [showFilterMenu, setShowFilterMenu] = useState(false);
-  const [filterOptions, setFilterOptions] = useState<Record<FilterKey, boolean>>({
+  const [filterOptions, setFilterOptions] = useState<
+    Record<FilterKey, boolean>
+  >({
     allReplies: false,
     repliedToCampaigns: false,
     unreadOnly: false,
     repliedWithin7Days: false,
     byUser: false,
   });
-  const [replyContent, setReplyContent] = useState('');
+  const [replyContent, setReplyContent] = useState("");
   const [isReplying, setIsReplying] = useState(false);
   const [isSending, setIsSending] = useState(false);
 
@@ -105,12 +131,15 @@ export const Inbox: React.FC = () => {
     const query = accountSearchQuery.toLowerCase();
     return accounts.filter(
       (acc: Account) =>
-        acc.name?.toLowerCase().includes(query) || acc.email?.toLowerCase().includes(query)
+        acc.name?.toLowerCase().includes(query) ||
+        acc.email?.toLowerCase().includes(query)
     );
   }, [accounts, accountSearchQuery]);
 
   const messagesToShow = useMemo(() => {
-    return searchQuery.trim() && !searchLoading ? searchResults : mailboxMessages;
+    return searchQuery.trim() && !searchLoading
+      ? searchResults
+      : mailboxMessages;
   }, [searchQuery, searchLoading, searchResults, mailboxMessages]);
 
   const totalPages = Math.ceil(totalMessages / MESSAGES_PER_PAGE);
@@ -136,7 +165,9 @@ export const Inbox: React.FC = () => {
 
     const loadData = async () => {
       try {
-        const mailboxes = await dispatch(fetchMailboxes(selectedAccountId)).unwrap();
+        const mailboxes = await dispatch(
+          fetchMailboxes(selectedAccountId)
+        ).unwrap();
         if (mailboxes.length > 0 && !selectedMailboxId) {
           dispatch(setSelectedMailbox(mailboxes[0]._id));
         }
@@ -148,7 +179,7 @@ export const Inbox: React.FC = () => {
           })
         );
       } catch (error) {
-        console.error('Failed to load inbox data:', error);
+        console.error("Failed to load inbox data:", error);
       }
     };
 
@@ -195,8 +226,8 @@ export const Inbox: React.FC = () => {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handleAccountSelect = async (accountId: string) => {
@@ -209,9 +240,9 @@ export const Inbox: React.FC = () => {
   const handleThreadSelect = async (thread: IEmailThread) => {
     setSelectedThreadId(thread.threadId);
     setIsReplying(false);
-    setReplyContent('');
+    setReplyContent("");
 
-    if (thread.flags?.includes('UNREAD')) {
+    if (thread.flags?.includes("UNREAD")) {
       dispatch(markThreadAsRead(thread.threadId));
     }
   };
@@ -321,41 +352,42 @@ export const Inbox: React.FC = () => {
   };
 
   const handleSendReply = async () => {
-    if (!replyContent.trim() || !selectedAccount || threadMessages.length === 0) return;
+    if (!replyContent.trim() || !selectedAccount || threadMessages.length === 0)
+      return;
 
     setIsSending(true);
     const lastMessage = threadMessages[threadMessages.length - 1];
     const firstMessage = threadMessages[0];
 
     const payload: IReplyPayload = {
-      accountId: selectedAccount._id || '',
+      accountId: selectedAccount._id || "",
       from: {
-        name: selectedAccount.name || 'Unknown',
-        address: selectedAccount.email || '',
+        name: selectedAccount.name || "Unknown",
+        address: selectedAccount.email || "",
       },
       to: {
-        name: lastMessage.from?.[0]?.name || 'Unknown',
-        address: lastMessage.from?.[0]?.address || '',
+        name: lastMessage.from?.[0]?.name || "Unknown",
+        address: lastMessage.from?.[0]?.address || "",
       },
       emailTemplate: {
-        subject: firstMessage.subject || 'No Subject',
+        subject: firstMessage.subject || "No Subject",
         emailBody: replyContent,
       },
-      messageId: lastMessage.messageId || '',
-      threadId: lastMessage.threadId || '',
+      messageId: lastMessage.messageId || "",
+      threadId: lastMessage.threadId || "",
     };
 
     try {
       const result = await dispatch(sendReply(payload)).unwrap();
       if (result.code === 200) {
-        toast.success(result.message || 'Reply sent successfully');
-        setReplyContent('');
+        toast.success(result.message || "Reply sent successfully");
+        setReplyContent("");
         setIsReplying(false);
       } else {
-        toast.error(result.message || 'Failed to send reply');
+        toast.error(result.message || "Failed to send reply");
       }
     } catch (error) {
-      toast.error(typeof error === 'string' ? error : 'Failed to send reply');
+      toast.error(typeof error === "string" ? error : "Failed to send reply");
     } finally {
       setIsSending(false);
     }
@@ -365,7 +397,7 @@ export const Inbox: React.FC = () => {
     setSelectedThreadId(null);
     dispatch(clearThreadMessages());
     setIsReplying(false);
-    setReplyContent('');
+    setReplyContent("");
   };
 
   const renderThreadMessage = (message: IThreadMessage, index: number) => (
@@ -373,32 +405,66 @@ export const Inbox: React.FC = () => {
       <S.MessageHeader>
         <S.MessageAvatar>
           <S.AccountAvatar $size="sm">
-            {getInitials(message.from?.[0]?.name || 'U')}
+            {getInitials(message.from?.[0]?.name || "U")}
           </S.AccountAvatar>
         </S.MessageAvatar>
         <S.MessageInfo>
-          <div className="sender">{message.from?.[0]?.name || message.from?.[0]?.address || 'Unknown Sender'}</div>
+          <div className="sender">
+            {message.from?.[0]?.name ||
+              message.from?.[0]?.address ||
+              "Unknown Sender"}
+          </div>
           <div className="date">{formatDate(message.date)}</div>
         </S.MessageInfo>
       </S.MessageHeader>
       <S.MessageRecipient>
-        {message.to?.[0]?.name || 'Unknown'} ({message.to?.[0]?.address || 'No Email'})
+        {message.to?.[0]?.name || "Unknown"} (
+        {message.to?.[0]?.address || "No Email"})
       </S.MessageRecipient>
-      <S.MessageBody dangerouslySetInnerHTML={{ __html: message.body || 'No content available.' }} />
+      <S.MessageBody
+        dangerouslySetInnerHTML={{
+          __html: message.body || "No content available.",
+        }}
+      />
     </S.MessageCard>
   );
 
+  const handleRefresh = async (accountId: string) => {
+    const result = await emailAccountService.refreshEmailAccount(accountId);
+    if (result.code === 200) {
+      toast.success(result.message || "Account refreshed successfully");
+    } else {
+      toast.error(result.message || "Failed to refresh account");
+    }
+  };
+  
   return (
     <S.PageContainer>
       <S.InboxWrapper>
         <S.InboxHeader>
           <h3>Email Inbox</h3>
           <S.AccountSelector>
+            {!selectedAccount?.lastFetchTimestamp ? (
+              <>
+                <LoaderIcon size={16} className="animate-spin" />
+                <span>Syncing...</span>{" "}
+              </>
+            ) : (
+              <>
+                <Button
+                  onClick={() => handleRefresh(selectedAccount?._id || "")}
+                >
+                  <RefreshCcw size={16} />
+                </Button>
+              </>
+            )}
             <span>({selectedAccount?.email})</span>
-            <div style={{ position: 'relative' }} ref={accountPopupRef}>
-              <S.AccountButton onClick={() => setShowAccountPopup(!showAccountPopup)}>
+            <div style={{ position: "relative" }} ref={accountPopupRef}>
+              <S.AccountButton
+                onClick={() => setShowAccountPopup(!showAccountPopup)}
+              >
                 <S.AccountAvatar>
-                  {selectedAccount?.name?.[0]?.toUpperCase() || '?'}
+                  {selectedAccount?.name?.[0]?.toUpperCase() || "?"}
                 </S.AccountAvatar>
               </S.AccountButton>
 
@@ -419,10 +485,12 @@ export const Inbox: React.FC = () => {
                       {selectedAccount && (
                         <S.AccountItem
                           $selected={true}
-                          onClick={() => handleAccountSelect(selectedAccount._id || '')}
+                          onClick={() =>
+                            handleAccountSelect(selectedAccount._id || "")
+                          }
                         >
                           <S.AccountAvatar>
-                            {selectedAccount.name?.[0]?.toUpperCase() || '?'}
+                            {selectedAccount.name?.[0]?.toUpperCase() || "?"}
                           </S.AccountAvatar>
                           <S.AccountItemDetails>
                             <div className="name">{selectedAccount.name}</div>
@@ -430,19 +498,26 @@ export const Inbox: React.FC = () => {
                           </S.AccountItemDetails>
                         </S.AccountItem>
                       )}
-                      {filteredAccounts.filter((acc: Account) => acc._id !== selectedAccountId).length >
-                        0 && (
+                      {filteredAccounts.filter(
+                        (acc: Account) => acc._id !== selectedAccountId
+                      ).length > 0 && (
                         <>
-                          <S.AccountDivider>Select another account</S.AccountDivider>
+                          <S.AccountDivider>
+                            Select another account
+                          </S.AccountDivider>
                           {filteredAccounts
-                            .filter((acc: Account) => acc._id !== selectedAccountId)
+                            .filter(
+                              (acc: Account) => acc._id !== selectedAccountId
+                            )
                             .map((account: Account) => (
                               <S.AccountItem
                                 key={account._id}
-                                onClick={() => handleAccountSelect(account._id || '')}
+                                onClick={() =>
+                                  handleAccountSelect(account._id || "")
+                                }
                               >
                                 <S.AccountAvatar>
-                                  {account.name?.[0]?.toUpperCase() || '?'}
+                                  {account.name?.[0]?.toUpperCase() || "?"}
                                 </S.AccountAvatar>
                                 <S.AccountItemDetails>
                                   <div className="name">{account.name}</div>
@@ -475,7 +550,7 @@ export const Inbox: React.FC = () => {
                   onChange={(e) => handleSearch(e.target.value)}
                 />
               </S.SearchInput>
-              <div style={{ position: 'relative' }} ref={filterMenuRef}>
+              <div style={{ position: "relative" }} ref={filterMenuRef}>
                 <S.FilterButton
                   $active={appliedFilters.length > 0}
                   onClick={() => setShowFilterMenu(!showFilterMenu)}
@@ -495,8 +570,13 @@ export const Inbox: React.FC = () => {
                     </S.FilterMenuItem>
                   ))}
                   <S.FilterMenuActions>
-                    <S.ActionButton onClick={handleClearFilters}>Cancel</S.ActionButton>
-                    <S.ActionButton $variant="primary" onClick={handleApplyFilters}>
+                    <S.ActionButton onClick={handleClearFilters}>
+                      Cancel
+                    </S.ActionButton>
+                    <S.ActionButton
+                      $variant="primary"
+                      onClick={handleApplyFilters}
+                    >
                       Apply
                     </S.ActionButton>
                   </S.FilterMenuActions>
@@ -546,27 +626,33 @@ export const Inbox: React.FC = () => {
                     <S.ThreadItem
                       key={thread._id}
                       $selected={thread.threadId === selectedThreadId}
-                      $unread={thread.flags?.includes('UNREAD')}
+                      $unread={thread.flags?.includes("UNREAD")}
                       onClick={() => handleThreadSelect(thread)}
                     >
-                      <S.ThreadSubject $unread={thread.flags?.includes('UNREAD')}>
-                        {thread.subject || 'No Subject'}
+                      <S.ThreadSubject
+                        $unread={thread.flags?.includes("UNREAD")}
+                      >
+                        {thread.subject || "No Subject"}
                       </S.ThreadSubject>
                       <S.ThreadMeta>
                         <S.ThreadSender>
                           <S.AccountAvatar $size="sm">
-                            {getInitials(thread.from?.[0]?.name || 'U')}
+                            {getInitials(thread.from?.[0]?.name || "U")}
                           </S.AccountAvatar>
                           <div className="info">
-                            <span className="name">{thread.from?.[0]?.name || 'Unknown'}</span>
-                            <span className="email">{thread.from?.[0]?.address || ''}</span>
+                            <span className="name">
+                              {thread.from?.[0]?.name || "Unknown"}
+                            </span>
+                            <span className="email">
+                              {thread.from?.[0]?.address || ""}
+                            </span>
                           </div>
                         </S.ThreadSender>
                         <S.ThreadDate>{formatDate(thread.date)}</S.ThreadDate>
                       </S.ThreadMeta>
                       <S.ThreadRecipient>
-                        To: <strong>{thread.to?.[0]?.name || 'Unknown'}</strong> (
-                        {thread.to?.[0]?.address || ''})
+                        To: <strong>{thread.to?.[0]?.name || "Unknown"}</strong>{" "}
+                        ({thread.to?.[0]?.address || ""})
                       </S.ThreadRecipient>
                     </S.ThreadItem>
                   ))}
@@ -582,18 +668,21 @@ export const Inbox: React.FC = () => {
                       >
                         <ChevronLeft size={16} />
                       </S.PageButton>
-                      {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
-                        const page = i + 1;
-                        return (
-                          <S.PageButton
-                            key={page}
-                            $active={page === currentPage}
-                            onClick={() => handlePageChange(page)}
-                          >
-                            {page}
-                          </S.PageButton>
-                        );
-                      })}
+                      {Array.from(
+                        { length: Math.min(totalPages, 5) },
+                        (_, i) => {
+                          const page = i + 1;
+                          return (
+                            <S.PageButton
+                              key={page}
+                              $active={page === currentPage}
+                              onClick={() => handlePageChange(page)}
+                            >
+                              {page}
+                            </S.PageButton>
+                          );
+                        }
+                      )}
                       <S.PageButton
                         disabled={currentPage === totalPages}
                         onClick={() => handlePageChange(currentPage + 1)}
@@ -611,10 +700,13 @@ export const Inbox: React.FC = () => {
             {selectedThreadId ? (
               <>
                 <S.ThreadDetailHeader>
-                  <S.CloseButton onClick={handleCloseThread} title="Back to inbox">
+                  <S.CloseButton
+                    onClick={handleCloseThread}
+                    title="Back to inbox"
+                  >
                     <ArrowLeft size={18} />
                   </S.CloseButton>
-                  <h3>{threadMessages[0]?.subject || 'No Subject'}</h3>
+                  <h3>{threadMessages[0]?.subject || "No Subject"}</h3>
                   <div style={{ width: 36 }} /> {/* Spacer for alignment */}
                 </S.ThreadDetailHeader>
 
@@ -640,7 +732,9 @@ export const Inbox: React.FC = () => {
                 ) : threadMessages.length > 0 ? (
                   <>
                     <S.ThreadMessages>
-                      {threadMessages.map((msg, index) => renderThreadMessage(msg, index))}
+                      {threadMessages.map((msg, index) =>
+                        renderThreadMessage(msg, index)
+                      )}
                     </S.ThreadMessages>
 
                     <S.ReplyComposer>
@@ -653,7 +747,9 @@ export const Inbox: React.FC = () => {
                             autoFocus
                           />
                           <S.ReplyActions>
-                            <S.ActionButton onClick={() => setIsReplying(false)}>
+                            <S.ActionButton
+                              onClick={() => setIsReplying(false)}
+                            >
                               <X size={14} />
                               Discard
                             </S.ActionButton>
@@ -662,7 +758,9 @@ export const Inbox: React.FC = () => {
                               onClick={handleSendReply}
                               disabled={!replyContent.trim() || isSending}
                             >
-                              {isSending ? 'Sending...' : (
+                              {isSending ? (
+                                "Sending..."
+                              ) : (
                                 <>
                                   <Send size={14} />
                                   Send
@@ -675,7 +773,7 @@ export const Inbox: React.FC = () => {
                         <S.ActionButton
                           $variant="primary"
                           onClick={() => setIsReplying(true)}
-                          style={{ width: '100%', justifyContent: 'center' }}
+                          style={{ width: "100%", justifyContent: "center" }}
                         >
                           <Reply size={14} />
                           Reply
@@ -704,4 +802,3 @@ export const Inbox: React.FC = () => {
 };
 
 export default Inbox;
-

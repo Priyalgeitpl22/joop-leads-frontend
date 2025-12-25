@@ -4,4 +4,7 @@ export { Input } from './Input';
 export { Loader } from './Loader';
 export { DataTable, Badge } from './DataTable';
 export type { Column, FilterState, SortState, DataTableProps } from './DataTable';
+export { QuillEditor } from './QuillEditor';
+export { VARIABLE_OPTIONS, QUILL_MODULES, QUILL_FORMATS } from './quillEditorConfig';
+export type { QuillEditorProps, QuillEditorRef } from './QuillEditor';
 

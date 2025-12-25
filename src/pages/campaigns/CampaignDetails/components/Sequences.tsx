@@ -1,5 +1,5 @@
-import React from 'react';
-import { Download, Mail } from 'lucide-react';
+import React, { useEffect } from "react";
+import { Download } from "lucide-react";
 import {
   SequencesContainer,
   SequencesCard,
@@ -7,41 +7,48 @@ import {
   SequencesTitle,
   HeaderActions,
   ActionButton,
-  TableContainer,
-  SequencesTable,
-  TableHeader,
-  TableHeaderCell,
-  TableRow,
-  TableCell,
-  SequenceName,
-  MetricCell,
-  MetricValue,
-  MetricWithPercent,
-  ColumnLabel,
-  EmptyState,
-  EmptyStateIcon,
-  EmptyStateTitle,
-  EmptyStateDescription,
-} from './Sequences.styled';
-import type { Sequence } from '../../../../interfaces';
-import { EventType } from '../../../../types/enums';
+} from "./Sequences.styled";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "../../../../store";
+import { DataTable } from "../../../../components/common";
+import { getSequenceAnalytics } from "../../../../store/slices/campaignSlice";
+import type { AppDispatch } from "../../../../store";
 
 interface SequencesProps {
-  sequences?: Sequence[];
+  campaignId: string;
   onShowEmailAccountPerformance?: () => void;
   onDownloadCsv?: () => void;
 }
 
 export const Sequences: React.FC<SequencesProps> = ({
-  sequences,
+  campaignId,
   onShowEmailAccountPerformance,
   onDownloadCsv,
 }) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { sequenceAnalytics, isLoadingSequenceAnalytics, errorSequenceAnalytics } = useSelector((state: RootState) => state.campaign);
+  const columns = [
+    { key: "emailType", label: "Email" },
+    { key: "sent", label: "Sent" },
+    { key: "opened", label: "Opened" },
+    { key: "clicked", label: "Clicked" },
+    { key: "replied", label: "Replied" },
+    // { key: "positiveReplies", label: "Positive Replies" },
+    { key: "bounced", label: "Bounced" },
+    // { key: "senderBounced", label: "Sender Bounced" },
+    { key: "unsubscribed", label: "Unsubscribed" },
+  ];
+
+  useEffect(() => {
+    if (sequenceAnalytics?.length === 0 && !errorSequenceAnalytics) {
+      dispatch(getSequenceAnalytics(campaignId));
+    }
+  }, [campaignId]);
+
   const handleShowEmailAccountPerformance = () => {
     if (onShowEmailAccountPerformance) {
       onShowEmailAccountPerformance();
     } else {
-      console.log('Show email account performance');
       // TODO: Navigate to email account performance page
     }
   };
@@ -50,7 +57,7 @@ export const Sequences: React.FC<SequencesProps> = ({
     if (onDownloadCsv) {
       onDownloadCsv();
     } else {
-      console.log('Download CSV');
+      console.log("Download CSV");
       // TODO: Implement CSV download
     }
   };
@@ -61,7 +68,10 @@ export const Sequences: React.FC<SequencesProps> = ({
         <SequencesHeader>
           <SequencesTitle>Sequences</SequencesTitle>
           <HeaderActions>
-            <ActionButton $variant="primary" onClick={handleShowEmailAccountPerformance}>
+            <ActionButton
+              $variant="primary"
+              onClick={handleShowEmailAccountPerformance}
+            >
               Show Email Account Performance
             </ActionButton>
             <ActionButton onClick={handleDownloadCsv}>
@@ -71,7 +81,15 @@ export const Sequences: React.FC<SequencesProps> = ({
           </HeaderActions>
         </SequencesHeader>
 
-        {sequences && sequences?.length > 0 ? (
+        <DataTable
+          columns={columns}
+          searchable={false}
+          showHeader={false}
+          data={sequenceAnalytics as unknown as Record<string, unknown>[]}
+          loading={isLoadingSequenceAnalytics}
+        />
+
+        {/* {isLoadingSequenceAnalytics ? (
           <TableContainer>
             <SequencesTable>
               <TableHeader>
@@ -89,18 +107,28 @@ export const Sequences: React.FC<SequencesProps> = ({
                 {sequences.map((seq, index) => (
                   <TableRow key={index}>
                     <TableCell>
-                      <SequenceName>{seq.seqNumber}. {seq.type.toUpperCase()}</SequenceName>
+                      <SequenceName>
+                        {seq.seqNumber}. {seq.type.toUpperCase()}
+                      </SequenceName>
                     </TableCell>
                     <TableCell>
                       <MetricCell>
-                        <MetricValue $color="#6366f1">{seq.emailSends?.length || 0}</MetricValue>
+                        <MetricValue $color="#6366f1">
+                          {seq.emailSends?.length || 0}
+                        </MetricValue>
                         <ColumnLabel>Sent</ColumnLabel>
                       </MetricCell>
                     </TableCell>
                     <TableCell>
                       <MetricCell>
                         <MetricWithPercent>
-                          <MetricValue $color="#8b5cf6">{seq.emailSends?.filter(emailSend => emailSend.events?.some(event => event.type === EventType.OPENED)).length || 0}</MetricValue>
+                          <MetricValue $color="#8b5cf6">
+                            {seq.emailSends?.filter((emailSend) =>
+                              emailSend.events?.some(
+                                (event) => event.type === EventType.OPENED
+                              )
+                            ).length || 0}
+                          </MetricValue>
                         </MetricWithPercent>
                         <ColumnLabel>Opened</ColumnLabel>
                       </MetricCell>
@@ -113,32 +141,62 @@ export const Sequences: React.FC<SequencesProps> = ({
                     </TableCell>
                     <TableCell>
                       <MetricCell>
-                        <MetricValue $color="#06b6d4">{seq.emailSends?.filter(emailSend => emailSend.events?.some(event => event.type === EventType.REPLIED)).length || 0}</MetricValue>
+                        <MetricValue $color="#06b6d4">
+                          {seq.emailSends?.filter((emailSend) =>
+                            emailSend.events?.some(
+                              (event) => event.type === EventType.REPLIED
+                            )
+                          ).length || 0}
+                        </MetricValue>
                         <ColumnLabel>Replied</ColumnLabel>
                       </MetricCell>
-                    </TableCell>  
+                    </TableCell>
                     <TableCell>
                       <MetricCell>
-                        <MetricValue $color="#10b981">{seq.emailSends?.filter(emailSend => emailSend.events?.some(event => event.type === EventType.REPLIED)).length || 0}</MetricValue>
+                        <MetricValue $color="#10b981">
+                          {seq.emailSends?.filter((emailSend) =>
+                            emailSend.events?.some(
+                              (event) => event.type === EventType.REPLIED
+                            )
+                          ).length || 0}
+                        </MetricValue>
                         <ColumnLabel>Positive Replies</ColumnLabel>
                       </MetricCell>
                     </TableCell>
                     <TableCell>
                       <MetricCell>
-                        <MetricValue $color="#f87171">{seq.emailSends?.filter(emailSend => emailSend.events?.some(event => event.type === EventType.BOUNCED)).length || 0}</MetricValue>
+                        <MetricValue $color="#f87171">
+                          {seq.emailSends?.filter((emailSend) =>
+                            emailSend.events?.some(
+                              (event) => event.type === EventType.BOUNCED
+                            )
+                          ).length || 0}
+                        </MetricValue>
                         <ColumnLabel>Bounced</ColumnLabel>
                       </MetricCell>
                     </TableCell>
                     <TableCell>
                       <MetricCell>
-                        <MetricValue $color="#ef4444">{seq.emailSends?.filter(emailSend => emailSend.events?.some(event => event.type === EventType.BOUNCED)).length || 0}</MetricValue>
+                        <MetricValue $color="#ef4444">
+                          {seq.emailSends?.filter((emailSend) =>
+                            emailSend.events?.some(
+                              (event) => event.type === EventType.BOUNCED
+                            )
+                          ).length || 0}
+                        </MetricValue>
                         <ColumnLabel>Sender Bounced</ColumnLabel>
                       </MetricCell>
                     </TableCell>
                     <TableCell>
                       <MetricCell>
-                        <MetricValue $color="#64748b">{seq.emailSends?.filter(emailSend => emailSend.events?.some(event => event.type === EventType.UNSUBSCRIBED)).length || 0}</MetricValue>
-                        <ColumnLabel>Unsubscribed</ColumnLabel> 
+                        <MetricValue $color="#64748b">
+                          {seq.emailSends?.filter((emailSend) =>
+                            emailSend.events?.some(
+                              (event) => event.type === EventType.UNSUBSCRIBED
+                            )
+                          ).length || 0}
+                        </MetricValue>
+                        <ColumnLabel>Unsubscribed</ColumnLabel>
                       </MetricCell>
                     </TableCell>
                   </TableRow>
@@ -156,11 +214,10 @@ export const Sequences: React.FC<SequencesProps> = ({
               Create email sequences to automate your outreach
             </EmptyStateDescription>
           </EmptyState>
-        )}
+        )} */}
       </SequencesCard>
     </SequencesContainer>
   );
 };
 
 export default Sequences;
-

@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { campaignService } from '../../services/campaign.service';
-import type { Campaign, CampaignStatus } from '../../interfaces';
+import type { Campaign, CampaignStatus, SequenceAnalytics } from '../../interfaces';
 import toast from 'react-hot-toast';
 import type { Logs } from '../../pages/campaigns/CampaignDetails/components/TriggerLogs';
 
@@ -12,6 +12,9 @@ interface CampaignState {
   error: string | null;
   triggerLogs: Logs[] | null;
   upcomingTriggers: Logs[] | null;
+  sequenceAnalytics: SequenceAnalytics[] | null;
+  isLoadingSequenceAnalytics: boolean;
+  errorSequenceAnalytics: string | null;
 }
 
 const initialState: CampaignState = {
@@ -21,6 +24,9 @@ const initialState: CampaignState = {
   error: null,
   triggerLogs: [],
   upcomingTriggers: [],
+  sequenceAnalytics: [],
+  isLoadingSequenceAnalytics: false,
+  errorSequenceAnalytics: null,
 };
 
 // Async thunks
@@ -125,6 +131,20 @@ export const fetchUpcomingTriggers = createAsyncThunk(
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } };
       return rejectWithValue(err.response?.data?.message || 'Failed to fetch upcoming triggers');
+    }
+  }
+);
+
+export const getSequenceAnalytics = createAsyncThunk(
+  'campaign/getSequenceAnalytics',
+  async (id: string, { rejectWithValue }) => {
+    try {
+      const analytics = await campaignService.getSequenceAnalytics(id);
+      return analytics;
+    }
+    catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      return rejectWithValue(err.response?.data?.message || 'Failed to fetch sequence analytics');
     }
   }
 );
@@ -254,6 +274,21 @@ const campaignSlice = createSlice({
       .addCase(fetchUpcomingTriggers.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
+      });
+
+    // Get Sequence Analytics
+    builder
+      .addCase(getSequenceAnalytics.pending, (state) => {
+        state.isLoadingSequenceAnalytics = true;
+        state.errorSequenceAnalytics = null;
+      })
+      .addCase(getSequenceAnalytics.fulfilled, (state, action) => {
+        state.isLoadingSequenceAnalytics = false;
+        state.sequenceAnalytics = action.payload as unknown as SequenceAnalytics[];
+      })
+      .addCase(getSequenceAnalytics.rejected, (state, action) => {
+        state.isLoadingSequenceAnalytics = false;
+        state.errorSequenceAnalytics = action.payload as string;
       });
   },
 });

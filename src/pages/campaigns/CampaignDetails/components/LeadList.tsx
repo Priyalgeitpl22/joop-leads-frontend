@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Download, Filter, Users, Mail, Linkedin, Globe, Lock, Check, Circle } from 'lucide-react';
 import {
   LeadListContainer,
@@ -42,7 +42,7 @@ import {
   EmptyStateDescription,
 } from './LeadList.styled';
 import type { CampaignLead } from '../../../../interfaces';
-
+import campaignService from '../../../../services/campaign.service';
 export interface LeadListItem {
   id: string;
   firstName: string;
@@ -59,24 +59,32 @@ export interface LeadListItem {
 }
 
 interface LeadListProps {
-  campaignLeads?: CampaignLead[];
+  campaignId: string;
   totalCount?: number;
   onExport?: () => void;
 }
 
 export const LeadList: React.FC<LeadListProps> = ({
-  campaignLeads,
+  // campaignLeads,
+  campaignId,
   totalCount,
   onExport,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLeads, setSelectedLeads] = useState<Set<string>>(new Set());
+  const [campaignLeads, setCampaignLeads] = useState<CampaignLead[]>([]);
+  
+  // const filteredLeads = campaignLeads?.filter(
+  //   (lead: CampaignLead) =>
+  //     `${lead?.lead?.firstName} ${lead?.lead?.lastName}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //     lead?.lead?.email?.toLowerCase().includes(searchQuery.toLowerCase())
+  // );
 
-  const filteredLeads = campaignLeads?.filter(
-    (lead: CampaignLead) =>
-      `${lead?.lead?.firstName} ${lead?.lead?.lastName}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      lead?.lead?.email?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  useEffect(() => {
+    campaignService.getLeadsGroupedBySender(campaignId).then((response) => {
+      setCampaignLeads(response.data?.groupedLeads || []);
+    });
+  }, [campaignId]);
 
   const handleSelectLead = (leadId: string) => {
     const newSelected = new Set(selectedLeads);
@@ -156,7 +164,7 @@ export const LeadList: React.FC<LeadListProps> = ({
           </ActionButtons>
         </LeadListHeader>
 
-        {filteredLeads?.length && filteredLeads?.length > 0 ? (
+        {campaignLeads?.length && campaignLeads?.length > 0 ? (
           <LeadListTable>
             <TableHeader>
               <TableRow>
@@ -166,22 +174,22 @@ export const LeadList: React.FC<LeadListProps> = ({
               </TableRow>
             </TableHeader>
             <tbody>
-              {filteredLeads?.map((lead: CampaignLead) => (
-                <React.Fragment key={lead?.id}>
+              {campaignLeads?.map((campaignLead: any) => (
+                <React.Fragment key={campaignLead?.lead.id}>
                   <TableRow>
                     <LeadDetailsCell>
                       <CheckboxInput
                         type="checkbox"
-                        checked={selectedLeads.has(lead?.id)}
-                        onChange={() => handleSelectLead(lead?.id)}
+                        checked={selectedLeads.has(campaignLead?.lead.id)}
+                        onChange={() => handleSelectLead(campaignLead?.lead.id)}
                       />
                       <LeadInfo>
                         <LeadName>
-                          {lead?.lead?.firstName} {lead?.lead?.lastName}
+                          {campaignLead?.lead.firstName} {campaignLead?.lead.lastName}
                         </LeadName>
                         <LeadEmail>
                           <Mail size={14} />
-                          {lead?.lead?.email}
+                          {campaignLead?.lead.email}
                         </LeadEmail>
                       </LeadInfo>
                     </LeadDetailsCell>
@@ -191,42 +199,44 @@ export const LeadList: React.FC<LeadListProps> = ({
                           <OtherDetailIcon>
                             <Linkedin size={16} />
                           </OtherDetailIcon>
-                          <OtherDetailText>{lead?.lead?.linkedinUrl || '--'}</OtherDetailText>
+                          <OtherDetailText>{campaignLead?.lead.linkedinUrl || '--'}</OtherDetailText>
                         </OtherDetailItem>
                         <OtherDetailItem>
                           <OtherDetailIcon>
                             <Globe size={16} />
                           </OtherDetailIcon>
-                          <OtherDetailText>{lead?.lead?.website || '--'}</OtherDetailText>
+                          <OtherDetailText>{campaignLead?.lead.website || '--'}</OtherDetailText>
                         </OtherDetailItem>
                         <OtherDetailItem>
                           <OtherDetailIcon>
                             <Mail size={16} />
                           </OtherDetailIcon>
-                          <OtherDetailText>{lead?.lead?.email || '--'}</OtherDetailText>
+                          <OtherDetailText>{campaignLead?.lead.email || '--'}</OtherDetailText>
                         </OtherDetailItem>
                         <OtherDetailItem>
                           <OtherDetailIcon>
                             <Lock size={16} />
                           </OtherDetailIcon>
-                          <OtherDetailText>{lead?.lead?.isBlocked ? 'Blocked' : 'Unlocked'}</OtherDetailText>
+                          <OtherDetailText>{campaignLead?.lead.isBlocked ? 'Blocked' : 'Unlocked'}</OtherDetailText>
                         </OtherDetailItem>
                       </OtherDetailsList>
                     </OtherDetailsCell>
                     <StatusCell>
-                      <StatusBadge $status={lead?.status || ''}>{lead?.status || ''}</StatusBadge>
+                      <StatusBadge $status={campaignLead?.status || ''}>{campaignLead?.status || ''}</StatusBadge>
                     </StatusCell>
                   </TableRow>
                   <TableRow $isDetailRow>
                     <TableCell colSpan={3}>
                       <SequenceSection>
                         <SequenceLabel>Sequence Status:</SequenceLabel>
-                        {renderSequenceSteps(lead?.currentSequenceStep || 0, lead?.campaign?.sequences?.length || 0)}
+                        {renderSequenceSteps(campaignLead?.currentSequenceStep || 0, campaignLead.totalSequences || 0)}
                       </SequenceSection>
-                      <EmailAccountSection>
-                        <EmailAccountLabel>Email Account Used:</EmailAccountLabel>
-                        <EmailAccountValue>{lead?.lead?.email || '--'}</EmailAccountValue>
-                      </EmailAccountSection>
+                      {campaignLead?.senders?.map((sender: any) => (
+                        <EmailAccountSection key={sender.senderEmail}>
+                          <EmailAccountLabel>Email Account Used:</EmailAccountLabel>
+                          <EmailAccountValue>{sender.senderEmail}</EmailAccountValue>
+                        </EmailAccountSection>
+                      ))}
                     </TableCell>
                   </TableRow>
                 </React.Fragment>

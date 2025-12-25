@@ -22,30 +22,26 @@ import {
   LoadingContainer,
   ErrorText,
 } from './WarmupTab.styled';
+import type { Account } from '../../../types/emailAccount.types';
 
-interface WarmupSettings {
-  enabled?: boolean;
-  maxPerDay?: number;
-  dailyRampup?: boolean;
-  rampupIncrement?: number;
-  replyRate?: number;
-  dailyReplyTarget?: number;
-  identifierTag?: string;
-  autoAdjust?: boolean;
-  customDomainTracking?: boolean;
-  weekdaysOnly?: boolean;
-  reputation?: number;
-}
-
-interface EmailAccountWithWarmup {
-  warmup?: WarmupSettings;
-  [key: string]: unknown;
-}
+// interface WarmupSettings {
+//   enabled?: boolean;
+//   maxPerDay?: number;
+//   dailyRampup?: boolean;
+//   rampupIncrement?: number;
+//   replyRate?: number;
+//   dailyReplyTarget?: number;
+//   identifierTag?: string;
+//   autoAdjust?: boolean;
+//   customDomainTracking?: boolean;
+//   weekdaysOnly?: boolean;
+//   reputation?: number;
+// }
 
 interface WarmupTabProps {
   accountId: string;
-  emailAccount: EmailAccountWithWarmup;
-  onUpdate?: () => void;
+  emailAccount: Account;
+  onUpdate?: (data?: Account) => void;
 }
 
 interface WarmupFormData {
@@ -105,7 +101,7 @@ export const WarmupTab: React.FC<WarmupTabProps> = ({ accountId, emailAccount, o
         dailyReplyTarget: warmup.dailyReplyTarget ?? 10,
         identifierTagFirst: identifierTagParts[0] || '',
         identifierTagSecond: identifierTagParts[1] || '',
-        autoAdjust: warmup.autoAdjust ?? false,
+        autoAdjust: warmup.dailyLimit && warmup.dailyLimit > 0 ? true : false,
         customDomainTracking: warmup.customDomainTracking ?? false,
         weekdaysOnly: warmup.weekdaysOnly ?? false,
       });

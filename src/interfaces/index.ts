@@ -268,6 +268,72 @@ export interface Sequence {
   emailSends?: EmailSend[];
 }
 
+export interface SequenceAnalytics {
+  emailType: SequenceType;
+  seqNumber: number;
+  subject: string | null;
+  totalLeads: number;
+  sent: number;
+  opened: number;
+  clicked: number;
+  replied: number;
+  positiveReplies: number;
+  bounced: number;
+  senderBounced: number;
+  failed: number;
+  unsubscribed: number;
+}
+export interface CampaignSenderStats {
+  sent: number;
+  queued: number;
+  failed: number;
+  total: number;
+  uniqueLeads: number;
+}
+export interface CampaignSenderWithStats {
+  id: string;
+  senderId: string;
+  accountId: string;
+  email: string;
+  name: string | null;
+  provider: string;
+  dailyLimit: number;
+  isEnabled: boolean;
+  isActive: boolean;
+  weight: number;
+  stats: CampaignSenderStats;
+}
+
+export interface OrgAnalytics {
+  orgId: string;
+  dateRange: {
+    from: Date | null;
+    to: Date | null;
+  };
+  stats: {
+    emailsSent: number;
+    opened: number;
+    replied: number;
+    positiveReply: number;
+    bounced: number;
+    unsubscribed: number;
+  };
+  rates: {
+    openRate: number;
+    replyRate: number;
+    bounceRate: number;
+  };
+}
+export interface NewSequence {
+  id: string;
+  campaignId: string;
+  seqNumber: number;
+  type: SequenceType;
+  delayDays: number;
+  subject: string;
+  bodyHtml: string;
+}
+
 export interface Lead {
   id: string;
   email: string;
@@ -402,6 +468,23 @@ export interface OrganizationPlan {
   updatedAt: string;
   organization?: Organization;
   plan?: Plan;
+}
+
+export interface CsvSettings {
+  ignoreCommunityBounceList: boolean;
+  ignoreDuplicateLeadsInOtherCampaign: boolean;
+  ignoreGlobalBlockList: boolean;
+  ignoreUnsubscribeList: boolean;
+}
+
+
+export interface UploadCounts {
+  uploaded: number;
+  duplicates: number;
+  blocked: number;
+  empty: number;
+  invalid: number;
+  unsubscribed: number;
 }
 
 type JsonValue = string | number | boolean | { [key in string]?: JsonValue } | Array<JsonValue> | null;

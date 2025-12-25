@@ -45,6 +45,12 @@ const handleUnauthorized = () => {
 const handleResponseError = (error: AxiosError) => {
   if (error.response) {
     const { status } = error.response;
+    // const data = error.response.data as { message: string };
+
+    if (status === 400) {
+      console.error('Bad Request: ', error.response.data);
+      // toast.error(error.response.data.message);
+    }
     
     // Handle 401 Unauthorized - logout and redirect to login
     if (status === 401) {

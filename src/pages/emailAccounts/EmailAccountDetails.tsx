@@ -3,20 +3,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { emailAccountService } from '../../services/email.account.service';
-import { OverviewTab, GeneralTab, CampaignTab } from './tabs';
-import {
-  PageContainer,
-  HeaderRow,
-  LeftSection,
-  BackButton,
-  TabsContainer,
-  Tab,
-  EmailDisplay,
-  ContentContainer,
-  LoadingContainer,
-  Spinner,
-} from './EmailAccountDetails.styled';
+import { OverviewTab, GeneralTab, CampaignTab, WarmupTab } from './tabs';
+import { PageContainer, HeaderRow, LeftSection, BackButton, TabsContainer, Tab, EmailDisplay, ContentContainer, LoadingContainer, Spinner } from './EmailAccountDetails.styled';
 import type { Account } from "../../types/emailAccount.types";
+// import type { EmailAccountWithWarmup } from '../../interfaces';
 
 type TabType = 'overview' | 'general' | 'warmup' | 'campaign';
 
@@ -79,14 +69,14 @@ export const EmailAccountDetails: React.FC = () => {
             onUpdate={(data?: Account) => handleUpdate(data)}
           />
         );
-      // case 'warmup':
-      //   return (
-      //     <WarmupTab
-      //       accountId={id!}
-      //       emailAccount={emailAccount}
-      //       onUpdate={(data?: Account) => handleUpdate(data)}
-      //     />
-      //   );
+      case 'warmup':
+        return (
+          <WarmupTab
+            accountId={id!}
+            emailAccount={emailAccount as unknown as Account}
+            onUpdate={(data?: Account) => handleUpdate(data)}
+          />
+        );
       case 'campaign':
         return <CampaignTab accountId={id!} />;
       default:

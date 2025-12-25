@@ -5,7 +5,6 @@ import { LeadDetailsPanel } from "./components";
 import {
   PageContainer,
 } from "./Leads.styled";
-import type { ILead } from "../../types/lead.types";
 import {
   fetchAllLeads,
   deleteLeads,
@@ -15,6 +14,7 @@ import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../../store";
 import { useAppSelector } from "../../store";
 import { DataTable } from "../../components/common";
+import type { Lead } from "../../interfaces";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -26,7 +26,7 @@ export const Leads: React.FC = () => {
 
   // Local state
   const [selectedLeads, setSelectedLeads] = useState<Set<string>>(new Set());
-  const [selectedLead, setSelectedLead] = useState<ILead | null>(null);
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -58,14 +58,14 @@ export const Leads: React.FC = () => {
 
   // Edit lead handler - opens the details panel
   const handleEditLead = (row: Record<string, unknown>) => {
-    const lead = row as unknown as ILead;
+    const lead = row as unknown as Lead;
     setSelectedLead(lead);
     setIsPanelOpen(true);
   };
 
   // Delete single lead handler
   const handleDeleteLead = async (row: Record<string, unknown>) => {
-    const lead = row as unknown as ILead;
+    const lead = row as unknown as Lead;
     if (window.confirm(`Are you sure you want to delete ${lead.email}?`)) {
       try {
         await dispatch(deleteLead(lead.id));
@@ -81,7 +81,7 @@ export const Leads: React.FC = () => {
 
   // Lead details panel handlers
   const handleOpenLeadDetails = (row: Record<string, unknown>) => {
-    const lead = row as unknown as ILead;
+    const lead = row as unknown as Lead;
     setSelectedLead(lead);
     setIsPanelOpen(true);
   };
@@ -94,7 +94,7 @@ export const Leads: React.FC = () => {
   const handleNavigatePrevLead = () => {
     if (!selectedLead) return;
     const currentIndex = leads.findIndex(
-      (l: ILead) => l.id === selectedLead.id
+      (l: Lead) => l.id === selectedLead.id
     );
     if (currentIndex > 0) {
       setSelectedLead(leads[currentIndex - 1]);
@@ -104,7 +104,7 @@ export const Leads: React.FC = () => {
   const handleNavigateNextLead = () => {
     if (!selectedLead) return;
     const currentIndex = leads.findIndex(
-      (l: ILead) => l.id === selectedLead.id
+      (l: Lead) => l.id === selectedLead.id
     );
     if (currentIndex < leads.length - 1) {
       setSelectedLead(leads[currentIndex + 1]);
@@ -114,7 +114,7 @@ export const Leads: React.FC = () => {
   const getLeadNavigationInfo = () => {
     if (!selectedLead) return { hasPrev: false, hasNext: false };
     const currentIndex = leads.findIndex(
-      (l: ILead) => l.id === selectedLead.id
+      (l: Lead) => l.id === selectedLead.id
     );
     return {
       hasPrev: currentIndex > 0,
@@ -167,7 +167,7 @@ export const Leads: React.FC = () => {
       />
 
       <LeadDetailsPanel
-        lead={selectedLead}
+        lead={selectedLead as Lead}
         isOpen={isPanelOpen}
         onClose={handleCloseLeadDetails}
         onNavigatePrev={handleNavigatePrevLead}

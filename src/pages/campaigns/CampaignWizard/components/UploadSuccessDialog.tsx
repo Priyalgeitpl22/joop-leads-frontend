@@ -1,38 +1,17 @@
 import React from 'react';
-import { X, CheckCircle, XCircle, AlertTriangle, Ban, Mail, UserX } from 'lucide-react';
+import { X, CheckCircle, XCircle } from 'lucide-react';
 import { DialogOverlay, DialogContainer, DialogHeader, CloseButton, DialogContent, TotalBox, SummaryTitle, SummaryList, SummaryItem, DialogFooter, DoneButton } from './styled';
-
-export interface UploadCounts {
-  uploaded: number;
-  duplicates: number;
-  blocked: number;
-  empty: number;
-  invalid: number;
-  unsubscribed: number;
-}
-
-interface UploadSuccessDialogProps {
+import type { UploadCounts } from '../../../../interfaces';
+import { STATUS_ITEMS } from '../../../../constants';
+interface Props {
   open: boolean;
-  uploadCounts: UploadCounts;
+  uploadCounts: UploadCounts | null;
   onClose: () => void;
 }
 
-const STATUS_ITEMS = [
-  { key: 'duplicates', label: 'Duplicate Leads', Icon: AlertTriangle },
-  { key: 'blocked', label: 'Blocked Email Count', Icon: Ban },
-  { key: 'empty', label: 'Empty Email Count', Icon: Mail },
-  { key: 'invalid', label: 'Invalid Email Count', Icon: AlertTriangle },
-  { key: 'unsubscribed', label: 'Unsubscribed Leads', Icon: UserX },
-];
-
-export const UploadSuccessDialog: React.FC<UploadSuccessDialogProps> = ({
-  open,
-  uploadCounts,
-  onClose,
-}) => {
+export const UploadSuccessDialog: React.FC<Props> = ({ open, uploadCounts, onClose }) => {
   if (!open) return null;
-
-  const isSuccess = (uploadCounts?.uploaded || 0) > 0;
+  const isSuccess = (uploadCounts?.uploaded || 0) > 0 || false;
 
   return (
     <DialogOverlay onClick={onClose}>

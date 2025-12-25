@@ -150,6 +150,7 @@ export const StatLabel = styled.div`
   font-size: ${({ theme }) => theme.typography.fontSize.sm};
   color: ${({ theme }) => theme.colors.text.secondary};
   font-weight: ${({ theme }) => theme.typography.fontWeight.medium};
+  white-space: nowrap;
 `;
 
 export const InfoIconButton = styled.button`

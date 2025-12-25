@@ -155,24 +155,27 @@ export const OTPInput = styled.input<{ $hasValue?: boolean; $hasError?: boolean 
 `;
 
 export const VerifyButton = styled.button`
+  position: relative;
   width: 100%;
-  height: 56px;
-  background: ${({ theme }) => theme.colors.text.primary};
+  height: 52px;
+  margin-top: ${({ theme }) => theme.spacing.sm};
+  background: linear-gradient(135deg, 
+    ${({ theme }) => theme.colors.primary.main} 0%, 
+    #4f46e5 50%,
+    #7c3aed 100%
+  );
   color: white;
   font-size: ${({ theme }) => theme.typography.fontSize.lg};
   font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
-  letter-spacing: 1px;
-  text-transform: uppercase;
   border: none;
-  border-radius: ${({ theme }) => theme.borderRadius.lg};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
   cursor: pointer;
   transition: all ${({ theme }) => theme.transitions.fast};
-  position: relative;
   overflow: hidden;
 
   &:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 24px ${({ theme }) => theme.colors.primary.main}40;
   }
 
   &:active:not(:disabled) {
@@ -180,7 +183,7 @@ export const VerifyButton = styled.button`
   }
 
   &:disabled {
-    opacity: 0.7;
+    opacity: 0.85;
     cursor: not-allowed;
     transform: none;
   }

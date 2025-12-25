@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { inboxService } from "../../../../../services/inbox.service";
 import { DialogOverlay, DialogContainer, DialogHeader, DialogContent, DialogFooter, FormGroup, Label, Select, Input, CancelButton, SendButton, InfoText } from "./styled";
-import { CloseButton } from "../SetupStep.styled";
+import { CloseButton } from "./SetupStep.styled";
 import type { Account } from "../../../../../types";
 
 interface SendTestEmailProps {

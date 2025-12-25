@@ -190,5 +190,15 @@ export const emailAccountService = {
     const response = await emailApi.get(`/accounts/${id}/warmup/emails`);
     return response.data;
   },
+
+  /**
+   * Refresh an email account
+   * @param id - Email account ID
+   * @returns Refresh result
+   */
+  async refreshEmailAccount(id: string): Promise<{ code: number; message: string; data?: Account }> {
+    const response = await emailApi.post(`/accounts/${id}/load-inbox-messages`);
+    return response.data;
+  },
 };
 

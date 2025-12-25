@@ -9,12 +9,12 @@ import {
   MessageSquare,
   Phone,
   ListTodo,
-  FileEdit,
+  // FileEdit,
   Linkedin,
   Mail,
   CheckCircle2,
   Plus,
-  Settings,
+  // Settings,
   Calendar,
   ChevronDown as ChevronDownIcon,
   Star,
@@ -37,9 +37,9 @@ import {
   HeaderActions,
   HeaderIconButton,
   CloseButton,
-  QuickActions,
-  AddToCampaignButton,
-  QuickActionButton,
+  // QuickActions,
+  // AddToCampaignButton,
+  // QuickActionButton,
   TabsContainer,
   Tab,
   TabBadge,
@@ -80,10 +80,11 @@ import {
   EmptyTabTitle,
   EmptyTabDescription,
 } from "./LeadDetailsPanel.styled";
-import type { ILead } from "../../../types/lead.types";
+import CampaignsList from "./CampaignsList";
+import type { Lead } from "../../../interfaces";
 
 interface LeadDetailsPanelProps {
-  lead: ILead | null;
+  lead: Lead;
   isOpen: boolean;
   onClose: () => void;
   onNavigatePrev?: () => void;
@@ -172,9 +173,9 @@ export const LeadDetailsPanel: React.FC<LeadDetailsPanelProps> = ({
         <SectionHeader>
           <SectionTitle>Contact fields</SectionTitle>
           <SectionActions>
-            <SectionIconButton onClick={() => toast("Settings coming soon")}>
+            {/* <SectionIconButton onClick={() => toast("Settings coming soon")}>
               <Settings size={16} />
-            </SectionIconButton>
+            </SectionIconButton> */}
             <SectionIconButton onClick={() => toast("Add field coming soon")}>
               <Plus size={16} />
             </SectionIconButton>
@@ -268,9 +269,9 @@ export const LeadDetailsPanel: React.FC<LeadDetailsPanelProps> = ({
                 <FieldIcon>
                   <Calendar size={16} />
                 </FieldIcon>
-                <span>{formatDate(lead.createdAt.toISOString())}</span>
+                <span>{formatDate(lead.createdAt)}</span>
               </DateInfo>
-              <RelativeDate>{getRelativeTime(lead.createdAt.toISOString())}</RelativeDate>
+              <RelativeDate>{getRelativeTime(lead.createdAt)}</RelativeDate>
             </DateFieldValue>
           </FieldGroup>
 
@@ -301,13 +302,13 @@ export const LeadDetailsPanel: React.FC<LeadDetailsPanelProps> = ({
           <SectionTitle>Experiences</SectionTitle>
         </SectionHeader>
         <SectionBody>
-          {lead.company || lead.jobTitle ? (
+          {lead.company || lead.designation ? (
             <ExperienceCard>
               <ExperienceLogo>
                 {lead.company?.substring(0, 4).toUpperCase() || "N/A"}
               </ExperienceLogo>
               <ExperienceInfo>
-                <ExperienceTitle>{lead.jobTitle || "Unknown Role"}</ExperienceTitle>
+                <ExperienceTitle>{lead.designation || "Unknown Role"}</ExperienceTitle>
                 <ExperienceCompany>{lead.company || "Unknown Company"}</ExperienceCompany>
                 <ExperienceDuration>Present</ExperienceDuration>
               </ExperienceInfo>
@@ -344,7 +345,7 @@ export const LeadDetailsPanel: React.FC<LeadDetailsPanelProps> = ({
               <Briefcase size={16} />
             </FieldIcon>
             <FieldInput 
-              defaultValue={lead.jobTitle || ""} 
+              defaultValue={lead.designation || ""} 
               placeholder="Enter job title" 
             />
           </FieldValue>
@@ -358,7 +359,7 @@ export const LeadDetailsPanel: React.FC<LeadDetailsPanelProps> = ({
         </SectionHeader>
         <SectionBody>
           <TextAreaField
-            defaultValue={lead.jobTitle || ""}
+            defaultValue={lead.designation || ""}
             placeholder="Enter job description..."
           />
         </SectionBody>
@@ -439,8 +440,8 @@ export const LeadDetailsPanel: React.FC<LeadDetailsPanelProps> = ({
                 )}
               </LeadName>
               <LeadSubtitle>
-                {lead.jobTitle && <span>{lead.jobTitle}</span>}
-                {lead.jobTitle && lead.company && <span>at</span>}
+                {lead.designation && <span>{lead.designation}</span>}
+                {lead.designation && lead.company && <span>at</span>}
                 {lead.company && <CompanyBadge>{lead.company}</CompanyBadge>}
               </LeadSubtitle>
             </LeadTitleSection>
@@ -469,7 +470,7 @@ export const LeadDetailsPanel: React.FC<LeadDetailsPanelProps> = ({
         </PanelHeader>
 
         {/* Quick Actions */}
-        <QuickActions>
+        {/* <QuickActions>
           <AddToCampaignButton onClick={() => toast("Add to campaign coming soon")}>
             <Send size={16} />
             Add to campaign
@@ -486,7 +487,7 @@ export const LeadDetailsPanel: React.FC<LeadDetailsPanelProps> = ({
           <QuickActionButton title="Notes" onClick={() => toast("Notes coming soon")}>
             <FileEdit size={18} />
           </QuickActionButton>
-        </QuickActions>
+        </QuickActions> */}
 
         {/* Tabs */}
         <TabsContainer>
@@ -498,14 +499,7 @@ export const LeadDetailsPanel: React.FC<LeadDetailsPanelProps> = ({
           </Tab>
           <Tab $isActive={activeTab === "campaigns"} onClick={() => setActiveTab("campaigns")}>
             Campaigns
-            <TabBadge>0</TabBadge>
-          </Tab>
-          <Tab $isActive={activeTab === "tasks"} onClick={() => setActiveTab("tasks")}>
-            Tasks
-            <TabBadge>0</TabBadge>
-          </Tab>
-          <Tab $isActive={activeTab === "signals"} onClick={() => setActiveTab("signals")}>
-            Signals
+            <TabBadge>{lead.campaigns?.length || 0}</TabBadge>
           </Tab>
         </TabsContainer>
 
@@ -518,12 +512,17 @@ export const LeadDetailsPanel: React.FC<LeadDetailsPanelProps> = ({
               "Activities and interactions with this lead will appear here.",
               <MessageSquare size={24} />
             )}
-          {activeTab === "campaigns" &&
-            renderEmptyTab(
-              "No campaigns",
-              "This lead hasn't been added to any campaigns yet.",
-              <Send size={24} />
-            )}
+          {activeTab === "campaigns" && (
+            lead.campaigns?.length === 0 ? (
+              renderEmptyTab(
+                "No campaigns",
+                "This lead hasn't been added to any campaigns yet.",
+                <Send size={24} />
+              )
+            ) : (
+              <CampaignsList lead={lead} campaignId={lead.campaigns?.[0]?.id || ""} />
+            )
+          )}
           {activeTab === "tasks" &&
             renderEmptyTab(
               "No tasks",

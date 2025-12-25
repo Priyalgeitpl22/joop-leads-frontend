@@ -4,8 +4,6 @@ import { Provider } from 'react-redux';
 import { ThemeProvider } from './context';
 import { store } from './store';
 import App from './App';
-
-// Quill editor styles
 import 'react-quill-new/dist/quill.snow.css';
 
 createRoot(document.getElementById('root')!).render(

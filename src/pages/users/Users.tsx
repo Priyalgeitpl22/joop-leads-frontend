@@ -95,22 +95,20 @@ export const Users: React.FC = () => {
     setIsSubmitting(true);
     try {
       const response = await userService.createUser(formData);
-      if (response.code === 200) {
+      if (response.code === 201 && response.data) {
         toast.success(response.message || "User created successfully");
-        await fetchUsers();
+        setUsers([...users, response.data]);
         setIsAddModalOpen(false);
+        setIsSubmitting(false);
         setFormData({
           fullName: "",
           email: "",
           phone: "",
           role: UserRole.MEMBER as UserRole,
         });
-      } else {
-        toast.error(response.message || "Failed to create user");
       }
     } catch (error) {
-      toast.error(typeof error === "string" ? error : "Failed to create user");
-    } finally {
+      console.error("Failed to create user:", error);
       setIsSubmitting(false);
     }
   };

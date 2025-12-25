@@ -39,8 +39,8 @@ export interface ILead {
   source: string | null; // csv_upload, api, manual, etc.
   fileName: string | null; // Original CSV file name
 
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 
   // Relations
   orgId: string;

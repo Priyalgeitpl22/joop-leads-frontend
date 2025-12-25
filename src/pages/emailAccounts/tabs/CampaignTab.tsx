@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Mail } from 'lucide-react';
 import { campaignSenderService } from '../../../services/campaign.sender.service';
+import type { CampaignSender } from '../../../interfaces';
 import {
   CampaignContainer,
   TableContainer,
@@ -20,16 +21,9 @@ interface CampaignTabProps {
   accountId: string;
 }
 
-interface Campaign {
-  id: string;
-  name: string;
-  status: string;
-  createdAt: string;
-}
-
 export const CampaignTab: React.FC<CampaignTabProps> = ({ accountId }) => {
-  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [campaigns, setCampaigns] = useState<CampaignSender[]>([]);
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const fetchCampaigns = async () => {
@@ -38,7 +32,7 @@ export const CampaignTab: React.FC<CampaignTabProps> = ({ accountId }) => {
       setIsLoading(true);
       try {
         const response = await campaignSenderService.getAllCampaignSenders(accountId);
-        setCampaigns(response as unknown as Campaign[] || []);
+        setCampaigns(response.data || []);
       } catch (error) {
         console.error('Error fetching campaigns:', error);
         setCampaigns([]);
@@ -95,15 +89,15 @@ export const CampaignTab: React.FC<CampaignTabProps> = ({ accountId }) => {
             </tr>
           </TableHead>
           <TableBody>
-            {campaigns.map((campaign) => (
-              <TableRow key={campaign.id}>
-                <TableCell>{campaign.name}</TableCell>
+            {campaigns.map((campaignSender) => (
+              <TableRow key={campaignSender.id}>
+                <TableCell>{campaignSender.campaign?.name || 'Unnamed Campaign'}</TableCell>
                 <TableCell>
-                  <StatusBadge $status={campaign.status?.toLowerCase()}>
-                    {campaign.status}
+                  <StatusBadge $status={campaignSender.campaign?.status?.toLowerCase()}>
+                    {campaignSender.campaign?.status || 'Unknown'}
                   </StatusBadge>
                 </TableCell>
-                <TableCell>{formatDate(campaign.createdAt)}</TableCell>
+                <TableCell>{formatDate(campaignSender.createdAt)}</TableCell>
               </TableRow>
             ))}
           </TableBody>

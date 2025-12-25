@@ -116,6 +116,7 @@ export interface DataTableProps {
   emptyIcon?: React.ReactNode;
   showSaveButton?: boolean;
   handleSaveSenderAccounts?: () => void;
+  showHeader?: boolean;
 }
 
 export function DataTable({
@@ -156,6 +157,7 @@ export function DataTable({
   emptyIcon,
   showSaveButton = false,
   handleSaveSenderAccounts = () => {},
+  showHeader = true,
 }: DataTableProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<FilterState>({});
@@ -433,7 +435,7 @@ export function DataTable({
 
   return (
     <TableContainer>
-      <TableHeader>
+      {showHeader && <TableHeader>
         {title && (
           <TableTitle>
             {title}
@@ -500,7 +502,7 @@ export function DataTable({
 
           {headerActions}
         </TableActions>
-      </TableHeader>
+      </TableHeader>}
 
       {selectable && selectedRows.length > 0 && (
         <BulkActions>

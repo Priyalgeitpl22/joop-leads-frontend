@@ -284,7 +284,7 @@ export const VerifyOTP: React.FC = () => {
               </ButtonLoader>
             )}
           </VerifyButton>
-
+          
           <Timer $isExpired={timeLeft <= 0}>
             {timeLeft > 0 ? `Time remaining: ${formatTime(timeLeft)}` : 'OTP expired'}
           </Timer>

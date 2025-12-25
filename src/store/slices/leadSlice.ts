@@ -1,17 +1,18 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { leadsService } from '../../services/leads.service';
-import type { ILead, ICreateLead, IUpdateLead } from '../../types/lead.types';
+import type { ICreateLead, IUpdateLead } from '../../types/lead.types';
+import type { Lead } from '../../interfaces';
 
 // ============================================================================
 // State Interface
 // ============================================================================
 
 export interface LeadState {
-  leads: ILead[];
-  selectedLead: ILead | null;
-  searchResults: ILead[];
-  filteredLeads: ILead[];
+  leads: Lead[];
+  selectedLead: Lead | null;
+  searchResults: Lead[];
+  filteredLeads: Lead[];
   isLoading: boolean;
   error: string | null;
   pagination: {
@@ -72,7 +73,7 @@ export const createLead = createAsyncThunk(
   'lead/create',
   async (data: ICreateLead, { rejectWithValue }) => {
     try {
-      const response = await leadsService.createLead(data as ILead);
+      const response = await leadsService.createLead(data as Lead);
       return response;
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } };
@@ -86,7 +87,7 @@ export const updateLead = createAsyncThunk(
   'lead/update',
   async ({ id, data }: { id: string; data: IUpdateLead }, { rejectWithValue }) => {
     try {
-      const response = await leadsService.updateLead(id, data as ILead);
+      const response = await leadsService.updateLead(id, data as Lead);
       return response;
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } };
@@ -179,7 +180,7 @@ const leadSlice = createSlice({
     clearSelectedLead: (state) => {
       state.selectedLead = null;
     },
-    setSelectedLead: (state, action: PayloadAction<ILead>) => {
+    setSelectedLead: (state, action) => {
       state.selectedLead = action.payload;
     },
     clearSearchResults: (state) => {
@@ -337,7 +338,7 @@ const leadSlice = createSlice({
         const updatedLead = action.payload;
         const index = state.leads.findIndex((lead) => lead.email === updatedLead.email);
         if (index !== -1) {
-          state.leads[index] = { ...state.leads[index], isUnsubscribed: true, unsubscribedAt: new Date() };
+          state.leads[index] = { ...state.leads[index], isUnsubscribed: true, unsubscribedAt: new Date().toISOString() };
         }
       })
       .addCase(unsubscribeLead.rejected, (state, action) => {

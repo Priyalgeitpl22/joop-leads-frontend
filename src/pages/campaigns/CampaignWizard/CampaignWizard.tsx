@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Papa from "papaparse";
 import {
   ArrowLeft,
@@ -16,18 +16,8 @@ import { Megaphone } from "lucide-react";
 import { campaignService } from "../../../services/campaign.service";
 import toast from "react-hot-toast";
 import { SequencesStep, SetupStep, FinalReviewStep } from "./steps";
-import type { ISequence } from "../../../types/sequence.types";
 import { ImportSettingsDialog, UploadSuccessDialog } from "./components";
-import type { Campaign, Sequence } from "../../../interfaces";
-import type { ICreateSequence } from "../../../types/sequence.types";
-
-interface CsvSettings {
-  ignoreCommunityBounceList: boolean;
-  ignoreDuplicateLeadsInOtherCampaign: boolean;
-  ignoreGlobalBlockList: boolean;
-  ignoreUnsubscribeList: boolean;
-}
-
+import type { Campaign, CsvSettings, Sequence } from "../../../interfaces";
 import {
   WizardContainer,
   WizardHeader,
@@ -77,31 +67,12 @@ import {
   SecondaryActionButton,
   PrimaryActionButton,
 } from "./CampaignWizard.styles";
-import { useSelector } from "react-redux";
-import type { RootState } from "../../../store";
-import type { UploadCounts } from "./components/UploadSuccessDialog";
-
-const CONTACT_FIELD_OPTIONS = [
-  { key: "email", label: "Email", required: true },
-  { key: "firstName", label: "First Name", required: true },
-  { key: "lastName", label: "Last Name" },
-  { key: "company", label: "Company Name" },
-  { key: "designation", label: "Designation" },
-  { key: "industry", label: "Industry Type" },
-  { key: "linkedinUrl", label: "LinkedIn Profile" },
-  { key: "website", label: "Website" },
-  { key: "phone", label: "Phone Number" },
-  { key: "city", label: "City" },
-  { key: "state", label: "State" },
-  { key: "country", label: "Country" },
-];
-
-const WIZARD_STEPS = [
-  { id: "import-leads", label: "Import Leads" },
-  { id: "sequences", label: "Sequences" },
-  { id: "setup", label: "Setup" },
-  { id: "review", label: "Final Review" },
-];
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "../../../store";
+import type { UploadCounts } from "../../../interfaces";
+import { WIZARD_STEPS, CONTACT_FIELD_OPTIONS } from "../../../constants";
+import { fetchCampaignById } from "../../../store/slices/campaignSlice";
+import type { ICreateSequence } from "../../../types/sequence.types";
 
 export const CampaignWizard: React.FC = () => {
   const navigate = useNavigate();
@@ -117,38 +88,35 @@ export const CampaignWizard: React.FC = () => {
   const [showImportSettingsDialog, setShowImportSettingsDialog] =
     useState(false);
   const [showUploadSuccessDialog, setShowUploadSuccessDialog] = useState(false);
-  const [uploadCounts, setUploadCounts] = useState<UploadCounts>({
-    uploaded: 0,
-    duplicates: 0,
-    blocked: 0,
-    empty: 0,
-    invalid: 0,
-    unsubscribed: 0,
-  });
-  const [sequences, setSequences] = useState<ISequence[]>([]);
+  const [uploadCounts, setUploadCounts] = useState<UploadCounts | null>(null);
+  const [sequences, setSequences] = useState<Sequence[]>([]);
   const [isSetupValid, setIsSetupValid] = useState<boolean | string>(false);
   const currentCampaign = useSelector(
     (state: RootState) => state.campaign.currentCampaign
   );
-  const campaign = currentCampaign as unknown as Campaign;
-  const [searchParams] = useSearchParams();
-  const isEdit = searchParams.get("edit") === "true";
-  const { id } = useParams();
-  const [campaignId, setCampaignId] = useState<string | null>(id || null);
 
+  const campaign = currentCampaign as unknown as Campaign;
+  const [campaignId, setCampaignId] = useState<string | null>(null);
+  const dispatch = useDispatch<AppDispatch>();
+  const { id } = useParams<{ id: string }>();
 
   useEffect(() => {
-    if (id && id !== "new" && isEdit) {
-      setCampaignId(id);
-      checkCampaignStep(id);
+    if (!id || id === "new") return;
+
+    if (!currentCampaign || currentCampaign.id !== id) {
+      dispatch(fetchCampaignById(id));
     }
-    if (!campaignId) {
-      const campaignIdLS = localStorage.getItem("campaignId");
-      if (campaignIdLS) {
-        setCampaignId(campaignId);
-      }
+  }, [id, dispatch]);
+
+  useEffect(() => {
+    if (!currentCampaign?.id) return;
+
+    setCampaignId(currentCampaign.id);
+
+    if (id && id !== "new") {
+      checkCampaignStep(currentCampaign.id);
     }
-  }, [campaignId]);
+  }, [currentCampaign?.id]);
 
   const processUploadedCsvFile = useCallback((file: File) => {
     if (file.type !== "text/csv" && !file.name.endsWith(".csv")) {
@@ -246,7 +214,7 @@ export const CampaignWizard: React.FC = () => {
       !campaign?.sender_accounts ||
       campaign?.senders?.length === 0 ||
       !campaign.scheduledAt ||
-      campaign.name === 'Untitled Campaign'
+      campaign.name === "Untitled Campaign"
     ) {
       setCurrentStepIndex(2);
     } else {
@@ -371,7 +339,7 @@ export const CampaignWizard: React.FC = () => {
         setUploadCounts(response?.data?.counts as unknown as UploadCounts);
         setShowUploadSuccessDialog(true);
         setCampaignId(response.data.campaign.id);
-        localStorage.setItem("campaignId", response.data.campaign.id);
+        dispatch(fetchCampaignById(response.data.campaign.id));
         return true;
       } else {
         toast.error(response.message || "Failed to import leads");
@@ -385,7 +353,7 @@ export const CampaignWizard: React.FC = () => {
     }
   };
 
-  const moveToNextStep = () => {  
+  const moveToNextStep = () => {
     setCurrentStepIndex((prev) => prev + 1);
   };
 
@@ -396,26 +364,27 @@ export const CampaignWizard: React.FC = () => {
 
   const handleUploadSuccessClose = () => {
     setShowUploadSuccessDialog(false);
-
     if ((uploadCounts?.uploaded || 0) > 0 || campaignId) {
       moveToNextStep();
     } else {
-      toast.error("No leads were imported. Please try again with a valid CSV file.");
+      toast.error(
+        "No leads were imported. Please try again with a valid CSV file."
+      );
     }
   };
 
   const handleSaveSequences = async () => {
-    if (!campaignId) {
+    if (!campaignId && !campaign.id) {
       toast.error("Campaign not found");
       return false;
     }
 
-    if (sequences.length === 0) {
+    if (sequences?.length === 0) {
       toast.error("Please add at least one email sequence");
       return false;
     }
 
-    const hasEmptySequence = sequences.some(
+    const hasEmptySequence = sequences?.some(
       (seq) => !seq.subject?.trim() || !seq.bodyText?.trim()
     );
 
@@ -439,14 +408,14 @@ export const CampaignWizard: React.FC = () => {
   };
 
   const handleScheduleCampaign = async () => {
-    if (!campaignId) {
+    if (!campaign.id && campaignId) {
       toast.error("Campaign not found");
       return false;
     }
 
     try {
       const response = await campaignService.updateCampaignStatus(
-        campaignId,
+        campaignId || campaign.id,
         "SCHEDULED"
       );
 
@@ -521,7 +490,7 @@ export const CampaignWizard: React.FC = () => {
       case 0:
         return !uploadedFile || !isEmailFieldMapped;
       case 1:
-        return sequences.length === 0;
+        return sequences?.length === 0;
       case 2:
         return !isSetupValid;
       case 3:
@@ -694,23 +663,24 @@ export const CampaignWizard: React.FC = () => {
 
   const renderSequencesStep = () => (
     <SequencesStep
-      campaignId={campaignId || ""}
-      sequences={sequences}
-      onSequencesChange={setSequences}
+      campaign={currentCampaign}
+      onSequencesChange={setSequences as (sequences: Sequence[]) => void}
     />
   );
 
   const renderSetupStep = () => (
     <SetupStep
-      campaignId={campaignId}
-      campaign={campaign}
+      campaign={currentCampaign}
       onSettingsUpdate={() => {}}
       onValidationChange={setIsSetupValid}
     />
   );
 
   const renderFinalReviewStep = () => (
-    <FinalReviewStep onEmailTemplateSelect={() => {}} />
+    <FinalReviewStep
+      campaign={currentCampaign}
+      onEmailTemplateSelect={() => {}}
+    />
   );
 
   return (

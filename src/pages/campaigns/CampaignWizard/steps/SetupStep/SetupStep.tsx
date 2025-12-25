@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { CheckCircle, Circle, X } from "lucide-react";
 import { toast } from "react-hot-toast";
-import { campaignService } from "../../../../services/campaign.service";
+import { campaignService } from "../../../../../services/campaign.service.ts";
 import {
   SetupContainer,
   SetupCard,
@@ -35,17 +35,16 @@ import {
   SliderMarks,
   SettingsDialogContent,
   RequiredLabel,
-} from "./SetupStep.styled";
-import { DAYS_OF_WEEK, TIMEZONES } from "../../../../constants";
-import SenderAccounts from "./SetupStep/SenderAccounts.tsx";
-import { StopSending } from "../../../../types/enums.ts";
-import type { Campaign } from "../../../../interfaces";
-import { toDatetimeLocal } from "../../../../utils";
-import type { Account } from "../../../../types";
+} from "./SetupStep.styled.ts";
+import { DAYS_OF_WEEK, TIMEZONES } from "../../../../../constants/index.ts";
+import SenderAccounts from "./SenderAccounts.tsx";
+import { StopSending } from "../../../../../types/enums.ts";
+import type { Campaign } from "../../../../../interfaces/index.ts";
+import { toDatetimeLocal } from "../../../../../utils/index.ts";
+import type { Account } from "../../../../../types/index.ts";
 
 interface SetupStepProps {
-  campaignId: string | null;
-  campaign: Campaign;
+  campaign: Campaign | null;
   onSettingsUpdate: (data: Record<string, unknown>) => void;
   onValidationChange: (isValid: boolean) => void;
 }
@@ -57,7 +56,6 @@ const getNowForDatetimeLocal = () => {
 };
 
 export const SetupStep: React.FC<SetupStepProps> = ({
-  campaignId,
   campaign,
   onSettingsUpdate,
   onValidationChange,
@@ -128,13 +126,13 @@ export const SetupStep: React.FC<SetupStepProps> = ({
   }, [campaign]);
 
   const setSetupData = async () => {
-    if (campaign.sender_accounts && campaign.sender_accounts.length > 0) {
+    if (campaign && campaign.sender_accounts && campaign.sender_accounts.length > 0) {
       setSenderCompleted(true);
     }
-    if (campaign.scheduledAt && campaign.timezone && campaign.windowStart && campaign.windowEnd && campaign.sendDays.length > 0) {
+    if (campaign && campaign.scheduledAt && campaign.timezone && campaign.windowStart && campaign.windowEnd && campaign.sendDays.length > 0) {
       setScheduleCompleted(true);
     }
-    if (campaign.name !== 'Untitled Campaign' && campaign.stopSending && campaign.sendingPriority) {
+    if (campaign && campaign.name !== 'Untitled Campaign' && campaign.stopSending && campaign.sendingPriority) {
       setSettingsCompleted(true);
     }
   };
@@ -156,7 +154,7 @@ export const SetupStep: React.FC<SetupStepProps> = ({
     setIsSaving(true);
     try {
       await campaignService.addCampaignSettings({
-        campaign_id: campaign.id,
+        campaign_id: campaign?.id || '',
         timezone: scheduleData.timezone,
         windowStart: scheduleData.windowStart,
         windowEnd: scheduleData.windowEnd,
@@ -187,7 +185,7 @@ export const SetupStep: React.FC<SetupStepProps> = ({
     setIsSaving(true);
     try {
       await campaignService.addCampaignSettings({
-        campaign_id: campaign.id,
+        campaign_id: campaign?.id || '',
         name: settingsData.name,
         stopSending: settingsData.stopSending,
         sendAsPlainText: settingsData.sendAsPlainText,
@@ -221,7 +219,7 @@ export const SetupStep: React.FC<SetupStepProps> = ({
 
   const handleSaveSenderAccounts = async () => {
     await campaignService.addCampaignSettings({
-      campaign_id: campaignId || campaign.id,
+      campaign_id: campaign?.id || '',
       sender_accounts: selectedSenderAccounts,
     });
     setSenderCompleted(true);

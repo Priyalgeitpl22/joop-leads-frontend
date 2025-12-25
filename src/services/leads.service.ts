@@ -1,4 +1,4 @@
-import type { ILead } from "../types/lead.types";
+import type { Lead } from "../interfaces";
 import { api } from "./api";
 
 const BASE_URL = '/lead';
@@ -13,11 +13,11 @@ export const leadsService = {
         const response = await api.get(`${BASE_URL}/${id}`);
         return response.data;
     },
-    createLead: async (lead: ILead) => {
+    createLead: async (lead: Lead) => {
         const response = await api.post(`${BASE_URL}`, lead);
         return response.data;
     },
-    updateLead: async (id: string, lead: ILead) => {
+    updateLead: async (id: string, lead: Partial<Lead>) => {
         const response = await api.put(`${BASE_URL}/${id}`, lead);
         return response.data;
     },

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { EmailAccountsDialogContainer } from "../SetupStep.styled";
+import { EmailAccountsDialogContainer } from "./SetupStep.styled";
 import {
   DataTable,
   type Column,

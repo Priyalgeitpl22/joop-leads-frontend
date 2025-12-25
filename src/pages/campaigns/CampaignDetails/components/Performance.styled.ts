@@ -9,9 +9,9 @@ export const PerformanceGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 0;
-  background: white;
+  background: ${({ theme }) => theme.colors.background.secondary};
   border-radius: 8px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid ${({ theme }) => theme.colors.border.main};
   overflow: hidden;
 
   @media (max-width: 1200px) {
@@ -21,7 +21,7 @@ export const PerformanceGrid = styled.div`
 
 export const PerformanceSection = styled.div`
   padding: 24px;
-  border-right: 1px solid #e0e0e0;
+  border-right: 1px solid ${({ theme }) => theme.colors.border.main};
 
   &:last-child {
     border-right: none;
@@ -29,7 +29,7 @@ export const PerformanceSection = styled.div`
 
   @media (max-width: 1200px) {
     border-right: none;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid ${({ theme }) => theme.colors.border.main};
 
     &:last-child {
       border-bottom: none;
@@ -40,19 +40,19 @@ export const PerformanceSection = styled.div`
 export const PercentageDisplay = styled.div`
   font-size: 28px;
   font-weight: 300;
-  color: #1a1a2e;
+  color: ${({ theme }) => theme.colors.text.primary};
   margin-bottom: 4px;
 
   span {
     font-size: 14px;
     font-weight: 400;
-    color: #666;
+    color: ${({ theme }) => theme.colors.text.secondary};
   }
 `;
 
 export const ProgressBarContainer = styled.div`
   height: 8px;
-  background: #e8f5e9;
+  background: ${({ theme }) => theme.colors.background.secondary};
   border-radius: 4px;
   margin-bottom: 24px;
   overflow: hidden;
@@ -61,7 +61,7 @@ export const ProgressBarContainer = styled.div`
 export const ProgressBarFill = styled.div<{ percentage: number }>`
   height: 100%;
   width: ${(props) => props.percentage}%;
-  background: linear-gradient(90deg, #4caf50 0%, #66bb6a 100%);
+  background: linear-gradient(90deg, ${({ theme }) => theme.colors.primary.main} 0%, ${({ theme }) => theme.colors.primary.dark} 100%);
   border-radius: 4px;
   transition: width 0.5s ease-in-out;
 `;
@@ -77,23 +77,23 @@ export const StatItem = styled.div`
   justify-content: space-between;
   align-items: center;
   font-size: 14px;
-  color: #444;
+  color: ${({ theme }) => theme.colors.text.secondary};
 
   .label {
     display: flex;
     align-items: center;
     gap: 6px;
-    color: #666;
+    color: ${({ theme }) => theme.colors.text.secondary};
   }
 
   .value {
     font-weight: 600;
-    color: #1a1a2e;
+    color: ${({ theme }) => theme.colors.text.primary};
   }
 `;
 
 export const ViewLink = styled.a`
-  color: #6366f1;
+  color: ${({ theme }) => theme.colors.primary.main};
   font-size: 14px;
   text-decoration: none;
   cursor: pointer;
@@ -106,7 +106,7 @@ export const ViewLink = styled.a`
 export const SectionTitle = styled.h3`
   font-size: 14px;
   font-weight: 600;
-  color: #1a1a2e;
+  color: ${({ theme }) => theme.colors.text.primary};
   margin: 0 0 16px 0;
 `;
 
@@ -115,13 +115,13 @@ export const TriggerInfo = styled.div`
 
   .label {
     font-size: 14px;
-    color: #666;
+    color: ${({ theme }) => theme.colors.text.secondary};
     margin-bottom: 4px;
   }
 
   .value {
     font-size: 14px;
-    color: #1a1a2e;
+    color: ${({ theme }) => theme.colors.text.primary};
   }
 `;
 
@@ -138,22 +138,22 @@ export const PriorityItem = styled.div`
   font-size: 14px;
 
   .name {
-    color: #444;
+    color: ${({ theme }) => theme.colors.text.secondary};
   }
 
   .percentage {
-    color: #666;
+    color: ${({ theme }) => theme.colors.text.secondary};
   }
 `;
 
 export const PriorityNote = styled.p`
   font-size: 12px;
-  color: #888;
+  color: ${({ theme }) => theme.colors.text.secondary};
   margin-top: 16px;
   line-height: 1.5;
 
   a {
-    color: #6366f1;
+    color: ${({ theme }) => theme.colors.primary.main};
     text-decoration: underline;
   }
 `;
@@ -167,19 +167,19 @@ export const ScoreDisplay = styled.div`
   .score {
     font-size: 32px;
     font-weight: 300;
-    color: #4caf50;
+    color: ${({ theme }) => theme.colors.primary.main};
   }
 
   .total {
     font-size: 14px;
-    color: #666;
+    color: ${({ theme }) => theme.colors.text.secondary};
   }
 `;
 
 export const ScoreLabel = styled.p`
   font-size: 14px;
   font-weight: 600;
-  color: #1a1a2e;
+  color: ${({ theme }) => theme.colors.text.primary};
   margin-bottom: 20px;
 `;
 
@@ -194,7 +194,7 @@ export const CheckItem = styled.div<{ passed?: boolean }>`
   align-items: center;
   justify-content: space-between;
   font-size: 14px;
-  color: #444;
+  color: ${({ theme }) => theme.colors.text.secondary};
 
   .left {
     display: flex;
@@ -209,28 +209,28 @@ export const CheckItem = styled.div<{ passed?: boolean }>`
     display: flex;
     align-items: center;
     justify-content: center;
-    background: ${(props) => (props.passed ? "#e8f5e9" : "#ffebee")};
-    color: ${(props) => (props.passed ? "#4caf50" : "#f44336")};
+    background: ${(props) => (props.passed ? ({ theme }) => theme.colors.background.secondary : ({ theme }) => theme.colors.background.tertiary)};
+    color: ${(props) => (props.passed ? ({ theme }) => theme.colors.primary.main : ({ theme }) => theme.colors.error.main)};
   }
 
   .info-icon {
-    color: #bdbdbd;
+    color: ${({ theme }) => theme.colors.text.secondary};
     cursor: pointer;
   }
 `;
 
 export const SenderAccountsSection = styled.div`
   margin-top: 24px;
-  background: white;
+  background: ${({ theme }) => theme.colors.background.secondary};
   border-radius: 8px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid ${({ theme }) => theme.colors.border.main};
   padding: 24px;
 `;
 
 export const SenderAccountsTitle = styled.h3`
   font-size: 16px;
   font-weight: 600;
-  color: #1a1a2e;
+  color: ${({ theme }) => theme.colors.text.primary};
   margin: 0 0 20px 0;
 `;
 

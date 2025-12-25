@@ -1,7 +1,8 @@
 import { api } from './api';
 import type { ICreateSequence, ISequence } from '../types/sequence.types';
-import type { ILead } from '../types/lead.types';
-import type { Campaign } from '../interfaces';
+import type { Lead } from '../interfaces';
+import type { Campaign, CampaignLead, CampaignSenderWithStats, SequenceAnalytics } from '../interfaces';
+import type { ApiResponse } from '../types/common.types';
 
 const BASE_URL = '/campaign';
 
@@ -46,14 +47,14 @@ export const campaignService = {
   /**
    * Add leads to campaign via CSV upload
    */
-  async addLeadsToCampaign(data: FormData): Promise<{ 
-    code: number; 
+  async addLeadsToCampaign(data: FormData): Promise<{
+    code: number;
     data: {
       campaign: Campaign;
-      counts: { 
-        uploaded: number; 
+      counts: {
+        uploaded: number;
         uploadedCount: number;
-        duplicates: number; 
+        duplicates: number;
         duplicateCount: number;
         errors: number;
         errorCount: number;
@@ -78,9 +79,9 @@ export const campaignService = {
   /**
    * Add sequences to campaign
    */
-  async addSequencesToCampaign(data: ICreateSequence): Promise<{ 
-    code: number; 
-    data: { campaign_id: string }; 
+  async addSequencesToCampaign(data: ICreateSequence): Promise<{
+    code: number;
+    data: { campaign_id: string };
   }> {
     const response = await api.post(`${BASE_URL}/sequences`, data);
     return response.data;
@@ -134,9 +135,9 @@ export const campaignService = {
   /**
    * Get campaign contacts
    */
-  async getCampaignContacts(campaignId: string): Promise<ILead[]> {
+  async getCampaignContacts(campaignId: string): Promise<Lead[]> {
     const response = await api.get(`${BASE_URL}/contacts/${campaignId}`);
-    return response.data.data || [];
+    return response.data || [];
   },
 
   /**
@@ -198,11 +199,41 @@ export const campaignService = {
   /**
    * Search contacts by campaign
    */
-  async searchContactsByCampaign(campaignId: string, email?: string): Promise<{ data: ILead[] }> {
-    const url = email 
+  async searchContactsByCampaign(campaignId: string, email?: string): Promise<{ data: Lead[] }> {
+    const url = email
       ? `${BASE_URL}/search-lead?campaign_id=${campaignId}&email=${email}`
       : `${BASE_URL}/search-lead?campaign_id=${campaignId}`;
     const response = await api.get(url);
+    return response.data;
+  },
+
+  /**
+   * Get sequence analytics for a campaign
+   */
+  async getSequenceAnalytics(campaignId: string): Promise<{ data: SequenceAnalytics[] }> {
+    const response = await api.get(`${BASE_URL}/${campaignId}/sequences/analytics`);
+    return response.data;
+  },
+
+  async getCampaignSenders(campaignId: string): Promise<CampaignSenderWithStats[]> {
+    const response = await api.get(`${BASE_URL}/${campaignId}/senders`);
+    return response.data;
+  },
+
+  async getOverallAnalytics(orgId: string, from: string, to: string): Promise<ApiResponse> {
+    const response = await api.get(`campaign-analytics/org/${orgId}`, {
+      params: { from, to },
+    });
+    return response.data;
+  },
+
+  async getLeadsGroupedBySender(campaignId: string): Promise<ApiResponse<{ groupedLeads: CampaignLead[] }>> {
+    const response = await api.get(`${BASE_URL}/${campaignId}/leads/grouped-by-sender`);
+    return response.data;
+  },
+
+  async getCampaignsByLead(leadId: string): Promise<ApiResponse<[]>> {
+    const response = await api.get(`${BASE_URL}/lead/${leadId}/campaigns-by-lead`);
     return response.data;
   },
 };

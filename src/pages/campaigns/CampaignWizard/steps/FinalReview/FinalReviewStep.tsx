@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
-import ReactQuill from "react-quill-new";
-import "react-quill-new/dist/quill.snow.css";
 import { Mail, Send } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
-import type { Sequence, Lead, Campaign } from "../../../../interfaces";
+import { useDispatch } from "react-redux";
+import type { Sequence, Lead, Campaign } from "../../../../../interfaces";
 import {
   ReviewContainer,
   ContactsSidebar,
@@ -23,45 +21,15 @@ import {
   TestEmailButton,
   EmptyState
 } from "./FinalReviewStep.styled";
-
-const QUILL_MODULES = {
-  toolbar: [
-    [{ header: [1, 2, 3, false] }],
-    ["bold", "italic", "underline", "strike"],
-    [{ color: [] }, { background: [] }],
-    [{ align: [] }],
-    [{ list: "ordered" }, { list: "bullet" }],
-    [{ indent: "-1" }, { indent: "+1" }],
-    ["blockquote", "code-block"],
-    ["link", "image"],
-    ["clean"],
-  ],
-};
-
-const QUILL_FORMATS = [
-  "header",
-  "bold",
-  "italic",
-  "underline",
-  "strike",
-  "color",
-  "background",
-  "align",
-  "list",
-  "bullet",
-  "indent",
-  "link",
-  "image",
-  "blockquote",
-  "code-block",
-];
-import type { AppDispatch, RootState } from "../../../../store";
-import { fetchCampaignById } from "../../../../store/slices/campaignSlice";
+import { QuillEditor } from "../../../../../components/common/QuillEditor";
+import type { AppDispatch } from "../../../../../store";
+import { fetchCampaignById } from "../../../../../store/slices/campaignSlice";
 import { useLocation, useParams } from "react-router-dom";
-import SendTestEmail from "./SetupStep/SendTestEmail";
-import type { Account } from "../../../../types";
+import SendTestEmail from "../SetupStep/SendTestEmail";
+import type { Account } from "../../../../../types";
 
 interface FinalReviewStepProps {
+  campaign: Campaign | null;
   onEmailTemplateSelect: (template: {
     compiledSubject: string;
     compiledBody: string;
@@ -69,10 +37,9 @@ interface FinalReviewStepProps {
 }
 
 export const FinalReviewStep: React.FC<FinalReviewStepProps> = ({
+  campaign,
   onEmailTemplateSelect,
 }) => {
-  const { currentCampaign } = useSelector((state: RootState) => state.campaign);
-  const campaign = currentCampaign as Campaign;
   const [selectedLead, setSelectedLead] = useState<Lead | null>(campaign?.leads?.[0] as Lead | null);
   const [selectedSequenceIndex, setSelectedSequenceIndex] = useState(campaign?.sequences?.[0] ? campaign?.sequences?.findIndex((seq: Sequence) => seq.id === campaign?.sequences?.[0]?.id) : 0);
   const [searchQuery, setSearchQuery] = useState("");
@@ -201,13 +168,11 @@ export const FinalReviewStep: React.FC<FinalReviewStepProps> = ({
 
             <PreviewContent>
               <EditorWrapper>
-                <ReactQuill
-                  theme="snow"
+                <QuillEditor
                   value={compiledBody}
-                  modules={QUILL_MODULES}
-                  formats={QUILL_FORMATS}
                   readOnly={true}
                   placeholder="Email content will appear here..."
+                  minHeight="300px"
                 />
               </EditorWrapper>
             </PreviewContent>
