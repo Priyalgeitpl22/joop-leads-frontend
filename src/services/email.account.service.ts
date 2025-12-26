@@ -1,5 +1,6 @@
 import { emailApi } from './api';
 import type { Account, IEmailAccountResponse, IEmailAccountFilters } from '../types/emailAccount.types';
+import type { ApiResponse } from '../types';
 
 export const emailAccountService = {
   /**
@@ -155,7 +156,7 @@ export const emailAccountService = {
     proxy: null;
     smtpEhloName: string;
     signature?: string;
-  }): Promise<Account> {
+  }): Promise<ApiResponse<Account>> {
     const response = await emailApi.post('/accounts', payload);
     return response.data;
   },

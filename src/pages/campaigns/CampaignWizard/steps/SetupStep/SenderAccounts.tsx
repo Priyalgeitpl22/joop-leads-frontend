@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { EmailAccountsDialogContainer } from "./SetupStep.styled";
 import {
   DataTable,
@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 import type { RootState } from "../../../../../store";
 
 interface Props {
-  selectedSenderAccounts: Account[] | [];
+  selectedSenderAccounts: Account[];
   onSelectionChange: (selectedAccounts: Account[]) => void;
   showSaveButton?: boolean;
   handleSaveSenderAccounts: () => void;
@@ -23,10 +23,7 @@ export default function SenderAccounts({
   handleSaveSenderAccounts = () => {},
 }: Props) {
   const [senderAccounts, setSenderAccounts] = useState<Account[]>([]);
-  const selectedIds = useMemo(
-    () => selectedSenderAccounts.map((acc) => acc._id || '').filter(Boolean),
-    [selectedSenderAccounts]
-  );
+  const selectedIds = selectedSenderAccounts.map((acc) => acc._id).filter(Boolean);
   const { currentUser } = useSelector((state: RootState) => state.user);
   const [isLoading, setIsLoading] = useState(true);
   const columns: Column[] = [

@@ -101,7 +101,18 @@ export const SetupStep: React.FC<SetupStepProps> = ({
 
   useEffect(() => {
     if (campaign) {
-      setSelectedSenderAccounts(campaign.sender_accounts as Account[] || []);
+      const campaignSenderAccounts: any = campaign.sender_accounts.map((s)=> {
+        return {
+          _id: s.accountId,
+          name: s.name || "",
+          email: s.email,
+          minDelaySeconds: s.minDelaySeconds,
+          dailyLimit: s.dailyLimit,
+          warmupStatus: s.warmupStatus,
+          orgId: campaign.orgId || "",
+        };
+      });
+      setSelectedSenderAccounts(campaignSenderAccounts || []);
       setScheduleData({
         scheduledAt: new Date(campaign.scheduledAt || getNowForDatetimeLocal()).toISOString().slice(0, 16),
         timezone: campaign.timezone || "UTC",
@@ -593,13 +604,13 @@ export const SetupStep: React.FC<SetupStepProps> = ({
                   />
                   <span>Don't track link clicks</span>
                 </CheckboxOption>
-              </SettingsSection>
+              </SettingsSection>v
 
               <SettingsSection>
                 <SectionHeader>
                   <h4>Sending Priority</h4>
                   <p>
-                    Set the priority level for sending (0 = low, 100 = high)
+                    Set the priority level for sending followup emails (0 = low, 100 = high)
                   </p>
                 </SectionHeader>
                 <SliderContainer>
@@ -623,7 +634,7 @@ export const SetupStep: React.FC<SetupStepProps> = ({
                   <SliderMarks>
                     {[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map(
                       (mark) => (
-                        <span key={mark}>•</span>
+                        <span key={mark}>{mark}</span>
                       )
                     )}
                   </SliderMarks>

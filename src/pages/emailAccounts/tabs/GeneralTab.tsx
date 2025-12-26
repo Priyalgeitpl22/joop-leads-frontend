@@ -29,6 +29,7 @@ import {
 } from './GeneralTab.styled';
 import type { Account } from '../../../types';
 import senderAccountService from '../../../services/sender.account.service';
+import { EmailAccountType } from '../../../types/emailAccount.types';
 
 interface GeneralTabProps {
   accountId: string;
@@ -188,7 +189,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ accountId, emailAccount,
 
     try {
       await emailAccountService.verifySmtpAccount({
-        type: 'smtp',
+        type: EmailAccountType.SMTP,
         imap: {
           host: formData.imapHost,
           port: formData.imapPort,
@@ -239,7 +240,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ accountId, emailAccount,
         };
       } else {
         payload = {
-          name: formData.fromName,
+          name: formData.fromName || '',
           email: formData.fromEmail,
           smtp: {
             host: formData.smtpHost,
@@ -268,8 +269,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ accountId, emailAccount,
 
       const response = await emailAccountService.updateEmailAccount(accountId, payload);
       if (response.code === 200 && response.data) {
-        console.log(response.data);
-        await senderAccountService.updateSenderAccount(accountId, payload);
+        await senderAccountService.updateSenderAccount(accountId, payload as Account);
         toast.success('Email account updated successfully!');
         onUpdate?.(response.data as Account);
       } else {

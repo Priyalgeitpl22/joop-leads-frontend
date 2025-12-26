@@ -452,7 +452,6 @@ export const ErrorContainer = styled.div`
   }
 `;
 
-// Sender Accounts Tab Styles
 export const SenderAccountsContainer = styled.div`
   background: ${({ theme }) => theme.colors.background.primary};
   border: 1px solid ${({ theme }) => theme.colors.border.light};

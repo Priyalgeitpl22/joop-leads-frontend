@@ -106,7 +106,7 @@ export const CampaignWizard: React.FC = () => {
     if (!currentCampaign || currentCampaign.id !== id) {
       dispatch(fetchCampaignById(id));
     }
-  }, [id, dispatch]);
+  }, [id, dispatch, currentStepIndex]);
 
   useEffect(() => {
     if (!currentCampaign?.id) return;
@@ -354,6 +354,7 @@ export const CampaignWizard: React.FC = () => {
   };
 
   const moveToNextStep = () => {
+    dispatch(fetchCampaignById(campaignId || campaign.id));
     setCurrentStepIndex((prev) => prev + 1);
   };
 
@@ -394,7 +395,7 @@ export const CampaignWizard: React.FC = () => {
     }
 
     const response = await campaignService.addSequencesToCampaign({
-      campaignId: campaignId!,
+      campaignId: campaignId || campaign.id || "",
       sequences: sequences as unknown as Sequence[],
     } as unknown as ICreateSequence);
 

@@ -35,11 +35,13 @@ import {
   SignatureEditor,
   Spinner,
 } from './SmtpDialog.styled';
+import senderAccountService from '../../../services/sender.account.service';
+import { EmailAccountState, EmailAccountType, type Account } from '../../../types/emailAccount.types';
 
 interface SmtpDialogProps {
   open: boolean;
   onClose: () => void;
-  onAccountCreated?: (account: unknown) => void;
+  onAccountCreated?: (account: Account) => void;
 }
 
 interface FormData {
@@ -192,7 +194,7 @@ export const SmtpDialog: React.FC<SmtpDialogProps> = ({ open, onClose, onAccount
 
     try {
       await emailAccountService.verifySmtpAccount({
-        type: 'smtp',
+        type: EmailAccountType.SMTP,
         imap: {
           host: formData.imapHost,
           port: formData.imapPort,
@@ -240,10 +242,10 @@ export const SmtpDialog: React.FC<SmtpDialogProps> = ({ open, onClose, onAccount
 
     try {
       const response = await emailAccountService.createSmtpAccount({
-        account: 'smtp',
+        account: EmailAccountType.SMTP,
         name: formData.fromName,
-        state: 'init',
-        type: 'imap',
+        state: EmailAccountState.ACTIVE,
+        type: EmailAccountType.SMTP,
         orgId: currentUser.orgId,
         email: formData.fromEmail,
         limit: Number(formData.limit),
@@ -270,8 +272,9 @@ export const SmtpDialog: React.FC<SmtpDialogProps> = ({ open, onClose, onAccount
         smtpEhloName: 'localhost',
         signature: formData.signature,
       });
+      await senderAccountService.createSenderAccount(response.data as Account);
       toast.success('Email account created successfully!');
-      onAccountCreated?.(response);
+      onAccountCreated?.(response.data as Account);
       onClose();
     } catch (error) {
       console.error('Failed to create account:', error);

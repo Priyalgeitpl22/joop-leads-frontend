@@ -107,7 +107,7 @@ export interface IEmailAccountFilters {
 }
 
 export enum EmailAccountState {
-  CONNECTED = 'connected',
+  ACTIVE = 'active',
   INACTIVE = 'inactive',
   PENDING = 'pending',
   VERIFIED = 'verified',

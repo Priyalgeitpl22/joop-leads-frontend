@@ -100,6 +100,7 @@ export interface ApiKey {
 
 export interface SenderAccount {
   id: string;
+  accountId: string;
   email: string;
   name: string | null;
   provider: EmailProvider;

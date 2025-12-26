@@ -1,5 +1,7 @@
 import { api } from './api';
 import type { Account } from '../types/emailAccount.types';
+import type { ApiResponse } from '../types';
+import type { SenderAccount } from '../interfaces';
 
 const BASE_URL = '/sender-account';
 
@@ -14,12 +16,12 @@ export const campaignService = {
         return response.data;
     },
 
-    async createSenderAccount(data: Partial<Account>): Promise<Account> {
+    async createSenderAccount(data: Account): Promise<ApiResponse<SenderAccount>> {
         const response = await api.post(`${BASE_URL}`, data);
         return response.data;
     },
 
-    async updateSenderAccount(id: string, data: Partial<Account>): Promise<Account> {
+    async updateSenderAccount(id: string, data: Account): Promise<ApiResponse<SenderAccount>> {
         const response = await api.put(`${BASE_URL}/${id}`, data);
         return response.data;
     },

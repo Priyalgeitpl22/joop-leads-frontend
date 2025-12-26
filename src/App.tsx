@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
 // Pages
@@ -24,12 +24,18 @@ import { useEffect } from "react";
 import type { AppDispatch } from "./store";
 import { fetchCurrentUser } from "./store/slices/userSlice";
 
+const PUBLIC_ROUTES = ['/login', '/register', '/forgot-password', '/reset-password', '/verify-otp', '/activate-account'];
+
 function App() {
   const dispatch = useDispatch<AppDispatch>();
+  const location = useLocation();
 
   useEffect(() => {
-    dispatch(fetchCurrentUser());
-  }, [dispatch]);
+    const isPublicRoute = PUBLIC_ROUTES.some(route => location.pathname.startsWith(route));
+    if (!isPublicRoute) {
+      dispatch(fetchCurrentUser());
+    }
+  }, [dispatch, location.pathname]);
 
   return (
     <>
