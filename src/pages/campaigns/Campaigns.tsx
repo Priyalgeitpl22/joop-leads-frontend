@@ -71,7 +71,6 @@ import CircularProgressWithStatus from "../../components/common/CircularProgress
 import { OptionsMenu, Dialog, Button, Input } from "../../components/common";
 import { deleteCampaign } from "../../store/slices/campaignSlice";
 import { toast } from "react-hot-toast";
-import { StatusBadge } from "../../styles/GlobalStyles";
 
 export const Campaigns: React.FC = () => {
   const navigate = useNavigate();

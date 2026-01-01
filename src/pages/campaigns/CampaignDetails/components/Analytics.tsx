@@ -5,7 +5,6 @@ import {
   SectionCard,
   SectionHeader,
   SectionTitleGroup,
-  SectionTitle,
   StatsGrid,
   StatCard,
   StatValue,

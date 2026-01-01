@@ -4,7 +4,6 @@ import {
   LeadListContainer,
   LeadListCard,
   LeadListHeader,
-  LeadListTitle,
   SearchBox,
   SearchIcon,
   SearchInput,
@@ -61,13 +60,11 @@ export interface LeadListItem {
 
 interface LeadListProps {
   campaignId: string;
-  totalCount?: number;
   onExport?: () => void;
 }
 
 export const LeadList: React.FC<LeadListProps> = ({
   campaignId,
-  totalCount,
   onExport,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');

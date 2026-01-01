@@ -123,7 +123,6 @@ const CampaignDetailsPage: React.FC = () => {
         return (
           <LeadList
             campaignId={id || ""}
-            totalCount={campaign.leads?.length || 0}
           />
         );
       case "sequences":
