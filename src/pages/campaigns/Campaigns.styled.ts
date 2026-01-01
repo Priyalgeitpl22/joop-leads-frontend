@@ -456,7 +456,7 @@ export const CampaignTable = styled.div`
   background: ${({ theme }) => theme.colors.background.primary};
   border: 1px solid ${({ theme }) => theme.colors.border.light};
   border-radius: ${({ theme }) => theme.borderRadius.lg};
-  overflow: hidden;
+  // overflow: hidden;
 `;
 
 export const TableHeader = styled.div`
@@ -538,22 +538,6 @@ export const CampaignMeta = styled.div`
   span {
     white-space: nowrap;
   }
-`;
-
-export const StatusBadge = styled.span<{ $status?: string }>`
-  color: ${({ $status, theme }) => {
-    switch ($status) {
-      case 'active':
-      case 'scheduled':
-        return theme.colors.success.main;
-      case 'paused':
-        return theme.colors.warning.main;
-      case 'drafted':
-      default:
-        return theme.colors.text.tertiary;
-    }
-  }};
-  text-transform: capitalize;
 `;
 
 export const MetaSeparator = styled.span`

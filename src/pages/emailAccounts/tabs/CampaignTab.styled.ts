@@ -49,31 +49,6 @@ export const TableCell = styled.td`
   color: ${({ theme }) => theme.colors.text.primary};
 `;
 
-export const StatusBadge = styled.span<{ $status?: string }>`
-  display: inline-block;
-  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.sm};
-  border-radius: ${({ theme }) => theme.borderRadius.sm};
-  font-size: ${({ theme }) => theme.typography.fontSize.xs};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
-  text-transform: capitalize;
-  background: ${({ $status, theme }) =>
-    $status === 'active' || $status === 'running'
-      ? `${theme.colors.success.main}20`
-      : $status === 'paused'
-        ? `${theme.colors.warning.main}20`
-        : $status === 'draft'
-          ? `${theme.colors.neutral[400]}20`
-          : `${theme.colors.primary.main}20`};
-  color: ${({ $status, theme }) =>
-    $status === 'active' || $status === 'running'
-      ? theme.colors.success.dark
-      : $status === 'paused'
-        ? theme.colors.warning.dark
-        : $status === 'draft'
-          ? theme.colors.neutral[600]
-          : theme.colors.primary.dark};
-`;
-
 export const EmptyState = styled.div`
   display: flex;
   flex-direction: column;

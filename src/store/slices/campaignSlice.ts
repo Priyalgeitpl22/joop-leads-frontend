@@ -149,6 +149,19 @@ export const getSequenceAnalytics = createAsyncThunk(
   }
 );
 
+export const changeCampaignStatus = createAsyncThunk(
+  'campaign/changeStatus',
+  async ({ id, status }: { id: string; status: CampaignStatus }, { rejectWithValue }) => {
+    try {
+      await campaignService.changeCampaignStatus(id, status);
+      return { id, status };
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      return rejectWithValue(err.response?.data?.message || 'Failed to change campaign status');
+    }
+  }
+);
+
 // Slice
 const campaignSlice = createSlice({
   name: 'campaign',
@@ -207,6 +220,22 @@ const campaignSlice = createSlice({
         state.campaigns = state.campaigns.filter((c) => c.id !== action.payload);
       })
       .addCase(deleteCampaign.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      });
+
+    // Change Campaign Status
+    builder
+      .addCase(changeCampaignStatus.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(changeCampaignStatus.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.currentCampaign = { ...state.currentCampaign as Campaign, status: action.payload.status as CampaignStatus };
+        toast.success('Campaign status changed successfully');
+      })
+      .addCase(changeCampaignStatus.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
       });

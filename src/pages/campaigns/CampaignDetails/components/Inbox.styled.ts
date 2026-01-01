@@ -14,7 +14,7 @@ export const InboxCard = styled.div`
 
 export const InboxHeader = styled.div`
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   gap: ${({ theme }) => theme.spacing.lg};
   padding: ${({ theme }) => theme.spacing.sm};
@@ -23,6 +23,18 @@ export const InboxHeader = styled.div`
   @media (max-width: 768px) {
     flex-direction: column;
     align-items: stretch;
+  }
+`;
+
+export const InboxHeaderTitle = styled.h2`
+  font-size: ${({ theme }) => theme.typography.fontSize.md};
+  font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
+  color: ${({ theme }) => theme.colors.text.primary};
+  margin: 0;
+
+  span {
+    font-weight: ${({ theme }) => theme.typography.fontWeight.normal};
+    color: ${({ theme }) => theme.colors.text.secondary};
   }
 `;
 
@@ -131,7 +143,10 @@ export const LeadAvatar = styled.div`
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg,
+    ${({ theme }) => theme.colors.primary.main} 0%,
+    ${({ theme }) => theme.colors.primary.dark} 100%
+  );
   display: flex;
   align-items: center;
   justify-content: center;
@@ -155,7 +170,7 @@ export const LeadName = styled.span`
 `;
 
 export const LeadDetail = styled.span`
-  font-size: ${({ theme }) => theme.typography.fontSize.sm};
+  font-size: ${({ theme }) => theme.typography.fontSize.xs};
   color: ${({ theme }) => theme.colors.text.secondary};
   display: flex;
   align-items: center;
@@ -169,12 +184,14 @@ export const LeadDetail = styled.span`
 
 export const EmailLink = styled.span`
   color: ${({ theme }) => theme.colors.text.primary};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.medium};
+  font-size: ${({ theme }) => theme.typography.fontSize.xs};
+  font-weight: ${({ theme }) => theme.typography.fontWeight.normal};
 `;
 
 export const MessageCell = styled.div`
-  max-width: 500px;
-  min-width: 300px;
+  max-width: 350px;
+  min-width: 200px;
+  word-wrap: break-word;
 `;
 
 export const MessageSubject = styled.div`
@@ -182,6 +199,7 @@ export const MessageSubject = styled.div`
   font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
   color: ${({ theme }) => theme.colors.text.primary};
   margin-bottom: ${({ theme }) => theme.spacing.md};
+  word-wrap: break-word;
 `;
 
 export const MessageBody = styled.div`
@@ -189,7 +207,7 @@ export const MessageBody = styled.div`
   color: ${({ theme }) => theme.colors.text.secondary};
   line-height: 1.6;
   white-space: pre-wrap;
-
+  word-wrap: break-word;
   p {
     margin: 0 0 ${({ theme }) => theme.spacing.sm} 0;
   }
@@ -222,51 +240,6 @@ export const ReplyCell = styled.div`
 
 export const StatusCell = styled.div`
   min-width: 100px;
-`;
-
-export const StatusBadge = styled.span<{ $status?: string }>`
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 12px;
-  border-radius: ${({ theme }) => theme.borderRadius.full};
-  font-size: ${({ theme }) => theme.typography.fontSize.xs};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.medium};
-  text-transform: capitalize;
-
-  ${({ $status, theme }) => {
-    switch ($status?.toLowerCase()) {
-      case 'replied':
-        return `
-          background: #e8f5e9;
-          color: #2e7d32;
-          border: 1px solid #4caf50;
-        `;
-      case 'opened':
-        return `
-          background: #e3f2fd;
-          color: #1565c0;
-          border: 1px solid #2196f3;
-        `;
-      case 'clicked':
-        return `
-          background: #fff3e0;
-          color: #ef6c00;
-          border: 1px solid #ff9800;
-        `;
-      case 'bounced':
-        return `
-          background: #ffebee;
-          color: #c62828;
-          border: 1px solid #f44336;
-        `;
-      default:
-        return `
-          background: ${theme.colors.background.secondary};
-          color: ${theme.colors.text.secondary};
-          border: 1px solid ${theme.colors.border.main};
-        `;
-    }
-  }}
 `;
 
 export const EmptyState = styled.div`

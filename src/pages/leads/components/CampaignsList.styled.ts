@@ -70,49 +70,6 @@ export const CampaignMeta = styled.span`
   color: ${({ theme }) => theme.colors.text.tertiary};
 `;
 
-export const StatusBadge = styled.span<{ $status: string }>`
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  border-radius: ${({ theme }) => theme.borderRadius.full};
-  font-size: ${({ theme }) => theme.typography.fontSize.xs};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.medium};
-  
-  ${({ $status, theme }) => {
-    switch ($status) {
-      case 'active':
-      case 'inprogress':
-        return `
-          background: ${theme.colors.success.main}15;
-          color: ${theme.colors.success.main};
-        `;
-      case 'completed':
-        return `
-          background: ${theme.colors.primary.main}15;
-          color: ${theme.colors.primary.main};
-        `;
-      case 'paused':
-      case 'stopped':
-        return `
-          background: ${theme.colors.warning.main}15;
-          color: ${theme.colors.warning.main};
-        `;
-      case 'blocked':
-      case 'unsubscribed':
-        return `
-          background: ${theme.colors.error.main}15;
-          color: ${theme.colors.error.main};
-        `;
-      default:
-        return `
-          background: ${theme.colors.background.tertiary};
-          color: ${theme.colors.text.secondary};
-        `;
-    }
-  }}
-`;
-
 export const CardBody = styled.div`
   padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.lg};
 `;

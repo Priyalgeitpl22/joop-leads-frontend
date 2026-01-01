@@ -12,11 +12,14 @@ import {
   MailOpen,
   MessageSquare,
   ThumbsUp,
+  PauseCircle,
+  StopCircle,
+  Edit3,
+  Info,
   Trash,
-  Pencil,
 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "../../store";
-import { fetchCampaigns } from "../../store/slices/campaignSlice";
+import { changeCampaignStatus, fetchCampaigns, renameCampaign } from "../../store/slices/campaignSlice";
 import {
   PageContainer,
   PageHeader,
@@ -54,28 +57,75 @@ import {
   CampaignTable,
   CampaignRow,
   CampaignInfo,
-  CampaignIconBadge,
   CampaignDetails,
   CampaignName,
   CampaignMeta,
-  StatusBadge,
   MetaSeparator,
   CampaignStats,
   StatItem,
   StatValue,
   StatLabel,
-  ActionIconButton,
 } from "./Campaigns.styled";
-import type { Campaign } from "../../interfaces";
+import type { Campaign, CampaignStatus } from "../../interfaces";
+import CircularProgressWithStatus from "../../components/common/CircularProgress";
+import { OptionsMenu, Dialog, Button, Input } from "../../components/common";
 import { deleteCampaign } from "../../store/slices/campaignSlice";
-import { CircularProgress, Box, Typography } from "@mui/material";
+import { toast } from "react-hot-toast";
+import { StatusBadge } from "../../styles/GlobalStyles";
 
 export const Campaigns: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const {campaigns, isLoading} = useAppSelector((state) => state.campaign);
+  const { campaigns, isLoading } = useAppSelector((state) => state.campaign);
   const [activeTab, setActiveTab] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [campaignToDelete, setCampaignToDelete] = useState<Campaign | null>(null);
+  const [renameDialogOpen, setRenameDialogOpen] = useState(false);
+  const [campaignToRename, setCampaignToRename] = useState<Campaign | null>(null);
+  const [newName, setNewName] = useState<string>("");
+  
+  const handleDeleteClick = (campaign: Campaign) => {
+    setCampaignToDelete(campaign);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (campaignToDelete) {
+      dispatch(deleteCampaign(campaignToDelete.id));
+    }
+    setDeleteDialogOpen(false);
+    setCampaignToDelete(null);
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteDialogOpen(false);
+    setCampaignToDelete(null);
+  };
+
+  const handleRenameClick = (campaign: Campaign) => {
+    setCampaignToRename(campaign);
+    setRenameDialogOpen(true);
+  };
+
+  const handleCancelRename = () => {
+    setRenameDialogOpen(false);
+    setCampaignToRename(null);
+  };
+
+  const handleConfirmRename = async () => {
+    if (campaignToRename) {
+      const result = await dispatch(renameCampaign({ id: campaignToRename.id, name: newName }));
+      if (result.payload) {
+        setRenameDialogOpen(false);
+        setCampaignToRename(null);
+        setNewName("");
+        toast.success("Campaign renamed successfully");
+      } else {
+        toast.error('Something went wrong');
+      }
+    }
+  };
 
   useEffect(() => {
     dispatch(fetchCampaigns());
@@ -240,48 +290,22 @@ export const Campaigns: React.FC = () => {
         {campaigns.map((campaign: Campaign) => (
           <CampaignRow key={campaign.id}>
             <CampaignInfo>
-              <CampaignIconBadge>
-                {campaign?.status === "ACTIVE" ? (
-                  <Box sx={{ position: 'relative', display: 'inline-flex' }}>
-                    <CircularProgress 
-                      variant="determinate" 
-                      value={campaign?.campaignStats?.completedPercentage || 0} 
-                      size={40}
-                      sx={{ color: '#22c55e' }}
-                    />
-                    <Box
-                      sx={{
-                        top: 0,
-                        left: 0,
-                        bottom: 0,
-                        right: 0,
-                        position: 'absolute',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <Typography variant="caption" sx={{ fontSize: '10px', color: '#666' }}>
-                        {`${Math.round(campaign?.campaignStats?.completedPercentage || 0)}%`}
-                      </Typography>
-                    </Box>
-                  </Box>
-                ) : (
-                  <Pencil size={20} />
-                )}
-              </CampaignIconBadge>
+              <CircularProgressWithStatus
+                value={campaign?.completedPercentage || 0}
+              />
               <CampaignDetails>
                 <CampaignName to={`/campaigns/${campaign.id}`}>
                   {campaign?.name || "Untitled Campaign"}
                   <ExternalLink size={14} />
                 </CampaignName>
                 <CampaignMeta>
-                  <StatusBadge $status={campaign?.status}>
+                  {/* <StatusBadge $status={campaign?.status}> */}
                     {campaign?.status || "DRAFT"}
-                  </StatusBadge>
+                  {/* </StatusBadge> */}
                   <MetaSeparator>|</MetaSeparator>
                   <span>
-                    Scheduled At: {formatDate(campaign?.scheduledAt || new Date())}
+                    Scheduled At:{" "}
+                    {formatDate(campaign?.scheduledAt || new Date())}
                   </span>
                   <MetaSeparator>|</MetaSeparator>
                   <span>{campaign?.sequences?.length || 0} sequences</span>
@@ -318,13 +342,65 @@ export const Campaigns: React.FC = () => {
                   Positive Reply
                 </StatLabel>
               </StatItem>
-              <ActionIconButton onClick={() => dispatch(deleteCampaign(campaign.id))}>
-                <Trash color="red" size={16} />
-              </ActionIconButton>
+              <OptionsMenu
+                items={[
+                  campaign.status === 'PAUSED' 
+                    ? { id: 'resume', label: 'Resume Campaign', icon: <PlayCircle size={18} />, onClick: () => dispatch(changeCampaignStatus({ id: campaign.id, status: 'ACTIVE' as CampaignStatus })) } 
+                    : { id: 'pause', label: 'Pause Campaign', icon: <PauseCircle size={18} />, onClick: () => dispatch(changeCampaignStatus({ id: campaign.id, status: 'PAUSED' as CampaignStatus })) },
+                  { id: 'stop', label: 'Stop Campaign', icon: <StopCircle size={18} />, onClick: () => dispatch(changeCampaignStatus({ id: campaign.id, status: 'STOPPED' as CampaignStatus })) },
+                  { id: 'delete', label: 'Delete Campaign', icon: <Trash size={18} />, danger: true, onClick: () => handleDeleteClick(campaign) },
+                  'divider',
+                  { id: 'rename', label: 'Rename', icon: <Edit3 size={18} />, onClick: () => handleRenameClick(campaign) },
+                  { id: 'details', label: 'View Details', icon: <Info size={18} />, onClick: () => navigate(`/campaigns/${campaign.id}`) },
+                ]}
+                position="right"
+              />
             </CampaignStats>
           </CampaignRow>
         ))}
       </CampaignTable>
+
+      <Dialog
+        isOpen={deleteDialogOpen}
+        onClose={handleCancelDelete}
+        title="Delete Campaign"
+        size="sm"
+        footer={
+          <>
+            <Button variant="ghost" onClick={handleCancelDelete}>
+              Cancel
+            </Button>
+            <Button variant="danger" onClick={handleConfirmDelete}>
+              Delete
+            </Button>
+          </>
+        }
+      >
+        <p>
+          Are you sure you want to delete <strong>{campaignToDelete?.name}</strong>? 
+          This action cannot be undone.
+        </p>
+      </Dialog>
+
+      <Dialog
+        isOpen={renameDialogOpen}
+        onClose={handleCancelRename}
+        title="Rename Campaign"
+        size="sm"
+        footer={
+          <>
+            <Button variant="ghost" onClick={handleCancelRename}>
+              Cancel
+            </Button>
+            <Button variant="primary" onClick={handleConfirmRename}>Confirm</Button>
+          </>
+        }
+      >
+        <p>
+          Enter the new name for <strong>{campaignToRename?.name}</strong>:
+          <Input type="text" value={newName} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewName(e.target.value)} placeholder="New Name" />
+        </p>
+      </Dialog>
     </PageContainer>
   );
 };

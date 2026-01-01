@@ -12,6 +12,7 @@ import {
   StatLabel,
   InfoIconButton,
 } from "./Analytics.styled";
+import { SectionHeaderTitle } from "../../../../styles/GlobalStyles";
 import type { CampaignAnalytics } from "../../../../interfaces";
 
 interface AnalyticsProps {
@@ -24,13 +25,13 @@ export const Analytics: React.FC<AnalyticsProps> = ({ analyticsData }) => {
       <SectionCard>
         <SectionHeader>
           <SectionTitleGroup>
-            <SectionTitle>Overall Email Reach</SectionTitle>
+            <SectionHeaderTitle>Overall Email Reach</SectionHeaderTitle>
           </SectionTitleGroup>
         </SectionHeader>
 
         <StatsGrid>
           <StatCard $borderColor="#6366f1">
-            <StatValue>{analyticsData.totalLeads || 0}</StatValue>
+            <StatValue>{analyticsData.sentCount || 0}</StatValue>
             <StatLabel>Total Leads Contacted</StatLabel>
           </StatCard>
 
@@ -62,7 +63,7 @@ export const Analytics: React.FC<AnalyticsProps> = ({ analyticsData }) => {
 
           <StatCard $borderColor="#a78bfa">
             <StatValue>
-              {analyticsData.openedCount || 0} ({analyticsData.openRate || 0}%)
+              {analyticsData.openedCount || 0}
             </StatValue>
             <StatLabel>
               Unique Opened

@@ -1,4 +1,4 @@
-import { createGlobalStyle } from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
 
 export const GlobalStyles = createGlobalStyle`
   * {
@@ -106,4 +106,100 @@ export const GlobalStyles = createGlobalStyle`
     color: ${({ theme }) => theme.colors.primary.contrast};
   }
 `;
+
+export const StatusBadge = styled.span<{ $status: string }>`
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  padding: 4px 12px;
+  border-radius: ${({ theme }) => theme.borderRadius.lg};
+  font-size: ${({ theme }) => theme.typography.fontSize.xs};
+  font-weight: ${({ theme }) => theme.typography.fontWeight.medium};
+  line-height: 1;
+  white-space: nowrap;
+  text-transform: capitalize;
+  transition: all 0.2s ease-in-out;
+
+  ${({ $status, theme }) => {
+    switch ($status?.toLowerCase()) {
+      case "active":
+        return `
+        background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+        color: #1b5e20;
+        border: 1px solid #66bb6a;
+        box-shadow: inset 0 0 0 1px rgba(76, 175, 80, 0.15);
+      `;
+      case "inprogress":
+        return `
+          background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+          color: #0d47a1;
+          border: 1px solid #64b5f6;
+          box-shadow: inset 0 0 0 1px rgba(33, 150, 243, 0.15);
+        `;
+      case "replied":
+        return `
+          background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+          color: #1b5e20;
+          border: 1px solid #66bb6a;
+          box-shadow: inset 0 0 0 1px rgba(76, 175, 80, 0.15);
+        `;
+      case "success":
+        return `
+          background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+          color: #1b5e20;
+          border: 1px solid #66bb6a;
+          box-shadow: inset 0 0 0 1px rgba(76, 175, 80, 0.15);
+        `;
+      case "completed":
+        return `
+          background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+          color: #1b5e20;
+          border: 1px solid #66bb6a;
+          box-shadow: inset 0 0 0 1px rgba(76, 175, 80, 0.15);
+        `;
+      case "blocked":
+        return `
+          background: linear-gradient(135deg, #ffebee, #ffcdd2);
+          color: #b71c1c;
+          border: 1px solid #ef5350;
+          box-shadow: inset 0 0 0 1px rgba(244, 67, 54, 0.15);
+        `;
+      case "bounced":
+        return `
+          background: linear-gradient(135deg, #ffebee, #ffcdd2);
+          color: #b71c1c;
+          border: 1px solid #ef5350;
+          box-shadow: inset 0 0 0 1px rgba(244, 67, 54, 0.15);
+        `;
+      case "unsubscribed":
+        return `
+          background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+          color: #e65100;
+          border: 1px solid #ffa726;
+          box-shadow: inset 0 0 0 1px rgba(255, 152, 0, 0.15);
+        `;
+      default:
+        return `
+          background: ${theme.colors.background.secondary};
+          color: ${theme.colors.text.secondary};
+          border: 1px solid ${theme.colors.border.main};
+        `;
+    }
+  }}
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  }
+`;
+
+export const SectionHeaderTitle = styled.div`
+  font-size: ${({ theme }) => theme.typography.fontSize.md};
+  font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
+  color: ${({ theme }) => theme.colors.text.primary};
+  margin: 0; 
+`;
+
+
 

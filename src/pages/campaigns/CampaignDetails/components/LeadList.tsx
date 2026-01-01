@@ -26,7 +26,6 @@ import {
   OtherDetailIcon,
   OtherDetailText,
   StatusCell,
-  StatusBadge,
   SequenceSection,
   SequenceLabel,
   SequenceSteps,
@@ -43,6 +42,8 @@ import {
 } from './LeadList.styled';
 import type { CampaignLead } from '../../../../interfaces';
 import campaignService from '../../../../services/campaign.service';
+import { StatusBadge } from "../../../../styles/GlobalStyles";
+import { SectionHeaderTitle } from "../../../../styles/GlobalStyles";
 export interface LeadListItem {
   id: string;
   firstName: string;
@@ -65,7 +66,6 @@ interface LeadListProps {
 }
 
 export const LeadList: React.FC<LeadListProps> = ({
-  // campaignLeads,
   campaignId,
   totalCount,
   onExport,
@@ -73,12 +73,6 @@ export const LeadList: React.FC<LeadListProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLeads, setSelectedLeads] = useState<Set<string>>(new Set());
   const [campaignLeads, setCampaignLeads] = useState<CampaignLead[]>([]);
-  
-  // const filteredLeads = campaignLeads?.filter(
-  //   (lead: CampaignLead) =>
-  //     `${lead?.lead?.firstName} ${lead?.lead?.lastName}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //     lead?.lead?.email?.toLowerCase().includes(searchQuery.toLowerCase())
-  // );
 
   useEffect(() => {
     campaignService.getLeadsGroupedBySender(campaignId).then((response) => {
@@ -101,7 +95,6 @@ export const LeadList: React.FC<LeadListProps> = ({
       onExport();
     } else {
       console.log('Export campaignLeads');
-      // TODO: Implement export functionality
     }
   };
 
@@ -137,9 +130,7 @@ export const LeadList: React.FC<LeadListProps> = ({
     <LeadListContainer>
       <LeadListCard>
         <LeadListHeader>
-          <LeadListTitle>
-            Lead List <span>({totalCount || campaignLeads?.length || 0})</span>
-          </LeadListTitle>
+          <SectionHeaderTitle>Lead List</SectionHeaderTitle>
 
           <ActionButtons>
             <SearchBox>
@@ -222,7 +213,7 @@ export const LeadList: React.FC<LeadListProps> = ({
                       </OtherDetailsList>
                     </OtherDetailsCell>
                     <StatusCell>
-                      <StatusBadge $status={campaignLead?.status || ''}>{campaignLead?.status || ''}</StatusBadge>
+                      <StatusBadge $status={campaignLead?.leadStatus || ''}>{campaignLead?.leadStatus || ''}</StatusBadge>
                     </StatusCell>
                   </TableRow>
                   <TableRow $isDetailRow>
@@ -248,7 +239,7 @@ export const LeadList: React.FC<LeadListProps> = ({
             <EmptyStateIcon>
               <Users size={48} />
             </EmptyStateIcon>
-            <EmptyStateTitle>No campaignLeads found</EmptyStateTitle>
+            <EmptyStateTitle>No campaign Leads found</EmptyStateTitle>
             <EmptyStateDescription>
               {searchQuery
                 ? 'Try adjusting your search criteria'

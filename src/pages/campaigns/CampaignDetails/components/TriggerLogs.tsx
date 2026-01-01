@@ -4,21 +4,14 @@ import {
   TriggerLogsContainer,
   SectionCard,
   SectionHeader,
-  SectionTitle,
   TriggerLogsHeader,
-  TriggerLogsTitle,
   TriggerLogsTable,
   TableHeader,
   TableHeaderCell,
   TableRow,
   TableCell,
-  DateTimeCell,
   StatusDataCell,
-  StatusBadge,
   StatusDetails,
-  StatusDetailItem,
-  TimezoneCell,
-  ActivityLogLink,
   EmptyState,
   EmptyStateIcon,
   EmptyStateTitle,
@@ -27,11 +20,14 @@ import {
   PaginationInfo,
   PaginationButtons,
   PaginationButton,
+  TextCell,
 } from './TriggerLogs.styled';
 import { fetchTriggerLogs, fetchUpcomingTriggers } from '../../../../store/slices/campaignSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { type AppDispatch, type RootState } from '../../../../store';
 import { convertUtcToTimezone } from '../../../../utils/date';
+import { StatusBadge } from "../../../../styles/GlobalStyles";
+import { SectionHeaderTitle } from "../../../../styles/GlobalStyles";
 
 export interface Logs {
   id: string;
@@ -93,21 +89,16 @@ export const TriggerLogs: React.FC<TriggerLogsProps> = ({ campaignId }) => {
     }
   }, [isLoading, triggerLogs, upcomingTriggers]);
 
-  const handleActivityLogClick = (logId: string) => {
-    console.log('Check activity log:', logId);
-  };
-
   const getNextTriggerDateTime = (nextTriggerAt: string, timezone: string) => {
     return convertUtcToTimezone(nextTriggerAt, timezone, "DD MMM YYYY, hh:mm A");
   };
 
   return (
     <TriggerLogsContainer>
-      {/* Upcoming Triggers Section */}
       {upcomingTriggers && upcomingTriggers.logs && upcomingTriggers.logs.length > 0 && (
         <SectionCard>
           <SectionHeader>
-            <SectionTitle>Upcoming Triggers</SectionTitle>
+            <SectionHeaderTitle>Upcoming Triggers</SectionHeaderTitle>
           </SectionHeader>
           <TriggerLogsTable>
             <TableHeader>
@@ -119,13 +110,13 @@ export const TriggerLogs: React.FC<TriggerLogsProps> = ({ campaignId }) => {
               {upcomingTriggers && upcomingTriggers.logs && upcomingTriggers.logs.map((log) => (
                 <TableRow key={log.id}>
                   <TableCell>
-                    <DateTimeCell>{getNextTriggerDateTime(log.nextTriggerAt, log.timezone)}</DateTimeCell>
+                    <TextCell>{getNextTriggerDateTime(log.nextTriggerAt, log.timezone) || 'N/A'}</TextCell>
                   </TableCell>
                   <TableCell>
-                    <StatusBadge $status={log.status}>{log.status}</StatusBadge>
+                    <StatusBadge $status={log.status.toLowerCase()}>{log.status}</StatusBadge>
                   </TableCell>
                   <TableCell>
-                    <TimezoneCell>{log.timezone}</TimezoneCell>
+                    <TextCell>{log.timezone || 'N/A'}</TextCell>
                   </TableCell>
                 </TableRow>
               ))}
@@ -134,10 +125,9 @@ export const TriggerLogs: React.FC<TriggerLogsProps> = ({ campaignId }) => {
         </SectionCard>
       )}
 
-      {/* Last 20 Triggers Status Section */}
       <SectionCard>
         <TriggerLogsHeader>
-          <TriggerLogsTitle>Last 20 Triggers Status</TriggerLogsTitle>
+          <SectionHeaderTitle>Last 20 Triggers Status</SectionHeaderTitle>
         </TriggerLogsHeader>
 
         {triggerLogs && triggerLogs.logs && triggerLogs.logs.length > 0 ? (
@@ -147,43 +137,41 @@ export const TriggerLogs: React.FC<TriggerLogsProps> = ({ campaignId }) => {
                 <TableHeaderCell>Date & Time</TableHeaderCell>
                 <TableHeaderCell>Status Data</TableHeaderCell>
                 <TableHeaderCell>Timezone Of Trigger</TableHeaderCell>
-                <TableHeaderCell>Activity Log</TableHeaderCell>
+                <TableHeaderCell $width="30%">Activity Log</TableHeaderCell>
               </TableHeader>
               <tbody>
                 {triggerLogs && triggerLogs.logs && triggerLogs.logs.map((log) => (
                   <TableRow key={log.id}>
                     <TableCell>
-                      <DateTimeCell>{convertUtcToTimezone(log.createdAt, log.timezone, "DD MMM YYYY, hh:mm A")}</DateTimeCell>
+                      <TextCell>{convertUtcToTimezone(log.createdAt, log.timezone, "DD MMM YYYY, hh:mm A") || 'N/A'}</TextCell>
                     </TableCell>
                     <TableCell>
                       <StatusDataCell>
                         <StatusBadge $status={log.status}>{log.status}</StatusBadge>
                         <StatusDetails>
                           {log.newLeadEmails !== undefined && (
-                            <StatusDetailItem>
+                            <TextCell >
                               New Leads Count: <span>{log.newLeadEmails}</span>
-                            </StatusDetailItem>
+                            </TextCell>
                           )}
                           {log.followUpEmails !== undefined && (
-                            <StatusDetailItem>
+                            <TextCell>
                               No. of Email Send: <span>{log.followUpEmails}</span>
-                            </StatusDetailItem>
+                            </TextCell>
                           )}
                           {log.totalEmailsSent !== undefined && (
-                            <StatusDetailItem>
+                            <TextCell>
                               Total Eligible Email Accounts: <span>{log.totalEmailsSent}</span>
-                            </StatusDetailItem>
+                            </TextCell>
                           )}
                         </StatusDetails>
                       </StatusDataCell>
                     </TableCell>
                     <TableCell>
-                      <TimezoneCell>{log.timezone}</TimezoneCell>
+                      <TextCell>{log.timezone || 'N/A'}</TextCell>
                     </TableCell>
                     <TableCell>
-                      <ActivityLogLink onClick={() => handleActivityLogClick(log.id)}>
-                        Check Activity Log
-                      </ActivityLogLink>
+                      <TextCell>{log.activityLog || 'N/A'}</TextCell>
                     </TableCell>
                   </TableRow>
                 ))}

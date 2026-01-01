@@ -59,61 +59,6 @@ export const CampaignTitle = styled.div`
   }
 `;
 
-export const StatusBadge = styled.span<{ $status?: string }>`
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  font-size: ${({ theme }) => theme.typography.fontSize.sm};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
-  border-radius: ${({ theme }) => theme.borderRadius.sm};
-  text-transform: uppercase;
-  
-  ${({ $status, theme }) => {
-    switch ($status?.toLowerCase()) {
-      case 'active':
-        return `
-          background: #e8f5e9;
-          color: #2e7d32;
-          border: 1px solid #4caf50;
-        `;
-      case 'paused':
-        return `
-          background: #fff3e0;
-          color: #e65100;
-          border: 1px solid #ff9800;
-        `;
-      case 'completed':
-        return `
-          background: #e3f2fd;
-          color: #1565c0;
-          border: 1px solid #2196f3;
-        `;
-      case 'draft':
-      case 'drafted':
-        return `
-          background: ${theme.colors.background.secondary};
-          color: ${theme.colors.text.secondary};
-          border: 1px solid ${theme.colors.border.main};
-        `;
-      default:
-        return `
-          background: ${theme.colors.background.secondary};
-          color: ${theme.colors.text.secondary};
-          border: 1px solid ${theme.colors.border.main};
-        `;
-    }
-  }}
-
-  &::before {
-    content: '';
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: currentColor;
-  }
-`;
-
 export const CampaignMeta = styled.p`
   font-size: ${({ theme }) => theme.typography.fontSize.sm};
   color: ${({ theme }) => theme.colors.text.tertiary};
@@ -463,7 +408,7 @@ export const SenderAccountsHeader = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing.lg};
 
   h2 {
-    font-size: ${({ theme }) => theme.typography.fontSize.xl};
+    font-size: ${({ theme }) => theme.typography.fontSize.md};
     font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
     color: ${({ theme }) => theme.colors.text.primary};
     margin: 0;

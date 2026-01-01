@@ -1,6 +1,6 @@
 import { api } from './api';
 import type { ICreateSequence, ISequence } from '../types/sequence.types';
-import type { Lead } from '../interfaces';
+import type { CampaignInbox, CampaignStatus, Lead } from '../interfaces';
 import type { Campaign, CampaignLead, CampaignSenderWithStats, SequenceAnalytics } from '../interfaces';
 import type { ApiResponse } from '../types/common.types';
 
@@ -102,7 +102,7 @@ export const campaignService = {
    * Rename campaign
    */
   async renameCampaign(campaignId: string, newName: string): Promise<{ code: number; message: string }> {
-    const response = await api.put(`${BASE_URL}/${campaignId}/rename`, { newName });
+    const response = await api.patch(`${BASE_URL}/${campaignId}/rename`, { newName });
     return response.data;
   },
 
@@ -234,6 +234,16 @@ export const campaignService = {
 
   async getCampaignsByLead(leadId: string): Promise<ApiResponse<[]>> {
     const response = await api.get(`${BASE_URL}/lead/${leadId}/campaigns-by-lead`);
+    return response.data;
+  },
+
+  async getCampaignInbox(campaignId: string): Promise<ApiResponse<CampaignInbox[]>> {
+    const response = await api.get(`${BASE_URL}/campaign-inbox/${campaignId}`);
+    return response.data;
+  },
+
+  async changeCampaignStatus(campaignId: string, status: CampaignStatus): Promise<ApiResponse<{ message: string }>> {
+    const response = await api.patch(`${BASE_URL}/${campaignId}/change-status`, { status: status.toString() });
     return response.data;
   },
 };

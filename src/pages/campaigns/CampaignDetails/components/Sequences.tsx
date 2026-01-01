@@ -1,29 +1,22 @@
 import React, { useEffect } from "react";
-import { Download } from "lucide-react";
 import {
   SequencesContainer,
   SequencesCard,
   SequencesHeader,
-  SequencesTitle,
-  HeaderActions,
-  ActionButton,
 } from "./Sequences.styled";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../../../store";
 import { DataTable } from "../../../../components/common";
 import { getSequenceAnalytics } from "../../../../store/slices/campaignSlice";
 import type { AppDispatch } from "../../../../store";
+import { SectionHeaderTitle } from "../../../../styles/GlobalStyles";
 
 interface SequencesProps {
   campaignId: string;
-  onShowEmailAccountPerformance?: () => void;
-  onDownloadCsv?: () => void;
 }
 
 export const Sequences: React.FC<SequencesProps> = ({
   campaignId,
-  onShowEmailAccountPerformance,
-  onDownloadCsv,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { sequenceAnalytics, isLoadingSequenceAnalytics, errorSequenceAnalytics } = useSelector((state: RootState) => state.campaign);
@@ -33,9 +26,7 @@ export const Sequences: React.FC<SequencesProps> = ({
     { key: "opened", label: "Opened" },
     { key: "clicked", label: "Clicked" },
     { key: "replied", label: "Replied" },
-    // { key: "positiveReplies", label: "Positive Replies" },
     { key: "bounced", label: "Bounced" },
-    // { key: "senderBounced", label: "Sender Bounced" },
     { key: "unsubscribed", label: "Unsubscribed" },
   ];
 
@@ -45,40 +36,11 @@ export const Sequences: React.FC<SequencesProps> = ({
     }
   }, [campaignId]);
 
-  const handleShowEmailAccountPerformance = () => {
-    if (onShowEmailAccountPerformance) {
-      onShowEmailAccountPerformance();
-    } else {
-      // TODO: Navigate to email account performance page
-    }
-  };
-
-  const handleDownloadCsv = () => {
-    if (onDownloadCsv) {
-      onDownloadCsv();
-    } else {
-      console.log("Download CSV");
-      // TODO: Implement CSV download
-    }
-  };
-
   return (
     <SequencesContainer>
       <SequencesCard>
         <SequencesHeader>
-          <SequencesTitle>Sequences</SequencesTitle>
-          <HeaderActions>
-            <ActionButton
-              $variant="primary"
-              onClick={handleShowEmailAccountPerformance}
-            >
-              Show Email Account Performance
-            </ActionButton>
-            <ActionButton onClick={handleDownloadCsv}>
-              <Download size={16} />
-              Download as CSV
-            </ActionButton>
-          </HeaderActions>
+          <SectionHeaderTitle>Sequences</SectionHeaderTitle>
         </SequencesHeader>
 
         <DataTable

@@ -7,6 +7,10 @@ export const TableContainer = styled.div`
   overflow: hidden;
 `;
 
+export const TableWrapper = styled.div`
+  overflow-x: auto;
+`;
+
 export const TableHeader = styled.div`
   display: flex;
   align-items: center;

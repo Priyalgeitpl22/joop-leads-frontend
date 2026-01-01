@@ -7,7 +7,7 @@ import {
   Sequences,
   Analytics,
   LeadList,
-  // Inbox,
+  Inbox,
 } from "./components";
 import {
   PageContainer,
@@ -17,7 +17,6 @@ import {
   HeaderActions,
   ActionButton,
   CampaignTitle,
-  StatusBadge,
   CampaignMeta,
   CampaignTags,
   Tag,
@@ -33,6 +32,7 @@ import Performance from "./components/Performance";
 import SenderAccounts from "./components/SenderAccounts";
 import { TIMEZONES } from "../../../constants";
 import { useSearchParams } from "react-router-dom";
+import { StatusBadge } from "../../../styles/GlobalStyles";
 
 type TabValue =
   | "performance"
@@ -80,7 +80,7 @@ const CampaignDetailsPage: React.FC = () => {
   const tabs: { label: string; value: TabValue; count?: number }[] = [
     { label: "Performance", value: "performance" },
     { label: "Analytics", value: "analytics" },
-    // { label: "Inbox", value: "inbox" },
+    { label: "Inbox", value: "inbox" },
     {
       label: "Lead List",
       value: "lead_list",
@@ -106,18 +106,19 @@ const CampaignDetailsPage: React.FC = () => {
       case "analytics":
         return (
           <Analytics
-          analyticsData={campaign.campaignStats as unknown as CampaignAnalytics}
+          analyticsData={campaign.analytics as unknown as CampaignAnalytics}
           />
         );
-      // case "inbox":
-      //   return (
-      //     <Inbox
-      //       campaignId={id || ""}
-      //       onDownloadCsv={() => {
-      //         console.log("Download Inbox CSV");
-      //       }}
-      //     />
-      //   );
+      case "inbox":
+        return (
+          <Inbox
+            campaignId={id || ""}
+            plainText={campaign.sendAsPlainText || false}
+            onDownloadCsv={() => {
+              console.log("Download Inbox CSV");
+            }}
+          />
+        );
       case "lead_list":
         return (
           <LeadList
@@ -129,8 +130,6 @@ const CampaignDetailsPage: React.FC = () => {
         return (
           <Sequences
             campaignId={id || ""}
-            onShowEmailAccountPerformance={() => {}}
-            onDownloadCsv={() => {}}
           />
         );
       case "trigger_logs":

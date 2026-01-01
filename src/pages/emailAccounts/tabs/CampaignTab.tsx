@@ -11,11 +11,11 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  StatusBadge,
   EmptyState,
   LoadingContainer,
   Spinner,
 } from './CampaignTab.styled';
+import { StatusBadge } from '../../../styles/GlobalStyles';
 
 interface CampaignTabProps {
   accountId: string;
@@ -93,7 +93,7 @@ export const CampaignTab: React.FC<CampaignTabProps> = ({ accountId }) => {
               <TableRow key={campaignSender.id}>
                 <TableCell>{campaignSender.campaign?.name || 'Unnamed Campaign'}</TableCell>
                 <TableCell>
-                  <StatusBadge $status={campaignSender.campaign?.status?.toLowerCase()}>
+                  <StatusBadge $status={campaignSender.campaign?.status?.toLowerCase() || ''}>
                     {campaignSender.campaign?.status || 'Unknown'}
                   </StatusBadge>
                 </TableCell>

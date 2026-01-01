@@ -184,6 +184,7 @@ export interface Campaign {
   emailSends?: EmailSend[] | [];
   sender_accounts: SenderAccount[] | [];
   campaignStats?: CampaignStats | null;
+  completedPercentage: number;
 }
 
 export interface CampaignStats {
@@ -198,6 +199,33 @@ export interface CampaignStats {
   leadsPending: number;
   leadsReplied: number; 
   totalEmailsNeeded: number;
+}
+
+export interface CampaignInbox {
+  id: string;
+  campaignId: string;
+  status: string;
+  sentAt: string;
+  sequenceStep: number;
+  lead: {
+    name: string;
+    email: string;
+  },
+  sender: {
+    email: string;
+  },
+  messageSent: {
+    subject: string;
+    seqNumber: number;
+    body: {
+        html: string;
+        text: string;
+    }
+  },
+  reply: {
+    text: string | null;
+    repliedAt: string | null;
+  }
 }
 
 export interface CampaignSender {

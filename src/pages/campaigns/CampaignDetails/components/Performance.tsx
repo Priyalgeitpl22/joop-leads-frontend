@@ -43,10 +43,10 @@ const Performance: React.FC<PerformanceProps> = ({
       <PerformanceGrid>
         <PerformanceSection>
           <PercentageDisplay>
-            {campaign.campaignStats?.completedPercentage}% <span>of Campaign Completed</span>
+            {campaign?.completedPercentage}% <span>of Campaign Completed</span>
           </PercentageDisplay>
           <ProgressBarContainer>
-            <ProgressBarFill percentage={campaign.campaignStats?.completedPercentage || 0} />
+            <ProgressBarFill percentage={campaign?.completedPercentage || 0} />
           </ProgressBarContainer>
 
           <StatsList>
@@ -120,7 +120,6 @@ const Performance: React.FC<PerformanceProps> = ({
           </Box>
         </PerformanceSection>
 
-        {/* Right Section - Sending Efficiency Score */}
         <PerformanceSection>
           <ScoreDisplay>
             <span className="score">{"N/A"}</span>
@@ -131,48 +130,11 @@ const Performance: React.FC<PerformanceProps> = ({
               </IconButton>
             </Tooltip>
           </ScoreDisplay>
-
           <ScoreLabel>Excellent - Sending Volume</ScoreLabel>
-
           <CheckList>
-            {/* {checklistItems.map((item, index) => (
-              <CheckItem key={index} passed={item.passed}>
-                <div className="left">
-                  <div className="icon">
-                    <Check size={12} />
-                  </div>
-                  <span>{item.label}</span>
-                </div>
-                <Tooltip title="More info">
-                  <IconButton size="small" sx={{ padding: 0 }}>
-                    <Info size={14} color="#bdbdbd" />
-                  </IconButton>
-                </Tooltip>
-              </CheckItem>
-            ))} */}
           </CheckList>
         </PerformanceSection>
       </PerformanceGrid>
-
-      {/* {senderAccounts.length > 0 && (
-        <SenderAccountsSection>
-          <SenderAccountsTitle>
-            Sender Email Accounts To Check
-          </SenderAccountsTitle>
-          {senderAccounts.map((account, index) => (
-            <Box key={index} display="flex" alignItems="center" gap={2} mb={1}>
-              <span>{account.email}</span>
-              <span
-                style={{
-                  color: account.status === "active" ? "#4caf50" : "#f44336",
-                }}
-              >
-                {account.status}
-              </span>
-            </Box>
-          ))}
-        </SenderAccountsSection>
-      )} */}
     </PerformanceContainer>
   );
 };

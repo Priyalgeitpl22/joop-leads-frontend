@@ -21,7 +21,6 @@ import {
   CampaignTitle,
   CampaignName,
   CampaignMeta,
-  StatusBadge,
   CardBody,
   ProgressSection,
   ProgressLabel,
@@ -33,12 +32,10 @@ import {
   ActivityIcon,
   ActivityLabel,
   ActivityValue,
-  // CardFooter,
-  // FooterInfo,
-  // ViewButton,
 } from './CampaignsList.styled';
 import { campaignService } from '../../../services/campaign.service';
 import type { Lead } from '../../../interfaces';
+import { StatusBadge } from '../../../styles/GlobalStyles';
 
 const getStatusIcon = (status: string) => {
   switch (status) {

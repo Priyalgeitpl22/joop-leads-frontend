@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import {
   TableContainer,
+  TableWrapper,
   TableHeader,
   TableTitle,
   TableActions,
@@ -518,37 +519,39 @@ export function DataTable({
       )}
 
       {loading ? (
-        <Table>
-          <TableHead>
-            <TableHeadRow>
-              {selectable && (
-                <TableHeadCell $width="50px">
-                  <Checkbox type="checkbox" checked={false} disabled />
-                </TableHeadCell>
-              )}
-              {columns.map((column) => (
-                <TableHeadCell
-                  key={column.key}
-                  $width={column.width}
-                  $align={column.align}
-                >
-                  {column.label}
-                </TableHeadCell>
-              ))}
-              {showRowActions && (
-                <TableHeadCell $width="100px" $align="center">
-                  Actions
-                </TableHeadCell>
-              )}
-            </TableHeadRow>
-          </TableHead>
-          <TableSkeleton
-            rows={8}
-            columns={columns}
-            selectable={selectable}
-            showRowActions={showRowActions}
-          />
-        </Table>
+        <TableWrapper>
+          <Table>
+            <TableHead>
+              <TableHeadRow>
+                {selectable && (
+                  <TableHeadCell $width="50px">
+                    <Checkbox type="checkbox" checked={false} disabled />
+                  </TableHeadCell>
+                )}
+                {columns.map((column) => (
+                  <TableHeadCell
+                    key={column.key}
+                    $width={column.width}
+                    $align={column.align}
+                  >
+                    {column.label}
+                  </TableHeadCell>
+                ))}
+                {showRowActions && (
+                  <TableHeadCell $width="100px" $align="center">
+                    Actions
+                  </TableHeadCell>
+                )}
+              </TableHeadRow>
+            </TableHead>
+            <TableSkeleton
+              rows={8}
+              columns={columns}
+              selectable={selectable}
+              showRowActions={showRowActions}
+            />
+          </Table>
+        </TableWrapper>
       ) : paginatedData.length === 0 ? (
         <EmptyState>
           {emptyIcon || <Inbox size={48} />}
@@ -556,104 +559,106 @@ export function DataTable({
           <p>{emptyMessage}</p>
         </EmptyState>
       ) : (
-        <Table>
-          <TableHead>
-            <TableHeadRow>
-              {selectable && (
-                <TableHeadCell $width="50px">
-                  <Checkbox
-                    type="checkbox"
-                    ref={headerCheckboxRef}
-                    checked={allSelected}
-                    onChange={handleSelectAll}
-                  />
-                </TableHeadCell>
-              )}
-
-              {columns.map((column) => (
-                <TableHeadCell
-                  key={column.key}
-                  $width={column.width}
-                  $align={column.align}
-                  $sortable={sortable && column.sortable !== false}
-                  onClick={() =>
-                    column.sortable !== false && handleSort(column.key)
-                  }
-                >
-                  {column.label}
-                  {sortable &&
-                    sortState?.key === column.key &&
-                    (sortState.direction === "asc" ? (
-                      <ChevronUp size={14} />
-                    ) : (
-                      <ChevronDown size={14} />
-                    ))}
-                </TableHeadCell>
-              ))}
-
-              {showRowActions && (
-                <TableHeadCell $width="100px" $align="center">
-                  Actions
-                </TableHeadCell>
-              )}
-            </TableHeadRow>
-          </TableHead>
-
-          <TableBody>
-            {paginatedData.map((row, rowIndex) => (
-              <TableRow
-                key={row.id as string}
-                $selected={selectedRows.includes(row.id as string)}
-                onClick={() => onRowClick?.(row)}
-                style={{ cursor: onRowClick ? "pointer" : "default" }}
-              >
+        <TableWrapper>
+          <Table>
+            <TableHead>
+              <TableHeadRow>
                 {selectable && (
-                  <TableCell onClick={(e) => e.stopPropagation()}>
+                  <TableHeadCell $width="50px">
                     <Checkbox
                       type="checkbox"
-                      checked={selectedRows.includes(row.id as string)}
-                      onChange={() => handleSelectRow(row.id as string)}
+                      ref={headerCheckboxRef}
+                      checked={allSelected}
+                      onChange={handleSelectAll}
                     />
-                  </TableCell>
+                  </TableHeadCell>
                 )}
 
                 {columns.map((column) => (
-                  <TableCell key={column.key} $align={column.align}>
-                    {renderCell(column, row, rowIndex)}
-                  </TableCell>
+                  <TableHeadCell
+                    key={column.key}
+                    $width={column.width}
+                    $align={column.align}
+                    $sortable={sortable && column.sortable !== false}
+                    onClick={() =>
+                      column.sortable !== false && handleSort(column.key)
+                    }
+                  >
+                    {column.label}
+                    {sortable &&
+                      sortState?.key === column.key &&
+                      (sortState.direction === "asc" ? (
+                        <ChevronUp size={14} />
+                      ) : (
+                        <ChevronDown size={14} />
+                      ))}
+                  </TableHeadCell>
                 ))}
 
                 {showRowActions && (
-                  <TableCell
-                    $align="center"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <RowActions>
-                      {customRowActions?.(row)}
-                      {onEdit && (
-                        <RowActionButton
-                          onClick={() => onEdit(row)}
-                          title="Edit"
-                        >
-                          <Edit2 size={16} />
-                        </RowActionButton>
-                      )}
-                      {onDelete && (
-                        <RowActionButton
-                          $danger
-                          onClick={() => onDelete(row)}
-                          title="Delete"
-                        >
-                          <Trash2 size={16} />
-                        </RowActionButton>
-                      )}
-                    </RowActions>
-                  </TableCell>
+                  <TableHeadCell $width="100px" $align="center">
+                    Actions
+                  </TableHeadCell>
                 )}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+              </TableHeadRow>
+            </TableHead>
+
+            <TableBody>
+              {paginatedData.map((row, rowIndex) => (
+                <TableRow
+                  key={row.id as string}
+                  $selected={selectedRows.includes(row.id as string)}
+                  onClick={() => onRowClick?.(row)}
+                  style={{ cursor: onRowClick ? "pointer" : "default" }}
+                >
+                  {selectable && (
+                    <TableCell onClick={(e) => e.stopPropagation()}>
+                      <Checkbox
+                        type="checkbox"
+                        checked={selectedRows.includes(row.id as string)}
+                        onChange={() => handleSelectRow(row.id as string)}
+                      />
+                    </TableCell>
+                  )}
+
+                  {columns.map((column) => (
+                    <TableCell key={column.key} $align={column.align}>
+                      {renderCell(column, row, rowIndex)}
+                    </TableCell>
+                  ))}
+
+                  {showRowActions && (
+                    <TableCell
+                      $align="center"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <RowActions>
+                        {customRowActions?.(row)}
+                        {onEdit && (
+                          <RowActionButton
+                            onClick={() => onEdit(row)}
+                            title="Edit"
+                          >
+                            <Edit2 size={16} />
+                          </RowActionButton>
+                        )}
+                        {onDelete && (
+                          <RowActionButton
+                            $danger
+                            onClick={() => onDelete(row)}
+                            title="Delete"
+                          >
+                            <Trash2 size={16} />
+                          </RowActionButton>
+                        )}
+                      </RowActions>
+                    </TableCell>
+                  )}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableWrapper>
       )}
 
       {paginated && totalPages > 0 && (

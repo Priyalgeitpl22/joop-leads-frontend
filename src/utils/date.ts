@@ -68,3 +68,19 @@ export function convertUtcToTimezone(
   return result;
 }
 
+export function formatDateWithGMT(dateInput: string | Date) {
+  const date = new Date(dateInput);
+
+  const formatted = new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "2-digit",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+    timeZone: "Asia/Kolkata",
+    timeZoneName: "short",
+  }).format(date);
+
+  return formatted;
+}

@@ -47,13 +47,14 @@ export const TableHeader = styled.thead`
   background: ${({ theme }) => theme.colors.background.primary};
 `;
 
-export const TableHeaderCell = styled.th`
+export const TableHeaderCell = styled.th<{ $width?: string }>`
   padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.lg};
   text-align: left;
   font-size: ${({ theme }) => theme.typography.fontSize.sm};
   font-weight: ${({ theme }) => theme.typography.fontWeight.medium};
   color: ${({ theme }) => theme.colors.text.tertiary};
   border-bottom: 1px solid ${({ theme }) => theme.colors.border.light};
+  width: ${({ $width }) => $width || 'auto'};
 `;
 
 export const TableRow = styled.tr`
@@ -69,9 +70,10 @@ export const TableRow = styled.tr`
   }
 `;
 
-export const TableCell = styled.td`
+export const TableCell = styled.td<{ $width?: string }>`
   padding: ${({ theme }) => theme.spacing.lg};
   vertical-align: top;
+  width: ${({ $width }) => $width || 'auto'};
 `;
 
 export const DateTimeCell = styled.div`
@@ -84,52 +86,6 @@ export const StatusDataCell = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing.sm};
-`;
-
-export const StatusBadge = styled.span<{ $status: string }>`
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 12px;
-  border-radius: ${({ theme }) => theme.borderRadius.sm};
-  font-size: ${({ theme }) => theme.typography.fontSize.sm};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.medium};
-  width: fit-content;
-  text-transform: capitalize;
-
-  ${({ $status, theme }) => {
-    switch ($status) {
-      case 'Completed':
-        return `
-          background: #e8f5e9;
-          color: #2e7d32;
-          border: 1px solid #4caf50;
-        `;
-      case 'Scheduled':
-        return `
-          background: #e3f2fd;
-          color: #1565c0;
-          border: 1px solid #2196f3;
-        `;
-      case 'Failed':
-        return `
-          background: #ffebee;
-          color: #c62828;
-          border: 1px solid #f44336;
-        `;
-      case 'In Progress':
-        return `
-          background: #fff3e0;
-          color: #ef6c00;
-          border: 1px solid #ff9800;
-        `;
-      default:
-        return `
-          background: ${theme.colors.background.secondary};
-          color: ${theme.colors.text.secondary};
-          border: 1px solid ${theme.colors.border.main};
-        `;
-    }
-  }}
 `;
 
 export const StatusDetails = styled.div`
@@ -152,6 +108,11 @@ export const StatusDetailItem = styled.div`
 export const TimezoneCell = styled.div`
   font-size: ${({ theme }) => theme.typography.fontSize.md};
   color: ${({ theme }) => theme.colors.text.primary};
+`;
+
+export const TextCell = styled.div`
+  font-size: ${({ theme }) => theme.typography.fontSize.xs};
+  color: ${({ theme }) => theme.colors.text.secondary};
 `;
 
 export const ActivityLogLink = styled.button`

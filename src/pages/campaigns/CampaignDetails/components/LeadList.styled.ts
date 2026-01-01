@@ -219,52 +219,6 @@ export const StatusCell = styled(TableCell)`
   padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.lg};
 `;
 
-export const StatusBadge = styled.span<{ $status: string }>`
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 12px;
-  border-radius: ${({ theme }) => theme.borderRadius.sm};
-  font-size: ${({ theme }) => theme.typography.fontSize.sm};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.medium};
-  text-transform: capitalize;
-
-  ${({ $status, theme }) => {
-    switch ($status?.toLowerCase()) {
-      case 'active':
-      case 'inprogress':
-        return `
-          background: #e3f2fd;
-          color: #1565c0;
-          border: 1px solid #2196f3;
-        `;
-      case 'completed':
-        return `
-          background: #e8f5e9;
-          color: #2e7d32;
-          border: 1px solid #4caf50;
-        `;
-      case 'blocked':
-        return `
-          background: #ffebee;
-          color: #c62828;
-          border: 1px solid #f44336;
-        `;
-      case 'unsubscribed':
-        return `
-          background: #fff3e0;
-          color: #e65100;
-          border: 1px solid #ff9800;
-        `;
-      default:
-        return `
-          background: ${theme.colors.background.secondary};
-          color: ${theme.colors.text.secondary};
-          border: 1px solid ${theme.colors.border.main};
-        `;
-    }
-  }}
-`;
-
 export const SequenceSection = styled.div`
   display: flex;
   align-items: center;

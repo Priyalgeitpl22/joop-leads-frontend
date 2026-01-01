@@ -139,7 +139,7 @@ const Spinner = styled.span`
 export const Button: React.FC<ButtonProps> = ({
   children,
   variant = 'primary',
-  size = 'md',
+  size = 'sm',
   fullWidth = false,
   isLoading = false,
   leftIcon,
