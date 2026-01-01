@@ -2,7 +2,20 @@ import React, { useState } from "react";
 import { X } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { inboxService } from "../../../../../services/inbox.service";
-import { DialogOverlay, DialogContainer, DialogHeader, DialogContent, DialogFooter, FormGroup, Label, Select, Input, CancelButton, SendButton, InfoText } from "./styled";
+import {
+  DialogOverlay,
+  DialogContainer,
+  DialogHeader,
+  DialogContent,
+  DialogFooter,
+  FormGroup,
+  Label,
+  Select,
+  Input,
+  CancelButton,
+  SendButton,
+  InfoText,
+} from "./styled";
 import { CloseButton } from "./SetupStep.styled";
 import type { Account } from "../../../../../types";
 
@@ -10,7 +23,7 @@ interface SendTestEmailProps {
   isOpen: boolean;
   onClose: () => void;
   senderAccounts: Account[] | [];
-  selectedLeadEmail?: string;
+  sendAsPlainText: boolean;
   compiledSubject: string;
   compiledBody: string;
 }
@@ -19,16 +32,19 @@ export const SendTestEmail: React.FC<SendTestEmailProps> = ({
   isOpen,
   onClose,
   senderAccounts,
-  selectedLeadEmail,
+  sendAsPlainText,
   compiledSubject,
   compiledBody,
 }) => {
-  const [senderEmail, setSenderEmail] = useState(senderAccounts[0]?.email || "");
+  const [senderEmail, setSenderEmail] = useState(
+    senderAccounts[0]?.email || ""
+  );
   const [isSending, setIsSending] = useState(false);
+  const [recipientEmail, setRecipientEmail] = useState("");
 
   const handleSendTestEmail = async () => {
-    if (!selectedLeadEmail) {
-      toast.error("Please select a lead");
+    if (!recipientEmail) {
+      toast.error("Please enter a recipient email");
       return;
     }
 
@@ -41,10 +57,11 @@ export const SendTestEmail: React.FC<SendTestEmailProps> = ({
     try {
       await inboxService.sendTestEmail({
         email: senderEmail || "",
-        toEmail: selectedLeadEmail,
+        toEmail: recipientEmail,
         emailTemplate: {
           subject: compiledSubject,
           emailBody: compiledBody,
+          sendAsPlainText,
         },
       });
       toast.success("Test email sent successfully!");
@@ -87,13 +104,13 @@ export const SendTestEmail: React.FC<SendTestEmailProps> = ({
             <Input
               type="email"
               placeholder="Enter email address"
-              value={selectedLeadEmail}
-              disabled
-              readOnly
+              value={recipientEmail}
+              onChange={(e) => setRecipientEmail(e.target.value)}
             />
           </FormGroup>
           <InfoText>
-            A test email will be sent to{" "} {selectedLeadEmail || "the selected lead"}
+            A test email will be sent to{" "}
+            {recipientEmail || "the recipient email"}
           </InfoText>
         </DialogContent>
         <DialogFooter>

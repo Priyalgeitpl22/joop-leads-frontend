@@ -201,7 +201,7 @@ export const FinalReviewStep: React.FC<FinalReviewStepProps> = ({
           isOpen={showTestEmailDialog}
           onClose={() => setShowTestEmailDialog(false)}
           senderAccounts={campaign?.sender_accounts as Account[] || []}
-          selectedLeadEmail={selectedLead?.email}
+          sendAsPlainText={campaign?.sendAsPlainText || false}
           compiledSubject={compiledSubject}
           compiledBody={compiledBody}
         />  

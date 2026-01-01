@@ -131,6 +131,7 @@ export const inboxService = {
     emailTemplate: {
       subject: string;
       emailBody: string;
+      sendAsPlainText: boolean;
     };
   }): Promise<{ code: number; message: string }> {
     const response = await emailApi.post('/accounts/send-test-email', data);
