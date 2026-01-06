@@ -22,11 +22,10 @@ import type { Account } from "../../../../../types";
 interface SendTestEmailProps {
   isOpen: boolean;
   onClose: () => void;
-  senderAccounts: Account[] | [];
-  selectedLeadEmail?: string; // ✅ ADD
-  sendAsPlainText: boolean;
+  senderAccounts: Account[];
   compiledSubject: string;
   compiledBody: string;
+  sendAsPlainText: boolean;
 }
 
 export const SendTestEmail: React.FC<SendTestEmailProps> = ({

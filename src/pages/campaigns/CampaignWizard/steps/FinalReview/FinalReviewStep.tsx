@@ -25,8 +25,8 @@ import { QuillEditor } from "../../../../../components/common/QuillEditor";
 import type { AppDispatch } from "../../../../../store";
 import { fetchCampaignById } from "../../../../../store/slices/campaignSlice";
 import { useLocation, useParams } from "react-router-dom";
-import SendTestEmail from "../SetupStep/SendTestEmail";
 import type { Account } from "../../../../../types";
+import SendTestEmail from "../SetupStep/SendTestEmail";
 
 interface FinalReviewStepProps {
   campaign: Campaign | null;
