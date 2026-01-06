@@ -45,5 +45,5 @@ jobs:
              sudo chmod -R 755 /var/www/joop-leads-frontend/
              sudo systemctl restart nginx
            else
-             echo '❌ Build failed, skipping deployment'
+             echo 'Build failed, skipping deployment'
            fi
