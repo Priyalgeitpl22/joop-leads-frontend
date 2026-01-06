@@ -23,6 +23,7 @@ interface SendTestEmailProps {
   isOpen: boolean;
   onClose: () => void;
   senderAccounts: Account[] | [];
+  selectedLeadEmail?: string; // ✅ ADD
   sendAsPlainText: boolean;
   compiledSubject: string;
   compiledBody: string;
