@@ -52,7 +52,12 @@ interface SetupStepProps {
 const getNowForDatetimeLocal = () => {
   const now = new Date();
   now.setSeconds(0, 0);
-  return now.toISOString().slice(0, 16);
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
 };
 
 export const SetupStep: React.FC<SetupStepProps> = ({
@@ -114,7 +119,7 @@ export const SetupStep: React.FC<SetupStepProps> = ({
       });
       setSelectedSenderAccounts(campaignSenderAccounts || []);
       setScheduleData({
-        scheduledAt: new Date(campaign.scheduledAt || getNowForDatetimeLocal()).toISOString().slice(0, 16),
+        scheduledAt: campaign.scheduledAt ? toDatetimeLocal(campaign.scheduledAt) : getNowForDatetimeLocal(),
         timezone: campaign.timezone || "UTC",
         windowStart: campaign.windowStart || "09:00",
         windowEnd: campaign.windowEnd || "18:00",
@@ -334,7 +339,8 @@ export const SetupStep: React.FC<SetupStepProps> = ({
                 <Input
                   type="datetime-local"
                   defaultValue={getNowForDatetimeLocal()}
-                  value={toDatetimeLocal(scheduleData.scheduledAt)}
+                  min={getNowForDatetimeLocal()}
+                  value={scheduleData.scheduledAt}
                   onChange={(e) =>
                     setScheduleData((prev) => ({
                       ...prev,

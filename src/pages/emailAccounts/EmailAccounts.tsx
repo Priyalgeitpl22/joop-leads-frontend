@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useAppSelector } from "../../store";
 import { emailAccountService } from "../../services/email.account.service";
 import type { Account } from "../../types/emailAccount.types";
+import { EmailAccountType } from "../../types/emailAccount.types";
 import { AddAccountDialog, SmtpDialog, OutlookDialog } from "./components";
 import {
   PageContainer,
@@ -62,10 +63,52 @@ export const EmailAccounts: React.FC = () => {
     setIsAddAccountDialogOpen(true);
   };
 
+  const getTypeIcon = (type: string) => {
+    const iconStyle = { display: "flex", alignItems: "center", gap: "8px" };
+    
+    switch (type) {
+      case EmailAccountType.GMAIL:
+        return (
+          <span style={iconStyle}>
+            <img src="/Images/mail.png" alt="Gmail" width={20} height={20} />
+            Gmail
+          </span>
+        );
+      case EmailAccountType.OUTLOOK:
+        return (
+          <span style={iconStyle}>
+            <img src="/Images/outlook.webp" alt="Outlook" width={20} height={20} />
+            Outlook
+          </span>
+        );
+      case EmailAccountType.IMAP:
+        return (
+          <span style={iconStyle}>
+            <img src="/Images/imap.png" alt="IMAP" width={20} height={20} />
+            IMAP
+          </span>
+        );
+      case EmailAccountType.SMTP:
+        return (
+          <span style={iconStyle}>
+            <img src="/Images/smtp.png" alt="SMTP" width={20} height={20} />
+            SMTP
+          </span>
+        );
+      default:
+        return type;
+    }
+  };
+
   const columns = [
     { key: "name", label: "Name" },
     { key: "email", label: "Email Address" },
-    { key: "type", label: "Type" },
+    { 
+      key: "type", 
+      label: "Type",
+      render: (value: unknown) => getTypeIcon(value as string),
+    },
+    { key: "state", label: "State" },
     { key: "dailyLimit", label: "Daily Limit" },
     { key: "warmupEnabled", label: "Warmup Enabled" },
     { key: "reputation", label: "Reputation" },
@@ -111,6 +154,7 @@ export const EmailAccounts: React.FC = () => {
           name: account.name,
           email: account.email,
           type: account.type,
+          state: account.state,
           timeGap: account.time_gap,
           dailyLimit: account.limit,
           warmupEnabled: account.warmup?.enabled ? "Yes" : "No",

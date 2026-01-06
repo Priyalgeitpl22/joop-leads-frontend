@@ -118,6 +118,7 @@ export interface DataTableProps {
   showSaveButton?: boolean;
   handleSaveSenderAccounts?: () => void;
   showHeader?: boolean;
+  isRowDisabled?: (row: Record<string, unknown>) => boolean;
 }
 
 export function DataTable({
@@ -159,6 +160,7 @@ export function DataTable({
   showSaveButton = false,
   handleSaveSenderAccounts = () => {},
   showHeader = true,
+  isRowDisabled,
 }: DataTableProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<FilterState>({});
@@ -604,19 +606,27 @@ export function DataTable({
             </TableHead>
 
             <TableBody>
-              {paginatedData.map((row, rowIndex) => (
+              {paginatedData.map((row, rowIndex) => {
+                const isDisabled = isRowDisabled?.(row) ?? false;
+                
+                return (
                 <TableRow
                   key={row.id as string}
                   $selected={selectedRows.includes(row.id as string)}
-                  onClick={() => onRowClick?.(row)}
-                  style={{ cursor: onRowClick ? "pointer" : "default" }}
+                  onClick={() => !isDisabled && onRowClick?.(row)}
+                  style={{ 
+                    cursor: onRowClick && !isDisabled ? "pointer" : "default",
+                    opacity: isDisabled ? 0.5 : 1,
+                    pointerEvents: isDisabled ? "none" : "auto"
+                  }}
                 >
                   {selectable && (
-                    <TableCell onClick={(e) => e.stopPropagation()}>
+                    <TableCell onClick={(e) => e.stopPropagation()} style={{ pointerEvents: "auto" }}>
                       <Checkbox
                         type="checkbox"
                         checked={selectedRows.includes(row.id as string)}
                         onChange={() => handleSelectRow(row.id as string)}
+                        disabled={isDisabled}
                       />
                     </TableCell>
                   )}
@@ -655,7 +665,8 @@ export function DataTable({
                     </TableCell>
                   )}
                 </TableRow>
-              ))}
+              );
+              })}
             </TableBody>
           </Table>
         </TableWrapper>

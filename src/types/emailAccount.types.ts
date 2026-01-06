@@ -114,6 +114,7 @@ export enum EmailAccountState {
   UNVERIFIED = 'unverified',
   DISABLED = 'disabled',
   DELETED = 'deleted',
+  REAUTH_REQUIRED = 'reauth_required',
 }
 
 export enum EmailAccountType {
