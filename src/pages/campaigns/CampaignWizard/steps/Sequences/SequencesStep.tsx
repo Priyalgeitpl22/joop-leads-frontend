@@ -77,6 +77,7 @@ export const SequencesStep: React.FC<Props> = ({
   const [tempDelay, setTempDelay] = useState(1);
 
   const quillRef = useRef<QuillEditorRef>(null);
+  const delayTargetIndexRef = useRef(0);
 
   const selectedSequence = sequences[selectedSequenceIndex];
 
@@ -156,16 +157,24 @@ export const SequencesStep: React.FC<Props> = ({
   };
 
   const updateDelay = (days: number) => {
+    const targetIndex = delayTargetIndexRef.current;
     setSequences((prev) => {
       const updated = [...prev];
-      updated[selectedSequenceIndex] = {
-        ...updated[selectedSequenceIndex],
+      updated[targetIndex] = {
+        ...updated[targetIndex],
         delayDays: days,
       };
       onSequencesChange(updated as Sequence[]);
       return updated;
     });
     setShowDelayModal(false);
+  };
+
+  const onChangeDelayDays = (index: number) => {
+    const prevIndex = index - 1;
+    delayTargetIndexRef.current = prevIndex;
+    setTempDelay(sequences[prevIndex].delayDays || 1);
+    setShowDelayModal(true);
   };
 
   return (
@@ -185,15 +194,11 @@ export const SequencesStep: React.FC<Props> = ({
               {index > 0 && (
                 <DelayConnectorLine>
                   <DelayBadgeInline
-                    onClick={() => {
-                      setSelectedSequenceIndex(index);
-                      setTempDelay(seq.delayDays || 1);
-                      setShowDelayModal(true);
-                    }}
+                    onClick={() => onChangeDelayDays(index)}
                   >
                     <Clock size={12} />
-                    Wait {seq.delayDays || 1} day
-                    {(seq.delayDays || 1) !== 1 ? "s" : ""}
+                    Wait {sequences[index - 1].delayDays || 1} day
+                    {(sequences[index - 1].delayDays || 1) !== 1 ? "s" : ""}
                   </DelayBadgeInline>
                 </DelayConnectorLine>
               )}
