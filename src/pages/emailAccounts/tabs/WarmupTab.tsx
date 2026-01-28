@@ -23,6 +23,7 @@ import {
   ErrorText,
 } from './WarmupTab.styled';
 import type { Account } from '../../../types/emailAccount.types';
+import { Slider } from '@mui/material';
 
 // interface WarmupSettings {
 //   enabled?: boolean;
@@ -46,9 +47,12 @@ interface WarmupTabProps {
 
 interface WarmupFormData {
   enabled: boolean;
-  maxPerDay: number;
-  dailyRampup: boolean;
+  maxEmailPerDay: number;
+  warmupMaxCount: number;
+  warmupMinCount: number;
+  isRampupEnabled: boolean;
   rampupIncrement: number;
+  startDate: Date | null;
   replyRate: number;
   dailyReplyTarget: number;
   identifierTagFirst: string;
@@ -59,8 +63,12 @@ interface WarmupFormData {
 }
 
 interface FormErrors {
-  maxPerDay?: string;
+  maxEmailPerDay?: string;
+  warmupMaxCount?: string;
+  warmupMinCount?: string;
+  isRampupEnabled?: string;
   rampupIncrement?: string;
+  startDate?: string;
   replyRate?: string;
   dailyReplyTarget?: string;
   identifierTagFirst?: string;
@@ -69,11 +77,14 @@ interface FormErrors {
 
 const defaultValues: WarmupFormData = {
   enabled: false,
-  maxPerDay: 20,
-  dailyRampup: false,
+  maxEmailPerDay: 20,
+  warmupMaxCount: 20, // Default to maxEmailPerDay
+  warmupMinCount: 1,
+  isRampupEnabled: false,
   rampupIncrement: 5,
+  startDate: null,
   replyRate: 20,
-  dailyReplyTarget: 10,
+  dailyReplyTarget: 0,
   identifierTagFirst: '',
   identifierTagSecond: '',
   autoAdjust: false,
@@ -91,23 +102,42 @@ export const WarmupTab: React.FC<WarmupTabProps> = ({ accountId, emailAccount, o
     if (emailAccount?.warmup) {
       const warmup = emailAccount.warmup;
       const identifierTagParts = warmup.identifierTag?.split('-') || ['', ''];
+      const maxEmailPerDay = warmup.maxEmailPerDay || 20;
 
       setFormData({
         enabled: warmup.enabled ?? false,
-        maxPerDay: warmup.maxPerDay || 20,
-        dailyRampup: warmup.dailyRampup ?? false,
+        maxEmailPerDay,
+        warmupMaxCount: warmup.warmupMaxCount || maxEmailPerDay, // Default to maxEmailPerDay
+        warmupMinCount: warmup.warmupMinCount || 1,
+        isRampupEnabled: warmup.isRampupEnabled ?? false,
         rampupIncrement: warmup.rampupIncrement ?? 5,
+        startDate: warmup.startDate ?? null,
         replyRate: warmup.replyRate ?? 20,
-        dailyReplyTarget: warmup.dailyReplyTarget ?? 10,
-        identifierTagFirst: identifierTagParts[0] || '',
-        identifierTagSecond: identifierTagParts[1] || '',
-        autoAdjust: warmup.dailyLimit && warmup.dailyLimit > 0 ? true : false,
+        dailyReplyTarget: warmup.dailyReplyTarget ?? 0,
+        identifierTagFirst: identifierTagParts[0] ?? '',
+        identifierTagSecond: identifierTagParts[1] ?? '',
+        autoAdjust: warmup.autoAdjust ?? false,
         customDomainTracking: warmup.customDomainTracking ?? false,
         weekdaysOnly: warmup.weekdaysOnly ?? false,
       });
     }
     setIsLoading(false);
   }, [emailAccount]);
+
+  // Ensure warmupMaxCount doesn't exceed maxEmailPerDay when maxEmailPerDay changes
+  useEffect(() => {
+    setFormData((prev) => {
+      const updates: Partial<WarmupFormData> = {};
+      if (prev.warmupMaxCount > prev.maxEmailPerDay) {
+        updates.warmupMaxCount = prev.maxEmailPerDay;
+      }
+      if (prev.warmupMinCount > prev.maxEmailPerDay) {
+        updates.warmupMinCount = Math.min(prev.warmupMinCount, prev.maxEmailPerDay);
+      }
+      return Object.keys(updates).length > 0 ? { ...prev, ...updates } : prev;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.maxEmailPerDay]);
 
   const handleChange = (field: keyof WarmupFormData, value: string | number | boolean) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -122,15 +152,15 @@ export const WarmupTab: React.FC<WarmupTabProps> = ({ accountId, emailAccount, o
 
     if (formData.enabled) {
       // Validate maxPerDay
-      if (!formData.maxPerDay) {
-        newErrors.maxPerDay = 'This field is required';
-      } else if (formData.maxPerDay < 1) {
-        newErrors.maxPerDay = 'Minimum value is 1';
-      } else if (formData.maxPerDay > 50) {
-        newErrors.maxPerDay = 'Maximum value is 50';
+      if (!formData.maxEmailPerDay) {
+        newErrors.maxEmailPerDay = 'This field is required';
+      } else if (formData.maxEmailPerDay < 1) {
+        newErrors.maxEmailPerDay = 'Minimum value is 1';
+      } else if (formData.maxEmailPerDay > 50) {
+        newErrors.maxEmailPerDay = 'Maximum value is 50';
       }
 
-      if (formData.dailyRampup) {
+      if (formData.isRampupEnabled) {
         // Validate rampupIncrement
         if (!formData.rampupIncrement) {
           newErrors.rampupIncrement = 'This field is required';
@@ -194,8 +224,10 @@ export const WarmupTab: React.FC<WarmupTabProps> = ({ accountId, emailAccount, o
       const payload = {
         warmup: {
           enabled: formData.enabled,
-          maxPerDay: formData.maxPerDay,
-          dailyRampup: formData.dailyRampup,
+          maxEmailPerDay: formData.maxEmailPerDay,
+          warmupMaxCount: formData.warmupMaxCount,
+          warmupMinCount: formData.warmupMinCount,
+          isRampupEnabled: formData.isRampupEnabled,
           rampupIncrement: formData.rampupIncrement,
           startDate: new Date(),
           replyRate: formData.replyRate,
@@ -261,14 +293,14 @@ export const WarmupTab: React.FC<WarmupTabProps> = ({ accountId, emailAccount, o
               </SettingInfo>
               <div>
                 <Input
-                  type="number"
-                  value={formData.maxPerDay}
-                  onChange={(e) => handleChange('maxPerDay', Number(e.target.value))}
+                  // type="number"
+                  value={formData.maxEmailPerDay}
+                  onChange={(e) => handleChange('maxEmailPerDay', Number(e.target.value))}
                   min={1}
                   max={50}
-                  $hasError={!!errors.maxPerDay}
+                  $hasError={!!errors.maxEmailPerDay}
                 />
-                {errors.maxPerDay && <ErrorText>{errors.maxPerDay}</ErrorText>}
+                {errors.maxEmailPerDay && <ErrorText>{errors.maxEmailPerDay}</ErrorText>}
               </div>
             </SettingRow>
           </SettingCard>
@@ -278,8 +310,8 @@ export const WarmupTab: React.FC<WarmupTabProps> = ({ accountId, emailAccount, o
               <ToggleSwitch>
                 <input
                   type="checkbox"
-                  checked={formData.dailyRampup}
-                  onChange={(e) => handleChange('dailyRampup', e.target.checked)}
+                  checked={formData.isRampupEnabled}
+                  onChange={(e) => handleChange('isRampupEnabled', e.target.checked)}
                 />
                 <span />
               </ToggleSwitch>
@@ -289,7 +321,7 @@ export const WarmupTab: React.FC<WarmupTabProps> = ({ accountId, emailAccount, o
             </SettingHeader>
           </SettingCard>
 
-          {formData.dailyRampup && (
+          {formData.isRampupEnabled && (
             <>
               <SettingCard>
                 <SettingRow>
@@ -299,7 +331,6 @@ export const WarmupTab: React.FC<WarmupTabProps> = ({ accountId, emailAccount, o
                   </SettingInfo>
                   <div>
                     <Input
-                      type="number"
                       value={formData.rampupIncrement}
                       onChange={(e) => handleChange('rampupIncrement', Number(e.target.value))}
                       min={1}
@@ -313,20 +344,45 @@ export const WarmupTab: React.FC<WarmupTabProps> = ({ accountId, emailAccount, o
 
               <SettingCard>
                 <SettingInfo>
+                  <h4>Randomise number of warm up emails per day</h4>
+                  <p>Set the minimum and maximum range for warmup emails per day</p>
+                </SettingInfo>
+                <div style={{ width: "100%", padding: "20px 12px" }}>
+                  <Slider
+                    value={[formData.warmupMinCount, formData.warmupMaxCount || formData.maxEmailPerDay]}
+                    min={1}
+                    max={formData.maxEmailPerDay}
+                    onChange={(_e, newValue) => {
+                      const [min, max] = newValue as number[];
+                      handleChange('warmupMinCount', min);
+                      handleChange('warmupMaxCount', max);
+                    }}
+                    valueLabelDisplay="auto"
+                    disableSwap
+                  />
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px', fontSize: '14px', color: '#666' }}>
+                    <span>Min: {formData.warmupMinCount}</span>
+                    <span>Max: {formData.warmupMaxCount || formData.maxEmailPerDay} (max: {formData.maxEmailPerDay})</span>
+                  </div>
+                  {errors.warmupMinCount && <ErrorText>{errors.warmupMinCount}</ErrorText>}
+                  {errors.warmupMaxCount && <ErrorText>{errors.warmupMaxCount}</ErrorText>}
+                </div>
+              </SettingCard>
+
+              <SettingCard>
+                <SettingInfo>
                   <h4>Reply Rate (%)</h4>
                   <p>Suggested - 20, Maximum - 100</p>
                 </SettingInfo>
-                <SliderInput
-                  type="range"
+                <Input
+                  // type="number"
+                  value={formData.warmupMaxCount}
+                  onChange={(e) => handleChange('warmupMaxCount', Number(e.target.value))}
                   min={1}
                   max={100}
-                  value={formData.replyRate}
-                  onChange={(e) => handleChange('replyRate', Number(e.target.value))}
+                  $hasError={!!errors.warmupMaxCount}
                 />
-                <div style={{ textAlign: 'right', fontSize: '14px', color: '#666' }}>
-                  {formData.replyRate}%
-                </div>
-                {errors.replyRate && <ErrorText>{errors.replyRate}</ErrorText>}
+                {errors.warmupMaxCount && <ErrorText>{errors.warmupMaxCount}</ErrorText>}
               </SettingCard>
 
               <SettingCard>

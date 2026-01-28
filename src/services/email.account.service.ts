@@ -1,5 +1,5 @@
 import { emailApi } from './api';
-import type { Account, IEmailAccountResponse, IEmailAccountFilters } from '../types/emailAccount.types';
+import type { Account, IEmailAccountResponse, IEmailAccountFilters, WarmupStatsResponse } from '../types/emailAccount.types';
 import type { ApiResponse } from '../types';
 
 export const emailAccountService = {
@@ -172,8 +172,8 @@ export const emailAccountService = {
     id: string,
     startDate: Date,
     endDate: Date
-  ): Promise<{ sent: number; inbox: number; spam: number; received: number }> {
-    const response = await emailApi.get(`/accounts/${id}/warmup/stats`, {
+  ): Promise<ApiResponse<WarmupStatsResponse>> {
+    const response = await emailApi.get<ApiResponse<WarmupStatsResponse>>(`/accounts/${id}/warmup/stats`, {
       params: {
         startDate: startDate.toISOString(),
         endDate: endDate.toISOString(),

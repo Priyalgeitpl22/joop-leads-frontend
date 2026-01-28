@@ -69,32 +69,21 @@ export interface Account {
 
 export interface IWarmupSettings {
   enabled: boolean;
-  maxPerDay: number;
-
-  identifierTag: string;
+  maxEmailPerDay: number;
+  warmupMaxCount: number;
+  warmupMinCount: number;
+  isRampupEnabled: boolean;
   rampupIncrement: number;
-
-  randomizeEmailsPerDay: boolean;
+  startDate: Date | null;
   replyRate: number;
-
+  dailyReplyTarget: number;
+  identifierTag: string;
+  autoAdjust: boolean;
+  customDomainTracking: boolean;
+  weekdaysOnly: boolean;
   reputation: number;
   reputationLastCalculated: Date | null;
-
-  startDate: Date | null;
-  weekdaysOnly: boolean;
-
-  customDomainTracking: boolean;
-  dailyRampup: boolean;
-  dailyReplyTarget: number;
-
-  maxEmailsPerDay: [number, number];
-
-  // Derived / runtime fields (not from API)
-  dailyLimit?: number;
-  dailyLimitUsed?: number;
-  dailyLimitRemaining?: number;
 }
-
 export interface IEmailAccountResponse {
   data: IEmailAccount[];
   total?: number;
@@ -104,6 +93,28 @@ export interface IEmailAccountFilters {
   search?: string;
   vendor?: string;
   warmupEnabled?: boolean;
+}
+
+/** Warmup stats API response (payload inside ApiResponse.data) */
+export interface WarmupStatsResponse {
+  accountId: string;
+  accountEmail: string;
+  period: {
+    startDate: string;
+    endDate: string;
+  };
+  statistics: {
+    warmupEmailsSent: number;
+    landedInInbox: number;
+    savedFromSpam: number;
+    emailsReceived: number;
+    emailPerformance: number;
+    outboundStatus: string;
+    replies: number;
+    replyRate: number | string;
+    deliveryRate: number | string;
+  };
+  recentEmails: unknown[];
 }
 
 export enum EmailAccountState {

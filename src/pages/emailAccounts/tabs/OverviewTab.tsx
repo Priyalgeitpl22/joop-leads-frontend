@@ -47,11 +47,14 @@ interface WarmupStats {
 export const OverviewTab: React.FC<OverviewTabProps> = ({ accountId, emailAccount }) => {
   const theme = useTheme();
   const [stats, setStats] = useState<WarmupStats>({
-    sent: 150,
-    inbox: 149,
-    spam: 1,
-    received: 23,
+    sent: 0,
+    inbox: 0,
+    spam: 0,
+    received: 0,
   });
+  const [pieData, setPieData] = useState<{ name: string; value: number }[]>([]);
+  const [barChartData, setBarChartData] = useState<{ name: string; sent: number; replied: number }[]>([]);
+  const [metrics, setMetrics] = useState<{ name: string; value: number; color: string }[]>([]);
   const [, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -59,19 +62,34 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({ accountId, emailAccoun
       if (!accountId) return;
       setIsLoading(true);
       try {
-        // Fetch warmup stats if available
         const endDate = new Date();
         const startDate = new Date();
         startDate.setDate(startDate.getDate() - 7);
-        
+
         const response = await emailAccountService.getWarmupStats(accountId, startDate, endDate);
-        if (response) {
+        if (response.code === 200 && response.data?.statistics) {
+          const { statistics } = response.data;
           setStats({
-            sent: response.sent || 150,
-            inbox: response.inbox || 149,
-            spam: response.spam || 1,
-            received: response.received || 23,
+            sent: statistics.warmupEmailsSent ?? 0,
+            inbox: statistics.landedInInbox ?? 0,
+            spam: statistics.savedFromSpam ?? 0,
+            received: statistics.emailsReceived ?? 0,
           });
+
+          setPieData([
+            { name: 'Landed in inbox', value: statistics.landedInInbox ?? 0 },
+            { name: 'Saved from spam', value: statistics.savedFromSpam ?? 0 },
+          ]);
+          setBarChartData([
+            { name: startDate.toLocaleDateString(), sent: statistics.warmupEmailsSent ?? 0, replied: statistics.replies ?? 0 },
+            { name: endDate.toLocaleDateString(), sent: statistics.warmupEmailsSent ?? 0, replied: statistics.replies ?? 0 },
+          ]);
+          setMetrics([
+            { value: statistics.warmupEmailsSent ?? 0, name: 'Warmup emails sent', color: theme.colors.primary.main },
+            { value: statistics.landedInInbox ?? 0, name: 'Landed in inbox', color: theme.colors.success.main },
+            { value: statistics.savedFromSpam ?? 0, name: 'Saved from spam', color: theme.colors.error.main },
+            { value: statistics.emailsReceived ?? 0, name: 'Emails received', color: theme.colors.warning.main },
+          ]);
         }
       } catch (error) {
         console.error('Failed to fetch warmup stats:', error);
@@ -84,28 +102,6 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({ accountId, emailAccoun
     fetchStats();
   }, [accountId]);
 
-  const metrics = [
-    { value: stats.sent, label: 'Warmup emails sent', color: theme.colors.primary.main },
-    { value: stats.inbox, label: 'Landed in inbox', color: theme.colors.success.main },
-    { value: stats.spam, label: 'Saved from spam', color: theme.colors.error.main },
-    { value: stats.received, label: 'Emails received', color: theme.colors.warning.main },
-  ];
-
-  const barChartData = [
-    { name: '20 Nov', sent: 19, replied: 5 },
-    { name: '21 Nov', sent: 18, replied: 5 },
-    { name: '22 Nov', sent: 13, replied: 4 },
-    { name: '23 Nov', sent: 31, replied: 8 },
-    { name: '24 Nov', sent: 19, replied: 7 },
-    { name: '25 Nov', sent: 22, replied: 4 },
-    { name: '26 Nov', sent: 25, replied: 8 },
-  ];
-
-  const pieData = [
-    { name: 'Landed in inbox', value: stats.inbox },
-    { name: 'Saved from spam', value: stats.spam },
-  ];
-
   const inboxPercentage = stats.sent > 0 ? Math.round((stats.inbox / stats.sent) * 100) : 0;
   const performanceType = inboxPercentage >= 95 ? 'super' : inboxPercentage >= 80 ? 'good' : 'poor';
 
@@ -117,7 +113,7 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({ accountId, emailAccoun
           {metrics.map((metric, index) => (
             <MetricCard key={index} $color={metric.color}>
               <div className="value">{metric.value}</div>
-              <div className="label">{metric.label}</div>
+              <div className="label">{metric.name}</div>
             </MetricCard>
           ))}
         </MetricsGrid>
