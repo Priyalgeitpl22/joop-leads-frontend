@@ -13,7 +13,7 @@ export {
 } from "./quillEditorConfig";
 
 // Styled components for the editor wrapper
-const EditorContainer = styled.div<{ $minHeight?: string }>`
+export const EditorContainer = styled.div<{ $minHeight?: string }>`
   position: relative;
 
   .ql-container {
@@ -37,16 +37,19 @@ const EditorContainer = styled.div<{ $minHeight?: string }>`
   .ql-container {
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
+    max-height: 355px;
+    overflow-y: auto;
+    scrollbar-width: thin;
   }
 `;
 
-const VariablesWrapper = styled.div`
+export const VariablesWrapper = styled.div`
   position: relative;
   display: inline-flex;
   margin-left: auto;
 `;
 
-const VariablesButton = styled.button`
+export const VariablesButton = styled.button`
   display: flex;
   align-items: center;
   gap: 4px;
@@ -66,7 +69,7 @@ const VariablesButton = styled.button`
   }
 `;
 
-const VariablesDropdown = styled.div`
+export const VariablesDropdown = styled.div`
   position: absolute;
   top: 100%;
   right: 0;
@@ -81,7 +84,7 @@ const VariablesDropdown = styled.div`
   z-index: 100;
 `;
 
-const VariableOption = styled.button`
+export const VariableOption = styled.button`
   display: flex;
   align-items: center;
   justify-content: space-between;

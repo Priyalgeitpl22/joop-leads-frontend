@@ -447,7 +447,6 @@ export const EditorWrapper = styled.div`
   flex-direction: column;
   border: 1px solid ${({ theme }) => theme.colors.border.light};
   border-radius: ${({ theme }) => theme.borderRadius.md};
-  overflow: hidden;
   min-height: 350px;
   position: relative;
 
