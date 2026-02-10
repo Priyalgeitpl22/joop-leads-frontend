@@ -19,23 +19,24 @@ import { Dashboard } from "./pages/dashboard";
 // Layouts & Components
 import { MainLayout } from "./layouts";
 import { ProtectedRoute } from "./components/ProtectedRoute";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import type { AppDispatch } from "./store";
+import type { AppDispatch, RootState } from "./store";
 import { fetchCurrentUser } from "./store/slices/userSlice";
 
 const PUBLIC_ROUTES = ['/login', '/register', '/forgot-password', '/reset-password', '/verify-otp', '/activate-account'];
 
 function App() {
+  const user = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch<AppDispatch>();
   const location = useLocation();
 
   useEffect(() => {
     const isPublicRoute = PUBLIC_ROUTES.some(route => location.pathname.startsWith(route));
-    if (!isPublicRoute) {
+    if (!isPublicRoute && !user) {
       dispatch(fetchCurrentUser());
     }
-  }, [dispatch, location.pathname]);
+  }, [dispatch, location.pathname, user]);
 
   return (
     <>
