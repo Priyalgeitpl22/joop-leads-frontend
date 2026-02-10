@@ -43,6 +43,14 @@ import type {
   NewSequence,
   Sequence,
 } from "../../../../../interfaces";
+import {
+  VARIABLE_OPTIONS,
+  VariableOption,
+  VariablesButton,
+  VariablesWrapper,
+  VariablesDropdown,
+} from "../../../../../components/common/QuillEditor";
+import { Braces } from "lucide-react";
 
 interface Props {
   campaign: Campaign | null;
@@ -75,6 +83,7 @@ export const SequencesStep: React.FC<Props> = ({
   const [selectedSequenceIndex, setSelectedSequenceIndex] = useState(0);
   const [showDelayModal, setShowDelayModal] = useState(false);
   const [tempDelay, setTempDelay] = useState(1);
+  const[showSubjectVariables, setShowSubjectVariables] = useState(false);
 
   const quillRef = useRef<QuillEditorRef>(null);
   const delayTargetIndexRef = useRef(0);
@@ -177,6 +186,12 @@ export const SequencesStep: React.FC<Props> = ({
     setShowDelayModal(true);
   };
 
+  const insertSubjectVariable = (variable: string) => {
+    const newSubject = `${selectedSequence.subject || ""}{{${variable}}}`;
+    updateSubject(newSubject);
+    setShowSubjectVariables(false);
+  };
+
   return (
     <SequencesContainer>
       {/* Sidebar */}
@@ -257,6 +272,27 @@ export const SequencesStep: React.FC<Props> = ({
                   onChange={(e) => updateSubject(e.target.value)}
                 />
               </SubjectInputWrapper>
+              <VariablesWrapper>
+                <VariablesButton
+                  onClick={() => setShowSubjectVariables(!showSubjectVariables)}
+                >
+                  <Braces size={14} /> Variables
+                </VariablesButton>
+
+                {showSubjectVariables && (
+                  <VariablesDropdown>
+                    {VARIABLE_OPTIONS.map((v) => (
+                      <VariableOption
+                        key={v.key}
+                        type="button"
+                        onClick={() => insertSubjectVariable(v.key)}
+                      >
+                        <span>{v.label}</span>
+                      </VariableOption>
+                    ))}
+                  </VariablesDropdown>
+                )}
+              </VariablesWrapper>
             </SubjectRow>
 
             <EditorWrapper>
