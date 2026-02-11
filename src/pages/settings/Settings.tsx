@@ -14,7 +14,7 @@ import {
 import { useTheme } from '../../context';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { updateCurrentUser } from '../../store/slices/userSlice';
-import { changePassword } from '../../store/slices/authSlice';
+import { changePassword, logout } from '../../store/slices/authSlice';
 import toast from 'react-hot-toast';
 import {
   PageContainer,
@@ -78,6 +78,7 @@ import {
   AvatarImage,
   AvatarUploadButton,
 } from './Settings.styled';
+import { useNavigate } from 'react-router-dom';
 
 type SettingsTab = 'profile' | 'security' | 'theme';
 
@@ -89,8 +90,12 @@ const colorThemes = [
   { id: 'amber', name: 'Amber', color: '#f59e0b' },
 ];
 
+const passwordRegex =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^()_\-+=])[A-Za-z\d@$!%*?&#^()_\-+=]{8,}$/;
+
 export const Settings: React.FC = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const { currentUser } = useAppSelector((state) => state.user);
   const { isDarkMode, toggleDarkMode, themeColor, setThemeColor } = useTheme();
 
@@ -108,14 +113,17 @@ export const Settings: React.FC = () => {
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
+    confirmPassword: '',
   });
   const [showPasswords, setShowPasswords] = useState({
     current: false,
     new: false,
+    confirm: false,
   });
   const [passwordErrors, setPasswordErrors] = useState({
     currentPassword: '',
     newPassword: '',
+    confirmPassword: '',
   });
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   // const [enable2FA, setEnable2FA] = useState(false);
@@ -199,7 +207,9 @@ export const Settings: React.FC = () => {
   // Security Handlers
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    if (value.startsWith(" ")) return;
     setPasswordData((prev) => ({ ...prev, [name]: value }));
+    setPasswordErrors((prev) => ({ ...prev, [name]: '' }));
     if (passwordErrors[name as keyof typeof passwordErrors]) {
       setPasswordErrors((prev) => ({ ...prev, [name]: '' }));
     }
@@ -208,41 +218,76 @@ export const Settings: React.FC = () => {
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    let hasError = false;
-    const errors = { currentPassword: '', newPassword: '' };
+    const errors = {
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: '',
+    };
 
-    if (!passwordData.currentPassword) {
+    const current = passwordData.currentPassword.trim();
+    const newPass = passwordData.newPassword.trim();
+    const confirm = passwordData.confirmPassword.trim();
+
+    if (!current) {
       errors.currentPassword = 'Current password is required';
-      hasError = true;
     }
 
-    if (!passwordData.newPassword) {
+    if (!newPass) {
       errors.newPassword = 'New password is required';
-      hasError = true;
-    } else if (passwordData.newPassword.length < 8) {
-      errors.newPassword = 'Password must be at least 8 characters';
-      hasError = true;
+    } else if (!passwordRegex.test(newPass)) {
+      errors.newPassword =
+        'Password must be 8+ chars, include uppercase, lowercase, number & special character';
+    } else if (current === newPass) {
+      errors.newPassword =
+        'New password must be different from current password';
     }
 
-    if (hasError) {
-      setPasswordErrors(errors);
-      return;
+    if (!confirm) {
+      errors.confirmPassword = 'Confirm password is required';
+    } else if (confirm !== newPass) {
+      errors.confirmPassword = 'Passwords do not match';
     }
+
+    setPasswordErrors(errors);
+
+    const hasError = Object.values(errors).some((err) => err !== "");
+    if (hasError) return;
 
     setIsChangingPassword(true);
     try {
       await dispatch(changePassword({
-        email: currentUser?.email || '',
-        existingPassword: passwordData.currentPassword,
-        newPassword: passwordData.newPassword,
-      })).unwrap();
-      setPasswordData({ currentPassword: '', newPassword: '' });
+          email: currentUser?.email || '',
+          existingPassword: current,
+          newPassword: newPass,
+        }),
+      ).unwrap();
+
+      toast.success('Password changed successfully. Please login again.');
+
+      dispatch(logout());
+      setTimeout(() => {
+        navigate("/login", { replace: true });
+      }, 2000);
     } catch (error: unknown) {
       const err = error as string;
       toast.error(err || 'Failed to change password');
     } finally {
       setIsChangingPassword(false);
     }
+  };
+
+  const isFormValid = () => {
+    const current = passwordData.currentPassword;
+    const newPass = passwordData.newPassword;
+    const confirm = passwordData.confirmPassword;
+
+    if (!current || !newPass || !confirm) return false;
+    if (current !== current.trim()) return false;
+    if (newPass !== newPass.trim()) return false;
+    if (!passwordRegex.test(newPass)) return false;
+    if (current === newPass) return false;
+    if (confirm !== newPass) return false;
+    return true;
   };
 
   // const handle2FAToggle = async () => {
@@ -357,7 +402,35 @@ export const Settings: React.FC = () => {
                 )}
               </InputGroup>
 
-              <SubmitButton type="submit" disabled={isChangingPassword}>
+              <InputGroup>
+                <InputLabel>Confirm Password</InputLabel>
+                <InputWrapper $hasError={!!passwordErrors.confirmPassword}>
+                  <Input
+                    type={showPasswords.confirm ? 'text' : 'password'}
+                    name='confirmPassword'
+                    value={passwordData.confirmPassword}
+                    onChange={handlePasswordChange}
+                    placeholder='Confirm Password'
+                    disabled={isChangingPassword}
+                  />
+                  <PasswordToggle
+                    type='button'
+                    onClick={() =>
+                      setShowPasswords((p) => ({ ...p, confirm: !p.confirm }))
+                    }
+                  >
+                    {showPasswords.confirm ? (
+                      <Eye size={18} />
+                    ) : (
+                      <EyeOff size={18} />
+                    )}
+                  </PasswordToggle>
+                </InputWrapper>
+                {passwordErrors.confirmPassword && (
+                  <ErrorText>{passwordErrors.confirmPassword}</ErrorText>
+                )}
+              </InputGroup>
+              <SubmitButton type="submit" disabled={!isFormValid() || isChangingPassword}>
                 {isChangingPassword ? 'Updating...' : 'Update'}
                 {isChangingPassword && (
                   <ButtonLoader>
