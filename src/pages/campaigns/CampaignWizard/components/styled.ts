@@ -89,13 +89,13 @@ export const TotalBox = styled.div`
   .label {
     font-size: ${({ theme }) => theme.typography.fontSize.sm};
     font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
-    color: ${({ theme }) => theme.colors.primary.dark};
+    color: ${({ theme }) => theme.colors.primary.contrast};
   }
 
   .count {
     font-size: 28px;
     font-weight: ${({ theme }) => theme.typography.fontWeight.bold};
-    color: ${({ theme }) => theme.colors.primary.main};
+    color: ${({ theme }) => theme.colors.primary.contrast};
   }
 `;
 

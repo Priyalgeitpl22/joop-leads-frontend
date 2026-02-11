@@ -115,6 +115,7 @@ export const DialogHeader = styled.div`
     font-size: ${({ theme }) => theme.typography.fontSize.lg};
     font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
     margin: 0;
+    color: ${({ theme }) => theme.colors.text.inverse};
   }
 `;
 

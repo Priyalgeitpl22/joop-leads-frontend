@@ -72,13 +72,12 @@ export const VariablesButton = styled.button`
 export const VariablesDropdown = styled.div`
   position: absolute;
   top: 100%;
-  right: 0;
   margin-top: 4px;
   background: ${({ theme }) => theme.colors?.background?.primary || "#fff"};
   border: 1px solid ${({ theme }) => theme.colors?.border?.main || "#e5e7eb"};
   border-radius: 8px;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  min-width: 200px;
+  min-width: 125px;
   max-height: 300px;
   overflow-y: auto;
   z-index: 100;
@@ -223,7 +222,6 @@ export const QuillEditor = React.forwardRef<QuillEditorRef, QuillEditorProps>(
                     type="button"
                     onClick={() => insertVariable(v.key)}
                   >
-                    {`{{${v.key}}}`}
                     <span>{v.label}</span>
                   </VariableOption>
                 ))}

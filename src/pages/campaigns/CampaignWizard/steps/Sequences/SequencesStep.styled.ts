@@ -37,7 +37,7 @@ export const SidebarIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${({ theme }) => theme.colors.primary.main};
+  color: ${({ theme }) => theme.colors.primary.contrast};
 `;
 
 export const EmailCardList = styled.div`
