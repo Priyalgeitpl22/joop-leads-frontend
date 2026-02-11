@@ -410,7 +410,7 @@ export const MappingVisualHeader = styled.div`
 export const MappingIconsRow = styled.div`
   display: flex;
   align-items: center;
-  gap: 85%;
+  gap: ${({ theme }) => theme.spacing.p80};
   flex: 1;
   justify-content: center;
   position: relative;

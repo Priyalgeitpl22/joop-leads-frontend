@@ -17,6 +17,7 @@ const baseTokens = {
     lg: '24px',
     xl: '32px',
     xxl: '48px',
+    p80: '80%'
   },
   typography: {
     fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
