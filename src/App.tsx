@@ -27,7 +27,7 @@ import { fetchCurrentUser } from "./store/slices/userSlice";
 const PUBLIC_ROUTES = ['/login', '/register', '/forgot-password', '/reset-password', '/verify-otp', '/activate-account'];
 
 function App() {
-  const user = useSelector((state: RootState) => state.user);
+  const user = useSelector((state: RootState) => state.user.currentUser);
   const dispatch = useDispatch<AppDispatch>();
   const location = useLocation();
 
