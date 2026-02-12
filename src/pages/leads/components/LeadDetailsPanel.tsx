@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   X,
   ChevronUp,
   ChevronDown,
-  MoreHorizontal,
-  Maximize2,
+  // MoreHorizontal,
+  // Maximize2,
   Send,
   MessageSquare,
   Phone,
@@ -21,6 +21,7 @@ import {
   Briefcase,
   Globe,
   ExternalLink,
+  Trash,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import {
@@ -66,13 +67,13 @@ import {
   OwnerField,
   OwnerAvatar,
   OwnerName,
-  ExperienceCard,
-  ExperienceLogo,
-  ExperienceInfo,
-  ExperienceTitle,
-  ExperienceCompany,
-  ExperienceDuration,
-  ExperienceBookmark,
+  // ExperienceCard,
+  // ExperienceLogo,
+  // ExperienceInfo,
+  // ExperienceTitle,
+  // ExperienceCompany,
+  // ExperienceDuration,
+  // ExperienceBookmark,
   TextAreaField,
   LinkField,
   EmptyTabContent,
@@ -82,6 +83,11 @@ import {
 } from "./LeadDetailsPanel.styled";
 import CampaignsList from "./CampaignsList";
 import type { Lead } from "../../../interfaces";
+import { Button, OptionsMenu } from "../../../components/common";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "../../../store";
+import { deleteLead, fetchAllLeads, updateLead } from "../../../store/slices/leadSlice";
+import ConfirmDialog from "../../common/DeleteDialog";
 
 interface LeadDetailsPanelProps {
   lead: Lead;
@@ -106,7 +112,19 @@ export const LeadDetailsPanel: React.FC<LeadDetailsPanelProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<TabType>("general");
   const [isClosing, setIsClosing] = useState(false);
+  const [deleteLeadDialogOpen, setDeleteLeadDialogOpen] = useState(false);
+  const [leadToDelete, setLeadToDelete] = useState<Lead | null>(null);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: lead?.firstName || "",
+    lastName: lead?.lastName || "",
+    phone: lead?.phone || "",
+    designation: lead?.designation || "",
+    linkedinUrl: lead?.linkedinUrl || "",
+  });
 
+  const dispatch = useDispatch<AppDispatch>();
+  
   useEffect(() => {
     if (lead?.id !== undefined) {
       setTimeout(() => {
@@ -114,6 +132,72 @@ export const LeadDetailsPanel: React.FC<LeadDetailsPanelProps> = ({
       }, 0);
     }
   }, [lead?.id !== undefined]);
+
+  useEffect(() => {
+    if (lead) {
+      setFormData({
+        firstName: lead.firstName || "",
+        lastName: lead.lastName || "",
+        phone: lead.phone || "",
+        designation: lead.designation || "",
+        linkedinUrl: lead.linkedinUrl || "",
+      });
+    }
+  }, [lead]);
+
+  const isFormChanged = useMemo(() => {
+    if (!lead) return false;
+
+    return (
+      formData.firstName !== (lead.firstName || "") ||
+      formData.lastName !== (lead.lastName || "") ||
+      formData.phone !== (lead.phone || "") ||
+      formData.designation !== (lead.designation || "") ||
+      formData.linkedinUrl !== (lead.linkedinUrl || "")
+    );
+  }, [formData, lead]);
+
+  if (!isOpen || !lead) {
+    return (
+      <Section>
+        <div>Loading...</div>
+      </Section>
+    );
+  }
+
+  const handleSave = async () => {
+    if (!isFormChanged) return;
+
+    try {
+      setIsUpdating(true);
+
+      await dispatch(
+        updateLead({
+          id: lead.id,
+          data: formData,
+        }),
+      ).unwrap();
+
+      await dispatch(fetchAllLeads()).unwrap();
+      toast.success("Lead updated successfully");
+      setIsClosing(true);
+    } catch (error: unknown) {
+      const err = error as { message?: string };
+      toast.error(err?.message || "Failed to update lead");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   const handleClose = () => {
     setIsClosing(true);
@@ -132,7 +216,7 @@ export const LeadDetailsPanel: React.FC<LeadDetailsPanelProps> = ({
   if (!isOpen || !lead) return null;
 
   const getInitials = (firstName: string, lastName: string) => {
-    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase() || "?";
+    return `${firstName?.charAt(0)}${lastName?.charAt(0)}`.toUpperCase() || "?";
   };
 
   const formatDate = (dateString: string) => {
@@ -164,6 +248,31 @@ export const LeadDetailsPanel: React.FC<LeadDetailsPanelProps> = ({
     return parts.length >= 2
       ? `${parts[0].charAt(0)}${parts[1].charAt(0)}`.toUpperCase()
       : name.substring(0, 2).toUpperCase();
+  };
+
+  const handleDeleteClick = (lead: Lead) => {
+    setLeadToDelete(lead);
+    setDeleteLeadDialogOpen(true);
+  };
+
+  const handleConfirmDeleteLead = async () => {
+    if (!leadToDelete) return;
+
+    try {
+      await dispatch(deleteLead(leadToDelete.id)).unwrap();
+      toast.success("Lead deleted successfully");
+      setDeleteLeadDialogOpen(false);
+      setIsClosing(true);
+      setLeadToDelete(null);
+    } catch (error: unknown) {
+      const err = error as { message?: string };
+      toast.error(err?.message || "Failed to delete lead");
+    }
+  };
+
+  const handleCancelDeleteLead = () => {
+    setDeleteLeadDialogOpen(false);
+    setLeadToDelete(null);
   };
 
   const renderGeneralTab = () => (
@@ -243,7 +352,12 @@ export const LeadDetailsPanel: React.FC<LeadDetailsPanelProps> = ({
                   <path d="M20 21a8 8 0 1 0-16 0" />
                 </svg>
               </FieldIcon>
-              <FieldInput defaultValue={lead.firstName || ""} placeholder="Enter first name" />
+              <FieldInput
+                name="firstName"
+                value={formData?.firstName}
+                onChange={handleChange}
+                placeholder="Enter first name"
+              />
             </FieldValue>
           </FieldGroup>
 
@@ -257,7 +371,12 @@ export const LeadDetailsPanel: React.FC<LeadDetailsPanelProps> = ({
                   <path d="M20 21a8 8 0 1 0-16 0" />
                 </svg>
               </FieldIcon>
-              <FieldInput defaultValue={lead.lastName || ""} placeholder="Enter last name" />
+              <FieldInput
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleChange}
+                placeholder="Enter last name"
+              />
             </FieldValue>
           </FieldGroup>
 
@@ -297,7 +416,7 @@ export const LeadDetailsPanel: React.FC<LeadDetailsPanelProps> = ({
       </Section>
 
       {/* Experiences Section */}
-      <Section>
+      {/* <Section>
         <SectionHeader>
           <SectionTitle>Experiences</SectionTitle>
         </SectionHeader>
@@ -332,7 +451,7 @@ export const LeadDetailsPanel: React.FC<LeadDetailsPanelProps> = ({
             Add new experience
           </AddFieldButton>
         </SectionBody>
-      </Section>
+      </Section> */}
 
       {/* Job Title */}
       <Section>
@@ -344,9 +463,10 @@ export const LeadDetailsPanel: React.FC<LeadDetailsPanelProps> = ({
             <FieldIcon>
               <Briefcase size={16} />
             </FieldIcon>
-            <FieldInput 
-              defaultValue={lead.designation || ""} 
-              placeholder="Enter job title" 
+            <FieldInput
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
             />
           </FieldValue>
         </SectionBody>
@@ -384,7 +504,12 @@ export const LeadDetailsPanel: React.FC<LeadDetailsPanelProps> = ({
               <FieldIcon>
                 <Linkedin size={16} />
               </FieldIcon>
-              <FieldInput placeholder="Enter LinkedIn URL" />
+              <FieldInput
+                name="linkedinUrl"
+                value={formData.linkedinUrl}
+                onChange={handleChange}
+                placeholder="Enter LinkedIn URL"
+              />
             </FieldValue>
           )}
         </SectionBody>
@@ -407,6 +532,9 @@ export const LeadDetailsPanel: React.FC<LeadDetailsPanelProps> = ({
           </SectionBody>
         </Section>
       )}
+      <Button onClick={handleSave} disabled={!isFormChanged || isUpdating}>
+        {isUpdating ? "Saving..." : "Save"}
+      </Button>
     </>
   );
 
@@ -421,7 +549,10 @@ export const LeadDetailsPanel: React.FC<LeadDetailsPanelProps> = ({
   return (
     <>
       <Overlay $isClosing={isClosing} onClick={handleOverlayClick} />
-      <PanelContainer $isClosing={isClosing}>
+      <PanelContainer
+        $isClosing={isClosing}
+        className={deleteLeadDialogOpen ? "blur-background" : ""}
+      >
         {/* Header */}
         <PanelHeader>
           <LeadHeaderInfo>
@@ -457,12 +588,17 @@ export const LeadDetailsPanel: React.FC<LeadDetailsPanelProps> = ({
                 <ChevronDown size={18} />
               </HeaderIconButton>
             )}
-            <HeaderIconButton title="More options">
-              <MoreHorizontal size={18} />
-            </HeaderIconButton>
-            <HeaderIconButton title="Expand">
-              <Maximize2 size={18} />
-            </HeaderIconButton>
+            <OptionsMenu
+              items={[
+                {
+                  id: "delete",
+                  label: "Delete lead",
+                  icon: <Trash size={18} />,
+                  danger: true,
+                  onClick: () => handleDeleteClick(lead),
+                },
+              ]}
+            />
             <CloseButton onClick={handleClose} title="Close">
               <X size={18} />
             </CloseButton>
@@ -537,6 +673,18 @@ export const LeadDetailsPanel: React.FC<LeadDetailsPanelProps> = ({
             )}
         </PanelContent>
       </PanelContainer>
+      <ConfirmDialog
+        isOpen={deleteLeadDialogOpen}
+        title="Delete Lead"
+        message={`Are you sure you want to delete ${
+          leadToDelete
+            ? `${leadToDelete.firstName ? leadToDelete.firstName : ""}${leadToDelete.firstName && leadToDelete.lastName ? " " : ""}${leadToDelete.lastName ? leadToDelete.lastName : ""}`
+            : "this lead"
+        }? This action cannot be undone.`}
+        confirmText="Delete"
+        onClose={handleCancelDeleteLead}
+        onConfirm={handleConfirmDeleteLead}
+      />
     </>
   );
 };

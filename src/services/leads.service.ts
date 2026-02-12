@@ -22,7 +22,11 @@ export const leadsService = {
         return response.data;
     },
     deleteLead: async (id: string) => {
-        const response = await api.delete(`${BASE_URL}/${id}`);
+        const response = await api.delete(`${BASE_URL}`, {
+            data: {
+            leadIds: [id],
+            },
+        });
         return response.data;
     },
     deleteLeads: async (leadIds: string[]) => {

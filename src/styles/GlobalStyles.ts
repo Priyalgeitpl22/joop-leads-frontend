@@ -105,6 +105,14 @@ export const GlobalStyles = createGlobalStyle`
     background: ${({ theme }) => theme.colors.primary.light};
     color: ${({ theme }) => theme.colors.primary.contrast};
   }
+
+  /* blur styles */
+  .blur-background {
+    filter: blur(3px);
+    pointer-events: none;
+    user-select: none;
+    transition: filter 0.3s ease;
+  }
 `;
 
 export const StatusBadge = styled.span<{ $status: string }>`
