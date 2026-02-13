@@ -32,7 +32,7 @@ export const CampaignTab: React.FC<CampaignTabProps> = ({ accountId }) => {
       setIsLoading(true);
       try {
         const response = await campaignSenderService.getAllCampaignSenders(accountId);
-        setCampaigns(response.data || []);
+        setCampaigns(response || []);
       } catch (error) {
         console.error('Error fetching campaigns:', error);
         setCampaigns([]);
@@ -91,10 +91,10 @@ export const CampaignTab: React.FC<CampaignTabProps> = ({ accountId }) => {
           <TableBody>
             {campaigns.map((campaignSender) => (
               <TableRow key={campaignSender.id}>
-                <TableCell>{campaignSender.campaign?.name || 'Unnamed Campaign'}</TableCell>
+                <TableCell>{campaignSender.name || 'Unnamed Campaign'}</TableCell>
                 <TableCell>
                   <StatusBadge $status={campaignSender.campaign?.status?.toLowerCase() || ''}>
-                    {campaignSender.campaign?.status || 'Unknown'}
+                    {campaignSender.status || 'Unknown'}
                   </StatusBadge>
                 </TableCell>
                 <TableCell>{formatDate(campaignSender.createdAt)}</TableCell>

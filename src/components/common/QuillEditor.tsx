@@ -37,7 +37,7 @@ export const EditorContainer = styled.div<{ $minHeight?: string }>`
   .ql-container {
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
-    max-height: 355px;
+    max-height: 335px;
     overflow-y: auto;
     scrollbar-width: thin;
   }

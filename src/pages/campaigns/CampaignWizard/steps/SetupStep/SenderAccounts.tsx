@@ -108,6 +108,7 @@ export default function SenderAccounts({
           name: account.name || "",
           email: account.email || "",
           minDelaySeconds: account.time_gap || 0,
+          type: account.type || 0,
           dailyLimit: account.limit || 0,
           state: account.state || '',
           warmupStatus: account.warmup?.enabled ? 'On' : 'Off',

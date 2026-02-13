@@ -229,6 +229,8 @@ export interface CampaignInbox {
 }
 
 export interface CampaignSender {
+  status: string;
+  name: string;
   id: string;
   campaignId: string;
   senderId: string;
