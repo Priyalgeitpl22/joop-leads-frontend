@@ -15,8 +15,11 @@ import type { AppDispatch } from "../../store";
 import { useAppSelector } from "../../store";
 import { DataTable } from "../../components/common";
 import type { Lead } from "../../interfaces";
+import ConfirmDialog from "../common/DeleteDialog";
 
 const ITEMS_PER_PAGE = 10;
+
+type DeleteType = "single" | "bulk" | null;
 
 export const Leads: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -29,32 +32,15 @@ export const Leads: React.FC = () => {
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [leadToDelete, setLeadToDelete] = useState<Lead | null>(null);
+  const [deleteType, setDeleteType] = useState<DeleteType>(null);
+
+  const isDeleteDialogOpen = deleteType !== null;
 
   // Initial fetch
   useEffect(() => {
     dispatch(fetchAllLeads());
   }, [dispatch]);
-
-  const handleBulkDelete = async () => {
-    if (
-      window.confirm(
-        `Are you sure you want to delete ${selectedLeads.size} leads?`
-      )
-    ) {
-      try {
-        const idsToDelete = Array.from(selectedLeads);
-        await dispatch(deleteLeads(idsToDelete));
-        toast.success(`Deleted ${selectedLeads.size} leads`);
-        setSelectedLeads(new Set());
-      } catch (error: unknown) {
-        const err = error as { response?: { data?: { message?: string } } };
-        toast.error(
-          err.response?.data?.message ||
-            "Failed to delete leads. Please try again."
-        );
-      }
-    }
-  };
 
   // Edit lead handler - opens the details panel
   const handleEditLead = (row: Record<string, unknown>) => {
@@ -64,19 +50,43 @@ export const Leads: React.FC = () => {
   };
 
   // Delete single lead handler
-  const handleDeleteLead = async (row: Record<string, unknown>) => {
+  const handleDeleteClick = (row: Record<string, unknown>) => {
     const lead = row as unknown as Lead;
-    if (window.confirm(`Are you sure you want to delete ${lead.email}?`)) {
-      try {
-        await dispatch(deleteLead(lead.id));
+    setLeadToDelete(lead);
+    setDeleteType("single");
+  };
+
+  // Delete bulk lead handler
+  const handleBulkDelete = () => {
+    if (selectedLeads.size === 0) return;
+    setDeleteType("bulk");
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      if (deleteType === "single" && leadToDelete) {
+        await dispatch(deleteLead(leadToDelete.id)).unwrap();
         toast.success("Lead deleted successfully");
-      } catch (error: unknown) {
-        const err = error as { response?: { data?: { message?: string } } };
-        toast.error(
-          err.response?.data?.message || "Failed to delete lead. Please try again."
-        );
+        setLeadToDelete(null);
       }
+
+      if (deleteType === "bulk") {
+        const idsToDelete = Array.from(selectedLeads);
+        await dispatch(deleteLeads(idsToDelete)).unwrap();
+        toast.success(`Deleted ${idsToDelete.length} leads`);
+        setSelectedLeads(new Set());
+      }
+
+      setDeleteType(null);
+    } catch (error: unknown) {
+      const err = error as { message?: string };
+      toast.error(err?.message || "Failed to delete");
     }
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteType(null);
+    setLeadToDelete(null);
   };
 
   // Lead details panel handlers
@@ -148,7 +158,7 @@ export const Leads: React.FC = () => {
         onSelectionChange={(ids: string[]) => setSelectedLeads(new Set(ids))}
         showRowActions={true}
         onEdit={handleEditLead}
-        onDelete={handleDeleteLead}
+        onDelete={handleDeleteClick}
         onRowClick={handleOpenLeadDetails}
         onBulkDelete={handleBulkDelete}
         paginated={true}
@@ -174,6 +184,24 @@ export const Leads: React.FC = () => {
         onNavigateNext={handleNavigateNextLead}
         hasPrev={getLeadNavigationInfo().hasPrev}
         hasNext={getLeadNavigationInfo().hasNext}
+      />
+      <ConfirmDialog
+        isOpen={isDeleteDialogOpen}
+        title={deleteType === "bulk" ? "Delete Leads" : "Delete Lead"}
+        message={
+          deleteType === "bulk"
+            ? `Are you sure you want to delete ${selectedLeads.size} selected ${
+                selectedLeads.size === 1 ? "lead" : "leads"
+              }? This action cannot be undone.`
+            : `Are you sure you want to delete ${
+                leadToDelete
+                  ? `${leadToDelete.firstName ? leadToDelete.firstName : ""}${leadToDelete.firstName && leadToDelete.lastName ? " " : ""}${leadToDelete.lastName ? leadToDelete.lastName : ""}`
+                  : "this lead"
+              }? This action cannot be undone.`
+        }
+        confirmText="Delete"
+        onClose={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
       />
     </PageContainer>
   );
