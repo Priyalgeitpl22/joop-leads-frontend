@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useAppSelector } from "../../store";
+import { useAppDispatch, useAppSelector } from "../../store";
 import { emailAccountService } from "../../services/email.account.service";
 import type { Account } from "../../types/emailAccount.types";
 import { EmailAccountType } from "../../types/emailAccount.types";
@@ -15,15 +15,23 @@ import {
 import DataTable from "../../components/common/DataTable/DataTable";
 import { useNavigate } from "react-router-dom";
 import senderAccountService from "../../services/sender.account.service";
+import { deleteEmailAccount, fetchEmailAccounts } from "../../store/slices/emailAccountSlice";
+import toast from "react-hot-toast";
+import { campaignSenderService } from "../../services/campaign.sender.service";
+import DeleteDialog from "../common/DeleteDialog";
+import { Dialog } from "../../components/common";
 
 type TabType = "accounts";
 
 export const EmailAccounts: React.FC = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const { currentUser } = useAppSelector((state) => state.user);
   const [activeTab, setActiveTab] = useState<TabType>("accounts");
   const [filteredAccounts, setFilteredAccounts] = useState<Account[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [deleteAccountDialogOpen, setDeleteAccountDialogOpen] = useState(false);
+  const [accountToDelete, setAccountToDelete] = useState<Account | null>(null);
 
   const checkOauthSuccess = async () => {
     const params = new URLSearchParams(window.location.search);
@@ -58,6 +66,9 @@ export const EmailAccounts: React.FC = () => {
   const [isAddAccountDialogOpen, setIsAddAccountDialogOpen] = useState(false);
   const [isSmtpDialogOpen, setIsSmtpDialogOpen] = useState(false);
   const [isOutlookDialogOpen, setIsOutlookDialogOpen] = useState(false);
+  const [accountHasActiveCampaign, setAccountHasActiveCampaign] =
+    useState(false);
+  const [activeCampaignNames, setActiveCampaignNames] = useState<string[]>([]);
 
   const handleAddAccount = () => {
     setIsAddAccountDialogOpen(true);
@@ -122,12 +133,59 @@ export const EmailAccounts: React.FC = () => {
     navigate(`/accounts/${row.id || row._id}`);
   };
 
-  const handleDeleteAccount = async (row: Record<string, unknown>) => {
-    setIsLoading(true);
-    await emailAccountService.deleteEmailAccount(row.id as string);
-    await senderAccountService.deleteSenderAccount(row.id as string);
-    setFilteredAccounts((prev) => prev.filter((account) => account._id !== row.id));
-    setIsLoading(false);
+  const handleDeleteClick = async (account: Account & { id?: string }) => {
+    if (!account?.id) return;
+
+    try {
+      const campaigns = await campaignSenderService.getAllCampaignSenders(
+        account.id,
+      );
+
+      const activeCampaigns = campaigns.filter((c) =>
+        ["SCHEDULED", "ACTIVE", "PAUSED"].includes(c.status),
+      );
+
+      if (activeCampaigns.length > 0) {
+        setAccountHasActiveCampaign(true);
+        setActiveCampaignNames(activeCampaigns.map((c) => c.name));
+      } else {
+        setAccountHasActiveCampaign(false);
+        setActiveCampaignNames([]);
+      }
+
+      setAccountToDelete(account);
+      setDeleteAccountDialogOpen(true);
+    } catch (error: unknown) {
+      const err = error as { message?: string };
+      toast.error(err?.message || "Failed to check campaigns");
+    }
+  };
+
+  const handleConfirmDeleteAccount = async () => {
+    if (!accountToDelete) return;
+
+    try {
+      if (!accountToDelete?._id) {
+        toast.error("Cannot delete: account ID is missing");
+        return;
+      }
+      await dispatch(deleteEmailAccount(accountToDelete._id)).unwrap();
+      toast.success("Account deleted successfully");
+      setDeleteAccountDialogOpen(false);
+      setAccountToDelete(null);
+      const result = await dispatch(
+        fetchEmailAccounts(currentUser!.orgId),
+      ).unwrap();
+      setFilteredAccounts(result);
+    } catch (error) {
+      const err = error as { message?: string };
+      toast.error(err?.message || "Failed to delete account");
+    }
+  };
+
+  const handleCancelDeleteAccount = () => {
+    setDeleteAccountDialogOpen(false);
+    setAccountToDelete(null);
   };
 
   return (
@@ -150,6 +208,7 @@ export const EmailAccounts: React.FC = () => {
         columns={columns}
         data={filteredAccounts.map((account) => ({
           ...account,
+          senderId: account.id,
           id: account._id,
           name: account.name,
           email: account.email,
@@ -167,7 +226,7 @@ export const EmailAccounts: React.FC = () => {
         showRowActions
         onRowClick={handleRowClick}
         onEdit={handleEditAccount}
-        onDelete={handleDeleteAccount}
+        onDelete={(row) => handleDeleteClick(row as unknown as Account)}
       />
 
       <AddAccountDialog
@@ -190,6 +249,40 @@ export const EmailAccounts: React.FC = () => {
         open={isOutlookDialogOpen}
         onClose={() => setIsOutlookDialogOpen(false)}
       />
+
+      {deleteAccountDialogOpen && !accountHasActiveCampaign && (
+        <DeleteDialog
+          isOpen={deleteAccountDialogOpen}
+          onConfirm={handleConfirmDeleteAccount}
+          onClose={handleCancelDeleteAccount}
+          message="Are you sure you want to delete this account?"
+        />
+      )}
+
+      {deleteAccountDialogOpen && accountHasActiveCampaign && (
+        <Dialog
+          isOpen={deleteAccountDialogOpen}
+          onClose={handleCancelDeleteAccount}
+          title="Cannot Delete Account"
+          footer={<button onClick={handleCancelDeleteAccount}>OK</button>}
+        >
+          <p>
+            This account cannot be deleted because it is associated with active
+            campaigns:
+          </p>
+
+          <ul>
+            <strong>
+              {activeCampaignNames.map((name, index) => (
+                <span key={name}>
+                  {name}
+                  {index < activeCampaignNames.length - 1 && <br />}
+                </span>
+              ))}
+            </strong>
+          </ul>
+        </Dialog>
+      )}
     </PageContainer>
   );
 };

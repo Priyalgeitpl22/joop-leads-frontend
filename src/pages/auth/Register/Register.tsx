@@ -43,6 +43,7 @@ import {
   ErrorText,
   InputValidationIcon,
   TermsText,
+  Divider,
 } from './Register.styled';
 
 // Validation helpers
@@ -240,10 +241,10 @@ export const Register: React.FC = () => {
       </LeftPanel>
 
       <RightPanel>
-        <HeaderRight>
+        {/* <HeaderRight>
           <span>Already have an account?</span>
           <HeaderLink to="/login">Log in</HeaderLink>
-        </HeaderRight>
+        </HeaderRight> */}
 
         <FormContainer>
           <Title>Start your free trial</Title>
@@ -411,6 +412,15 @@ export const Register: React.FC = () => {
               <a href="/privacy">Privacy Policy</a>
             </TermsText>
           </Form>
+
+          <Divider>
+            <span>or</span>
+          </Divider>
+
+          <HeaderRight style={{ justifyContent: 'center', marginBottom: 0 }}>
+            <span>Already have an account?</span>
+            <HeaderLink to="/login">Log in</HeaderLink>
+          </HeaderRight>
         </FormContainer>
       </RightPanel>
     </PageContainer>

@@ -19,6 +19,7 @@ export interface IEmailAccount {
 }
 
 export interface Account {
+  id: string;
   _id?: string;
   account?: string;
   name: string;

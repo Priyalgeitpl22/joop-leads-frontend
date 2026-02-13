@@ -235,10 +235,10 @@ export const Login: React.FC = () => {
       </LeftPanel>
 
       <RightPanel>
-        <HeaderRight>
+        {/* <HeaderRight>
           <span>New to Jooper Leads?</span>
           <HeaderLink to="/register">Sign up</HeaderLink>
-        </HeaderRight>
+        </HeaderRight> */}
 
         <FormContainer>
           <Title>Sign in to your account</Title>

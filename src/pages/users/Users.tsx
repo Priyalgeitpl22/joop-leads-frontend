@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { UserPlus, X, Users as UsersIcon } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAppDispatch, useAppSelector } from "../../store";
-import { deleteUser } from "../../store/slices/userSlice";
+import { deleteUser, fetchAllUsers } from "../../store/slices/userSlice";
 import type { IUser, CreateUserData } from "../../types/user.types";
 import { DataTable, type Column } from "../../components/common";
 import {
@@ -30,6 +30,8 @@ import {
 } from "./Users.styled";
 import { UserRole } from "../../types/enums";
 import { userService } from "../../services/user.service";
+import ConfirmDialog from "../common/DeleteDialog";
+import type { User } from "../../interfaces";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -43,6 +45,8 @@ const getInitials = (name: string) => {
     .slice(0, 2);
 };
 
+type DeleteType = "single" | "bulk" | null;
+
 export const Users: React.FC = () => {
   const dispatch = useAppDispatch();
   const [users, setUsers] = useState<IUser[]>([]);
@@ -52,12 +56,16 @@ export const Users: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
+  const [deleteType, setDeleteType] = useState<DeleteType>(null);
   const [formData, setFormData] = useState<CreateUserData>({
     fullName: "",
     email: "",
     phone: "",
     role: UserRole.MEMBER,
   });
+
+  const isDeleteDialogOpen = deleteType !== null;
 
   const fetchUsers = useCallback(async () => {
     setIsLoading(true);
@@ -113,41 +121,47 @@ export const Users: React.FC = () => {
     }
   };
 
-  const handleDeleteUser = async (row: Record<string, unknown>) => {
-    const user = row as unknown as IUser;
-    if (window.confirm(`Are you sure you want to delete ${user.fullName}?`)) {
-      try {
-        await dispatch(deleteUser(user.id)).unwrap();
-        toast.success("User deleted successfully");
-        // Refresh users list
-        await fetchUsers();
-      } catch (error) {
-        toast.error(
-          typeof error === "string" ? error : "Failed to delete user"
-        );
-      }
-    }
+  // Delete single user handler
+  const handleDeleteClick = (row: Record<string, unknown>) => {
+    const user = row as unknown as User;
+    setUserToDelete(user);
+    setDeleteType("single");
   };
 
-  const handleBulkDelete = async () => {
-    if (
-      window.confirm(
-        `Are you sure you want to delete ${selectedUsers.size} users?`
-      )
-    ) {
-      try {
+  // Delete bulk user handler
+  const handleBulkDelete = () => {
+    if (selectedUsers.size === 0) return;
+    setDeleteType("bulk");
+  };
+
+  const handleConfirmDeleteUser = async () => {
+    try {
+      if (deleteType === "single" && userToDelete) {
+        await dispatch(deleteUser(userToDelete.id)).unwrap();
+        toast.success("User deleted successfully");
+        setUserToDelete(null);
+      }
+      if (deleteType === "bulk") {
         const deletePromises = Array.from(selectedUsers).map((id) =>
           dispatch(deleteUser(id)).unwrap()
         );
         await Promise.all(deletePromises);
         toast.success(`Deleted ${selectedUsers.size} users`);
         setSelectedUsers(new Set());
-        // Refresh users list
-        await fetchUsers();
-      } catch {
-        toast.error("Failed to delete some users");
       }
+
+      setDeleteType(null);
+      const result = await dispatch(fetchAllUsers()).unwrap();
+      setUsers(result);
+    } catch (error: unknown) {
+      const err = error as { message?: string };
+      toast.error(err?.message || "Failed to delete");
     }
+  };
+
+  const handleCancelDeleteUser = () => {
+    setDeleteType(null);
+    setUserToDelete(null);
   };
 
   const columns: Column[] = useMemo(
@@ -253,7 +267,7 @@ export const Users: React.FC = () => {
         onSelectionChange={(ids: string[]) => setSelectedUsers(new Set(ids))}
         showRowActions={currentUser?.role === UserRole.ADMIN ? true : false}
         onDelete={
-          currentUser?.role === UserRole.ADMIN ? handleDeleteUser : undefined
+          currentUser?.role === UserRole.ADMIN ? handleDeleteClick : undefined
         }
         onBulkDelete={handleBulkDelete}
         paginated={true}
@@ -359,6 +373,24 @@ export const Users: React.FC = () => {
           </ModalFooter>
         </ModalContent>
       </ModalOverlay>
+      <ConfirmDialog
+        isOpen={isDeleteDialogOpen}
+        title={deleteType === "bulk" ? "Delete Users" : "Delete User"}
+        message={
+          deleteType === "bulk"
+            ? `Are you sure you want to delete ${selectedUsers.size} selected ${
+                selectedUsers.size === 1 ? "user" : "users"
+              }? This action cannot be undone.`
+            : `Are you sure you want to delete ${
+                userToDelete
+                  ? `${userToDelete.fullName ? userToDelete.fullName : ""}`
+                  : "this user"
+              }? This action cannot be undone.`
+        }
+        confirmText="Delete"
+        onClose={handleCancelDeleteUser}
+        onConfirm={handleConfirmDeleteUser}
+      />
     </PageContainer>
   );
 };
