@@ -419,7 +419,7 @@ export const Register: React.FC = () => {
 
           <HeaderRight style={{ justifyContent: 'center', marginBottom: 0 }}>
             <span>Already have an account?</span>
-            <HeaderLink to="/login">Log in</HeaderLink>
+            <HeaderLink to="/login">Sign in</HeaderLink>
           </HeaderRight>
         </FormContainer>
       </RightPanel>

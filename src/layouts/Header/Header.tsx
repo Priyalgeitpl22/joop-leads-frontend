@@ -24,12 +24,12 @@ import {
   DropdownUserInfo,
   DropdownUserName,
   DropdownUserEmail,
-  DropdownSection,
-  DropdownSectionTitle,
-  CreditItem,
-  CreditLabel,
-  CreditBar,
-  CreditProgress,
+  // DropdownSection,
+  // DropdownSectionTitle,
+  // CreditItem,
+  // CreditLabel,
+  // CreditBar,
+  // CreditProgress,
   DropdownMenu,
   DropdownMenuItem,
 } from './Header.styled';
@@ -121,13 +121,13 @@ export const Header: React.FC = () => {
   };
 
   // Mock credit usage data - replace with actual data from API
-  const creditUsage = {
-    activeLeads: { current: 0, max: 1250 },
-    emailCredits: { current: 0, max: 2500 },
-  };
+  // const creditUsage = {
+  //   activeLeads: { current: 0, max: 1250 },
+  //   emailCredits: { current: 0, max: 2500 },
+  // };
 
-  const getPercentage = (current: number, max: number) => 
-    max > 0 ? (current / max) * 100 : 0;
+  // const getPercentage = (current: number, max: number) => 
+  //   max > 0 ? (current / max) * 100 : 0;
 
   if (isFetchingCurrentUser && !currentUser) {
     return null;
@@ -185,7 +185,7 @@ export const Header: React.FC = () => {
                   </DropdownUserInfo>
                 </DropdownHeader>
 
-                <DropdownSection>
+                {/* <DropdownSection>
                   <DropdownSectionTitle>Your credit usage detail</DropdownSectionTitle>
                   <CreditItem>
                     <CreditLabel>
@@ -207,7 +207,7 @@ export const Header: React.FC = () => {
                       />
                     </CreditBar>
                   </CreditItem>
-                </DropdownSection>
+                </DropdownSection> */}
 
                 <DropdownMenu>
                   <DropdownMenuItem onClick={() => handleNavigate('/settings')}>
