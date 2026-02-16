@@ -21,6 +21,7 @@ export interface UpdateUserData {
   fullName?: string;
   phone?: string;
   profilePicture?: File;
+  removeProfilePicture?: boolean;
 }
 
 export interface CreateUserData {

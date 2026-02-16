@@ -371,7 +371,7 @@ export const Select = styled.select`
   padding: 0 ${({ theme }) => theme.spacing.xxl} 0 ${({ theme }) => theme.spacing.md};
   font-size: ${({ theme }) => theme.typography.fontSize.md};
   color: ${({ theme }) => theme.colors.text.primary};
-  background: transparent;
+  background: ${({ theme }) => theme.colors.background.secondary};
   border: none;
   outline: none;
   cursor: pointer;

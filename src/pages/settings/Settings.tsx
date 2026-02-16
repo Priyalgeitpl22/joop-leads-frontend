@@ -9,7 +9,8 @@ import {
   Palette,
   Sun,
   Moon,
-  Check
+  Check,
+  Trash
 } from 'lucide-react';
 import { useTheme } from '../../context';
 import { useAppDispatch, useAppSelector } from '../../store';
@@ -77,6 +78,7 @@ import {
   AvatarPreview,
   AvatarImage,
   AvatarUploadButton,
+  AvatarRemoveButton,
 } from './Settings.styled';
 import { useNavigate } from 'react-router-dom';
 
@@ -92,6 +94,36 @@ const colorThemes = [
 
 const passwordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^()_\-+=])[A-Za-z\d@$!%*?&#^()_\-+=]{8,}$/;
+
+const validateFullName = (name: string) => {
+  const trimmedName = name.trim();
+  if (!trimmedName) {
+    return { isValid: false, message: 'Full name is required' };
+  }
+  if (trimmedName.length < 2) {
+    return { isValid: false, message: 'Name must be at least 2 characters' };
+  }
+  const nameRegex = /^[A-Za-z]+(?:\s[A-Za-z]+)*$/;
+  if (!nameRegex.test(trimmedName)) {
+    return {
+      isValid: false,
+      message: 'Full name can only contain letters and single spaces',
+    };
+  }
+  return { isValid: true, message: '' };
+};
+
+const validatePhone = (phone: string) => {
+  const cleanedPhone = phone.trim();
+  if (!cleanedPhone) {
+    return { isValid: false, message: 'Phone number is required' };
+  }
+  const phoneRegex = /^[+]?[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/;
+  if (!phoneRegex.test(cleanedPhone)) {
+    return { isValid: false, message: 'Please enter a valid phone number' };
+  }
+  return { isValid: true, message: '' };
+};
 
 export const Settings: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -109,6 +141,9 @@ export const Settings: React.FC = () => {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [newProfilePicture, setNewProfilePicture] = useState<File | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [fullNameError, setFullNameError] = useState('');
+  const [phoneError, setPhoneError] = useState('');
+  const [removeImage, setRemoveImage] = useState(false);
 
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
@@ -150,6 +185,24 @@ export const Settings: React.FC = () => {
   const handleEditInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setEditFormData((prev) => ({ ...prev, [name]: value }));
+    let updatedValue = value;
+
+    if (name === 'fullName') {
+      updatedValue = value.replace(/^\s+/, '');
+      const validation = validateFullName(value);
+      setFullNameError(validation.isValid ? '' : validation.message)
+    }
+
+    if (name === 'phone') {
+      updatedValue = value.replace(/^\s+/, '');
+      const validation = validatePhone(value);
+      setPhoneError(validation.isValid ? '' : validation.message);
+    }
+
+    setEditFormData((prev) => ({
+      ...prev,
+      [name]: updatedValue,
+    }));
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -165,7 +218,14 @@ export const Settings: React.FC = () => {
       }
       setNewProfilePicture(file);
       setPreviewImage(URL.createObjectURL(file));
+      setRemoveImage(false);
     }
+  };
+
+  const handleRemoveClick = () => {
+    setPreviewImage(null);
+    setNewProfilePicture(null);
+    setRemoveImage(true);
   };
 
   const handleSaveProfile = async () => {
@@ -177,15 +237,17 @@ export const Settings: React.FC = () => {
     setIsSaving(true);
     try {
       await dispatch(updateCurrentUser({
-        id: currentUser?.id || '',
-        fullName: editFormData.fullName.trim(),
-        phone: editFormData.phone.trim() || undefined,
-        profilePicture: newProfilePicture || undefined,
-      })).unwrap();
-      
+          id: currentUser?.id || '',
+          fullName: editFormData.fullName.trim(),
+          phone: editFormData.phone.trim() || undefined,
+          profilePicture: newProfilePicture || undefined,
+          removeProfilePicture: removeImage || undefined,
+        })).unwrap();
+
       toast.success('Profile updated successfully!');
       setIsEditModalOpen(false);
       setNewProfilePicture(null);
+      setRemoveImage(false);
     } catch (error: unknown) {
       const err = error as string;
       toast.error(err || 'Failed to update profile');
@@ -287,6 +349,16 @@ export const Settings: React.FC = () => {
     if (!passwordRegex.test(newPass)) return false;
     if (current === newPass) return false;
     if (confirm !== newPass) return false;
+    return true;
+  };
+
+  const isProfileFormValid = () => {
+    const nameValidation = validateFullName(editFormData.fullName);
+    const phoneValidation = validatePhone(editFormData.phone);
+
+    if (!nameValidation.isValid) return false;
+    if (!phoneValidation.isValid) return false;
+
     return true;
   };
 
@@ -576,6 +648,11 @@ export const Settings: React.FC = () => {
                     <span>{getInitials(editFormData.fullName)}</span>
                   )}
                 </AvatarImage>
+                {previewImage && (
+                  <AvatarRemoveButton onClick={handleRemoveClick}>
+                    <Trash size={18} />
+                  </AvatarRemoveButton>
+                )}
                 <AvatarUploadButton>
                   <Camera size={16} />
                   <input
@@ -587,7 +664,7 @@ export const Settings: React.FC = () => {
               </AvatarPreview>
             </AvatarUpload>
 
-            <InputGroup style={{ marginBottom: '16px' }}>
+            <InputGroup>
               <InputLabel>Full Name</InputLabel>
               <InputWrapper>
                 <Input
@@ -599,6 +676,7 @@ export const Settings: React.FC = () => {
                   disabled={isSaving}
                 />
               </InputWrapper>
+              {fullNameError && <ErrorText>{fullNameError}</ErrorText>}
             </InputGroup>
 
             <InputGroup style={{ marginBottom: '16px' }}>
@@ -625,6 +703,7 @@ export const Settings: React.FC = () => {
                   disabled={isSaving}
                 />
               </InputWrapper>
+              {phoneError && <ErrorText>{phoneError}</ErrorText>}
             </InputGroup>
           </ModalBody>
 
@@ -632,7 +711,10 @@ export const Settings: React.FC = () => {
             <CancelButton onClick={handleCloseEditModal} disabled={isSaving}>
               Cancel
             </CancelButton>
-            <SaveButton onClick={handleSaveProfile} disabled={isSaving}>
+            <SaveButton
+              onClick={handleSaveProfile}
+              disabled={!isProfileFormValid() || isSaving}
+            >
               {isSaving ? 'Saving...' : 'Save Changes'}
             </SaveButton>
           </ModalFooter>

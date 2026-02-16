@@ -27,16 +27,20 @@ export const userService = {
    */
   async updateUser(data: UpdateUserData): Promise<IUser> {
     const formData = new FormData();
-    Object.entries(data).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        formData.append(key, value as string | Blob);
-      }
-    });
-    
+    formData.append("id", data.id);
+    if (data.fullName) formData.append("fullName", data.fullName);
+    if (data.phone) formData.append("phone", data.phone);
+    if (data.removeProfilePicture) {
+      formData.append("removeProfilePicture", "true");
+    }
+    if (data.profilePicture) {
+      formData.append("profilePicture", data.profilePicture);
+    }
+
     const response = await api.put(`/user/${data.id}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
-    
+
     // Handle different API response structures
     const resData = response.data;
     if (resData?.user) {

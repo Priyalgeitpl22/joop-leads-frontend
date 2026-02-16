@@ -1,4 +1,5 @@
 import styled, { keyframes } from 'styled-components';
+import { Button } from "../../components/common";
 
 export const PageContainer = styled.div`
   display: flex;
@@ -246,6 +247,11 @@ export const SecurityForm = styled.form`
 export const InputGroup = styled.div`
   display: flex;
   flex-direction: column;
+  padding-top: ${({ theme }) => theme.spacing.md};
+`;
+
+export const RemoveButton = styled(Button)`
+  margin: ${({ theme }) => theme.spacing.md};
 `;
 
 export const InputLabel = styled.label`
@@ -644,10 +650,43 @@ export const AvatarUpload = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing.lg};
 `;
 
+export const AvatarRemoveButton = styled.label`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: ${({ theme }) => theme.colors.error.main};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  transition: all ${({ theme }) => theme.transitions.fast};
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  visibility: hidden;
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.error.dark};
+    transform: scale(1.1);
+  }
+
+  input {
+    display: none;
+  }
+`;
+
 export const AvatarPreview = styled.div`
   position: relative;
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
+
+  &:hover ${AvatarRemoveButton} {
+    opacity: 1;
+    visibility: visible;
+  }
 `;
 
 export const AvatarImage = styled.div`

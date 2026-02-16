@@ -349,7 +349,7 @@ export const Login: React.FC = () => {
 
           <HeaderRight style={{ justifyContent: 'center', marginBottom: 0 }}>
             <span>Don't have an account?</span>
-            <HeaderLink to="/register">Create one now</HeaderLink>
+            <HeaderLink to="/register">Sign up</HeaderLink>
           </HeaderRight>
         </FormContainer>
       </RightPanel>
