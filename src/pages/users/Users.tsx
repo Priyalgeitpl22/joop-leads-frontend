@@ -114,9 +114,13 @@ export const Users: React.FC = () => {
           phone: "",
           role: UserRole.MEMBER as UserRole,
         });
+      } else {
+        toast.error(response.message || "Failed to create user");
+        setIsSubmitting(false);
       }
-    } catch (error) {
-      console.error("Failed to create user:", error);
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || "Failed to create user");
       setIsSubmitting(false);
     }
   };

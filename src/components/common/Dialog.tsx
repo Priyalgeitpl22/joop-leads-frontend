@@ -37,8 +37,9 @@ const slideIn = keyframes`
 const Backdrop = styled.div<{ $isOpen: boolean }>`
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   z-index: 1000;
   display: ${({ $isOpen }) => ($isOpen ? 'block' : 'none')};
   animation: ${fadeIn} 0.2s ease-out;
@@ -83,7 +84,7 @@ const DialogHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.md};
+  padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.md};
   border-bottom: 1px solid ${({ theme }) => theme.colors.border.light};
 `;
 

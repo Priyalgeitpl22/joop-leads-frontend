@@ -2,7 +2,7 @@ import styled, { keyframes } from 'styled-components';
 
 export const PageContainer = styled.div`
   padding: ${({ theme }) => theme.spacing.xl};
-  max-width: 900px;
+  // max-width: 900px;
   margin: 0 auto;
 
   @media (max-width: 768px) {
