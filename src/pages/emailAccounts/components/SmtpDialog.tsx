@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Check, AlertCircle } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useAppSelector } from '../../../store';
@@ -37,6 +38,7 @@ import {
 } from './SmtpDialog.styled';
 import senderAccountService from '../../../services/sender.account.service';
 import { EmailAccountState, EmailAccountType, type Account } from '../../../types/emailAccount.types';
+import ErrorDialog from '../../../components/common/ErrorDialog';
 
 interface SmtpDialogProps {
   open: boolean;
@@ -107,6 +109,8 @@ export const SmtpDialog: React.FC<SmtpDialogProps> = ({ open, onClose, onAccount
   const [verificationFailed, setVerificationFailed] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [showErrorDialog, setShowErrorDialog] = useState(false);
+  const [verificationFailedMessage, setVerificationFailedMessage] = useState<string | null>(null);
 
   // Reset form when dialog opens
   useEffect(() => {
@@ -219,9 +223,16 @@ export const SmtpDialog: React.FC<SmtpDialogProps> = ({ open, onClose, onAccount
       setIsVerified(true);
       toast.success('Email account verified successfully!');
     } catch (error) {
-      console.error('Verification failed:', error);
-      setVerificationFailed(true);
-      toast.error('Verification failed. Please check your credentials.');
+      const err = error as { response?: { data?: { message?: string } } };
+      const message = err.response?.data?.message || 'Verification failed. Please check your credentials.';
+
+      if (message.length > 100) {
+        setVerificationFailedMessage(message);
+        setShowErrorDialog(true);
+      } else {
+        toast.error(message);
+        setVerificationFailed(true);
+      }
     } finally {
       setIsVerifying(false);
     }
@@ -286,7 +297,7 @@ export const SmtpDialog: React.FC<SmtpDialogProps> = ({ open, onClose, onAccount
 
   if (!open) return null;
 
-  return (
+  const dialogContent = (
     <>
       <DialogOverlay onClick={onClose} />
       <DialogContainer onClick={(e) => e.stopPropagation()}>
@@ -588,8 +599,20 @@ export const SmtpDialog: React.FC<SmtpDialogProps> = ({ open, onClose, onAccount
           </ButtonRow>
         </DialogContent>
       </DialogContainer>
+
+      {showErrorDialog && (
+        <ErrorDialog
+          isOpen={showErrorDialog}
+          onClose={() => setShowErrorDialog(false)}
+          title="Verification Failed"
+          message={verificationFailedMessage || 'Verification failed. Please check your credentials and try again.'}
+          okLabel="OK"
+        />
+      )}
     </>
   );
+
+  return createPortal(dialogContent, document.body);
 };
 
 export default SmtpDialog;

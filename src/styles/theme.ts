@@ -116,6 +116,7 @@ export const indigoLight = {
       secondary: '#666666',
       tertiary: '#888888',
       inverse: '#ffffff',
+      grey: '#a5a5a5',
     },
     border: {
       light: '#f0f0f0',

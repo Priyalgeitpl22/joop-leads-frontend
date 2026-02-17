@@ -11,4 +11,6 @@ export { OptionsMenu } from './OptionsMenu';
 export type { OptionsMenuProps, MenuItemType } from './OptionsMenu';
 export { Dialog } from './Dialog';
 export type { DialogProps } from './Dialog';
+export { ErrorDialog } from './ErrorDialog';
+export type { ErrorDialogProps } from './ErrorDialog';
 
