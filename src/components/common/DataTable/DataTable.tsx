@@ -95,6 +95,10 @@ export interface DataTableProps {
   selectedRows?: string[];
   onSelectionChange?: (selectedIds: string[]) => void;
   showRowActions?: boolean;
+  isBulk?: boolean;
+  onBulkDetails?: (row: Record<string, unknown>) => void;
+  onSingleDetails?: (row: Record<string, unknown>) => void;
+  showDetails?: boolean;
   onEdit?: (row: Record<string, unknown>) => void;
   onDelete?: (row: Record<string, unknown>) => void;
   onRowClick?: (row: Record<string, unknown>) => void;
@@ -137,6 +141,10 @@ export function DataTable({
   selectedRows = [],
   onSelectionChange,
   showRowActions = false,
+  isBulk,
+  onBulkDetails,
+  onSingleDetails,
+  showDetails,
   onEdit,
   onDelete,
   onRowClick,
@@ -608,64 +616,84 @@ export function DataTable({
             <TableBody>
               {paginatedData.map((row, rowIndex) => {
                 const isDisabled = isRowDisabled?.(row) ?? false;
-                
+
                 return (
-                <TableRow
-                  key={row.id as string}
-                  $selected={selectedRows.includes(row.id as string)}
-                  onClick={() => !isDisabled && onRowClick?.(row)}
-                  style={{ 
-                    cursor: onRowClick && !isDisabled ? "pointer" : "default",
-                    opacity: isDisabled ? 0.5 : 1,
-                    pointerEvents: isDisabled ? "none" : "auto"
-                  }}
-                >
-                  {selectable && (
+                  <TableRow
+                    key={row.id as string}
+                    $selected={selectedRows.includes(row.id as string)}
+                    onClick={() => !isDisabled && onRowClick?.(row)}
+                    style={{
+                      cursor: onRowClick && !isDisabled ? "pointer" : "default",
+                      opacity: isDisabled ? 0.5 : 1,
+                      pointerEvents: isDisabled ? "none" : "auto"
+                    }}
+                  >
+                    {selectable && (
                     <TableCell onClick={(e) => e.stopPropagation()} style={{ pointerEvents: "auto" }}>
-                      <Checkbox
-                        type="checkbox"
-                        checked={selectedRows.includes(row.id as string)}
-                        onChange={() => handleSelectRow(row.id as string)}
-                        disabled={isDisabled}
-                      />
-                    </TableCell>
-                  )}
+                        <Checkbox
+                          type="checkbox"
+                          checked={selectedRows.includes(row.id as string)}
+                          onChange={() => handleSelectRow(row.id as string)}
+                          disabled={isDisabled}
+                        />
+                      </TableCell>
+                    )}
 
-                  {columns.map((column) => (
-                    <TableCell key={column.key} $align={column.align}>
-                      {renderCell(column, row, rowIndex)}
-                    </TableCell>
-                  ))}
+                    {columns.map((column) => (
+                      <TableCell key={column.key} $align={column.align}>
+                        {renderCell(column, row, rowIndex)}
+                      </TableCell>
+                    ))}
 
-                  {showRowActions && (
-                    <TableCell
-                      $align="center"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <RowActions>
-                        {customRowActions?.(row)}
-                        {onEdit && (
-                          <RowActionButton
-                            onClick={() => onEdit(row)}
-                            title="Edit"
-                          >
-                            <Edit2 size={16} />
-                          </RowActionButton>
-                        )}
-                        {onDelete && (
-                          <RowActionButton
-                            $danger
-                            onClick={() => onDelete(row)}
-                            title="Delete"
-                          >
-                            <Trash2 size={16} />
-                          </RowActionButton>
-                        )}
-                      </RowActions>
-                    </TableCell>
-                  )}
-                </TableRow>
-              );
+                    {showRowActions && (
+                      <TableCell
+                        $align="center"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <RowActions>
+                          {customRowActions?.(row)}
+                          {isBulk && showDetails && (
+                            <>
+                              <RowActionButton
+                                onClick={() => onBulkDetails?.(row)}
+                                title="Bulk Details"
+                              >
+                                Details / Download
+                              </RowActionButton>
+                            </>
+                          )}
+
+                          {!isBulk && showDetails && (
+                            <RowActionButton
+                              onClick={() => onSingleDetails?.(row)}
+                              title="View Details"
+                            >
+                              View Details
+                            </RowActionButton>
+                          )}
+
+                          {onEdit && (
+                            <RowActionButton
+                              onClick={() => onEdit(row)}
+                              title="Edit"
+                            >
+                              <Edit2 size={16} />
+                            </RowActionButton>
+                          )}
+                          {onDelete && (
+                            <RowActionButton
+                              $danger
+                              onClick={() => onDelete(row)}
+                              title="Delete"
+                            >
+                              <Trash2 size={16} />
+                            </RowActionButton>
+                          )}
+                        </RowActions>
+                      </TableCell>
+                    )}
+                  </TableRow>
+                );
               })}
             </TableBody>
           </Table>

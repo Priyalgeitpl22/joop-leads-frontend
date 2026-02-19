@@ -12,6 +12,10 @@ import {
   ChevronLeft,
   Menu,
   Zap,
+  BookCheck,
+  ListTodo,
+  ChevronDown,
+  CheckCircle,
 } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { toggleSidebarCollapsed } from '../../store/slices/uiSlice';
@@ -31,18 +35,39 @@ import {
   NavText,
   NavDivider,
   BottomNav,
+  ParentRow,
+  ArrowIcon,
+  ChildNavList,
+  NavWrapper,
 } from './Sidebar.styled';
 
 interface NavItemConfig {
   title: string;
   icon: React.ReactNode;
-  path: string;
+  path?: string | undefined;
+  children?: NavItemConfig[];
 }
 
 const mainNavItems: NavItemConfig[] = [
   { title: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/' },
   { title: 'Email Campaigns', icon: <MailSearch size={20} />, path: '/campaigns' },
   { title: 'Email Accounts', icon: <Mail size={20} />, path: '/accounts' },
+  {
+    title: 'Email Verification',
+    icon: <BookCheck size={20} />,
+    children: [
+      {
+        title: 'Verify Email',
+        path: '/email-verification/verify-email',
+        icon: <CheckCircle size={18} />,
+      },
+      {
+        title: 'Task & Results',
+        path: '/email-verification/task-and-results',
+        icon: <ListTodo size={18} />,
+      },
+    ],
+  },
   { title: 'All Leads', icon: <Users size={20} />, path: '/leads' },
   { title: 'Master Inbox', icon: <Inbox size={20} />, path: '/inbox' },
   // { title: 'Subscription', icon: <CreditCard size={20} />, path: '/subscription' },
@@ -58,6 +83,15 @@ export const Sidebar: React.FC = () => {
   const location = useLocation();
   const dispatch = useAppDispatch();
   const { sidebarCollapsed } = useAppSelector((state) => state.ui);
+  const [openMenu, setOpenMenu] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    mainNavItems.forEach((item) => {
+      if (item.children?.some((child) => isActive(child.path!))) {
+        setOpenMenu(item.title);
+      }
+    });
+  }, [location.pathname]);
 
   const isActive = (path: string) => {
     if (path === '/') return location.pathname === '/';
@@ -101,19 +135,66 @@ export const Sidebar: React.FC = () => {
 
       <NavSection>
         <NavList>
-          {mainNavItems.map((item) => (
-            <NavItem key={item.path}>
-              <NavLink
-                onClick={() => handleNavigation(item.path)}
-                $active={isActive(item.path)}
-                $collapsed={sidebarCollapsed}
-                title={sidebarCollapsed ? item.title : undefined}
-              >
-                <NavIcon $active={isActive(item.path)}>{item.icon}</NavIcon>
-                {!sidebarCollapsed && <NavText>{item.title}</NavText>}
-              </NavLink>
-            </NavItem>
-          ))}
+          {mainNavItems.map((item) => {
+            const hasChildren = !!item.children;
+            const isParentActive =
+              hasChildren &&
+              item.children!.some((child) => isActive(child.path!));
+
+            return (
+              <NavItem key={item.title}>
+                <NavLink
+                  onClick={() => {
+                    if (hasChildren) {
+                      setOpenMenu(openMenu === item.title ? null : item.title);
+                    } else if (item.path) {
+                      handleNavigation(item.path);
+                    }
+                  }}
+                  $active={item.path ? isActive(item.path) : isParentActive}
+                  $collapsed={sidebarCollapsed}
+                >
+                  <ParentRow>
+                    <NavWrapper>
+                      <NavIcon
+                        $active={
+                          item.path ? isActive(item.path) : isParentActive
+                        }
+                      >
+                        {item.icon}
+                      </NavIcon>
+                      {!sidebarCollapsed && <NavText>{item.title}</NavText>}
+                    </NavWrapper>
+                    {hasChildren && !sidebarCollapsed && (
+                      <ArrowIcon $open={openMenu === item.title}>
+                        <ChevronDown size={16} />
+                      </ArrowIcon>
+                    )}
+                  </ParentRow>
+                </NavLink>
+
+                {hasChildren &&
+                  openMenu === item.title &&
+                  !sidebarCollapsed && (
+                    <ChildNavList>
+                      {item.children!.map((child) => (
+                        <NavLink
+                          key={child.path}
+                          onClick={() => handleNavigation(child.path!)}
+                          $active={isActive(child.path!)}
+                          $collapsed={sidebarCollapsed}
+                        >
+                          <NavIcon $active={isActive(child.path!)}>
+                            {child.icon}
+                          </NavIcon>
+                          <NavText>{child.title}</NavText>
+                        </NavLink>
+                      ))}
+                    </ChildNavList>
+                  )}
+              </NavItem>
+            );
+          })}
         </NavList>
       </NavSection>
 
@@ -122,14 +203,20 @@ export const Sidebar: React.FC = () => {
       <BottomNav>
         <NavList>
           {bottomNavItems.map((item) => (
-            <NavItem key={item.path}>
+            <NavItem key={item.title}>
               <NavLink
-                onClick={() => handleNavigation(item.path)}
-                $active={isActive(item.path)}
+                onClick={() => {
+                  if (item.path) {
+                    handleNavigation(item.path);
+                  }
+                }}
+                $active={item.path ? isActive(item.path) : false}
                 $collapsed={sidebarCollapsed}
                 title={sidebarCollapsed ? item.title : undefined}
               >
-                <NavIcon $active={isActive(item.path)}>{item.icon}</NavIcon>
+                <NavIcon $active={item.path ? isActive(item.path) : false}>
+                  {item.icon}
+                </NavIcon>
                 {!sidebarCollapsed && <NavText>{item.title}</NavText>}
               </NavLink>
             </NavItem>
