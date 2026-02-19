@@ -157,7 +157,6 @@ export const LeadDetailsPanel: React.FC<LeadDetailsPanelProps> = ({
     );
   }, [formData, lead]);
 
-
   const handleSave = async () => {
     if (!isFormChanged) return;
 
