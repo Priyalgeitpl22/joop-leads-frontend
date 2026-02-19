@@ -162,6 +162,15 @@ export const ResetPassword: React.FC = () => {
     }
   };
 
+  const preventLeadingSpace = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    value: string,
+  ) => {
+    if (e.key === ' ' && value.length === 0) {
+      e.preventDefault();
+    }
+  };
+
   const passwordValidation = validatePassword(password);
   const isPasswordValid = touched.password && passwordValidation.isValid;
   const isConfirmValid = touched.confirmPassword && !errors.confirmPassword && confirmPassword.length > 0;
@@ -212,6 +221,7 @@ export const ResetPassword: React.FC = () => {
                   name="password"
                   value={password}
                   onChange={handlePasswordChange}
+                  onKeyDown={(e) => preventLeadingSpace(e, password)}
                   onBlur={handlePasswordBlur}
                   placeholder="Enter your new password"
                   disabled={isSubmitting}
@@ -261,6 +271,7 @@ export const ResetPassword: React.FC = () => {
                   name="confirmPassword"
                   value={confirmPassword}
                   onChange={handleConfirmPasswordChange}
+                  onKeyDown={(e) => preventLeadingSpace(e, password)}
                   onBlur={handleConfirmPasswordBlur}
                   placeholder="Confirm your new password"
                   disabled={isSubmitting}

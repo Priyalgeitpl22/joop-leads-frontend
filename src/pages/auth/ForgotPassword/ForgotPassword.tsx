@@ -130,6 +130,16 @@ export const ForgotPassword: React.FC = () => {
   const isFieldValid = touched && !error && email.length > 0;
   const isButtonDisabled = isSubmitting || isLoading;
 
+
+  const preventLeadingSpace = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    value: string,
+  ) => {
+    if (e.key === ' ' && value.length === 0) {
+      e.preventDefault();
+    }
+  };
+
   return (
     <PageContainer>
       <LeftPanel>
@@ -177,6 +187,7 @@ export const ForgotPassword: React.FC = () => {
                       name="email"
                       value={email}
                       onChange={handleChange}
+                      onKeyDown={(e) => preventLeadingSpace(e, email)}
                       onBlur={handleBlur}
                       placeholder="you@company.com"
                       disabled={isSubmitting}
