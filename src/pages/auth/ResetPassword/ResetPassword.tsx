@@ -17,8 +17,6 @@ import {
   IllustrationIcon,
   IllustrationText,
   SecurityBadge,
-  HeaderRight,
-  HeaderLink,
   FormContainer,
   Title,
   Subtitle,
@@ -197,10 +195,6 @@ export const ResetPassword: React.FC = () => {
       </LeftPanel>
 
       <RightPanel>
-        <HeaderRight>
-          <span>Remember your password?</span>
-          <HeaderLink to="/login">Log in</HeaderLink>
-        </HeaderRight>
 
         <FormContainer>
           <Title>Reset Password</Title>

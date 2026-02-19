@@ -147,3 +147,31 @@ export const BottomNav = styled.div`
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 `;
 
+export const ParentRow = styled.div<{ $active?: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+`;
+
+export const ArrowIcon = styled.div<{ $open?: boolean }>`
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s ease;
+
+  transform: ${({ $open }) => ($open ? "rotate(180deg)" : "rotate(0deg)")};
+`;
+
+export const ChildNavList = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: ${({ theme }) => theme.spacing.sm};
+  margin-left: ${({ theme }) => theme.spacing.xl};
+  gap: ${({ theme }) => theme.spacing.xs};
+`;
+
+export const NavWrapper = styled.div`
+  display: flex;
+  align-item: center;
+  gap: ${({theme}) => theme.spacing.md}
+`;

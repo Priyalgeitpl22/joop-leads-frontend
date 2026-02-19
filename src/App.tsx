@@ -23,6 +23,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import type { AppDispatch, RootState } from "./store";
 import { fetchCurrentUser } from "./store/slices/userSlice";
+import EmailVerification from "./pages/verifications/emailVerification/EmailVerification";
+import TaskAndResults from "./pages/verifications/task&Results/Task&Results";
+import BulkDetailsResult from "./pages/verifications/task&Results/bulkDetailsResult/BulkDetailsResult";
 
 const PUBLIC_ROUTES = ['/login', '/register', '/forgot-password', '/reset-password', '/verify-otp', '/activate-account'];
 
@@ -85,6 +88,18 @@ function App() {
           <Route path="/campaigns/:id" element={<CampaignDetails />} />
           <Route path="/accounts" element={<EmailAccounts />} />
           <Route path="/accounts/:id" element={<EmailAccountDetails />} />
+          <Route
+            path="/email-verification/verify-email"
+            element={<EmailVerification />}
+          />
+          <Route
+            path="/email-verification/task-and-results"
+            element={<TaskAndResults />}
+          />
+          <Route
+            path="/email-verification/task-and-results/bulk-detail/:taskId"
+            element={<BulkDetailsResult />}
+          />
           <Route path="/leads" element={<Leads />} />
           <Route path="/inbox" element={<Inbox />} />
           <Route path="/users" element={<Users />} />

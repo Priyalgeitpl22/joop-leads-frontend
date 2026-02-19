@@ -157,13 +157,7 @@ export const LeadDetailsPanel: React.FC<LeadDetailsPanelProps> = ({
     );
   }, [formData, lead]);
 
-  if (!isOpen || !lead) {
-    return (
-      <Section>
-        <div>Loading...</div>
-      </Section>
-    );
-  }
+  if (!isOpen || !lead) return;
 
   const handleSave = async () => {
     if (!isFormChanged) return;

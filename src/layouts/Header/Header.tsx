@@ -49,6 +49,18 @@ const getPageConfig = (pathname: string): PageConfig => {
   if (pathname.startsWith('/accounts')) {
     return { title: 'Email Accounts', subtitle: 'Manage your email connections' };
   }
+  if (pathname.startsWith('/email-verification/verify-email')) {
+    return {
+      title: 'Verify Email',
+      subtitle: 'Bulk and single email verification with real-time accuracy',
+    };
+  }
+  if (pathname.startsWith('/email-verification/task-and-result')) {
+    return {
+      title: 'Task and Results',
+      subtitle: 'Review verification history and detailed results',
+    };
+  }
   if (pathname.startsWith('/leads')) {
     return { title: 'All Leads', subtitle: 'Track and manage leads' };
   }

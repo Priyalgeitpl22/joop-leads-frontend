@@ -288,7 +288,8 @@ export const RowActionButton = styled.button<{ $danger?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
+  white-space: nowrap;
+  width: ${({theme}) => theme.spacing.p80};
   height: 32px;
   background: transparent;
   border: none;

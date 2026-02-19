@@ -8,6 +8,7 @@ const baseTokens = {
     md: '8px',
     lg: '12px',
     xl: '16px',
+    half: '50%',
     full: '9999px',
   },
   spacing: {
