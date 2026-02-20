@@ -139,6 +139,7 @@ export const emailAccountService = {
     type: string;
     orgId: string;
     email: string;
+    replyTo?: string;
     limit: number;
     time_gap: number;
     imap: {

@@ -196,7 +196,7 @@ export const EmailAccounts: React.FC = () => {
             $isActive={activeTab === "accounts"}
             onClick={() => setActiveTab("accounts")}
           >
-            Email Accounts ({filteredAccounts.length})
+            Email Accounts ({filteredAccounts?.length})
           </Tab>
         </TabsList>
 
@@ -206,7 +206,7 @@ export const EmailAccounts: React.FC = () => {
       </TabsContainer>
       <DataTable
         columns={columns}
-        data={filteredAccounts.map((account) => ({
+        data={(filteredAccounts || []).map((account) => ({
           ...account,
           senderId: account.id,
           id: account._id,
