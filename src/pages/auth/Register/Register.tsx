@@ -42,7 +42,7 @@ import {
   ButtonLoader,
   ErrorText,
   InputValidationIcon,
-  TermsText,
+  // TermsText,
   Divider,
 } from './Register.styled';
 
@@ -414,11 +414,11 @@ export const Register: React.FC = () => {
               )}
             </RegisterButton>
 
-            <TermsText>
+            {/* <TermsText>
               By signing up, you agree to our{' '}
               <a href="/terms">Terms of Service</a> and{' '}
               <a href="/privacy">Privacy Policy</a>
-            </TermsText>
+            </TermsText> */}
           </Form>
 
           <Divider>
