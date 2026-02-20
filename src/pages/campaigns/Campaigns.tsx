@@ -44,7 +44,6 @@ import {
   EmptyStateDescription,
   EmptyStateActions,
   PrimaryButton,
-  LearnMoreLink,
   Skeleton,
   SkeletonList,
   SkeletonRow,
@@ -235,11 +234,6 @@ export const Campaigns: React.FC = () => {
               <Plus size={20} />
               Create my first Campaign
             </PrimaryButton>
-
-            <LearnMoreLink href="#" target="_blank">
-              <PlayCircle size={18} />
-              Learn more about campaign creation
-            </LearnMoreLink>
           </EmptyStateActions>
         </EmptyStateContainer>
       </PageContainer>
