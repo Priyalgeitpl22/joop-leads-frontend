@@ -97,6 +97,15 @@ export const Login: React.FC = () => {
     }
   }, [email, password]);
 
+  const preventLeadingSpace = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    value: string,
+  ) => {
+    if (e.key === ' ' && value.length === 0) {
+      e.preventDefault();
+    }
+  };
+
   // Handle email change
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -265,6 +274,7 @@ export const Login: React.FC = () => {
                   type="email"
                   value={email}
                   onChange={handleEmailChange}
+                  onKeyDown={(e) => preventLeadingSpace(e, email)}
                   onBlur={() => handleBlur('email')}
                   placeholder="you@company.com"
                   autoComplete="email"
@@ -307,6 +317,7 @@ export const Login: React.FC = () => {
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={handlePasswordChange}
+                  onKeyDown={(e) => preventLeadingSpace(e, password)}
                   onBlur={() => handleBlur('password')}
                   placeholder="Enter your password"
                   autoComplete="current-password"

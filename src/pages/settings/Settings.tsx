@@ -118,9 +118,11 @@ const validatePhone = (phone: string) => {
   if (!cleanedPhone) {
     return { isValid: false, message: 'Phone number is required' };
   }
-  const phoneRegex = /^[+]?[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/;
+  const phoneRegex = /^\+?[1-9]\d{7,14}$/;
   if (!phoneRegex.test(cleanedPhone)) {
-    return { isValid: false, message: 'Please enter a valid phone number' };
+    return { isValid: false, message:
+        'Phone number must be 8 to 15 digits and include a valid country code',
+    };
   }
   return { isValid: true, message: '' };
 };
@@ -184,18 +186,20 @@ export const Settings: React.FC = () => {
 
   const handleEditInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setEditFormData((prev) => ({ ...prev, [name]: value }));
-    let updatedValue = value;
+    let updatedValue = value.replace(/^\s+/, '');
 
     if (name === 'fullName') {
-      updatedValue = value.replace(/^\s+/, '');
-      const validation = validateFullName(value);
+      updatedValue = value.replace(/[^a-zA-Z\s]/g, '');
+      updatedValue = updatedValue.replace(/^\s+/, '');
+      const validation = validateFullName(updatedValue);
       setFullNameError(validation.isValid ? '' : validation.message)
     }
 
     if (name === 'phone') {
-      updatedValue = value.replace(/^\s+/, '');
-      const validation = validatePhone(value);
+      updatedValue = value.replace(/(?!^\+)\D/g, '');
+      const digitsOnly = updatedValue.replace('+', '');
+      if (digitsOnly.length > 15) return;
+      const validation = validatePhone(updatedValue);
       setPhoneError(validation.isValid ? '' : validation.message);
     }
 
@@ -356,10 +360,7 @@ export const Settings: React.FC = () => {
     const nameValidation = validateFullName(editFormData.fullName);
     const phoneValidation = validatePhone(editFormData.phone);
 
-    if (!nameValidation.isValid) return false;
-    if (!phoneValidation.isValid) return false;
-
-    return true;
+    return phoneValidation.isValid && nameValidation.isValid;
   };
 
   // const handle2FAToggle = async () => {

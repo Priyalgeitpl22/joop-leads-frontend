@@ -42,7 +42,7 @@ import {
   ButtonLoader,
   ErrorText,
   InputValidationIcon,
-  TermsText,
+  // TermsText,
   Divider,
 } from './Register.styled';
 
@@ -55,7 +55,7 @@ const validateFullName = (name: string) => {
 
 const validateEmail = (email: string) => {
   if (!email.trim()) return { isValid: false, message: 'Email is required' };
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
   if (!emailRegex.test(email)) return { isValid: false, message: 'Please enter a valid email' };
   return { isValid: true, message: '' };
 };
@@ -179,6 +179,15 @@ export const Register: React.FC = () => {
   const isFieldValid = (field: keyof typeof touched) => 
     touched[field] && !errors[field] && formData[field].length > 0;
 
+  const preventLeadingSpace = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    value: string,
+  ) => {
+    if (e.key === ' ' && value.length === 0) {
+      e.preventDefault();
+    }
+  };
+
   const isButtonDisabled = isSubmitting || isLoading;
 
   return (
@@ -241,11 +250,6 @@ export const Register: React.FC = () => {
       </LeftPanel>
 
       <RightPanel>
-        {/* <HeaderRight>
-          <span>Already have an account?</span>
-          <HeaderLink to="/login">Log in</HeaderLink>
-        </HeaderRight> */}
-
         <FormContainer>
           <Title>Start your free trial</Title>
           <Subtitle>No credit card required • 14 days free</Subtitle>
@@ -260,6 +264,7 @@ export const Register: React.FC = () => {
                   name="fullName"
                   value={formData.fullName}
                   onChange={handleChange}
+                  onKeyDown={(e) => preventLeadingSpace(e, formData.fullName)}
                   onBlur={() => handleBlur('fullName')}
                   placeholder="John Doe"
                   disabled={isSubmitting}
@@ -283,6 +288,7 @@ export const Register: React.FC = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
+                  onKeyDown={(e) => preventLeadingSpace(e, formData.email)}
                   onBlur={() => handleBlur('email')}
                   placeholder="you@company.com"
                   disabled={isSubmitting}
@@ -306,6 +312,7 @@ export const Register: React.FC = () => {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
+                  onKeyDown={(e) => preventLeadingSpace(e, formData.password)}
                   onBlur={() => handleBlur('password')}
                   placeholder="Minimum 8 characters"
                   disabled={isSubmitting}
@@ -331,6 +338,7 @@ export const Register: React.FC = () => {
                     name="companyName"
                     value={formData.companyName}
                     onChange={handleChange}
+                    onKeyDown={(e) => preventLeadingSpace(e, formData.companyName)}
                     placeholder="Acme Inc."
                     disabled={isSubmitting}
                   />
@@ -406,11 +414,11 @@ export const Register: React.FC = () => {
               )}
             </RegisterButton>
 
-            <TermsText>
+            {/* <TermsText>
               By signing up, you agree to our{' '}
               <a href="/terms">Terms of Service</a> and{' '}
               <a href="/privacy">Privacy Policy</a>
-            </TermsText>
+            </TermsText> */}
           </Form>
 
           <Divider>

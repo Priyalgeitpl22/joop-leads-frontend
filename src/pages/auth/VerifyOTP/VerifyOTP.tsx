@@ -202,7 +202,10 @@ export const VerifyOTP: React.FC = () => {
       }
     } catch (err: unknown) {
       const error = err as { response?: { data?: { message?: string } } };
-      setError(error.response?.data?.message || 'Invalid OTP. Please try again.');
+      const message =
+        error.response?.data?.message || 'Invalid OTP. Please try again.';
+      toast.error(message);
+      setError(message);
     } finally {
       setIsSubmitting(false);
     }
