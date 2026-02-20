@@ -174,7 +174,6 @@ const campaignSlice = createSlice({
       state.currentCampaign = null;
     },
     setCurrentCampaign: (state, action: PayloadAction<Campaign>) => {
-      // @ts-expect-error - Campaign has circular refs causing deep type instantiation
       state.currentCampaign = action.payload;
     },
   },
