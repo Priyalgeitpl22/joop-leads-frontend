@@ -19,7 +19,7 @@ import {
   Trash,
 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "../../store";
-import { changeCampaignStatus, fetchCampaigns, renameCampaign } from "../../store/slices/campaignSlice";
+import { changeCampaignStatus, fetchCampaigns, renameCampaign, searchCampaigns } from "../../store/slices/campaignSlice";
 import {
   PageContainer,
   PageHeader,
@@ -64,6 +64,7 @@ import {
   StatItem,
   StatValue,
   StatLabel,
+  CampaignWrapper,
 } from "./Campaigns.styled";
 import type { Campaign, CampaignStatus } from "../../interfaces";
 import CircularProgressWithStatus from "../../components/common/CircularProgress";
@@ -82,6 +83,7 @@ export const Campaigns: React.FC = () => {
   const [renameDialogOpen, setRenameDialogOpen] = useState(false);
   const [campaignToRename, setCampaignToRename] = useState<Campaign | null>(null);
   const [newName, setNewName] = useState<string>("");
+  const isSearching = searchQuery.trim().length > 0;
   
   const handleDeleteClick = (campaign: Campaign) => {
     setCampaignToDelete(campaign);
@@ -133,8 +135,19 @@ export const Campaigns: React.FC = () => {
     navigate(`/campaign/new`);
   };
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
+  const handleSearchChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      const value = e.target.value;
+      setSearchQuery(value);
+      const trimmedQuery = value.trim();
+      if (trimmedQuery === "") {
+        dispatch(fetchCampaigns());
+      } else {
+        await dispatch(searchCampaigns(trimmedQuery)).unwrap();
+      }
+    } catch (error) {
+      console.error("Search failed:", error);
+    }
   };
 
   const formatDate = (dateValue: Date | string) => {
@@ -151,7 +164,7 @@ export const Campaigns: React.FC = () => {
     return `${datePart} | ${timePart}`;
   };
 
-  if (isLoading) {
+  if (isLoading && campaigns.length === 0 && !isSearching) {
     return (
       <PageContainer>
         <PageHeader>
@@ -179,7 +192,7 @@ export const Campaigns: React.FC = () => {
   }
 
   // Empty state
-  if (campaigns.length === 0) {
+  if (campaigns.length === 0 && !isSearching) {
     return (
       <PageContainer>
         <EmptyStateContainer>
@@ -280,63 +293,68 @@ export const Campaigns: React.FC = () => {
       </TabsContainer>
 
       <CampaignTable>
-        {campaigns.map((campaign: Campaign) => (
-          <CampaignRow key={campaign.id}>
-            <CampaignInfo>
-              <CircularProgressWithStatus
-                value={campaign?.completedPercentage || 0}
-              />
-              <CampaignDetails>
-                <CampaignName to={`/campaigns/${campaign.id}`}>
-                  {campaign?.name || "Untitled Campaign"}
-                  <ExternalLink size={14} />
-                </CampaignName>
-                <CampaignMeta>
-                  {/* <StatusBadge $status={campaign?.status}> */}
+        {campaigns.length === 0 && isSearching ? (
+          <CampaignWrapper>
+            No campaigns match your search.
+          </CampaignWrapper>
+        ) : (
+          campaigns.map((campaign: Campaign) => (
+            <CampaignRow key={campaign.id}>
+              <CampaignInfo>
+                <CircularProgressWithStatus
+                  value={campaign?.completedPercentage || 0}
+                />
+                <CampaignDetails>
+                  <CampaignName to={`/campaigns/${campaign.id}`}>
+                    {campaign?.name || "Untitled Campaign"}
+                    <ExternalLink size={14} />
+                  </CampaignName>
+                  <CampaignMeta>
+                    {/* <StatusBadge $status={campaign?.status}> */}
                     {campaign?.status || "DRAFT"}
-                  {/* </StatusBadge> */}
-                  <MetaSeparator>|</MetaSeparator>
-                  <span>
-                    Scheduled At:{" "}
-                    {formatDate(campaign?.scheduledAt || new Date())}
-                  </span>
-                  <MetaSeparator>|</MetaSeparator>
-                  <span>{campaign?.sequences?.length || 0} sequences</span>
-                </CampaignMeta>
-              </CampaignDetails>
-            </CampaignInfo>
+                    {/* </StatusBadge> */}
+                    <MetaSeparator>|</MetaSeparator>
+                    <span>
+                      Scheduled At:{" "}
+                      {formatDate(campaign?.scheduledAt || new Date())}
+                    </span>
+                    <MetaSeparator>|</MetaSeparator>
+                    <span>{campaign?.sequences?.length || 0} sequences</span>
+                  </CampaignMeta>
+                </CampaignDetails>
+              </CampaignInfo>
 
-            <CampaignStats>
-              <StatItem>
-                <StatValue>{campaign?.analytics?.sentCount || 0}</StatValue>
-                <StatLabel>
-                  <Send size={12} />
-                  Sent
-                </StatLabel>
-              </StatItem>
-              <StatItem>
-                <StatValue>{campaign?.analytics?.openedCount || 0}</StatValue>
-                <StatLabel>
-                  <MailOpen size={12} />
-                  Opened
-                </StatLabel>
-              </StatItem>
-              <StatItem>
+              <CampaignStats>
+                <StatItem>
+                  <StatValue>{campaign?.analytics?.sentCount || 0}</StatValue>
+                  <StatLabel>
+                    <Send size={12} />
+                    Sent
+                  </StatLabel>
+                </StatItem>
+                <StatItem>
+                  <StatValue>{campaign?.analytics?.openedCount || 0}</StatValue>
+                  <StatLabel>
+                    <MailOpen size={12} />
+                    Opened
+                  </StatLabel>
+                </StatItem>
+                <StatItem>
                 <StatValue>{campaign?.analytics?.repliedCount || 0}</StatValue>
-                <StatLabel>
-                  <MessageSquare size={12} />
-                  Replied
-                </StatLabel>
-              </StatItem>
-              <StatItem>
+                  <StatLabel>
+                    <MessageSquare size={12} />
+                    Replied
+                  </StatLabel>
+                </StatItem>
+                <StatItem>
                 <StatValue>{campaign?.analytics?.repliedCount || 0}</StatValue>
-                <StatLabel>
-                  <ThumbsUp size={12} />
-                  Positive Reply
-                </StatLabel>
-              </StatItem>
-              <OptionsMenu
-                items={[
+                  <StatLabel>
+                    <ThumbsUp size={12} />
+                    Positive Reply
+                  </StatLabel>
+                </StatItem>
+                <OptionsMenu
+                  items={[
                   campaign.status === 'PAUSED' 
                     ? { id: 'resume', label: 'Resume Campaign', icon: <PlayCircle size={18} />, onClick: () => dispatch(changeCampaignStatus({ id: campaign.id, status: 'ACTIVE' as CampaignStatus })) } 
                     : { id: 'pause', label: 'Pause Campaign', icon: <PauseCircle size={18} />, onClick: () => dispatch(changeCampaignStatus({ id: campaign.id, status: 'PAUSED' as CampaignStatus })) },
@@ -345,12 +363,12 @@ export const Campaigns: React.FC = () => {
                   'divider',
                   { id: 'rename', label: 'Rename', icon: <Edit3 size={18} />, onClick: () => handleRenameClick(campaign) },
                   { id: 'details', label: 'View Details', icon: <Info size={18} />, onClick: () => navigate(`/campaigns/${campaign.id}`) },
-                ]}
-                position="right"
-              />
-            </CampaignStats>
-          </CampaignRow>
-        ))}
+                  ]}
+                  position="right"
+                />
+              </CampaignStats>
+            </CampaignRow>
+        )))}
       </CampaignTable>
 
       <Dialog

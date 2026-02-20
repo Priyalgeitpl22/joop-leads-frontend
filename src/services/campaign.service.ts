@@ -118,7 +118,7 @@ export const campaignService = {
    * Search campaigns
    */
   async searchCampaigns(query: string): Promise<Campaign[]> {
-    const response = await api.get<{ data: Campaign[] }>(`${BASE_URL}/search/campaign?query=${query}`);
+    const response = await api.get<{ data: Campaign[] }>(`${BASE_URL}/search?q=${query}`);
     return response.data.data || [];
   },
 
