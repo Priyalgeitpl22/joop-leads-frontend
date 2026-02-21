@@ -604,3 +604,8 @@ export const ActionIconButton = styled.button`
   }
 `;
 
+export const CampaignWrapper = styled.div`
+  padding: ${({theme}) => theme.spacing.xxl}; 
+  text-align: center; 
+  width: 100%;
+`;

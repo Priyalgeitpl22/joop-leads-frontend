@@ -263,9 +263,9 @@ export const Users: React.FC = () => {
         title="Team Members"
         showCount={true}
         loading={isLoading}
-        // searchable={true}
-        // searchPlaceholder="Search users..."
-        // searchKeys={["fullName", "email"]}
+        searchable={true}
+        searchPlaceholder="Search users..."
+        searchKeys={["fullName", "email", "role"]}
         selectable={true}
         selectedRows={Array.from(selectedUsers)}
         onSelectionChange={(ids: string[]) => setSelectedUsers(new Set(ids))}
