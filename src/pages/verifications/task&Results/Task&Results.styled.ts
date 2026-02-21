@@ -2,6 +2,17 @@ import styled, { css } from "styled-components";
 
 export const PageContainer = styled.div`
   padding: 0;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+`;
+
+export const TableSection = styled.div`
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 `;
 
 export const TabsContainer = styled.div`

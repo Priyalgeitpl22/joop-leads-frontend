@@ -1,18 +1,92 @@
-import { useState } from "react";
-import { PageContainer, StatusBadge, Tab, TabsContainer, TabsList } from "./Task&Results.styled";
-import { DataTable } from "../../../components/common/DataTable";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { PageContainer, StatusBadge, Tab, TableSection, TabsContainer, TabsList } from "./Task&Results.styled";
+import { DataTable } from "../../../components/common/DataTable";
+import { emailVerificationService, type Batch } from "../../../services/email.verification.service";
 import VerificationDetailDialog from "../VerificationDetailDialog";
+import { formatDateTime } from "../../../utils";
+
+function mapBatchToRow(batch: Batch): Record<string, unknown> {
+  const b = batch as Record<string, unknown>;
+  return {
+    id: batch.id,
+    reoonTaskId: b.reoonTaskId ?? batch.id,
+    dateStarted: formatDateTime(b.createdAt as string) ?? "—",
+    taskName: b.name ?? b.fileName ?? batch.id,
+    status: b.status ?? "pending",
+    total: b.total ?? b.totalEmails ?? 0,
+    progress: b.progress ?? "0%",
+  };
+}
+
+function mapEmailToRow(item: unknown, index: number): Record<string, unknown> {
+  const r = (item ?? {}) as Record<string, unknown>;
+  const id = r.id ?? r.email ?? `single-${index}`;
+  const verifiedAt = r.verifiedAt ?? r.dateVerified ?? r.createdAt;
+  const dateStr = verifiedAt != null ? (typeof verifiedAt === "string" ? formatDateTime(verifiedAt) : String(verifiedAt)) : "—";
+  return {
+    id: String(id),
+    dateVerified: dateStr,
+    emailAddress: r.email ?? r.emailAddress ?? "—",
+    verificationMethod: r.verificationMethod ?? r.source ?? "dashboard",
+    status: r.status ?? "—",
+    timeTaken: r.timeTaken ?? r.duration ?? r.timeTakenSec ?? "—",
+  };
+}
 
 const TaskAndResults = () => {
   const navigate = useNavigate();
   const [mode, setMode] = useState<"bulk" | "single">("bulk");
   const [openVerificationDialog, setOpenVerificationDialog] = useState(false);
+  const [batches, setBatches] = useState<Batch[]>([]);
+  const [loadingBatches, setLoadingBatches] = useState(true);
+  const [singleEmails, setSingleEmails] = useState<unknown[]>([]);
+  const [loadingSingle, setLoadingSingle] = useState(false);
 
   const isBulk = mode === "bulk";
 
+  useEffect(() => {
+    if (!isBulk) return;
+    let cancelled = false;
+    const load = async () => {
+      setLoadingBatches(true);
+      try {
+        const data = await emailVerificationService.getAllBatches();
+        if (!cancelled) setBatches(data);
+      } catch {
+        if (!cancelled) setBatches([]);
+      } finally {
+        if (!cancelled) setLoadingBatches(false);
+      }
+    };
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [isBulk]);
+
+  useEffect(() => {
+    if (isBulk) return;
+    let cancelled = false;
+    const load = async () => {
+      setLoadingSingle(true);
+      try {
+        const { data } = await emailVerificationService.getEmails();
+        if (!cancelled) setSingleEmails(Array.isArray(data) ? data : []);
+      } catch {
+        if (!cancelled) setSingleEmails([]);
+      } finally {
+        if (!cancelled) setLoadingSingle(false);
+      }
+    };
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [isBulk]);
+
   const bulkColumns = [
-    { key: "taskId", label: "Task ID" },
+    { key: "reoonTaskId", label: "Task ID" },
     { key: "dateStarted", label: "Date Started" },
     { key: "taskName", label: "Task Name" },
     {
@@ -45,62 +119,7 @@ const TaskAndResults = () => {
     { key: "timeTaken", label: "Time Taken (Sec)" },
   ];
 
-  const bulkMockData = [
-    {
-      id: "1",
-      taskId: "45263",
-      dateStarted: "11:38:23 17/02/2026",
-      taskName: "sample-lead.csv",
-      status: "pending",
-      total: 500,
-      progress: "100%",
-    },
-    {
-      id: "2",
-      taskId: "98768",
-      dateStarted: "13:38:23 17/02/2026",
-      taskName: "test-leads.csv",
-      status: "Completed",
-      total: 1,
-      progress: "100%",
-    },
-    {
-      id: "3",
-      taskId: "67547",
-      dateStarted: "09:38:23 17/02/2026",
-      taskName: "demo-leads.csv",
-      status: "Completed",
-      total: 100,
-      progress: "100%",
-    },
-  ];
-
-  const singleMockData = [
-    {
-      id: "1",
-      dateVerified: "11:38:23 17/02/2026",
-      emailAddress: "priyal@goldeneagle.ai",
-      verificationMethod: "dashboard",
-      status: "Safe",
-      timeTaken: 0.4,
-    },
-    {
-      id: "2",
-      dateVerified: "13:38:23 17/02/2026",
-      emailAddress: "muskan@goldeneagle.ai",
-      verificationMethod: "dashboard",
-      status: "Safe",
-      timeTaken: 0.32,
-    },
-    {
-      id: "3",
-      dateVerified: "09:38:23 17/02/2026",
-      emailAddress: "satyam.g@goldeneagle.ai",
-      verificationMethod: "dashboard",
-      status: "Invalid",
-      timeTaken: 0.12,
-    },
-  ];
+  const singleData = singleEmails.map(mapEmailToRow);
 
   const handleSingleDetails = () => {
     setOpenVerificationDialog(true)
@@ -110,9 +129,12 @@ const TaskAndResults = () => {
     setOpenVerificationDialog(false);
   }
 
-  const handleBulkDetails = (row: any) => {
-    navigate(`/email-verification/task-and-results/bulk-detail/${row.taskId}`);
-  }
+  const handleBulkDetails = (row: Record<string, unknown>) => {
+    const taskId = (row.id ?? row.taskId) as string;
+    navigate(`/email-verification/task-and-results/bulk-detail/${taskId}`);
+  };
+
+  const bulkData = batches.map(mapBatchToRow);
 
   return (
     <PageContainer>
@@ -128,18 +150,21 @@ const TaskAndResults = () => {
         </TabsList>
       </TabsContainer>
 
-      <DataTable
-        columns={isBulk ? bulkColumns : singleColumns}
-        data={isBulk ? bulkMockData : singleMockData}
-        searchable={false}
-        showRowActions
-        showDetails
-        isBulk={isBulk}
-        onBulkDetails={(row) => handleBulkDetails(row)}
-        onSingleDetails={
-          !isBulk ? () => handleSingleDetails() : undefined
-        }
-      />
+      <TableSection>
+        <DataTable
+          columns={isBulk ? bulkColumns : singleColumns}
+          data={isBulk ? bulkData : singleData}
+          loading={isBulk ? loadingBatches : loadingSingle}
+          searchable={false}
+          showRowActions
+          showDetails
+          isBulk={isBulk}
+          onBulkDetails={(row) => handleBulkDetails(row)}
+          onSingleDetails={
+            !isBulk ? () => handleSingleDetails() : undefined
+          }
+        />
+      </TableSection>
 
       <VerificationDetailDialog
         isOpen={openVerificationDialog}

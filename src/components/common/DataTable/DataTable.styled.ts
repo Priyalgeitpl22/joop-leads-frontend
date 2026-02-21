@@ -5,10 +5,17 @@ export const TableContainer = styled.div`
   border: 1px solid ${({ theme }) => theme.colors.border.light};
   border-radius: ${({ theme }) => theme.borderRadius.lg};
   overflow: hidden;
+  height: 100%;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 `;
 
 export const TableWrapper = styled.div`
-  overflow-x: auto;
+  overflow: auto;
+  flex: 1;
+  min-height: 0;
 `;
 
 export const TableHeader = styled.div`
@@ -314,6 +321,8 @@ export const EmptyState = styled.div`
   justify-content: center;
   padding: ${({ theme }) => theme.spacing.xxl} ${({ theme }) => theme.spacing.lg};
   color: ${({ theme }) => theme.colors.text.secondary};
+  flex: 1;
+  min-height: 0;
 
   svg {
     margin-bottom: ${({ theme }) => theme.spacing.md};

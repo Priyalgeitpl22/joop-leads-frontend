@@ -1,3 +1,4 @@
+import ConfirmDialog from "../../../../common/DeleteDialog";
 import {
   CardContainer,
   Title,
@@ -11,8 +12,16 @@ import {
   InfoText,
   DownloadIcon,
 } from "./DownloadResult.styled";
+import { useState } from "react";
 
 const DownloadResult = () => {
+
+  const [openConfirmDeleteDialog, setOpenConfirmDeleteDialog] = useState(false);
+
+  const handleConfirmDelete = () => {
+    setOpenConfirmDeleteDialog(false);
+  };
+  
   return (
     <CardContainer>
       <Title>Download Categorized Results</Title>
@@ -40,13 +49,23 @@ const DownloadResult = () => {
 
       <DeleteText>
         Want to delete the files permanently from our servers?{" "}
-        <DeleteLink href="#">Click Here</DeleteLink>
+        <DeleteLink href="#" onClick={() => setOpenConfirmDeleteDialog(true)}>Click Here</DeleteLink>
       </DeleteText>
 
       <InfoText>
         All files get deleted automatically after 15 days of verification by
         default.
       </InfoText>
+
+      <ConfirmDialog
+        isOpen={openConfirmDeleteDialog}
+        title="Delete Verification Task"
+        message="Are you sure you want to delete this verification task? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        onClose={() => setOpenConfirmDeleteDialog(false)}
+        onConfirm={handleConfirmDelete}
+      />
     </CardContainer>
   );
 };

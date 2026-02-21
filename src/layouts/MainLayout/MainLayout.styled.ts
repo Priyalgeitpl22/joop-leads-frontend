@@ -13,14 +13,21 @@ export const MainContent = styled.main<{ $sidebarCollapsed: boolean }>`
   margin-left: ${({ $sidebarCollapsed }) =>
     $sidebarCollapsed ? SIDEBAR_COLLAPSED_WIDTH : SIDEBAR_WIDTH}px;
   margin-top: ${HEADER_HEIGHT}px;
+  height: calc(100vh - ${HEADER_HEIGHT}px);
   min-height: calc(100vh - ${HEADER_HEIGHT}px);
+  display: flex;
+  flex-direction: column;
   transition: margin-left ${({ theme }) => theme.transitions.normal};
 `;
 
 export const ContentWrapper = styled.div`
   padding: ${({ theme }) => theme.spacing.lg};
   max-width: 1600px;
-  
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+
   @media (max-width: 640px) {
     padding: ${({ theme }) => theme.spacing.md};
   }
