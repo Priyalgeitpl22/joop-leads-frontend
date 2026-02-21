@@ -199,6 +199,11 @@ export const SmtpDialog: React.FC<SmtpDialogProps> = ({ open, onClose, onAccount
     try {
       await emailAccountService.verifySmtpAccount({
         type: EmailAccountType.SMTP,
+        ...(formData.replyToAddressChecked &&
+          formData.replyToAddress.trim() && {
+          replyTo: formData.replyToAddress.trim(),
+        }),
+
         imap: {
           host: formData.imapHost,
           port: formData.imapPort,
@@ -257,6 +262,12 @@ export const SmtpDialog: React.FC<SmtpDialogProps> = ({ open, onClose, onAccount
         name: formData.fromName,
         state: EmailAccountState.ACTIVE,
         type: EmailAccountType.SMTP,
+
+        ...(formData.replyToAddressChecked &&
+          formData.replyToAddress.trim() && {
+          replyTo: formData.replyToAddress.trim(),
+        }),
+
         orgId: currentUser.orgId,
         email: formData.fromEmail,
         limit: Number(formData.limit),
