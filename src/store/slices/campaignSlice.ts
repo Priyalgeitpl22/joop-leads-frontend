@@ -214,10 +214,10 @@ const campaignSlice = createSlice({
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(deleteCampaign.fulfilled, (state, action) => {
-        state.isLoading = false;
-        (state as CampaignState).campaigns = state.campaigns.filter((c) => c.id !== action.payload) as Campaign[];
-      })
+      // .addCase(deleteCampaign.fulfilled, (state, action) => {
+      //   state.isLoading = false;
+      //   (state as CampaignState).campaigns = state.campaigns.filter((c) => c.id !== action.payload) as Campaign[];
+      // })
       .addCase(deleteCampaign.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
