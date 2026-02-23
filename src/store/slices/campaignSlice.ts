@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import type { PayloadAction, ActionReducerMapBuilder } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
 import { campaignService } from '../../services/campaign.service';
 import type { Campaign, CampaignStatus, SequenceAnalytics } from '../../interfaces';
 import toast from 'react-hot-toast';
@@ -174,10 +174,10 @@ const campaignSlice = createSlice({
       state.currentCampaign = null;
     },
     setCurrentCampaign: (state, action: PayloadAction<Campaign>) => {
-      state.currentCampaign = action.payload;
+      (state as CampaignState).currentCampaign = action.payload;
     },
   },
-  extraReducers: (builder: ActionReducerMapBuilder<CampaignState>) => {
+  extraReducers: (builder) => {
     // Fetch All Campaigns
     builder
       .addCase(fetchCampaigns.pending, (state) => {
@@ -186,7 +186,7 @@ const campaignSlice = createSlice({
       })
       .addCase(fetchCampaigns.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.campaigns = action.payload as unknown as Campaign[];
+        (state as CampaignState).campaigns = action.payload as unknown as Campaign[];
       })
       .addCase(fetchCampaigns.rejected, (state, action) => {
         state.isLoading = false;
@@ -201,7 +201,7 @@ const campaignSlice = createSlice({
       })
       .addCase(fetchCampaignById.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.currentCampaign = action.payload as unknown as Campaign;
+        (state as CampaignState).currentCampaign = action.payload as unknown as Campaign;
       })
       .addCase(fetchCampaignById.rejected, (state, action) => {
         state.isLoading = false;
@@ -216,7 +216,7 @@ const campaignSlice = createSlice({
       })
       .addCase(deleteCampaign.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.campaigns = state.campaigns.filter((c) => c.id !== action.payload);
+        (state as CampaignState).campaigns = state.campaigns.filter((c) => c.id !== action.payload) as Campaign[];
       })
       .addCase(deleteCampaign.rejected, (state, action) => {
         state.isLoading = false;
@@ -231,7 +231,10 @@ const campaignSlice = createSlice({
       })
       .addCase(changeCampaignStatus.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.currentCampaign = { ...state.currentCampaign as Campaign, status: action.payload.status as CampaignStatus };
+        const prev = state.currentCampaign as Campaign | null;
+        (state as CampaignState).currentCampaign = prev
+          ? { ...prev, status: action.payload.status as CampaignStatus }
+          : null;
         toast.success('Campaign status changed successfully');
       })
       .addCase(changeCampaignStatus.rejected, (state, action) => {
@@ -267,7 +270,7 @@ const campaignSlice = createSlice({
       })
       .addCase(searchCampaigns.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.campaigns = action.payload as unknown as Campaign[];
+        (state as CampaignState).campaigns = action.payload as unknown as Campaign[];
       })
       .addCase(searchCampaigns.rejected, (state, action) => {
         state.isLoading = false;
@@ -282,7 +285,7 @@ const campaignSlice = createSlice({
       })
       .addCase(fetchTriggerLogs.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.triggerLogs = action.payload as unknown as Logs[];
+        (state as CampaignState).triggerLogs = action.payload as unknown as Logs[];
       })
       .addCase(fetchTriggerLogs.rejected, (state, action) => {
         state.isLoading = false;
@@ -297,7 +300,7 @@ const campaignSlice = createSlice({
       })
       .addCase(fetchUpcomingTriggers.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.upcomingTriggers = action.payload as unknown as Logs[];
+        (state as CampaignState).upcomingTriggers = action.payload as unknown as Logs[];
       })
       .addCase(fetchUpcomingTriggers.rejected, (state, action) => {
         state.isLoading = false;
@@ -312,7 +315,7 @@ const campaignSlice = createSlice({
       })
       .addCase(getSequenceAnalytics.fulfilled, (state, action) => {
         state.isLoadingSequenceAnalytics = false;
-        state.sequenceAnalytics = action.payload as unknown as SequenceAnalytics[];
+        (state as CampaignState).sequenceAnalytics = action.payload as unknown as SequenceAnalytics[];
       })
       .addCase(getSequenceAnalytics.rejected, (state, action) => {
         state.isLoadingSequenceAnalytics = false;
