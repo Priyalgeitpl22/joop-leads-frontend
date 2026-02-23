@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
+import type { PayloadAction, ActionReducerMapBuilder } from '@reduxjs/toolkit';
 import { campaignService } from '../../services/campaign.service';
 import type { Campaign, CampaignStatus, SequenceAnalytics } from '../../interfaces';
 import toast from 'react-hot-toast';
@@ -162,7 +162,7 @@ export const changeCampaignStatus = createAsyncThunk(
   }
 );
 
-// Slice
+// Slice – explicit CampaignState avoids "Type instantiation is excessively deep" (many thunks)
 const campaignSlice = createSlice({
   name: 'campaign',
   initialState,
@@ -177,7 +177,7 @@ const campaignSlice = createSlice({
       state.currentCampaign = action.payload;
     },
   },
-  extraReducers: (builder) => {
+  extraReducers: (builder: ActionReducerMapBuilder<CampaignState>) => {
     // Fetch All Campaigns
     builder
       .addCase(fetchCampaigns.pending, (state) => {
