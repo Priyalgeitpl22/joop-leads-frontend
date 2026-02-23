@@ -346,7 +346,10 @@ export const CampaignWizard: React.FC = () => {
         return false;
       }
     } catch (error: unknown) {
-      toast.error((error as string) || "Failed to import leads");
+      const err = error as { response?: { data?: { message?: string } }; message?: string };
+      const message =
+        err?.response?.data?.message ?? err?.message ?? "Failed to import leads";
+      toast.error(typeof message === "string" ? message : "Failed to import leads");
       return false;
     } finally {
       setIsSaving(false);

@@ -14,6 +14,7 @@ export interface IUser {
   isVerified?: boolean;
   createdAt: string;
   updatedAt?: string;
+  planDetails?: any;
 }
 
 export interface UpdateUserData {

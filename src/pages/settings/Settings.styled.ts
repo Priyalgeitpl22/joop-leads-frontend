@@ -7,15 +7,64 @@ export const PageContainer = styled.div`
   background: ${({ theme }) => theme.colors.background.secondary};
 `;
 
-export const Sidebar = styled.div`
-  width: 280px;
+export const Sidebar = styled.div<{ $collapsed?: boolean }>`
+  width: ${({ $collapsed }) => ($collapsed ? 72 : 280)}px;
   background: ${({ theme }) => theme.colors.background.primary};
   border-right: 1px solid ${({ theme }) => theme.colors.border.light};
-  padding: ${({ theme }) => theme.spacing.lg};
+  padding: ${({ theme, $collapsed }) => ($collapsed ? theme.spacing.sm : theme.spacing.lg)};
   flex-shrink: 0;
+  transition: width ${({ theme }) => theme.transitions.normal};
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 
   @media (max-width: 768px) {
     display: none;
+  }
+`;
+
+export const SidebarHeader = styled.div<{ $collapsed?: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: ${({ $collapsed }) => ($collapsed ? 'center' : 'space-between')};
+  margin-bottom: ${({ theme }) => theme.spacing.lg};
+  flex-shrink: 0;
+
+  ${({ $collapsed }) => $collapsed && 'margin-bottom: 0;'}
+`;
+
+export const SettingsSidebarTitle = styled.div`
+  font-size: ${({ theme }) => theme.typography.fontSize.sm};
+  font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
+  color: ${({ theme }) => theme.colors.text.secondary};
+  white-space: nowrap;
+  overflow: hidden;
+`;
+
+export const SettingsSidebarSubtitle = styled.div`
+  font-size: ${({ theme }) => theme.typography.fontSize.xs};
+  color: ${({ theme }) => theme.colors.text.tertiary};
+  white-space: nowrap;
+  overflow: hidden;
+`;
+
+export const SidebarToggleBtn = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: ${({ theme }) => theme.borderRadius.sm};
+  background: ${({ theme }) => theme.colors.background.tertiary};
+  border: none;
+  color: ${({ theme }) => theme.colors.text.secondary};
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all ${({ theme }) => theme.transitions.fast};
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.text.primary};
+    background: ${({ theme }) => theme.colors.border.light};
   }
 `;
 
@@ -43,12 +92,13 @@ export const SidebarNav = styled.nav`
   gap: 2px;
 `;
 
-export const SidebarNavItem = styled.button<{ $active?: boolean }>`
+export const SidebarNavItem = styled.button<{ $active?: boolean; $collapsed?: boolean }>`
   display: flex;
   align-items: center;
+  justify-content: ${({ $collapsed }) => ($collapsed ? 'center' : 'flex-start')};
   gap: ${({ theme }) => theme.spacing.md};
   width: 100%;
-  padding: ${({ theme }) => theme.spacing.md};
+  padding: ${({ theme, $collapsed }) => ($collapsed ? theme.spacing.md : theme.spacing.md)};
   background: ${({ $active, theme }) => 
     $active ? theme.colors.primary.main + '10' : 'transparent'};
   border: none;
@@ -80,10 +130,11 @@ export const SidebarNavItem = styled.button<{ $active?: boolean }>`
   `}
 `;
 
-export const MainContent = styled.div`
+export const MainContent = styled.div<{ $fullWidth?: boolean }>`
   flex: 1;
   padding: 0 ${({ theme }) => theme.spacing.md};
-  max-width: 900px;
+  min-width: 0;
+  ${({ $fullWidth }) => !$fullWidth && 'max-width: 900px;'}
 
   @media (max-width: 768px) {
     padding: ${({ theme }) => theme.spacing.md};
@@ -94,11 +145,11 @@ export const ContentCard = styled.div`
   background: ${({ theme }) => theme.colors.background.primary};
   border: 1px solid ${({ theme }) => theme.colors.border.light};
   // border-radius: ${({ theme }) => theme.borderRadius.xl};
-  padding: ${({ theme }) => theme.spacing.xl};
+  padding: ${({ theme }) => theme.spacing.md};
 `;
 
 export const SectionHeader = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing.xl};
+  margin-bottom: ${({ theme }) => theme.spacing.md};
 `;
 
 export const SectionTitle = styled.h2`

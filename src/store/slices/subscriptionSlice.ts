@@ -1,14 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { subscriptionService, type PlanWithFeatures, type ContactSalesPayload, type AssignPlanPayload } from '../../services/subscription.service';
+import { subscriptionService, type PlanWithFeatures, type ContactSalesPayload, type AssignPlanPayload, type PlanAddon } from '../../services/subscription.service';
 import type { IOrganizationPlan } from '../../types/organisation.plan.types';
-
-// ============================================================================
-// State Interface
-// ============================================================================
+import { planService } from '../../services/plan.service';
+import { addOnPlanService, type IAddOnPlan } from '../../services/add-on.plan.service';
 
 interface SubscriptionState {
   plans: PlanWithFeatures[];
+  addons: PlanAddon[];
   currentOrgPlan: (IOrganizationPlan & { plan?: PlanWithFeatures }) | null;
   selectedPlanCode: string | null;
   isLoading: boolean;
@@ -17,22 +16,18 @@ interface SubscriptionState {
 
 const initialState: SubscriptionState = {
   plans: [],
+  addons: [],
   currentOrgPlan: null,
   selectedPlanCode: null,
   isLoading: false,
   error: null,
 };
 
-// ============================================================================
-// Async Thunks
-// ============================================================================
-
-// Fetch all available plans
 export const fetchPlans = createAsyncThunk(
   'subscription/fetchPlans',
   async (_, { rejectWithValue }) => {
     try {
-      const plans = await subscriptionService.getAllPlans();
+      const plans = await planService.getAllPlans();
       return plans;
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } };
@@ -41,7 +36,6 @@ export const fetchPlans = createAsyncThunk(
   }
 );
 
-// Fetch plan by code
 export const fetchPlanByCode = createAsyncThunk(
   'subscription/fetchPlanByCode',
   async (planCode: string, { rejectWithValue }) => {
@@ -55,7 +49,26 @@ export const fetchPlanByCode = createAsyncThunk(
   }
 );
 
-// Fetch current organization's plan
+export const fetchAddons = createAsyncThunk(
+  'subscription/fetchAddons',
+  async (_, { rejectWithValue }) => {
+    try {
+      const addons = await subscriptionService.getAddons();
+      return addons.map((addon) => ({
+        id: addon.id,
+        code: addon.code,
+        name: addon.name,
+        description: addon.description ?? "",
+        priceMonthly: Number(addon.priceMonthly) || 0,
+        priceYearly: Number(addon.priceYearly) || 0,
+      }));
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      return rejectWithValue(err.response?.data?.message || 'Failed to fetch add ons');
+    }
+  }
+);
+
 export const fetchCurrentOrgPlan = createAsyncThunk(
   'subscription/fetchCurrentOrgPlan',
   async (orgId: string, { rejectWithValue }) => {
@@ -69,7 +82,6 @@ export const fetchCurrentOrgPlan = createAsyncThunk(
   }
 );
 
-// Assign plan to organization
 export const assignPlanToOrg = createAsyncThunk(
   'subscription/assignPlanToOrg',
   async (payload: AssignPlanPayload, { rejectWithValue }) => {
@@ -83,7 +95,58 @@ export const assignPlanToOrg = createAsyncThunk(
   }
 );
 
-// Contact sales for plan upgrade
+export const fetchPlanAddons = createAsyncThunk(
+  'subscription/fetchPlanAddons',
+  async (_, { rejectWithValue }) => {
+    try {
+      const addOnPlans = await addOnPlanService.getAllAddOnPlans();
+      return addOnPlans;
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      return rejectWithValue(err.response?.data?.message || 'Failed to fetch plan add ons');
+    }
+  }
+);
+
+export const fetchPlanAddonById = createAsyncThunk(
+  'subscription/fetchPlanAddonById',
+  async (addonId: number, { rejectWithValue }) => {
+    try {
+      const addon = await addOnPlanService.getAddOnPlanById(addonId);
+      return addon;
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      return rejectWithValue(err.response?.data?.message || 'Failed to fetch plan add-on');
+    }
+  }
+);
+
+export const updatePlanAddon = createAsyncThunk(
+  'subscription/updatePlanAddon',
+  async ({ addonId, addon }: { addonId: number; addon: IAddOnPlan }, { rejectWithValue }) => {
+    try {
+      const updatedAddon = await addOnPlanService.updateAddOnPlan(addonId, addon);
+      return updatedAddon;
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      return rejectWithValue(err.response?.data?.message || 'Failed to update plan add-on');
+    }
+  }
+);
+
+export const deletePlanAddon = createAsyncThunk(
+  'subscription/deletePlanAddon',
+  async (addonId: number, { rejectWithValue }) => {
+    try {
+      const deletedAddon = await addOnPlanService.deleteAddOnPlan(addonId.toString());
+      return deletedAddon;
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      return rejectWithValue(err.response?.data?.message || 'Failed to delete plan add-on');
+    }
+  }
+);
+
 export const contactSales = createAsyncThunk(
   'subscription/contactSales',
   async (payload: ContactSalesPayload, { rejectWithValue }) => {
@@ -96,10 +159,6 @@ export const contactSales = createAsyncThunk(
     }
   }
 );
-
-// ============================================================================
-// Slice
-// ============================================================================
 
 const subscriptionSlice = createSlice({
   name: 'subscription',
@@ -116,7 +175,6 @@ const subscriptionSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // Fetch all plans
     builder
       .addCase(fetchPlans.pending, (state) => {
         state.isLoading = true;
@@ -131,7 +189,18 @@ const subscriptionSlice = createSlice({
         state.error = action.payload as string;
       });
 
-    // Fetch current organization plan
+    builder
+      .addCase(fetchAddons.fulfilled, (state, action) => {
+        state.addons = action.payload.map((addon) => ({
+          id: addon.id,
+          code: addon.code,
+          name: addon.name,
+          description: addon.description ?? "",
+          priceMonthly: Number(addon.priceMonthly) || 0,
+          priceYearly: Number(addon.priceYearly) || 0,
+        }));
+      });
+
     builder
       .addCase(fetchCurrentOrgPlan.pending, (state) => {
         state.isLoading = true;
@@ -149,7 +218,6 @@ const subscriptionSlice = createSlice({
         state.error = action.payload as string;
       });
 
-    // Assign plan to organization
     builder
       .addCase(assignPlanToOrg.pending, (state) => {
         state.isLoading = true;
@@ -164,7 +232,6 @@ const subscriptionSlice = createSlice({
         state.error = action.payload as string;
       });
 
-    // Contact sales
     builder
       .addCase(contactSales.pending, (state) => {
         state.isLoading = true;

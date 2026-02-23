@@ -1,5 +1,9 @@
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
+
+// Components
+import { LimitReachedDialog } from "./components/common";
 
 // Pages
 import { Login, Register, ForgotPassword, ResetPassword, VerifyOTP, ActivateAccount } from "./pages/auth";
@@ -20,7 +24,6 @@ import { Dashboard } from "./pages/dashboard";
 import { MainLayout } from "./layouts";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
 import type { AppDispatch, RootState } from "./store";
 import { fetchCurrentUser } from "./store/slices/userSlice";
 import EmailVerification from "./pages/verifications/emailVerification/EmailVerification";
@@ -29,10 +32,14 @@ import BulkDetailsResult from "./pages/verifications/task&Results/bulkDetailsRes
 
 const PUBLIC_ROUTES = ['/login', '/register', '/forgot-password', '/reset-password', '/verify-otp', '/activate-account'];
 
+const PAYMENT_REQUIRED_EVENT = "api:payment-required";
+
 function App() {
   const user = useSelector((state: RootState) => state.user.currentUser);
   const dispatch = useDispatch<AppDispatch>();
   const location = useLocation();
+  const navigate = useNavigate();
+  const [showLimitDialog, setShowLimitDialog] = useState(false);
 
   useEffect(() => {
     const isPublicRoute = PUBLIC_ROUTES.some(route => location.pathname.startsWith(route));
@@ -41,8 +48,29 @@ function App() {
     }
   }, [dispatch, location.pathname, user]);
 
+  useEffect(() => {
+    const handler = () => setShowLimitDialog(true);
+    window.addEventListener(PAYMENT_REQUIRED_EVENT, handler);
+    return () => window.removeEventListener(PAYMENT_REQUIRED_EVENT, handler);
+  }, []);
+
+  const handleLimitPrimaryAction = () => {
+    setShowLimitDialog(false);
+    navigate("/subscription");
+  };
+
   return (
     <>
+      <LimitReachedDialog
+        isOpen={showLimitDialog}
+        onClose={() => setShowLimitDialog(false)}
+        limitType="plan limit"
+        variant="subscribe"
+        onPrimaryAction={handleLimitPrimaryAction}
+        primaryActionLabel="View plans"
+        secondaryActionLabel="Maybe later"
+      />
+
       <Toaster
         position="top-right"
         reverseOrder={false}
@@ -104,6 +132,7 @@ function App() {
           <Route path="/inbox" element={<Inbox />} />
           <Route path="/users" element={<Users />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/settings/:tab" element={<Settings />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/subscription" element={<Subscription />} />
         </Route>

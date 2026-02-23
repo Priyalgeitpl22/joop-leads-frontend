@@ -91,7 +91,9 @@ const TaskDetailResult = () => {
       })
       .catch((err: unknown) => {
         if (!cancelled) {
-          setError(err && typeof err === "object" && "message" in err ? String((err as { message: string }).message) : "Failed to load task details");
+          const ax = err as { response?: { data?: { message?: string } }; message?: string };
+          const msg = ax?.response?.data?.message ?? ax?.message;
+          setError(typeof msg === "string" ? msg : "Failed to load task details");
         }
       })
       .finally(() => {
@@ -120,7 +122,7 @@ const TaskDetailResult = () => {
     return (
       <CardContainer>
         <ContentWrapper>
-          <p style={{ color: "var(--color-error, #dc2626)" }}>{error}</p>
+          <p style={{ color: "var(--color-error, #dc2626)" }}>{typeof error === "string" ? error : "Something went wrong"}</p>
         </ContentWrapper>
       </CardContainer>
     );

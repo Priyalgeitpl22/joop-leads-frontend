@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
 import { useAppSelector } from "../../../store";
+import type { RootState } from "../../../store";
 import { emailAccountService } from "../../../services/email.account.service";
+import { LimitReachedDialog } from "../../../components/common";
 import {
   DialogOverlay,
   DialogContainer,
@@ -17,7 +20,6 @@ import {
   MethodSubtext,
   RecommendedBadge,
 } from "./AddAccountDialog.styled";
-import type { RootState } from "../../../store";
 
 interface AddAccountDialogProps {
   open: boolean;
@@ -32,29 +34,26 @@ export const AddAccountDialog: React.FC<AddAccountDialogProps> = ({
   onOpenSmtp,
   onOpenOutlook,
 }) => {
+  const navigate = useNavigate();
   const { currentUser, isFetchingCurrentUser } = useAppSelector(
-    (state: RootState) => state.user
+    (state: RootState) => state.user,
   );
 
+  const isLimitReached = useMemo(() => {
+    const plan = currentUser?.planDetails?.plan;
+    const max = plan?.maxSenderAccounts;
+    const count = currentUser?.planDetails?.senderAccountsCount;
+    if (max == null || count == null) return false;
+    return Number(count) >= Number(max);
+  }, [currentUser?.planDetails]);
+
   const handleGoogleOAuth = async () => {
-    if (isFetchingCurrentUser) {
-      return;
-    }
-
-    if (!currentUser?.orgId) {
-      console.error("Organization ID is missing");
-      return;
-    }
-
+    if (isFetchingCurrentUser || !currentUser?.orgId) return;
     try {
-      const response = await emailAccountService.getGoogleOAuthUrl(
-        currentUser.orgId
-      );
-      if (response) {
-        window.location.href = response;
-      }
-    } catch (error) {
-      console.error("Error fetching Google OAuth URL:", error);
+      const url = await emailAccountService.getGoogleOAuthUrl(currentUser.orgId);
+      if (url) window.location.href = url;
+    } catch (err) {
+      console.error("Error fetching Google OAuth URL:", err);
     }
   };
 
@@ -68,7 +67,26 @@ export const AddAccountDialog: React.FC<AddAccountDialogProps> = ({
     onOpenSmtp();
   };
 
+  const handleLimitPrimaryAction = () => {
+    onClose();
+    navigate("/subscription");
+  };
+
   if (!open) return null;
+
+  if (isLimitReached) {
+    return (
+      <LimitReachedDialog
+        isOpen={true}
+        onClose={onClose}
+        limitType="sender accounts"
+        variant="subscribe"
+        onPrimaryAction={handleLimitPrimaryAction}
+        primaryActionLabel="View plans"
+        secondaryActionLabel="Maybe later"
+      />
+    );
+  }
 
   return (
     <>
@@ -76,14 +94,12 @@ export const AddAccountDialog: React.FC<AddAccountDialogProps> = ({
       <DialogContainer>
         <DialogHeader>
           <DialogTitle>Add Email Account</DialogTitle>
-          <CloseButton onClick={onClose}>
+          <CloseButton onClick={onClose} aria-label="Close">
             <X size={20} />
           </CloseButton>
         </DialogHeader>
-
         <DialogContent>
           <MethodTitle>Choose a Method to Connect Your Email</MethodTitle>
-
           <MethodButtons>
             <MethodButton
               onClick={handleGoogleOAuth}
@@ -92,18 +108,11 @@ export const AddAccountDialog: React.FC<AddAccountDialogProps> = ({
             >
               <RecommendedBadge>Fastest</RecommendedBadge>
               <MethodIcon>
-                <img
-                  src="/Images/mail.png"
-                  alt="Gmail Icon"
-                  width={44}
-                  height={36}
-                />
+                <img src="/Images/mail.png" alt="Gmail" width={44} height={36} />
               </MethodIcon>
               <MethodLabel>Google OAuth</MethodLabel>
               <MethodSubtext>
-                {isFetchingCurrentUser
-                  ? "Loading..."
-                  : "One-click secure setup"}
+                {isFetchingCurrentUser ? "Loading..." : "One-click secure setup"}
               </MethodSubtext>
             </MethodButton>
 
@@ -111,7 +120,7 @@ export const AddAccountDialog: React.FC<AddAccountDialogProps> = ({
               <MethodIcon>
                 <img
                   src="/Images/outlook.webp"
-                  alt="Outlook Icon"
+                  alt="Outlook"
                   width={44}
                   height={44}
                 />
@@ -122,12 +131,7 @@ export const AddAccountDialog: React.FC<AddAccountDialogProps> = ({
 
             <MethodButton onClick={handleSmtp}>
               <MethodIcon>
-                <img
-                  src="/Images/smtp.png"
-                  alt="SMTP Icon"
-                  width={44}
-                  height={44}
-                />
+                <img src="/Images/smtp.png" alt="SMTP" width={44} height={44} />
               </MethodIcon>
               <MethodLabel>SMTP</MethodLabel>
               <MethodSubtext>Custom email server</MethodSubtext>

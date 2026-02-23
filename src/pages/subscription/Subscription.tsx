@@ -1,36 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import { Check, X, CheckCircle } from 'lucide-react';
-import toast from 'react-hot-toast';
-import { useAppDispatch, useAppSelector } from '../../store';
+import React, { useEffect, useState } from "react";
+import { CheckCircle } from "lucide-react";
+import toast from "react-hot-toast";
+import { useAppDispatch, useAppSelector } from "../../store";
 import {
   fetchPlans,
+  fetchAddons,
   fetchCurrentOrgPlan,
   contactSales,
   setSelectedPlanCode,
-} from '../../store/slices/subscriptionSlice';
-import { BillingPeriod, PlanCode } from '../../types/enums';
-import type { PlanWithFeatures } from '../../services/subscription.service';
+} from "../../store/slices/subscriptionSlice";
+import { BillingPeriod } from "../../types/enums";
+import type { PlanWithFeatures } from "../../services/subscription.service";
 import {
   PageContainer,
-  PageHeader,
-  PageTitle,
-  PageSubtitle,
+  GeneralPlanCardWrapper,
+  ComparisonTableWrapper,
   BillingToggleContainer,
   BillingToggle,
   BillingOption,
-  SaveBadge,
-  PlansContainer,
-  PlanCard,
-  PlanHeader,
-  PlanName,
-  PlanBody,
-  PlanDescription,
-  PlanPriceContainer,
-  PlanPrice,
-  PlanPriceFree,
-  FeaturesList,
-  FeatureItem,
-  SelectionIndicator,
   GetStartedContainer,
   GetStartedButton,
   DialogOverlay,
@@ -43,61 +30,61 @@ import {
   LoadingContainer,
   LoadingSpinner,
   LoadingText,
-  CurrentPlanBadge,
-} from './Subscription.styled';
+} from "./Subscription.styled";
+import { Alert } from "../../components/common";
+import { GeneralPlanCard } from "./GeneralPlanCard";
+import { type AddonOption, CompletePurchaseModal } from "./CompletePurchaseModal";
+import { PlanComparisonTable, type AddedAddonsMap } from "./PlanComparisonTable";
+import { AddOnCode } from "../../services/add-on.plan.service";
 
-// Plan feature mapping for display
-const PLAN_FEATURES = [
-  { key: 'hasEmailVerification', name: 'Email Verification' },
-  { key: 'hasEmailWarmup', name: 'Email Warmup' },
-  { key: 'hasUnifiedInbox', name: 'Unified Inbox' },
-  { key: 'maxUsers', name: 'Teammates', isLimit: true },
-  { key: 'hasAdvancedAnalytics', name: 'AI Campaign Gen' },
-  { key: 'hasAdvancedAnalytics', name: 'AI Tagging' },
-  { key: 'hasAdvancedAnalytics', name: 'AI Responses' },
-  { key: 'hasAdvancedAnalytics', name: 'AI Improvement' },
-  { key: 'hasCustomDomain', name: 'Website Link Warmup' },
-  { key: 'hasPrioritySupport', name: 'Support Type', isSupportType: true },
-  { key: 'maxSenderAccounts', name: 'Max Sender Accounts', isLimit: true },
-  { key: 'maxLeadsPerMonth', name: 'Max Lead List Per Month', isLimit: true },
-  { key: 'maxEmailsPerMonth', name: 'Max Emails Per Month', isLimit: true },
-  { key: 'maxCampaigns', name: 'Max Live Campaigns', isLimit: true },
-];
-
-const SUPPORT_TYPE_MAP: Record<string, string> = {
-  COMMUNITY: 'Community Support Type',
-  EMAIL_24x7: 'Email 24x7 Support Type',
-  PRIORITY_EMAIL_CHAT: 'Priority Email Chat Support Type',
-  PHONE_WHATSAPP: 'Phone WhatsApp Support Type',
-};
+function getAddonKey(addon: { code?: string; id: string | number }): string {
+  return (addon.code?.toLowerCase() ?? String(addon.id)).trim();
+}
 
 const PLAN_NAME_MAP: Record<string, string> = {
-  FREE: 'Free',
-  SILVER: 'Silver',
-  GOLD: 'Gold',
-  PLATINUM: 'Platinum',
-  STARTER: 'Starter',
-  PROFESSIONAL: 'Professional',
-  ENTERPRISE: 'Enterprise',
+  FREE: "Free",
+  SILVER: "Silver",
+  GOLD: "Gold",
+  PLATINUM: "Platinum",
+  STARTER: "Starter",
+  PROFESSIONAL: "Professional",
+  ENTERPRISE: "Enterprise",
 };
 
 export const Subscription: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { plans, currentOrgPlan, selectedPlanCode, isLoading } = useAppSelector(
-    (state) => state.subscription
+  const { plans, addons, currentOrgPlan, selectedPlanCode, isLoading } = useAppSelector(
+    (state) => state.subscription,
   );
   const { currentUser } = useAppSelector((state) => state.user);
 
-  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>(BillingPeriod.MONTHLY);
-  const [contactDialogOpen, setContactDialogOpen] = useState(false);
-  const [successDialogOpen, setSuccessDialogOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>(
+    BillingPeriod.MONTHLY,
+  );
+  const [completePurchaseOpen, setCompletePurchaseOpen] = useState(false);
+  const [thankYouDialogOpen, setThankYouDialogOpen] = useState(false);
+  const [addedAddons, setAddedAddons] = useState<AddedAddonsMap>({});
+  const yearlyDiscount = 20;
 
-  // Calculate yearly discount
-  const yearlyDiscount = 20; // 20% discount for yearly
+  const handleAddonToggle = (planCode: string, addonId: string, added: boolean) => {
+    setAddedAddons((prev) => {
+      const set = new Set(prev[planCode] ?? []);
+      if (added) set.add(addonId);
+      else set.delete(addonId);
+      return { ...prev, [planCode]: set };
+    });
+  };
+
+  const preselectedAddonIds =
+    selectedPlanCode && addons.length > 0
+      ? addons
+          .filter((a) => addedAddons[selectedPlanCode]?.has(getAddonKey(a)))
+          .map((a) => String(a.id))
+      : [];
 
   useEffect(() => {
     dispatch(fetchPlans());
+    dispatch(fetchAddons());
     if (currentUser?.orgId) {
       dispatch(fetchCurrentOrgPlan(currentUser.orgId));
     }
@@ -111,72 +98,48 @@ export const Subscription: React.FC = () => {
     if (!selectedPlanCode || selectedPlanCode === currentOrgPlan?.plan?.code) {
       return;
     }
-    setContactDialogOpen(true);
+    setCompletePurchaseOpen(true);
   };
 
-  const handleConfirmContact = async () => {
-    if (!selectedPlanCode) return;
+  const handleCompletePurchaseConfirm = (selection: {
+    addons: { id: string; code: AddOnCode; name: string; enabled: boolean; quantity?: number }[];
+    totalCost: number;
+  }) => {
+    console.log(selection);
+    handleConfirmContact(selection);
+  };
 
-    setIsSubmitting(true);
+  const handleConfirmContact = async (selection: {
+    addons: { id: string; code: AddOnCode; name: string; enabled: boolean; quantity?: number }[];
+    totalCost: number;
+  }) => {
+    if (!selectedPlanCode) return;
     try {
       await dispatch(
         contactSales({
           planCode: selectedPlanCode,
+          addOns: selection.addons.map((addon) => addon.name) as AddOnCode[],
           billingPeriod,
-        })
+          totalCost: selection.totalCost,
+        }),
       ).unwrap();
 
-      setContactDialogOpen(false);
-      setSuccessDialogOpen(true);
+      setCompletePurchaseOpen(false);
+      setThankYouDialogOpen(true);
     } catch {
-      toast.error('Failed to submit request. Please try again.');
-    } finally {
-      setIsSubmitting(false);
+      toast.error("Failed to submit request. Please try again.");
     }
   };
 
   const getPrice = (plan: PlanWithFeatures) => {
     const monthlyPrice = plan.priceMonthly || plan.priceUsd || 0;
-    
+
     if (monthlyPrice === 0) return null; // Free plan
 
     if (billingPeriod === BillingPeriod.YEARLY) {
       return Math.round(monthlyPrice * 12 * (1 - yearlyDiscount / 100));
     }
     return monthlyPrice;
-  };
-
-  const getFeatureValue = (plan: PlanWithFeatures, feature: typeof PLAN_FEATURES[0]) => {
-    const value = (plan as unknown as Record<string, unknown>)[feature.key];
-
-    if (feature.isLimit) {
-      if (value === null || value === undefined) return { included: true, display: 'Unlimited' };
-      if (typeof value === 'number') return { included: true, display: value.toLocaleString() };
-      return { included: false, display: null };
-    }
-
-    if (feature.isSupportType) {
-      // Handle support type from featureNames or hasPrioritySupport
-      if (plan.featureNames) {
-        const supportFeature = plan.featureNames.find((f) => f.name.includes('Support'));
-        if (supportFeature && typeof supportFeature.value === 'string') {
-          return {
-            included: true,
-            display: SUPPORT_TYPE_MAP[supportFeature.value] || supportFeature.value,
-          };
-        }
-      }
-      return {
-        included: !!value,
-        display: value ? 'Priority Support' : null,
-      };
-    }
-
-    return { included: !!value, display: null };
-  };
-
-  const isCurrentPlan = (planCode: string) => {
-    return currentOrgPlan?.plan?.code === planCode;
   };
 
   if (isLoading && plans.length === 0) {
@@ -192,11 +155,16 @@ export const Subscription: React.FC = () => {
 
   return (
     <PageContainer>
-      <PageHeader>
-        <PageTitle>Subscription</PageTitle>
-        <PageSubtitle>Manage your subscription</PageSubtitle>
-      </PageHeader>
-
+      {!currentOrgPlan?.isActive && (currentOrgPlan as { isContactSales?: boolean } | null)?.isContactSales && (
+        <Alert
+          type="info"
+          message="Your request for the activation of the subscription plan has been sent successfully. We will contact you shortly. Meanwhile if you want to change your plan, you can do so by contacting our sales team."
+        />
+      )}
+      <GeneralPlanCardWrapper>
+        <GeneralPlanCard currentOrgPlan={currentOrgPlan} />
+      </GeneralPlanCardWrapper>
+      
       <BillingToggleContainer>
         <BillingToggle>
           <BillingOption
@@ -212,147 +180,99 @@ export const Subscription: React.FC = () => {
             Yearly (Save {yearlyDiscount}%)
           </BillingOption>
         </BillingToggle>
-        {billingPeriod === BillingPeriod.YEARLY && (
-          <SaveBadge>Best Value!</SaveBadge>
-        )}
       </BillingToggleContainer>
 
-      <PlansContainer>
-        {plans.map((plan) => {
-          const price = getPrice(plan);
-          const isSelected = selectedPlanCode === plan.code;
-          const isCurrent = isCurrentPlan(plan.code);
-          const isFeatured = plan.code === PlanCode.STARTER || plan.code === PlanCode.PROFESSIONAL;
-
-          return (
-            <PlanCard
-              key={plan.id}
-              $selected={isSelected}
-              $featured={isFeatured}
-              onClick={() => handleSelectPlan(plan.code)}
-            >
-              {isCurrent && <CurrentPlanBadge>Current Plan</CurrentPlanBadge>}
-              
-              <SelectionIndicator $selected={isSelected}>
-                {isSelected && <Check size={14} />}
-              </SelectionIndicator>
-
-              <PlanHeader $planType={plan.code}>
-                <PlanName>{plan.name || PLAN_NAME_MAP[plan.code] || plan.code}</PlanName>
-              </PlanHeader>
-
-              <PlanBody>
-                <PlanDescription>
-                  {plan.description || 'Perfect for getting started with email outreach.'}
-                </PlanDescription>
-
-                <PlanPriceContainer>
-                  {price === null ? (
-                    <PlanPriceFree>Free</PlanPriceFree>
-                  ) : (
-                    <PlanPrice>
-                      ${price}
-                      <span>/{billingPeriod === BillingPeriod.MONTHLY ? 'month' : 'year'}</span>
-                    </PlanPrice>
-                  )}
-                </PlanPriceContainer>
-
-                <FeaturesList>
-                  {PLAN_FEATURES.map((feature, index) => {
-                    const { included, display } = getFeatureValue(plan, feature);
-                    
-                    // Skip duplicate features
-                    if (feature.key === 'hasAdvancedAnalytics' && index > 4) {
-                      // Use plan.featureNames if available for AI features
-                      if (plan.featureNames) {
-                        const aiFeature = plan.featureNames.find(
-                          (f) => f.name === feature.name
-                        );
-                        if (aiFeature) {
-                          return (
-                            <FeatureItem key={feature.name} $included={!!aiFeature.value}>
-                              {aiFeature.value ? (
-                                <Check size={16} />
-                              ) : (
-                                <X size={16} />
-                              )}
-                              {feature.name}
-                            </FeatureItem>
-                          );
-                        }
-                      }
-                    }
-
-                    return (
-                      <FeatureItem key={feature.name + index} $included={included}>
-                        {included ? <Check size={16} /> : <X size={16} />}
-                        {display ? (
-                          <>
-                            {display} {feature.name}
-                          </>
-                        ) : (
-                          feature.name
-                        )}
-                      </FeatureItem>
-                    );
-                  })}
-                </FeaturesList>
-              </PlanBody>
-            </PlanCard>
-          );
-        })}
-      </PlansContainer>
+      <ComparisonTableWrapper>
+        <PlanComparisonTable
+          plans={plans}
+          addons={addons}
+          billingPeriod={billingPeriod}
+          selectedPlanCode={selectedPlanCode}
+          currentPlanCode={currentOrgPlan?.plan?.code}
+          onSelectPlan={handleSelectPlan}
+          onChoosePlan={handleSelectPlan}
+          getPlanPrice={getPrice}
+          addedAddons={addedAddons}
+          onAddonToggle={handleAddonToggle}
+        />
+      </ComparisonTableWrapper>
 
       <GetStartedContainer>
         <GetStartedButton
-          disabled={!selectedPlanCode || selectedPlanCode === currentOrgPlan?.plan?.code}
+          disabled={
+            !selectedPlanCode || selectedPlanCode === currentOrgPlan?.plan?.code
+          }
           onClick={handleGetStarted}
         >
           GET STARTED
         </GetStartedButton>
       </GetStartedContainer>
 
-      {/* Contact Admin Dialog */}
-      <DialogOverlay $open={contactDialogOpen} onClick={() => setContactDialogOpen(false)}>
+      <CompletePurchaseModal
+        open={completePurchaseOpen}
+        onClose={() => setCompletePurchaseOpen(false)}
+        planName={
+          PLAN_NAME_MAP[selectedPlanCode || ""] ||
+          selectedPlanCode ||
+          "Pro Plan"
+        }
+        planPrice={(() => {
+          const plan = plans.find((p) => p.code === selectedPlanCode);
+          const price = plan ? getPrice(plan) : null;
+          return price ?? 0;
+        })()}
+        planPeriod={billingPeriod === BillingPeriod.YEARLY ? "year" : "month"}
+        onConfirm={handleCompletePurchaseConfirm} 
+        addons={addons.map((addon) => ({
+          id: addon.id as string,
+          code: addon.code as AddOnCode,
+          name: addon.name,
+          title: addon.name,
+          description: addon.description ?? "",
+          pricePerMonth: Number(addon.priceMonthly) || 0,
+          pricePerYear: Number(addon.priceYearly) || 0,
+        })) as AddonOption[]}
+        preselectedAddonIds={preselectedAddonIds}
+      />
+
+      {/* Thank You Dialog */}  
+      <DialogOverlay
+        $open={thankYouDialogOpen}
+        onClick={() => setThankYouDialogOpen(false)}
+      >
         <DialogContent onClick={(e) => e.stopPropagation()}>
-          <DialogTitle>Contact Admin</DialogTitle>
+          <DialogTitle>Thank You</DialogTitle>
           <DialogDescription>
-            Are you sure you want to activate the{' '}
-            <strong>{PLAN_NAME_MAP[selectedPlanCode || ''] || selectedPlanCode}</strong>{' '}
-            subscription plan? We will contact you shortly to complete the process.
+            Thank you for your purchase! We will contact you shortly to complete the
+            process.
           </DialogDescription>
           <DialogActions>
-            <DialogButton
-              $variant="secondary"
-              onClick={() => setContactDialogOpen(false)}
-              disabled={isSubmitting}
-            >
-              Cancel
-            </DialogButton>
-            <DialogButton
-              $variant="primary"
-              onClick={handleConfirmContact}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Submitting...' : 'Contact Admin'}
+            <DialogButton $variant="primary" onClick={() => setThankYouDialogOpen(false)}>
+              OK
             </DialogButton>
           </DialogActions>
         </DialogContent>
       </DialogOverlay>
 
       {/* Success Dialog */}
-      <DialogOverlay $open={successDialogOpen} onClick={() => setSuccessDialogOpen(false)}>
+      <DialogOverlay
+        $open={thankYouDialogOpen}
+        onClick={() => setThankYouDialogOpen(false)}
+      >
         <DialogContent onClick={(e) => e.stopPropagation()}>
           <SuccessIcon>
             <CheckCircle />
           </SuccessIcon>
           <DialogTitle>Request Sent</DialogTitle>
           <DialogDescription>
-            Your request for the activation of the subscription plan has been sent
-            successfully. We will contact you shortly.
+            Your request for the activation of the subscription plan has been
+            sent successfully. We will contact you shortly.
           </DialogDescription>
           <DialogActions>
-            <DialogButton $variant="primary" onClick={() => setSuccessDialogOpen(false)}>
+            <DialogButton
+              $variant="primary"
+              onClick={() => setThankYouDialogOpen(false)}
+            >
               OK
             </DialogButton>
           </DialogActions>
@@ -363,4 +283,3 @@ export const Subscription: React.FC = () => {
 };
 
 export default Subscription;
-

@@ -5,7 +5,10 @@ import styled, { css, keyframes } from 'styled-components';
 // ============================================================================
 
 export const PageContainer = styled.div`
-  padding: ${({ theme }) => theme.spacing.xl};
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing.md};
+  padding: ${({ theme }) => `0 ${theme.spacing.xl}`};
   min-height: 100vh;
   background: ${({ theme }) => theme.colors.background.primary};
 `;
@@ -32,8 +35,17 @@ export const PageSubtitle = styled.p`
 // Billing Toggle
 // ============================================================================
 
+export const GeneralPlanCardWrapper = styled.div`
+  margin-bottom: ${({ theme }) => theme.spacing.xl};
+`;
+
+export const ComparisonTableWrapper = styled.div`
+  margin-bottom: ${({ theme }) => theme.spacing.xl};
+`;
+
 export const BillingToggleContainer = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: ${({ theme }) => theme.spacing.md};
@@ -49,7 +61,7 @@ export const BillingToggle = styled.div`
 `;
 
 export const BillingOption = styled.button<{ $active?: boolean }>`
-  padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.lg}`};
+  padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.md}`};
   border: none;
   border-radius: ${({ theme }) => theme.borderRadius.full};
   font-size: ${({ theme }) => theme.typography.fontSize.md};
@@ -59,11 +71,11 @@ export const BillingOption = styled.button<{ $active?: boolean }>`
   background: ${({ $active, theme }) =>
     $active ? theme.colors.primary : 'transparent'};
   color: ${({ $active, theme }) =>
-    $active ? '#ffffff' : theme.colors.text.secondary};
+    $active ? theme.colors.text.primary : theme.colors.text.grey};
 
   &:hover {
     color: ${({ $active, theme }) =>
-      $active ? '#ffffff' : theme.colors.text.primary};
+      $active ? theme.colors.text.primary : theme.colors.text.grey};
   }
 `;
 
@@ -82,10 +94,17 @@ export const SaveBadge = styled.span`
 
 export const PlansContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: ${({ theme }) => theme.spacing.lg};
-  max-width: 1400px;
-  margin: 0 auto ${({ theme }) => theme.spacing.xl};
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: ${({ theme }) => theme.spacing.md};
+  width: 100%;
+  margin: 0 0 ${({ theme }) => theme.spacing.xl};
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 // ============================================================================
@@ -104,6 +123,7 @@ export const PlanCard = styled.div<{ $selected?: boolean; $featured?: boolean }>
   transition: all ${({ theme }) => theme.transitions.normal};
   cursor: pointer;
   position: relative;
+  min-width: 0;
   border: 2px solid ${({ $selected, $featured, theme }) =>
     $selected
       ? theme.colors.primary
@@ -146,18 +166,12 @@ export const PlanCard = styled.div<{ $selected?: boolean; $featured?: boolean }>
 
 export const PlanHeader = styled.div<{ $planType?: string }>`
   padding: ${({ theme }) => theme.spacing.lg};
-  background: ${({ $planType }) => {
+  background: ${({ $planType, theme }) => {
     switch ($planType) {
       case 'FREE':
-        return 'linear-gradient(135deg, #3b82f6, #1d4ed8)';
-      case 'SILVER':
-        return 'linear-gradient(135deg, #6366f1, #4f46e5)';
-      case 'GOLD':
-        return 'linear-gradient(135deg, #10b981, #059669)';
-      case 'PLATINUM':
-        return 'linear-gradient(135deg, #8b5cf6, #7c3aed)';
+        return `linear-gradient(135deg, ${theme.colors.primary.light}, ${theme.colors.primary.main})`;
       default:
-        return 'linear-gradient(135deg, #6366f1, #4f46e5)';
+        return `linear-gradient(135deg, ${theme.colors.primary.light}, ${theme.colors.primary.main})`;
     }
   }};
   text-align: center;
@@ -283,8 +297,8 @@ export const GetStartedButton = styled.button<{ disabled?: boolean }>`
   color: white;
   background: ${({ disabled }) =>
     disabled
-      ? '#9ca3af'
-      : 'linear-gradient(135deg, #10b981, #059669)'};
+      ? ({ theme }) => theme.colors.background.tertiary
+      : ({ theme }) => theme.colors.success?.main ?? "#22c55e"};
   border: none;
   border-radius: ${({ theme }) => theme.borderRadius.lg};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
@@ -354,16 +368,17 @@ export const DialogButton = styled.button<{ $variant?: 'primary' | 'secondary' }
   border-radius: ${({ theme }) => theme.borderRadius.md};
   cursor: pointer;
   transition: all ${({ theme }) => theme.transitions.fast};
+  background: ${({ theme }) => theme.colors.background.tertiary};
 
   ${({ $variant, theme }) =>
     $variant === 'primary'
       ? css`
-          background: ${theme.colors.primary};
+          background: ${({ theme }) => theme.colors.primary.main};
           color: white;
           border: none;
 
           &:hover {
-            background: ${theme.colors.primary.dark};
+            background: ${({ theme }) => theme.colors.primary.dark};
           }
         `
       : css`

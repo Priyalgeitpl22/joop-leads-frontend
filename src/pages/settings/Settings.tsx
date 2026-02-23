@@ -10,16 +10,24 @@ import {
   Sun,
   Moon,
   Check,
-  Trash
+  Trash,
+  CreditCard,
+  ChevronLeft,
+  Menu,
 } from 'lucide-react';
 import { useTheme } from '../../context';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { updateCurrentUser } from '../../store/slices/userSlice';
 import { changePassword, logout } from '../../store/slices/authSlice';
+import { setSidebarCollapsed } from '../../store/slices/uiSlice';
 import toast from 'react-hot-toast';
 import {
   PageContainer,
   Sidebar,
+  SidebarHeader,
+  SettingsSidebarTitle,
+  SettingsSidebarSubtitle,
+  SidebarToggleBtn,
   SidebarSection,
   SidebarNav,
   SidebarNavItem,
@@ -80,9 +88,15 @@ import {
   AvatarUploadButton,
   AvatarRemoveButton,
 } from './Settings.styled';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { Subscription } from '../subscription/Subscription';
 
-type SettingsTab = 'profile' | 'security' | 'theme';
+type SettingsTab = 'profile' | 'security' | 'theme' | 'billing';
+
+const SETTINGS_TABS: SettingsTab[] = ['profile', 'security', 'theme', 'billing'];
+
+const getTabFromPath = (tab: string | undefined): SettingsTab =>
+  tab && SETTINGS_TABS.includes(tab as SettingsTab) ? (tab as SettingsTab) : 'profile';
 
 const colorThemes = [
   { id: 'indigo', name: 'Indigo', color: '#6366f1' },
@@ -130,10 +144,15 @@ const validatePhone = (phone: string) => {
 export const Settings: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { tab: tabParam } = useParams<{ tab?: string }>();
+  const location = useLocation();
   const { currentUser } = useAppSelector((state) => state.user);
   const { isDarkMode, toggleDarkMode, themeColor, setThemeColor } = useTheme();
 
-  const [activeTab, setActiveTab] = useState<SettingsTab>('profile');
+  const activeTab = getTabFromPath(tabParam);
+  const setActiveTab = (tab: SettingsTab) => navigate(`/settings/${tab}`);
+
+  const [settingsSidebarCollapsed, setSettingsSidebarCollapsed] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const [editFormData, setEditFormData] = useState({
@@ -165,6 +184,12 @@ export const Settings: React.FC = () => {
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   // const [enable2FA, setEnable2FA] = useState(false);
   useEffect(() => {
+    if (location.pathname === '/settings') {
+      navigate('/settings/profile', { replace: true });
+    }
+  }, [location.pathname, navigate]);
+
+  useEffect(() => {
     if (currentUser) {
       setEditFormData({
         fullName: currentUser.fullName || '',
@@ -172,7 +197,11 @@ export const Settings: React.FC = () => {
       });
       setPreviewImage(currentUser.profilePicture || null);
     }
-  }, [currentUser]);
+    if (activeTab === 'billing') {
+      setSettingsSidebarCollapsed(true);
+      dispatch(setSidebarCollapsed(true)); // collapse main app sidebar from this component
+    }
+  }, [currentUser, activeTab, dispatch]);
 
   const getInitials = (name?: string) => {
     if (!name) return 'U';
@@ -591,6 +620,18 @@ export const Settings: React.FC = () => {
           </ContentCard>
         );
 
+      case 'billing':
+        return (
+          <ContentCard>
+            <SectionHeader>
+              <SectionTitle>Billing</SectionTitle>
+              <SectionDescription>
+                Manage your billing information and subscription
+              </SectionDescription>
+            </SectionHeader>
+            <Subscription />
+          </ContentCard>
+        );
       default:
         return null;
     }
@@ -598,35 +639,67 @@ export const Settings: React.FC = () => {
 
   return (
     <PageContainer>
-      <Sidebar>
+      <Sidebar $collapsed={settingsSidebarCollapsed}>
+        <SidebarHeader $collapsed={settingsSidebarCollapsed}>
+          {!settingsSidebarCollapsed ? (
+            <>
+              <div>
+                <SettingsSidebarTitle>Settings & Profile</SettingsSidebarTitle>
+                <SettingsSidebarSubtitle>Manage your preferences</SettingsSidebarSubtitle>
+              </div>
+              <SidebarToggleBtn onClick={() => setSettingsSidebarCollapsed(true)} aria-label="Collapse sidebar">
+                <ChevronLeft size={20} />
+              </SidebarToggleBtn>
+            </>
+          ) : (
+            <SidebarToggleBtn onClick={() => setSettingsSidebarCollapsed(false)} aria-label="Expand sidebar">
+              <Menu size={20} />
+            </SidebarToggleBtn>
+          )}
+        </SidebarHeader>
         <SidebarSection>
           <SidebarNav>
             <SidebarNavItem
               $active={activeTab === 'profile'}
+              $collapsed={settingsSidebarCollapsed}
               onClick={() => setActiveTab('profile')}
+              title={settingsSidebarCollapsed ? 'Your profile' : undefined}
             >
               <User size={20} />
-              Your profile
+              {!settingsSidebarCollapsed && 'Your profile'}
             </SidebarNavItem>
             <SidebarNavItem
               $active={activeTab === 'security'}
+              $collapsed={settingsSidebarCollapsed}
               onClick={() => setActiveTab('security')}
+              title={settingsSidebarCollapsed ? 'Security' : undefined}
             >
               <Shield size={20} />
-              Security
+              {!settingsSidebarCollapsed && 'Security'}
             </SidebarNavItem>
             <SidebarNavItem
               $active={activeTab === 'theme'}
+              $collapsed={settingsSidebarCollapsed}
               onClick={() => setActiveTab('theme')}
+              title={settingsSidebarCollapsed ? 'Appearance' : undefined}
             >
               <Palette size={20} />
-              Appearance
+              {!settingsSidebarCollapsed && 'Appearance'}
+            </SidebarNavItem>
+            <SidebarNavItem
+              $active={activeTab === 'billing'}
+              $collapsed={settingsSidebarCollapsed}
+              onClick={() => setActiveTab('billing')}
+              title={settingsSidebarCollapsed ? 'Billing' : undefined}
+            >
+              <CreditCard size={20} />
+              {!settingsSidebarCollapsed && 'Billing'}
             </SidebarNavItem>
           </SidebarNav>
         </SidebarSection>
       </Sidebar>
 
-      <MainContent>
+      <MainContent $fullWidth={activeTab === 'billing'}>
         {renderContent()}
       </MainContent>
 

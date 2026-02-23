@@ -19,6 +19,7 @@ export interface IOrganizationPlan {
   // Current period usage
   emailsSentThisPeriod: number;
   leadsAddedThisPeriod: number;
+  senderAccountsCount: number;
 
   // Stripe/Payment info
   stripeCustomerId: string | null;
@@ -52,6 +53,7 @@ export interface IUpdateOrganizationPlan {
   endsAt?: Date | null;
   emailsSentThisPeriod?: number;
   leadsAddedThisPeriod?: number;
+  senderAccountsCount?: number;
   stripeCustomerId?: string | null;
   stripeSubscriptionId?: string | null;
 }

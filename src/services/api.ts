@@ -4,7 +4,6 @@ import Cookies from 'js-cookie';
 import { config } from '../config';
 import { store } from '../store';
 import { forceLogout } from '../store/slices/authSlice';
-import { useNavigate } from 'react-router-dom';
 
 export const api = axios.create({
   baseURL: config.api.baseUrl,
@@ -31,9 +30,13 @@ const addAuthToken = (axiosConfig: InternalAxiosRequestConfig): InternalAxiosReq
 };
 
 const handleUnauthorized = () => {
-  const navigate = useNavigate();
   store.dispatch(forceLogout());
-  navigate('/login');
+  window.location.href = '/login';
+};
+
+/** Notify the app to show the limit-reached dialog (e.g. App listens for this event). */
+const handlePaymentRequired = () => {
+  window.dispatchEvent(new CustomEvent('api:payment-required'));
 };
 
 const handleResponseError = (error: AxiosError) => {
@@ -42,16 +45,20 @@ const handleResponseError = (error: AxiosError) => {
     if (status === 400) {
       console.error('Bad Request: ', error.response.data);
     }
-    
+
     if (status === 401) {
       handleUnauthorized();
     }
-    
+
     if (status === 403) {
-      console.error('Access forbidden - logging out user');
-      handleUnauthorized();
+      console.error('Access forbidden');
     }
-    
+
+    if (status === 402) {
+      console.error('Payment required');
+      handlePaymentRequired();
+    }
+
     if (status >= 500) {
       console.error('Server error occurred');
     }
