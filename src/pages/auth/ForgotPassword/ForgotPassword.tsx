@@ -87,7 +87,7 @@ export const ForgotPassword: React.FC = () => {
 
     try {
       const result = await dispatch(forgotPassword(email)).unwrap();
-      toast.success(result.message || 'Reset link sent successfully!!');
+      toast.success(result.message || 'Reset link sent successfully!');
       setIsSuccess(true);
       startResendCooldown();
     } catch (error: unknown) {
