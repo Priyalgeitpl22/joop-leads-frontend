@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { Tooltip } from "@mui/material";
 import {
   LayoutDashboard,
   Mail,
@@ -85,6 +86,16 @@ export const Sidebar: React.FC = () => {
   const { sidebarCollapsed } = useAppSelector((state) => state.ui);
   const [openMenu, setOpenMenu] = React.useState<string | null>(null);
 
+  const withTooltip = (title: string, children: React.ReactElement) => {
+    if (!sidebarCollapsed) return children;
+
+    return (
+      <Tooltip title={title} placement="right" arrow>
+        {children}
+      </Tooltip>
+    );
+  };
+
   React.useEffect(() => {
     mainNavItems.forEach((item) => {
       if (item.children?.some((child) => isActive(child.path!))) {
@@ -143,41 +154,45 @@ export const Sidebar: React.FC = () => {
 
             return (
               <NavItem key={item.title}>
-                <NavLink
-                  onClick={() => {
-                    if (hasChildren) {
+                {withTooltip(
+                  item.title,
+                  <NavLink
+                    onClick={() => {
+                      if (hasChildren) {
                       setOpenMenu(openMenu === item.title ? null : item.title);
-                    } else if (item.path) {
-                      handleNavigation(item.path);
-                    }
-                  }}
-                  $active={item.path ? isActive(item.path) : isParentActive}
-                  $collapsed={sidebarCollapsed}
-                >
-                  <ParentRow>
-                    <NavWrapper>
-                      <NavIcon
-                        $active={
-                          item.path ? isActive(item.path) : isParentActive
-                        }
-                      >
-                        {item.icon}
-                      </NavIcon>
-                      {!sidebarCollapsed && <NavText>{item.title}</NavText>}
-                    </NavWrapper>
-                    {hasChildren && !sidebarCollapsed && (
-                      <ArrowIcon $open={openMenu === item.title}>
-                        <ChevronDown size={16} />
-                      </ArrowIcon>
-                    )}
-                  </ParentRow>
-                </NavLink>
+                      } else if (item.path) {
+                        handleNavigation(item.path);
+                      }
+                    }}
+                    $active={item.path ? isActive(item.path) : isParentActive}
+                    $collapsed={sidebarCollapsed}
+                  >
+                    <ParentRow>
+                      <NavWrapper>
+                        <NavIcon
+                          $hasChildren={hasChildren && sidebarCollapsed}
+                          $active={
+                            item.path ? isActive(item.path) : isParentActive
+                          }
+                        >
+                          {item.icon}
+                        </NavIcon>
+                        {!sidebarCollapsed && <NavText>{item.title}</NavText>}
+                      </NavWrapper>
+                      {hasChildren && (
+                        <ArrowIcon $open={openMenu === item.title}>
+                          <ChevronDown size={16} />
+                        </ArrowIcon>
+                      )}
+                    </ParentRow>
+                  </NavLink>
+                )}
 
-                {hasChildren &&
-                  openMenu === item.title &&
-                  !sidebarCollapsed && (
-                    <ChildNavList>
-                      {item.children!.map((child) => (
+                {hasChildren && openMenu === item.title && (
+                  <ChildNavList>
+                    {item.children!.map((child) =>
+                      withTooltip(
+                        child.title,
                         <NavLink
                           key={child.path}
                           onClick={() => handleNavigation(child.path!)}
@@ -187,11 +202,13 @@ export const Sidebar: React.FC = () => {
                           <NavIcon $active={isActive(child.path!)}>
                             {child.icon}
                           </NavIcon>
-                          <NavText>{child.title}</NavText>
+                          {!sidebarCollapsed && (
+                            <NavText>{child.title}</NavText>
+                          )}
                         </NavLink>
                       ))}
-                    </ChildNavList>
-                  )}
+                  </ChildNavList>
+                )}
               </NavItem>
             );
           })}
@@ -204,34 +221,35 @@ export const Sidebar: React.FC = () => {
         <NavList>
           {bottomNavItems.map((item) => (
             <NavItem key={item.title}>
-              <NavLink
-                onClick={() => {
-                  if (item.path) {
-                    handleNavigation(item.path);
-                  }
-                }}
-                $active={item.path ? isActive(item.path) : false}
-                $collapsed={sidebarCollapsed}
-                title={sidebarCollapsed ? item.title : undefined}
-              >
-                <NavIcon $active={item.path ? isActive(item.path) : false}>
-                  {item.icon}
-                </NavIcon>
-                {!sidebarCollapsed && <NavText>{item.title}</NavText>}
-              </NavLink>
+              {withTooltip(
+                item.title,
+                <NavLink
+                  onClick={() => {
+                    if (item.path) {
+                      handleNavigation(item.path);
+                    }
+                  }}
+                  $active={item.path ? isActive(item.path) : false}
+                  $collapsed={sidebarCollapsed}
+                >
+                  <NavIcon $active={item.path ? isActive(item.path) : false}>
+                    {item.icon}
+                  </NavIcon>
+                  {!sidebarCollapsed && <NavText>{item.title}</NavText>}
+                </NavLink>
+              )}
             </NavItem>
           ))}
           <NavItem>
-            <NavLink
-              onClick={handleLogout}
-              $collapsed={sidebarCollapsed}
-              title={sidebarCollapsed ? 'Logout' : undefined}
-            >
-              <NavIcon>
-                <LogOut size={20} />
-              </NavIcon>
-              {!sidebarCollapsed && <NavText>Logout</NavText>}
-            </NavLink>
+            {withTooltip(
+              'Logout',
+              <NavLink onClick={handleLogout} $collapsed={sidebarCollapsed}>
+                <NavIcon>
+                  <LogOut size={20} />
+                </NavIcon>
+                {!sidebarCollapsed && <NavText>Logout</NavText>}
+              </NavLink>
+            )}
           </NavItem>
         </NavList>
       </BottomNav>
