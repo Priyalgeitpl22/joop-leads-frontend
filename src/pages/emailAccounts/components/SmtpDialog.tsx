@@ -299,8 +299,14 @@ export const SmtpDialog: React.FC<SmtpDialogProps> = ({ open, onClose, onAccount
       onAccountCreated?.(response.data as Account);
       onClose();
     } catch (error) {
-      console.error('Failed to create account:', error);
-      toast.error('Failed to create email account');
+      const err = error as { response?: { data?: { message?: string } } };
+      const message = err.response?.data?.message || 'Failed to create email account';
+      if (message.length > 100) {
+        setVerificationFailedMessage(message);
+        setShowErrorDialog(true);
+      } else {  
+        toast.error(message);
+      }
     } finally {
       setIsSaving(false);
     }
