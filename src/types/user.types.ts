@@ -1,4 +1,5 @@
-export type UserRole = "OWNER" | "ADMIN" | "MEMBER" | "VIEWER";
+import { UserRole } from './enums';
+export { UserRole };
 
 export interface IUser {
   id: string;

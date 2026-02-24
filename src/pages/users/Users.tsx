@@ -114,7 +114,7 @@ export const Users: React.FC = () => {
           fullName: "",
           email: "",
           phone: "",
-          role: UserRole.MEMBER as UserRole,
+          role: UserRole.MEMBER,
         });
       } else {
         toast.error(response.message || "Failed to create user");
