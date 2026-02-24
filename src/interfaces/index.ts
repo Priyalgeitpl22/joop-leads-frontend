@@ -188,6 +188,7 @@ export interface Campaign {
   sender_accounts: SenderAccount[] | [];
   campaignStats?: CampaignStats | null;
   completedPercentage: number;
+  csvFile?: string | null;
 }
 
 export interface CampaignStats {

@@ -1,4 +1,7 @@
 import styled, { keyframes } from 'styled-components';
+interface StatusBadgeProps {
+  $variant?: "primary" | "success" | "warning" | "danger" | "neutral";
+}
 
 // ================================
 // LAYOUT COMPONENTS
@@ -157,7 +160,7 @@ export const StepConnector = styled.div<{ $isCompleted: boolean }>`
 export const WizardContent = styled.main`
   flex: 1;
   padding: ${({ theme }) => theme.spacing.md};
-  overflow-y: auto;
+  // overflow-y: auto;
 `;
 
 export const ContentCard = styled.div`
@@ -285,6 +288,120 @@ export const UploadFooterNote = styled.p`
   margin: ${({ theme }) => theme.spacing.md} 0 0;
   padding-top: ${({ theme }) => theme.spacing.md};
   border-top: 1px solid ${({ theme }) => theme.colors.border.light};
+`;
+
+export const PreviouslyUploadedSection = styled.div`
+  max-width: 800px;
+  margin: ${({theme}) => theme.spacing.lg} auto;
+`;
+
+export const LeadsTable = styled.div`
+  background: ${({ theme }) => theme.colors.background.primary};
+  border-radius: ${({ theme }) => theme.borderRadius.lg};
+  box-shadow: 0 0 0 3px ${({ theme }) => theme.colors.border.dark}20;
+`;
+
+export const TableHeader = styled.div`
+  display: grid;
+  grid-template-columns: 2fr 1fr 2fr 60px;
+  padding: ${({ theme }) => theme.spacing.md}
+    ${({ theme }) => theme.spacing.lg};
+  background: ${({ theme }) => theme.colors.background.secondary};
+  font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
+  font-size: ${({ theme }) => theme.typography.fontSize.md};
+  color: ${({ theme }) => theme.colors.text.secondary};
+`;
+
+export const HeaderCell = styled.div<{ align?: string }>`
+  text-align: ${({ align }) => align || 'left'};
+`;
+
+export const TableRow = styled.div`
+  display: grid;
+  grid-template-columns: 2fr 1fr 2fr 40px;
+  align-items: center;
+  padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.xs};
+  border-top: 1px solid ${({ theme }) => theme.colors.border.main};
+`;
+
+export const NameCell = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.md};
+`;
+
+export const CsvIcon = styled.div`
+  width: 36px;
+  height: 36px;
+  background: ${({ theme }) => theme.colors.background.tertiary};
+  color: ${({ theme }) => theme.colors.success.dark};
+  font-weight: ${({ theme }) => theme.typography.fontWeight.bold};
+  font-size: ${({ theme }) => theme.typography.fontSize.xs};
+  border-radius: ${({ theme }) => theme.borderRadius.sm};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const FileInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+export const UploadedFileName = styled.div`
+  font-size: ${({ theme }) => theme.typography.fontSize.md};
+  font-weight: ${({ theme }) => theme.typography.fontWeight.medium};
+  color: ${({ theme }) => theme.colors.primary.main};
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+export const FileMeta = styled.div`
+  font-size: ${({ theme }) => theme.typography.fontSize.sm};
+  color: ${({ theme }) => theme.colors.text.grey};
+  margin-top: ${({ theme }) => theme.spacing.xs};
+`;
+
+export const CountCell = styled.div`
+  text-align: center;
+  font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
+  font-size: ${({ theme }) => theme.typography.fontSize.lg};
+`;
+
+export const VerificationCell = styled.div`
+  display: flex;
+  justify-content: center;
+  white-space: nowrap;
+`;
+
+export const StatusBadge = styled.div<StatusBadgeProps>`
+  display: flex;
+  padding: ${({ theme }) => theme.spacing.xs}
+    ${({ theme }) => theme.spacing.sm};
+  border-radius: ${({ theme }) => theme.borderRadius.xl};
+  font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
+  font-size: ${({ theme }) => theme.typography.fontSize.sm};
+  align-item: center;
+  gap: ${({ theme }) => theme.spacing.xs};
+
+  color: ${({ theme, $variant }) => {
+    switch ($variant) {
+      case "primary":
+        return theme.colors.warning.dark;
+      case "success":
+        return theme.colors.success.dark;
+      case "warning":
+        return theme.colors.primary.dark;
+      case "danger":
+        return theme.colors.error.dark;
+      case "neutral":
+      default:
+        return theme.colors.warning.light;
+    }
+  }};
 `;
 
 // ================================

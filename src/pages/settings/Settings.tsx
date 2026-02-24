@@ -14,10 +14,11 @@ import {
   CreditCard,
   ChevronLeft,
   Menu,
+  Edit
 } from 'lucide-react';
 import { useTheme } from '../../context';
 import { useAppDispatch, useAppSelector } from '../../store';
-import { updateCurrentUser } from '../../store/slices/userSlice';
+import { deleteUser, updateCurrentUser } from '../../store/slices/userSlice';
 import { changePassword, logout } from '../../store/slices/authSlice';
 import { setSidebarCollapsed } from '../../store/slices/uiSlice';
 import toast from 'react-hot-toast';
@@ -87,9 +88,13 @@ import {
   AvatarImage,
   AvatarUploadButton,
   AvatarRemoveButton,
+  DeleteProfileButton,
+  ActionWrapper,
 } from './Settings.styled';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { Subscription } from '../subscription/Subscription';
+import { Tooltip } from "@mui/material";
+import ConfirmDialog from '../common/DeleteDialog';
 
 type SettingsTab = 'profile' | 'security' | 'theme' | 'billing';
 
@@ -154,6 +159,7 @@ export const Settings: React.FC = () => {
 
   const [settingsSidebarCollapsed, setSettingsSidebarCollapsed] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const [editFormData, setEditFormData] = useState({
     fullName: '',
@@ -392,6 +398,20 @@ export const Settings: React.FC = () => {
     return phoneValidation.isValid && nameValidation.isValid;
   };
 
+  const handleDeleteUser = async () => {
+    if (!currentUser) return;
+
+    try {
+      await dispatch(deleteUser(currentUser.id)).unwrap();
+      setIsDeleteDialogOpen(false);
+      navigate('/login')
+      toast.success("User deleted successfully");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to delete user");
+    }
+  };
+
   // const handle2FAToggle = async () => {
   //   const newValue = !enable2FA;
   //   setEnable2FA(newValue);
@@ -425,9 +445,20 @@ export const Settings: React.FC = () => {
                   <ProfileEmail>{currentUser?.email || 'user@email.com'}</ProfileEmail>
                 </ProfileDetails>
               </ProfileInfo>
-              <EditProfileButton onClick={() => setIsEditModalOpen(true)}>
-                Edit profile
-              </EditProfileButton>
+              <ActionWrapper>
+                <Tooltip title="Edit profile" arrow>
+                  <EditProfileButton onClick={() => setIsEditModalOpen(true)}>
+                    <Edit size={15} />
+                  </EditProfileButton>
+                </Tooltip>
+                <Tooltip title="Delete profile" arrow>
+                  <DeleteProfileButton
+                    onClick={() => setIsDeleteDialogOpen(true)}
+                  >
+                    <Trash size={15} />
+                  </DeleteProfileButton>
+                </Tooltip>
+              </ActionWrapper>
             </ProfileHeader>
 
             <ProfileGrid>
@@ -444,6 +475,14 @@ export const Settings: React.FC = () => {
                 <FieldValue>{currentUser?.role || 'NA'}</FieldValue>
               </ProfileField>
             </ProfileGrid>
+            <ConfirmDialog
+              isOpen={isDeleteDialogOpen}
+              title='Delete User'
+              message='Are you sure you want to delete this profile? This action cannot be undone.'
+              confirmText='Delete'
+              onClose={() => setIsDeleteDialogOpen(false)}
+              onConfirm={handleDeleteUser}
+            />
           </ContentCard>
         );
 

@@ -122,12 +122,16 @@ export const NavLink = styled.button<{ $active?: boolean; $collapsed?: boolean }
   }
 `;
 
-export const NavIcon = styled.span<{ $active?: boolean }>`
+export const NavIcon = styled.span<{ $active?: boolean, $hasChildren?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
   color: inherit;
   flex-shrink: 0;
+
+  ${({ $hasChildren }) => $hasChildren && css`
+    margin-left: ${({ theme }) => theme.spacing.md};
+  `}
 `;
 
 export const NavText = styled.span`
