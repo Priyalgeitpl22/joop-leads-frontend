@@ -108,6 +108,7 @@ export const emailAccountService = {
    */
   async verifySmtpAccount(payload: {
     type: string;
+    replyTo?: string
     imap: {
       host: string;
       port: string;
