@@ -16,6 +16,7 @@ import {
   Menu,
   Edit
 } from 'lucide-react';
+import { UserRole } from '../../types/enums';
 import { useTheme } from '../../context';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { deleteUser, updateCurrentUser } from '../../store/slices/userSlice';
@@ -153,9 +154,16 @@ export const Settings: React.FC = () => {
   const location = useLocation();
   const { currentUser } = useAppSelector((state) => state.user);
   const { isDarkMode, toggleDarkMode, themeColor, setThemeColor } = useTheme();
+  const isSuperAdmin = (currentUser?.role as string) === UserRole.SUPER_ADMIN;
 
   const activeTab = getTabFromPath(tabParam);
   const setActiveTab = (tab: SettingsTab) => navigate(`/settings/${tab}`);
+
+  useEffect(() => {
+    if (activeTab === 'billing' && !isSuperAdmin) {
+      navigate('/settings/profile', { replace: true });
+    }
+  }, [activeTab, isSuperAdmin, navigate]);
 
   const [settingsSidebarCollapsed, setSettingsSidebarCollapsed] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -660,6 +668,7 @@ export const Settings: React.FC = () => {
         );
 
       case 'billing':
+        if (!isSuperAdmin) return null;
         return (
           <ContentCard>
             <SectionHeader>
@@ -725,15 +734,17 @@ export const Settings: React.FC = () => {
               <Palette size={20} />
               {!settingsSidebarCollapsed && 'Appearance'}
             </SidebarNavItem>
-            <SidebarNavItem
-              $active={activeTab === 'billing'}
-              $collapsed={settingsSidebarCollapsed}
-              onClick={() => setActiveTab('billing')}
-              title={settingsSidebarCollapsed ? 'Billing' : undefined}
-            >
-              <CreditCard size={20} />
-              {!settingsSidebarCollapsed && 'Billing'}
-            </SidebarNavItem>
+            {isSuperAdmin && (
+              <SidebarNavItem
+                $active={activeTab === 'billing'}
+                $collapsed={settingsSidebarCollapsed}
+                onClick={() => setActiveTab('billing')}
+                title={settingsSidebarCollapsed ? 'Billing' : undefined}
+              >
+                <CreditCard size={20} />
+                {!settingsSidebarCollapsed && 'Billing'}
+              </SidebarNavItem>
+            )}
           </SidebarNav>
         </SidebarSection>
       </Sidebar>
