@@ -234,11 +234,15 @@ export const ProfileEmail = styled.p`
   margin: 0;
 `;
 
+export const ActionWrapper = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing.md};
+`;
+
 export const EditProfileButton = styled.button`
   display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing.sm};
-  padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.lg};
+  padding: ${({ theme }) => theme.spacing.sm};
   background: transparent;
   border: 1.5px solid ${({ theme }) => theme.colors.primary.main};
   border-radius: ${({ theme }) => theme.borderRadius.md};
@@ -250,6 +254,24 @@ export const EditProfileButton = styled.button`
 
   &:hover {
     background: ${({ theme }) => theme.colors.primary.main}10;
+  }
+`;
+
+export const DeleteProfileButton = styled.button`
+  display: flex;
+  align-items: center;
+  padding: ${({ theme }) => theme.spacing.sm};
+  background: transparent;
+  border: 1.5px solid ${({ theme }) => theme.colors.error.dark};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  color: ${({ theme }) => theme.colors.error.dark};
+  font-size: ${({ theme }) => theme.typography.fontSize.md};
+  font-weight: ${({ theme }) => theme.typography.fontWeight.medium};
+  cursor: pointer;
+  transition: all ${({ theme }) => theme.transitions.fast};
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.error.main}10;
   }
 `;
 

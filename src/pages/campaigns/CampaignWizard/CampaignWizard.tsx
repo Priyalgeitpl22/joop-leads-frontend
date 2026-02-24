@@ -11,6 +11,12 @@ import {
   RefreshCw,
   Trash2,
   FileUp,
+  Info,
+  Upload,
+  BadgeCheck,
+  BadgeXIcon,
+  Badge,
+  Ban,
 } from "lucide-react";
 import { Megaphone } from "lucide-react";
 import { campaignService } from "../../../services/campaign.service";
@@ -66,6 +72,19 @@ import {
   WizardFooter,
   SecondaryActionButton,
   PrimaryActionButton,
+  PreviouslyUploadedSection,
+  LeadsTable,
+  TableHeader,
+  HeaderCell,
+  TableRow,
+  NameCell,
+  CsvIcon,
+  FileInfo,
+  FileMeta,
+  CountCell,
+  VerificationCell,
+  StatusBadge,
+  UploadedFileName,
 } from "./CampaignWizard.styles";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../../store";
@@ -73,6 +92,8 @@ import type { UploadCounts } from "../../../interfaces";
 import { WIZARD_STEPS, CONTACT_FIELD_OPTIONS } from "../../../constants";
 import { fetchCampaignById } from "../../../store/slices/campaignSlice";
 import type { ICreateSequence } from "../../../types/sequence.types";
+import OptionsMenu from "../../../components/common/OptionsMenu";
+import ConfirmDialog from "../../common/DeleteDialog";
 
 export const CampaignWizard: React.FC = () => {
   const navigate = useNavigate();
@@ -94,11 +115,23 @@ export const CampaignWizard: React.FC = () => {
   const currentCampaign = useSelector(
     (state: RootState) => state.campaign.currentCampaign
   );
+  const [leadDetailDialog, setLeadDetailDialog] = useState(false);
+  const [deleteDialog, setDeleteDialog] = useState(false);
 
   const campaign = currentCampaign as unknown as Campaign;
   const [campaignId, setCampaignId] = useState<string | null>(null);
   const dispatch = useDispatch<AppDispatch>();
   const { id } = useParams<{ id: string }>();
+  const hasLeadsInCampaign = (campaign?.leads?.length ?? 0) > 0;
+
+  const isCampaignLoadedForCurrentId =
+    campaign?.id && id && campaign.id === id;
+
+  const shouldShowPreviousUploads =
+    isCampaignLoadedForCurrentId &&
+    (campaign?.leads?.length ?? 0) > 0 &&
+    !uploadedFile;
+
 
   useEffect(() => {
     if (!id || id === "new") return;
@@ -289,6 +322,10 @@ export const CampaignWizard: React.FC = () => {
   );
 
   const handleValidateBeforeImport = () => {
+    if (hasLeadsInCampaign) {
+      return true;
+    }
+
     if (!uploadedFile) {
       toast.error("Please upload a CSV file");
       return false;
@@ -307,6 +344,10 @@ export const CampaignWizard: React.FC = () => {
   };
 
   const handleImportLeads = async (settings: CsvSettings) => {
+    if (hasLeadsInCampaign) {
+      return true;
+    }
+
     if (!uploadedFile) {
       toast.error("Please upload a CSV file");
       return false;
@@ -492,9 +533,14 @@ export const CampaignWizard: React.FC = () => {
 
     switch (currentStepIndex) {
       case 0:
-        return !uploadedFile || !isEmailFieldMapped;
+        return (
+          (!uploadedFile && !hasLeadsInCampaign) ||
+          (uploadedFile && !isEmailFieldMapped)
+        );
       case 1:
-        return sequences?.length === 0;
+        return (
+          sequences?.length === 0 && (campaign?.sequences?.length ?? 0) === 0
+        );
       case 2:
         return !isSetupValid;
       case 3:
@@ -503,6 +549,33 @@ export const CampaignWizard: React.FC = () => {
         return false;
     }
   };
+
+  const handleOpenLeadDialog = () => {
+    setLeadDetailDialog(true)
+  }
+
+  const handleCloseLeadDialog =() => {
+    setLeadDetailDialog(false)
+  }
+
+  const handleOpenDeleteDialog = () => {
+    setDeleteDialog(true)
+  }
+
+  const handleCloseDeleteDialog = () => {
+    setDeleteDialog(false)
+  }
+
+  const hasImportedLeads: UploadCounts | null = campaign?.leads?.length
+    ? {
+        uploaded: campaign.leads.length,
+        duplicates: 0,
+        blocked: 0,
+        empty: 0,
+        invalid: 0,
+        unsubscribed: 0,
+      }
+    : null;
 
   const renderProgressStepper = () => (
     <StepperContainer>
@@ -533,136 +606,233 @@ export const CampaignWizard: React.FC = () => {
     </StepperContainer>
   );
 
+  const formatDate = (isoDate: string | number | Date) => {
+    const date = new Date(isoDate);
+
+    return date
+      .toLocaleString("en-US", {
+        weekday: "short",
+        month: "short",
+        day: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      })
+      .replace(",", "")
+      .replace(",", " at");
+  };
+
   const renderImportLeadsStep = () => (
-    <ContentCard>
-      <SectionHeader>
-        <SectionTitle>Easily add or update Leads /Contacts</SectionTitle>
-        <SectionDescription>
-          How would you like to get contacts into your list?
-        </SectionDescription>
-      </SectionHeader>
+    <>
+      <ContentCard>
+        <SectionHeader>
+          <SectionTitle>Easily add or update Leads /Contacts</SectionTitle>
+          <SectionDescription>
+            How would you like to get contacts into your list?
+          </SectionDescription>
+        </SectionHeader>
 
-      <ImportCard>
-        <ImportTitle>Import Your Existing Contacts</ImportTitle>
+        <ImportCard>
+          <ImportTitle>Import Your Existing Contacts</ImportTitle>
 
-        <UploadHeader>
-          <FileSpreadsheet size={20} />
-          Upload CSV File
-        </UploadHeader>
+          <UploadHeader>
+            <FileSpreadsheet size={20} />
+            Upload CSV File
+          </UploadHeader>
 
-        {!uploadedFile ? (
-          <DropZone
-            $isDragActive={isDragActive}
-            onClick={() => fileInputRef.current?.click()}
-            onDrop={handleFileDrop}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-          >
-            <UploadIconWrapper>
-              <FileUp size={32} />
-            </UploadIconWrapper>
-            <UploadPrompt>
-              <span>Click to browse</span> or drag and drop
-            </UploadPrompt>
-            <UploadHint>Upload your CSV files to import leads.</UploadHint>
-          </DropZone>
-        ) : (
-          <FilePreviewCard>
-            <FileInfoSection>
-              <FileIconWrapper>
-                <FileSpreadsheet size={20} />
-              </FileIconWrapper>
-              <FileMetadata>
-                <FileName>{uploadedFile.name}</FileName>
-                <FileSize>{uploadedFile.size}</FileSize>
-              </FileMetadata>
-            </FileInfoSection>
-            <FileActionsGroup>
-              <FileActionLink onClick={() => toast("Preview coming soon")}>
-                <Eye size={16} style={{ marginRight: 4 }} />
-                Preview
-              </FileActionLink>
-              <FileActionLink onClick={handleReuploadFile}>
-                <RefreshCw size={16} style={{ marginRight: 4 }} />
-                Reupload
-              </FileActionLink>
-              <FileActionLink $variant="danger" onClick={handleRemoveFile}>
-                <Trash2 size={16} style={{ marginRight: 4 }} />
-                Delete
-              </FileActionLink>
-            </FileActionsGroup>
-          </FilePreviewCard>
-        )}
+          {!uploadedFile ? (
+            <DropZone
+              $isDragActive={isDragActive}
+              onClick={() => fileInputRef.current?.click()}
+              onDrop={handleFileDrop}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+            >
+              <UploadIconWrapper>
+                <FileUp size={32} />
+              </UploadIconWrapper>
+              <UploadPrompt>
+                <span>Click to browse</span> or drag and drop
+              </UploadPrompt>
+              <UploadHint>Upload your CSV files to import leads.</UploadHint>
+            </DropZone>
+          ) : (
+            <FilePreviewCard>
+              <FileInfoSection>
+                <FileIconWrapper>
+                  <FileSpreadsheet size={20} />
+                </FileIconWrapper>
+                <FileMetadata>
+                  <FileName>{uploadedFile?.name}</FileName>
+                  <FileSize>{uploadedFile?.size}</FileSize>
+                </FileMetadata>
+              </FileInfoSection>
+              <FileActionsGroup>
+                <FileActionLink onClick={() => toast("Preview coming soon")}>
+                  <Eye size={16} style={{ marginRight: 4 }} />
+                  Preview
+                </FileActionLink>
+                <FileActionLink onClick={handleReuploadFile}>
+                  <RefreshCw size={16} style={{ marginRight: 4 }} />
+                  Reupload
+                </FileActionLink>
+                <FileActionLink $variant="danger" onClick={handleRemoveFile}>
+                  <Trash2 size={16} style={{ marginRight: 4 }} />
+                  Delete
+                </FileActionLink>
+              </FileActionsGroup>
+            </FilePreviewCard>
+          )}
 
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".csv"
-          style={{ display: "none" }}
-          onChange={handleFileInputChange}
-        />
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".csv"
+            style={{ display: "none" }}
+            onChange={handleFileInputChange}
+          />
 
-        <UploadFooterNote>
-          Upload your existing lead lists or connect to your favorite CRM
-          platform. Quick and easy import in just a few clicks.
-        </UploadFooterNote>
-      </ImportCard>
+          <UploadFooterNote>
+            Upload your existing lead lists or connect to your favorite CRM
+            platform. Quick and easy import in just a few clicks.
+          </UploadFooterNote>
+        </ImportCard>
 
       {/* Field Mapping Section - visible after CSV upload */}
-      {csvColumnHeaders.length > 0 && (
-        <FieldMappingSection>
-          <SectionNumberBadge>
-            <NumberBadge>2</NumberBadge>
-            <SectionSubtitle>Map Fields</SectionSubtitle>
-          </SectionNumberBadge>
-          <FieldMappingDescription>
+        {csvColumnHeaders.length > 0 && (
+          <FieldMappingSection>
+            <SectionNumberBadge>
+              <NumberBadge>2</NumberBadge>
+              <SectionSubtitle>Map Fields</SectionSubtitle>
+            </SectionNumberBadge>
+            <FieldMappingDescription>
             Map CSV columns to the variables you want to add it on the campaign
-          </FieldMappingDescription>
+            </FieldMappingDescription>
 
-          <MappingVisualHeader>
-            <MappingIconsRow>
-              <MappingIconBox>
-                <FileSpreadsheet size={20} />
-              </MappingIconBox>
-              <MappingIconBox>
-                <Megaphone size={20} />
-              </MappingIconBox>
-            </MappingIconsRow>
-          </MappingVisualHeader>
+            <MappingVisualHeader>
+              <MappingIconsRow>
+                <MappingIconBox>
+                  <FileSpreadsheet size={20} />
+                </MappingIconBox>
+                <MappingIconBox>
+                  <Megaphone size={20} />
+                </MappingIconBox>
+              </MappingIconsRow>
+            </MappingVisualHeader>
 
-          {csvColumnHeaders.map((csvColumn) => (
-            <FieldMappingRow key={csvColumn}>
-              <CsvColumnLabel>{csvColumn}</CsvColumnLabel>
-              <FieldSelectWrapper>
-                <FieldSelect
-                  value={columnToFieldMappings[csvColumn] || ""}
-                  onChange={(e) =>
-                    handleFieldMappingChange(csvColumn, e.target.value)
-                  }
-                >
-                  <option value="">Select field</option>
-                  {CONTACT_FIELD_OPTIONS.map((field) => (
-                    <option key={field.key} value={field.key}>
-                      {field.label} {field.required ? "*" : ""}
-                    </option>
-                  ))}
-                </FieldSelect>
-                {columnToFieldMappings[csvColumn] && (
-                  <ClearMappingButton
-                    onClick={() => handleClearFieldMapping(csvColumn)}
+            {csvColumnHeaders.map((csvColumn) => (
+              <FieldMappingRow key={csvColumn}>
+                <CsvColumnLabel>{csvColumn}</CsvColumnLabel>
+                <FieldSelectWrapper>
+                  <FieldSelect
+                    value={columnToFieldMappings[csvColumn] || ""}
+                    onChange={(e) =>
+                      handleFieldMappingChange(csvColumn, e.target.value)
+                    }
                   >
-                    <X size={16} />
-                  </ClearMappingButton>
-                )}
-                <SelectDropdownIcon>
-                  <ChevronDown size={16} />
-                </SelectDropdownIcon>
-              </FieldSelectWrapper>
-            </FieldMappingRow>
-          ))}
-        </FieldMappingSection>
+                    <option value="">Select field</option>
+                    {CONTACT_FIELD_OPTIONS.map((field) => (
+                      <option key={field.key} value={field.key}>
+                        {field.label} {field.required ? "*" : ""}
+                      </option>
+                    ))}
+                  </FieldSelect>
+                  {columnToFieldMappings[csvColumn] && (
+                    <ClearMappingButton
+                      onClick={() => handleClearFieldMapping(csvColumn)}
+                    >
+                      <X size={16} />
+                    </ClearMappingButton>
+                  )}
+                  <SelectDropdownIcon>
+                    <ChevronDown size={16} />
+                  </SelectDropdownIcon>
+                </FieldSelectWrapper>
+              </FieldMappingRow>
+            ))}
+          </FieldMappingSection>
+        )}
+      </ContentCard>
+      {shouldShowPreviousUploads && (
+        <PreviouslyUploadedSection>
+          <SectionTitle>Previously Uploaded Leads</SectionTitle>
+
+          <LeadsTable>
+            <TableHeader>
+              <HeaderCell>Name</HeaderCell>
+              <HeaderCell align="center">Imported Leads Count</HeaderCell>
+              <HeaderCell align="center">Email Verification</HeaderCell>
+              <HeaderCell />
+            </TableHeader>
+
+            <TableRow>
+              <NameCell>
+                <CsvIcon>CSV</CsvIcon>
+                <FileInfo>
+                  <UploadedFileName>{campaign?.name}</UploadedFileName>
+                  <FileMeta>{formatDate(campaign?.createdAt)}</FileMeta>
+                </FileInfo>
+              </NameCell>
+
+              <CountCell>{hasImportedLeads?.uploaded}</CountCell>
+
+              <VerificationCell>
+                <StatusBadge $variant="primary"><BadgeCheck size={18}/>682</StatusBadge>
+                <StatusBadge $variant="success"><BadgeXIcon size={18}/>119</StatusBadge>
+                <StatusBadge $variant="warning"><Badge size={18}/>137</StatusBadge>
+                <StatusBadge $variant="danger"><Badge size={18}/>104</StatusBadge>
+                <StatusBadge $variant="neutral"><Ban size={18}/>20</StatusBadge>
+              </VerificationCell>
+              <OptionsMenu
+                items={[
+                  {
+                    id: "export",
+                    label: "Export CSV",
+                    icon: <Upload size={18} />,
+                    onClick: () => {
+                      window.open(campaign?.csvFile ?? "", "_blank");
+                    },
+                  },
+                  {
+                    id: "details",
+                    label: "View Details",
+                    icon: <Info size={18} />,
+                    onClick: () => {
+                      handleOpenLeadDialog();
+                    },
+                  },
+                  // {
+                  //   id: "delete",
+                  //   label: "Delete CSV",
+                  //   icon: <Trash2 size={18} />,
+                  //   onClick: () => {
+                  //     handleOpenDeleteDialog();
+                  //   },
+                  // },
+                ]}
+                position="left"
+              />
+            </TableRow>
+          </LeadsTable>
+          <UploadSuccessDialog
+            open={leadDetailDialog}
+            onClose={handleCloseLeadDialog}
+            uploadCounts={hasImportedLeads}
+          />
+          <ConfirmDialog
+            isOpen={deleteDialog}
+            title={"Delete CSV"}
+            message={
+              "Are you sure you want to delete CSV. This action cannot be undone. Are you sure you want to proceed ?"
+            }
+            confirmText="Delete"
+            onClose={handleCloseDeleteDialog}
+            onConfirm={handleOpenDeleteDialog}
+          />
+        </PreviouslyUploadedSection>
       )}
-    </ContentCard>
+    </>
   );
 
   const renderSequencesStep = () => (
@@ -717,7 +887,7 @@ export const CampaignWizard: React.FC = () => {
         )}
         <PrimaryActionButton
           onClick={handleSaveAndProceed}
-          disabled={isNextButtonDisabled()}
+          disabled={!!isNextButtonDisabled()}
         >
           {isSaving
             ? "Saving..."
