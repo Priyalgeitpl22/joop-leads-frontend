@@ -190,6 +190,9 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ accountId, emailAccount,
     try {
       await emailAccountService.verifySmtpAccount({
         type: EmailAccountType.SMTP,
+        replyTo: formData.replyToAddressChecked
+          ? formData.replyToAddress
+          : "",
         imap: {
           host: formData.imapHost,
           port: formData.imapPort,
@@ -242,6 +245,9 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ accountId, emailAccount,
         payload = {
           name: formData.fromName || '',
           email: formData.fromEmail,
+          replyTo: formData.replyToAddressChecked
+            ? formData.replyToAddress
+            : "",   
           smtp: {
             host: formData.smtpHost,
             port: Number(formData.smtpPort),
