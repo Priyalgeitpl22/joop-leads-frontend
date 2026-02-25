@@ -174,7 +174,7 @@ const campaignSlice = createSlice({
       state.currentCampaign = null;
     },
     setCurrentCampaign: (state, action: PayloadAction<Campaign>) => {
-      state.currentCampaign = action.payload;
+      (state as { currentCampaign: Campaign | null }).currentCampaign = action.payload;
     },
   },
   extraReducers: (builder: ActionReducerMapBuilder<CampaignState>) => {
@@ -186,7 +186,7 @@ const campaignSlice = createSlice({
       })
       .addCase(fetchCampaigns.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.campaigns = (action.payload ?? []) as Campaign[];
+        (state as { campaigns: Campaign[] }).campaigns = (action.payload ?? []) as Campaign[];
       })
       .addCase(fetchCampaigns.rejected, (state, action) => {
         state.isLoading = false;
@@ -201,7 +201,7 @@ const campaignSlice = createSlice({
       })
       .addCase(fetchCampaignById.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.currentCampaign = action.payload as Campaign;
+        (state as { currentCampaign: Campaign | null }).currentCampaign = action.payload;
       })
       .addCase(fetchCampaignById.rejected, (state, action) => {
         state.isLoading = false;
@@ -216,9 +216,11 @@ const campaignSlice = createSlice({
       })
       .addCase(deleteCampaign.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.campaigns = state.campaigns.filter((c) => c.id !== action.payload);
-        if (state.currentCampaign?.id === action.payload) {
-          state.currentCampaign = null;
+        const list = (state as { campaigns: Campaign[] }).campaigns;
+        (state as { campaigns: Campaign[]; currentCampaign: Campaign | null }).campaigns = list.filter((c) => c.id !== action.payload);
+        const s = state as { currentCampaign: Campaign | null };
+        if (s.currentCampaign?.id === action.payload) {
+          s.currentCampaign = null;
         }
       })
       .addCase(deleteCampaign.rejected, (state, action) => {
@@ -234,8 +236,8 @@ const campaignSlice = createSlice({
       })
       .addCase(changeCampaignStatus.fulfilled, (state, action) => {
         state.isLoading = false;
-        const prev = state.currentCampaign;
-        state.currentCampaign = prev
+        const prev = (state as { currentCampaign: Campaign | null }).currentCampaign;
+        (state as { currentCampaign: Campaign | null }).currentCampaign = prev
           ? { ...prev, status: action.payload.status }
           : null;
         toast.success('Campaign status changed successfully');
@@ -281,7 +283,7 @@ const campaignSlice = createSlice({
       })
       .addCase(searchCampaigns.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.campaigns = (action.payload ?? []) as Campaign[];
+        (state as { campaigns: Campaign[] }).campaigns = (action.payload ?? []) as Campaign[];
       })
       .addCase(searchCampaigns.rejected, (state, action) => {
         state.isLoading = false;
