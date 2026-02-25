@@ -8,6 +8,22 @@ export const Card = styled.div`
   max-width: 100%;
 `;
 
+export const PlanExpiredBanner = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: ${({ theme }) => theme.spacing.sm};
+  padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.lg};
+  margin-bottom: ${({ theme }) => theme.spacing.lg};
+  background: ${({ theme }) => theme.colors.error?.main ?? '#dc2626'};
+  color: white;
+  font-size: ${({ theme }) => theme.typography.fontSize.md};
+  font-weight: 600;
+  border-radius: ${({ theme }) => theme.borderRadius.lg};
+  border: 1px solid ${({ theme }) => theme.colors.error?.dark ?? '#b91c1c'};
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.25);
+`;
+
 export const CardTitle = styled.h2`
   font-size: ${({ theme }) => theme.typography.fontSize.xl};
   font-weight: 600;

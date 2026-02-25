@@ -4,7 +4,7 @@ import type { IAddOnPlan } from "../services/add-on.plan.service";
 
 export type UserRole = "OWNER" | "ADMIN" | "MEMBER" | "VIEWER";
 
-export type CampaignStatus = "DRAFT" | "SCHEDULED" | "ACTIVE" | "PAUSED" | "COMPLETED" | "ARCHIVED";
+export type CampaignStatus = "DRAFT" | "SCHEDULED" | "ACTIVE" | "PAUSED" | "COMPLETED" | "ARCHIVED" | "STOPPED";
 
 export type LeadStatus = "PENDING" | "QUEUED" | "SENT" | "OPENED" | "CLICKED" | "REPLIED" | "BOUNCED" | "UNSUBSCRIBED" | "FAILED";
 
@@ -189,6 +189,19 @@ export interface Campaign {
   campaignStats?: CampaignStats | null;
   completedPercentage: number;
   csvFile?: string | null;
+  csvFileName?: string | null;
+  stoppedDetails: {
+    at: string;
+    senderReasons: [
+      {
+        email: string;
+        reason: string;
+        senderId: string;
+        accountId: string;
+      }
+    ];
+  };
+  stoppedReason: string | null;
 }
 
 export interface CampaignStats {

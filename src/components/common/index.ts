@@ -13,8 +13,11 @@ export { Dialog } from './Dialog';
 export type { DialogProps } from './Dialog';
 export { ErrorDialog } from './ErrorDialog';
 export type { ErrorDialogProps } from './ErrorDialog';
-export { Alert } from './Alert';
-export type { AlertProps, AlertType, AlertAction } from './Alert';
-export { LimitReachedDialog } from './LimitReachedDialog';
-export type { LimitReachedDialogProps } from './LimitReachedDialog';
-
+export { AlertChip } from './Alert/AlertChips';
+export type { AlertChipProps, AlertChipVariant } from './Alert/AlertChips';
+export { LimitReachedDialog } from "./LimitReachedDialog";
+export type { LimitReachedDialogProps } from "./LimitReachedDialog";
+export { StatusBadge } from "./StatusBadge";
+export type { StatusBadgeStyledProps, StatusBadgeVariant } from "./StatusBadge";
+export { EmailProvider } from "./EmailProvider";
+export type { EmailProviderProps, EmailProviderType } from "./EmailProvider";

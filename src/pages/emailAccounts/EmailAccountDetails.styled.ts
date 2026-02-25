@@ -50,10 +50,27 @@ export const Tab = styled.button<{ $isActive?: boolean }>`
   padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.md};
   background: none;
   border: none;
-  border-bottom: 2px solid ${({ $isActive, theme }) => 
+  border-bottom: 2px solid ${({ $isActive, theme }) =>
     $isActive ? theme.colors.primary.main : 'transparent'};
-  color: ${({ $isActive, theme }) => 
+  color: ${({ $isActive, theme }) =>
     $isActive ? theme.colors.primary.main : theme.colors.text.secondary};
+  font-size: ${({ theme }) => theme.typography.fontSize.sm};
+  font-weight: ${({ theme }) => theme.typography.fontWeight.medium};
+  cursor: pointer;
+  transition: all ${({ theme }) => theme.transitions.fast};
+  margin-bottom: -1px;
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.primary.main};
+  }
+`;
+
+export const TabAttention = styled.button<{ $isActive?: boolean }>`
+  padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.md};
+  background: none;
+  border: none;
+  border-bottom: 2px solid ${({ $isActive }) => ($isActive ? '#ea580c' : 'transparent')};
+  color: ${({ theme }) => theme.colors.text.secondary};
   font-size: ${({ theme }) => theme.typography.fontSize.sm};
   font-weight: ${({ theme }) => theme.typography.fontWeight.medium};
   cursor: pointer;

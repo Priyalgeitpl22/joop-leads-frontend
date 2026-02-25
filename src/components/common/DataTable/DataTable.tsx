@@ -53,6 +53,7 @@ import {
 } from "./DataTable.styled";
 import { TableSkeleton } from "../tableSkeleton";
 import { Button } from "../Button.tsx";
+import { LinkField } from "../../../pages/leads/components/LeadDetailsPanel.styled.ts";
 
 export interface Column {
   key: string;
@@ -142,7 +143,6 @@ export function DataTable({
   onSelectionChange,
   showRowActions = false,
   isBulk,
-  onBulkDetails,
   onSingleDetails,
   showDetails,
   onEdit,
@@ -654,10 +654,9 @@ export function DataTable({
                           {isBulk && showDetails && (
                             <>
                               <RowActionButton
-                                onClick={() => onBulkDetails?.(row)}
                                 title="Bulk Details"
                               >
-                                Details / Download
+                                <LinkField href={`/email-verification/task-and-results/bulk-detail/${row.id}`}>Details / Download</LinkField>
                               </RowActionButton>
                             </>
                           )}
@@ -667,7 +666,7 @@ export function DataTable({
                               onClick={() => onSingleDetails?.(row)}
                               title="View Details"
                             >
-                              View Details
+                              <LinkField href={`/accounts/${row.id}`}>View Details</LinkField>
                             </RowActionButton>
                           )}
 

@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import {
   Card,
   CardTitle,
+  PlanExpiredBanner,
   Section,
   SectionLabel,
   CurrentPlanRow,
@@ -19,6 +20,7 @@ import {
 import type { IOrganizationPlan } from "../../../types/organisation.plan.types";
 import type { PlanWithFeatures } from "../../../services/subscription.service";
 import { PLAN_FEATURE_ROWS, type FeatureRowDef } from "../PlanComparisonTable";
+import { Info } from "lucide-react";
 
 export interface GeneralPlanCardProps {
   currentOrgPlan?: (IOrganizationPlan & { plan?: PlanWithFeatures }) | null;
@@ -26,18 +28,27 @@ export interface GeneralPlanCardProps {
 
 function formatLimit(value: number | null | undefined): string {
   if (value == null) return "∞";
-  if (value >= 1000) return `${(value / 1000).toFixed(value % 1000 === 0 ? 0 : 1)}K`;
+  if (value >= 1000)
+    return `${(value / 1000).toFixed(value % 1000 === 0 ? 0 : 1)}K`;
   return value.toLocaleString();
 }
 
 /** Map a feature row to display value from the current plan */
-function getPlanFeatureDisplay(plan: PlanWithFeatures | undefined, row: FeatureRowDef): string {
+function getPlanFeatureDisplay(
+  plan: PlanWithFeatures | undefined,
+  row: FeatureRowDef,
+): string {
   if (!plan) return "—";
   const record = plan as unknown as Record<string, unknown>;
   if (row.type === "limit" && row.planKey) {
     const raw = record[row.planKey];
     const num = typeof raw === "number" ? raw : null;
-    const suffix = row.planKey === "maxLeadsPerMonth" ? " Contacts" : row.planKey === "maxEmailsPerMonth" ? " Sends" : "";
+    const suffix =
+      row.planKey === "maxLeadsPerMonth"
+        ? " Contacts"
+        : row.planKey === "maxEmailsPerMonth"
+          ? " Sends"
+          : "";
     return formatLimit(num) + suffix;
   }
   if (row.type === "boolean" && row.planKey) {
@@ -52,15 +63,38 @@ function getPlanFeatureDisplay(plan: PlanWithFeatures | undefined, row: FeatureR
 const USAGE_STAT_ROWS: {
   key: string;
   label: string;
-  usedKey: keyof Pick<IOrganizationPlan, "emailsSentThisPeriod" | "leadsAddedThisPeriod" | "senderAccountsCount">;
-  planLimitKey: keyof Pick<PlanWithFeatures, "maxEmailsPerMonth" | "maxLeadsPerMonth" | "maxSenderAccounts">;
+  usedKey: keyof Pick<
+    IOrganizationPlan,
+    "emailsSentThisPeriod" | "leadsAddedThisPeriod" | "senderAccountsCount"
+  >;
+  planLimitKey: keyof Pick<
+    PlanWithFeatures,
+    "maxEmailsPerMonth" | "maxLeadsPerMonth" | "maxSenderAccounts"
+  >;
 }[] = [
-  { key: "emails", label: "Monthly Sends", usedKey: "emailsSentThisPeriod", planLimitKey: "maxEmailsPerMonth" },
-  { key: "contacts", label: "Contact Storage", usedKey: "leadsAddedThisPeriod", planLimitKey: "maxLeadsPerMonth" },
-  { key: "sender_accounts", label: "Sender Accounts", usedKey: "senderAccountsCount", planLimitKey: "maxSenderAccounts" },
+  {
+    key: "emails",
+    label: "Monthly Sends",
+    usedKey: "emailsSentThisPeriod",
+    planLimitKey: "maxEmailsPerMonth",
+  },
+  {
+    key: "contacts",
+    label: "Contact Storage",
+    usedKey: "leadsAddedThisPeriod",
+    planLimitKey: "maxLeadsPerMonth",
+  },
+  {
+    key: "sender_accounts",
+    label: "Sender Accounts",
+    usedKey: "senderAccountsCount",
+    planLimitKey: "maxSenderAccounts",
+  },
 ];
 
-function formatCancelDate(endsAt: Date | string | null | undefined): string | null {
+function formatCancelDate(
+  endsAt: Date | string | null | undefined,
+): string | null {
   if (!endsAt) return null;
   const d = typeof endsAt === "string" ? new Date(endsAt) : endsAt;
   if (Number.isNaN(d.getTime())) return null;
@@ -78,29 +112,39 @@ export const GeneralPlanCard: React.FC<GeneralPlanCardProps> = ({
     currentOrgPlan?.plan?.name ?? currentOrgPlan?.plan?.code ?? "Free Trial";
 
   useEffect(() => {
-      console.log(currentOrgPlan);
-    }, [currentOrgPlan]);
+    console.log(currentOrgPlan);
+  }, [currentOrgPlan]);
 
-    const cancelDate = formatCancelDate(currentOrgPlan?.endsAt ?? null);
+  const endsAt = currentOrgPlan?.endsAt;
+  const cancelDate = formatCancelDate(endsAt ?? null);
+  const isPlanExpired = !!endsAt && new Date(endsAt) < new Date();
+
   return (
     <Card>
+      {isPlanExpired && (
+        <PlanExpiredBanner>
+          <Info size={18} aria-hidden />
+          Your plan has expired
+        </PlanExpiredBanner>
+      )}
       <CardTitle>{planName} Plan</CardTitle>
 
       <Section>
         <SectionLabel>Current Plan</SectionLabel>
-        <CurrentPlanRow>    
+        <CurrentPlanRow>
           <PlanName>{planName}</PlanName>
-          {PLAN_FEATURE_ROWS?.length > 0 && PLAN_FEATURE_ROWS.map((row) => (
-            <UsageItem key={row.key}>
-              <UsageLabel>{row.label}</UsageLabel>
-              <UsageBadge>{getPlanFeatureDisplay(currentOrgPlan?.plan, row)}</UsageBadge>
-            </UsageItem>
-          ))}
-            {cancelDate && (
-              <CancelInfo>
-                Your plan is set to cancel on {cancelDate}
-              </CancelInfo>
-            )}
+          {PLAN_FEATURE_ROWS?.length > 0 &&
+            PLAN_FEATURE_ROWS.map((row) => (
+              <UsageItem key={row.key}>
+                <UsageLabel>{row.label}</UsageLabel>
+                <UsageBadge>
+                  {getPlanFeatureDisplay(currentOrgPlan?.plan, row)}
+                </UsageBadge>
+              </UsageItem>
+            ))}
+          {cancelDate && !isPlanExpired && (
+            <CancelInfo>Your plan is set to cancel on {cancelDate}</CancelInfo>
+          )}
         </CurrentPlanRow>
       </Section>
 
@@ -116,7 +160,9 @@ export const GeneralPlanCard: React.FC<GeneralPlanCardProps> = ({
                 ? Math.min(100, (used / maxNum) * 100)
                 : 0;
             const maxDisplay =
-              maxNum === Infinity || maxNum == null ? "∞" : maxNum.toLocaleString();
+              maxNum === Infinity || maxNum == null
+                ? "∞"
+                : maxNum.toLocaleString();
             return (
               <UsageItem key={row.key}>
                 <UsageLabel>{row.label}:</UsageLabel>

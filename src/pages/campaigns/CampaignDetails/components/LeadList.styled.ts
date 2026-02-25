@@ -48,7 +48,8 @@ export const ActionButtons = styled.div`
 export const SearchBox = styled.div`
   position: relative;
   display: flex;
-  align-items: center;
+  align-items: space-between;
+  justify-content: space-between;
   min-width: 250px;
 `;
 

@@ -41,8 +41,9 @@ import {
 } from './LeadList.styled';
 import type { CampaignLead } from '../../../../interfaces';
 import campaignService from '../../../../services/campaign.service';
-import { StatusBadge } from "../../../../styles/GlobalStyles";
+import { StatusBadge } from "../../../../components/common";
 import { SectionHeaderTitle } from "../../../../styles/GlobalStyles";
+import { LinkField } from '../../../leads/components/LeadDetailsPanel.styled';
 export interface LeadListItem {
   id: string;
   firstName: string;
@@ -136,7 +137,7 @@ export const LeadList: React.FC<LeadListProps> = ({
               </SearchIcon>
               <SearchInput
                 type="text"
-                placeholder="Search campaignLeads..."
+                placeholder="Search campaign leads..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -187,25 +188,37 @@ export const LeadList: React.FC<LeadListProps> = ({
                           <OtherDetailIcon>
                             <Linkedin size={16} />
                           </OtherDetailIcon>
-                          <OtherDetailText>{campaignLead?.lead.linkedinUrl || '--'}</OtherDetailText>
+                          {campaignLead?.lead.linkedinUrl ? (
+                            <LinkField href={campaignLead?.lead.linkedinUrl} target="_blank" rel="noopener noreferrer">
+                              <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis" }}>
+                                {campaignLead?.lead.linkedinUrl}
+                              </span>
+                            </LinkField>
+                          ) : <OtherDetailText>--</OtherDetailText>}
                         </OtherDetailItem>
                         <OtherDetailItem>
                           <OtherDetailIcon>
                             <Globe size={16} />
                           </OtherDetailIcon>
-                          <OtherDetailText>{campaignLead?.lead.website || '--'}</OtherDetailText>
+                          {campaignLead?.lead.website ? (
+                            <LinkField href={campaignLead?.lead.website} target="_blank" rel="noopener noreferrer">
+                              <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis" }}>
+                                {campaignLead?.lead.website}
+                              </span>
+                            </LinkField>
+                          ) : <OtherDetailText>--</OtherDetailText>}
                         </OtherDetailItem>
                         <OtherDetailItem>
                           <OtherDetailIcon>
                             <Mail size={16} />
                           </OtherDetailIcon>
-                          <OtherDetailText>{campaignLead?.lead.email || '--'}</OtherDetailText>
+                          <LinkField href={`/accounts/${campaignLead?.lead.email}`}>{campaignLead?.lead.email || '--'}</LinkField>
                         </OtherDetailItem>
                         <OtherDetailItem>
                           <OtherDetailIcon>
                             <Lock size={16} />
                           </OtherDetailIcon>
-                          <OtherDetailText>{campaignLead?.lead.isBlocked ? 'Blocked' : 'Unlocked'}</OtherDetailText>
+                          <StatusBadge $status={campaignLead?.lead.isBlocked ? 'blocked' : 'active'}>{campaignLead?.lead.isBlocked ? 'Blocked' : 'Active'}</StatusBadge>
                         </OtherDetailItem>
                       </OtherDetailsList>
                     </OtherDetailsCell>

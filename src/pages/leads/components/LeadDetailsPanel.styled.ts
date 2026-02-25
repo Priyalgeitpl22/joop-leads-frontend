@@ -612,15 +612,16 @@ export const LinkField = styled.a`
   display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.spacing.sm};
-  padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.md};
+  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.sm};
   background: ${({ theme }) => theme.colors.background.secondary};
   border: 1px solid ${({ theme }) => theme.colors.border.light};
   border-radius: ${({ theme }) => theme.borderRadius.md};
-  font-size: ${({ theme }) => theme.typography.fontSize.md};
+  font-size: ${({ theme }) => theme.typography.fontSize.xs};
   color: ${({ theme }) => theme.colors.primary.main};
   text-decoration: none;
   transition: all ${({ theme }) => theme.transitions.fast};
-
+  width: fit-content;
+  
   &:hover {
     border-color: ${({ theme }) => theme.colors.primary.main};
     background: ${({ theme }) => theme.colors.primary.main}10;

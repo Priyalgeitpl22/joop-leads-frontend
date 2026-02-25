@@ -26,7 +26,8 @@ import type { CampaignInbox } from "../../../../interfaces";
 import { ActionButtons } from "./LeadList.styled";
 import { DataTable } from "../../../../components/common";
 import { formatDateWithGMT } from "../../../../utils/date";
-import { StatusBadge } from "../../../../styles/GlobalStyles";
+import { StatusBadge } from "../../../../components/common";
+import { getLeadStatusLabel } from "../../../../utils/labels";
 
 export interface InboxMessage {
   id: string;
@@ -50,7 +51,11 @@ interface InboxProps {
   onDownloadCsv?: () => void;
 }
 
-export const Inbox: React.FC<InboxProps> = ({ campaignId, plainText, onDownloadCsv }) => {
+export const Inbox: React.FC<InboxProps> = ({
+  campaignId,
+  plainText,
+  onDownloadCsv,
+}) => {
   const [campaignSequence, setCampaignSequence] = useState("All");
   const [sequenceStatus, setSequenceStatus] = useState("All");
   const [inboxMessages, setInboxMessages] = useState<CampaignInbox[]>([]);
@@ -135,7 +140,11 @@ export const Inbox: React.FC<InboxProps> = ({ campaignId, plainText, onDownloadC
                 ))}
               </MessageBody>
             ) : (
-              <MessageBody dangerouslySetInnerHTML={{ __html: message.messageSent.body.html }} />
+              <MessageBody
+                dangerouslySetInnerHTML={{
+                  __html: message.messageSent.body.html,
+                }}
+              />
             )}
           </MessageCell>
         );
@@ -165,10 +174,7 @@ export const Inbox: React.FC<InboxProps> = ({ campaignId, plainText, onDownloadC
                   : message.status
               }
             >
-              {message.status.toLowerCase() === "stopped"
-                ? "Unsubscribed"
-                : message.status.charAt(0) +
-                  message.status.slice(1).toLowerCase()}
+              {getLeadStatusLabel(message.status)}
             </StatusBadge>
           </StatusCell>
         );

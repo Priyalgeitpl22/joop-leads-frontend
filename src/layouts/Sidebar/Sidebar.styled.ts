@@ -3,11 +3,11 @@ import styled, { css } from 'styled-components';
 const SIDEBAR_WIDTH = 260;
 const SIDEBAR_COLLAPSED_WIDTH = 72;
 
-export const SidebarContainer = styled.aside<{ $collapsed: boolean }>`
+export const SidebarContainer = styled.aside<{ $collapsed: boolean; $topOffset?: number }>`
   position: fixed;
   left: 0;
-  top: 0;
-  height: 100vh;
+  top: ${({ $topOffset = 0 }) => $topOffset}px;
+  height: calc(100vh - ${({ $topOffset = 0 }) => $topOffset}px);
   width: ${({ $collapsed }) => ($collapsed ? SIDEBAR_COLLAPSED_WIDTH : SIDEBAR_WIDTH)}px;
   background: ${({ theme }) => theme.colors.sidebar.background};
   display: flex;

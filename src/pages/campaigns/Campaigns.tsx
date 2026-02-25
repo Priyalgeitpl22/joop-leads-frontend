@@ -68,9 +68,10 @@ import {
 } from "./Campaigns.styled";
 import type { Campaign, CampaignStatus } from "../../interfaces";
 import CircularProgressWithStatus from "../../components/common/CircularProgress";
-import { OptionsMenu, Dialog, Button, Input } from "../../components/common";
+import { OptionsMenu, Dialog, Button, Input, AlertChip } from "../../components/common";
 import { deleteCampaign } from "../../store/slices/campaignSlice";
 import { toast } from "react-hot-toast";
+import { getStoppedReasonLabel } from "../../utils/labels";
 
 export const Campaigns: React.FC = () => {
   const navigate = useNavigate();
@@ -321,6 +322,9 @@ export const Campaigns: React.FC = () => {
                     <MetaSeparator>|</MetaSeparator>
                     <span>{campaign?.sequences?.length || 0} sequences</span>
                   </CampaignMeta>
+                  <AlertChip variant={campaign?.status === 'STOPPED' ? "warning" : "success"}>
+                    {getStoppedReasonLabel(campaign?.stoppedReason || 'Unknown')}
+                  </AlertChip>
                 </CampaignDetails>
               </CampaignInfo>
 

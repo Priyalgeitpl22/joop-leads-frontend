@@ -20,6 +20,7 @@ import {
   MethodSubtext,
   RecommendedBadge,
 } from "./AddAccountDialog.styled";
+import { EmailProvider } from "../../../components/common";
 
 interface AddAccountDialogProps {
   open: boolean;
@@ -50,7 +51,9 @@ export const AddAccountDialog: React.FC<AddAccountDialogProps> = ({
   const handleGoogleOAuth = async () => {
     if (isFetchingCurrentUser || !currentUser?.orgId) return;
     try {
-      const url = await emailAccountService.getGoogleOAuthUrl(currentUser.orgId);
+      const url = await emailAccountService.getGoogleOAuthUrl(
+        currentUser.orgId,
+      );
       if (url) window.location.href = url;
     } catch (err) {
       console.error("Error fetching Google OAuth URL:", err);
@@ -108,11 +111,13 @@ export const AddAccountDialog: React.FC<AddAccountDialogProps> = ({
             >
               <RecommendedBadge>Fastest</RecommendedBadge>
               <MethodIcon>
-                <img src="/Images/mail.png" alt="Gmail" width={44} height={36} />
+                <EmailProvider type="gmail" size={44} height={30} showLabel={false} />
               </MethodIcon>
               <MethodLabel>Google OAuth</MethodLabel>
               <MethodSubtext>
-                {isFetchingCurrentUser ? "Loading..." : "One-click secure setup"}
+                {isFetchingCurrentUser
+                  ? "Loading..."
+                  : "One-click secure setup"}
               </MethodSubtext>
             </MethodButton>
 

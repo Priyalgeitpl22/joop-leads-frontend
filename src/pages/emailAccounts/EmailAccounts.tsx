@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { emailAccountService } from "../../services/email.account.service";
 import type { Account } from "../../types/emailAccount.types";
-import { EmailAccountType } from "../../types/emailAccount.types";
+import { EmailAccountState } from "../../types/emailAccount.types";
 import { AddAccountDialog, SmtpDialog, OutlookDialog } from "./components";
 import {
   PageContainer,
@@ -15,11 +15,14 @@ import {
 import DataTable from "../../components/common/DataTable/DataTable";
 import { useNavigate } from "react-router-dom";
 import senderAccountService from "../../services/sender.account.service";
-import { deleteEmailAccount, fetchEmailAccounts } from "../../store/slices/emailAccountSlice";
+import {
+  deleteEmailAccount,
+  fetchEmailAccounts,
+} from "../../store/slices/emailAccountSlice";
 import toast from "react-hot-toast";
 import { campaignSenderService } from "../../services/campaign.sender.service";
 import DeleteDialog from "../common/DeleteDialog";
-import { Dialog } from "../../components/common";
+import { AlertChip, Dialog, EmailProvider } from "../../components/common";
 
 type TabType = "accounts";
 
@@ -39,9 +42,8 @@ export const EmailAccounts: React.FC = () => {
     const accountEmail = params.get("account");
 
     if (oauthSuccess && accountEmail) {
-      const response = await emailAccountService.getEmailAccountByEmail(
-        accountEmail
-      );
+      const response =
+        await emailAccountService.getEmailAccountByEmail(accountEmail);
       await senderAccountService.createSenderAccount(response);
       window.history.replaceState({}, document.title, window.location.pathname);
     }
@@ -54,7 +56,7 @@ export const EmailAccounts: React.FC = () => {
       setIsLoading(true);
       await checkOauthSuccess();
       const accounts = await emailAccountService.getEmailAccounts(
-        currentUser.orgId
+        currentUser.orgId,
       );
       setFilteredAccounts(accounts);
       setIsLoading(false);
@@ -74,55 +76,52 @@ export const EmailAccounts: React.FC = () => {
     setIsAddAccountDialogOpen(true);
   };
 
-  const getTypeIcon = (type: string) => {
-    const iconStyle = { display: "flex", alignItems: "center", gap: "8px" };
-    
-    switch (type) {
-      case EmailAccountType.GMAIL:
-        return (
-          <span style={iconStyle}>
-            <img src="/Images/mail.png" alt="Gmail" width={20} height={20} />
-            Gmail
-          </span>
-        );
-      case EmailAccountType.OUTLOOK:
-        return (
-          <span style={iconStyle}>
-            <img src="/Images/outlook.webp" alt="Outlook" width={20} height={20} />
-            Outlook
-          </span>
-        );
-      case EmailAccountType.IMAP:
-        return (
-          <span style={iconStyle}>
-            <img src="/Images/imap.png" alt="IMAP" width={20} height={20} />
-            IMAP
-          </span>
-        );
-      case EmailAccountType.SMTP:
-        return (
-          <span style={iconStyle}>
-            <img src="/Images/smtp.png" alt="SMTP" width={20} height={20} />
-            SMTP
-          </span>
-        );
-      default:
-        return type;
-    }
+  const getStateVariant = (state: EmailAccountState) => {
+    if (state === EmailAccountState.REAUTH_REQUIRED) return "warning";
+    if (state === EmailAccountState.ACTIVE) return "success";
+    return "alert";
+  };
+
+  const stateToLabel = (state: EmailAccountState) => {
+    if (state === EmailAccountState.REAUTH_REQUIRED) return "Reauth Required";
+    if (state === EmailAccountState.ACTIVE) return "Active";
+    return "Inactive";
   };
 
   const columns = [
     { key: "name", label: "Name" },
     { key: "email", label: "Email Address" },
-    { 
-      key: "type", 
+    {
+      key: "type",
       label: "Type",
-      render: (value: unknown) => getTypeIcon(value as string),
+      render: (value: unknown) => (
+        <EmailProvider type={(value as string) ?? ""} size={16} />
+      ),
     },
-    { key: "state", label: "State" },
+    {
+      key: "state",
+      label: "State",
+      render: (value: unknown) => (
+        <AlertChip variant={getStateVariant(value as EmailAccountState)}>
+          {stateToLabel(value as EmailAccountState)}
+        </AlertChip>
+      ),
+    },
     { key: "dailyLimit", label: "Daily Limit" },
-    { key: "warmupEnabled", label: "Warmup Enabled" },
-    { key: "reputation", label: "Reputation" },
+    {
+      key: "warmupEnabled",
+      label: "Warmup Enabled",
+      render: (value: unknown) => (
+        <AlertChip variant={value === "Yes" ? "success" : "info"} showIcon={false}>
+          {value as string}
+        </AlertChip>
+      ),
+    },
+    { key: "reputation", label: "Reputation", render: (value: unknown) => (
+      <AlertChip variant="success" showIcon={false}>
+        {value as string}
+      </AlertChip>
+    )},
   ];
 
   const handleRowClick = (row: Record<string, unknown>) => {

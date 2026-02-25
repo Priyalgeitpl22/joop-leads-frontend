@@ -770,7 +770,7 @@ export const CampaignWizard: React.FC = () => {
               <NameCell>
                 <CsvIcon>CSV</CsvIcon>
                 <FileInfo>
-                  <UploadedFileName>{campaign?.name}</UploadedFileName>
+                  <UploadedFileName>{campaign?.csvFileName}</UploadedFileName>
                   <FileMeta>{formatDate(campaign?.createdAt)}</FileMeta>
                 </FileInfo>
               </NameCell>

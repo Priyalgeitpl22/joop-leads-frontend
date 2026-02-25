@@ -35,7 +35,7 @@ import {
 } from './CampaignsList.styled';
 import { campaignService } from '../../../services/campaign.service';
 import type { Lead } from '../../../interfaces';
-import { StatusBadge } from '../../../styles/GlobalStyles';
+import { StatusBadge } from '../../../components/common';
 
 const getStatusIcon = (status: string) => {
   switch (status) {

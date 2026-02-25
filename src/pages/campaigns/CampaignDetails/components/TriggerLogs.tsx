@@ -26,9 +26,8 @@ import { fetchTriggerLogs, fetchUpcomingTriggers } from '../../../../store/slice
 import { useDispatch, useSelector } from 'react-redux';
 import { type AppDispatch, type RootState } from '../../../../store';
 import { convertUtcToTimezone } from '../../../../utils/date';
-import { StatusBadge } from "../../../../styles/GlobalStyles";
+import { StatusBadge } from "../../../../components/common";
 import { SectionHeaderTitle } from "../../../../styles/GlobalStyles";
-
 export interface Logs {
   id: string;
   activityLog: string;
@@ -113,19 +112,17 @@ export const TriggerLogs: React.FC<TriggerLogsProps> = ({ campaignId }) => {
                     <TextCell>{getNextTriggerDateTime(log.nextTriggerAt, log.timezone) || 'N/A'}</TextCell>
                   </TableCell>
                   <TableCell>
-                    <StatusBadge $status={log.status.toLowerCase()}>{log.status}</StatusBadge>
+                    <StatusBadge $status={log.status.toLowerCase()}>{log.status.toLowerCase()}</StatusBadge>
                   </TableCell>
                   <TableCell>
-                    <TextCell>{log.timezone || 'N/A'}</TextCell>
+                    <TextCell>{log.timezone || "N/A"}</TextCell>
                   </TableCell>
                 </TableRow>
               ))}
             </tbody>
           </TriggerLogsTable>
         </SectionCard>
-      )}
-
-      <SectionCard>
+      )}  <SectionCard>
         <TriggerLogsHeader>
           <SectionHeaderTitle>Last 20 Triggers Status</SectionHeaderTitle>
         </TriggerLogsHeader>
