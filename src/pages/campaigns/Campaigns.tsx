@@ -322,9 +322,11 @@ export const Campaigns: React.FC = () => {
                     <MetaSeparator>|</MetaSeparator>
                     <span>{campaign?.sequences?.length || 0} sequences</span>
                   </CampaignMeta>
-                  <AlertChip variant={campaign?.status === 'STOPPED' ? "warning" : "success"}>
-                    {getStoppedReasonLabel(campaign?.stoppedReason || 'Unknown')}
-                  </AlertChip>
+                  {campaign?.status === 'STOPPED' && (
+                    <AlertChip variant="warning">
+                      {getStoppedReasonLabel(campaign?.stoppedReason || 'Unknown')}
+                    </AlertChip>
+                  )}
                 </CampaignDetails>
               </CampaignInfo>
 
