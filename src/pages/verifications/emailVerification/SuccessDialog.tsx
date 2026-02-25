@@ -16,9 +16,10 @@ interface SuccessDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onGoToTask?: () => void;
+  textMessage: string;
 }
 
-const SuccessDialog = ({ isOpen, onClose, onGoToTask }: SuccessDialogProps) => {
+const SuccessDialog = ({ isOpen, onClose, onGoToTask, textMessage }: SuccessDialogProps) => {
   return (
     <StyledDialog open={isOpen} onClose={onClose}>
       <DialogContainer>
@@ -32,9 +33,7 @@ const SuccessDialog = ({ isOpen, onClose, onGoToTask }: SuccessDialogProps) => {
           <Subtitle>Task created successfully</Subtitle>
           <MessageBox>
             <div>
-              The verification process will start automatically within a few
-              moments. You will get the credits refunded for all the emails with
-              "unknown" status.
+              {textMessage}
             </div>
           </MessageBox>
           <ButtonWrapper>

@@ -12,6 +12,7 @@ import {
   VerificationButton,
   CardContainer,
   OptionTitle,
+  Error
 } from "./StartVerificationOption.styled";
 import { emailVerificationService } from "../../../../services/email.verification.service";
 
@@ -28,6 +29,17 @@ const StartVerificationOption = () => {
   const [emailAddresses, setEmailAddresses] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
   const [openSuccessDialog, setOpenSuccessDialog] = useState(false);
+  const [taskError, setTaskError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  const validateEmails = (input: string): boolean => {
+    const emails = parseEmailsInput(input).split(",");
+    if (!emails.length) return false;
+    return emails.every((email) => emailRegex.test(email));
+  };
 
   const handleStartVerification = async () => {
     const emails = parseEmailsInput(emailAddresses);
@@ -61,6 +73,42 @@ const StartVerificationOption = () => {
     }
   };
 
+  const handleTaskChange = (value: string) => {
+    setTaskName(value);
+
+    if (!value.trim()) {
+      setTaskError("Task name is required");
+    } else if (value.trim().length < 3) {
+      setTaskError("Task name must be at least 3 characters");
+    } else {
+      setTaskError("");
+    }
+
+    validateForm(value, emailAddresses);
+  };
+
+  const handleEmailChange = (value: string) => {
+    setEmailAddresses(value);
+
+    if (!value.trim()) {
+      setEmailError("At least one email is required");
+    } else if (!validateEmails(value)) {
+      setEmailError(
+        "Enter valid email(s), comma-separated or newline-separated",
+      );
+    } else {
+      setEmailError("");
+    }
+
+    validateForm(taskName, value);
+  };
+
+  const validateForm = (task: string, emails: string) => {
+    const isTaskValid = task.trim().length >= 3;
+    const isEmailValid = validateEmails(emails);
+    setIsFormValid(isTaskValid && isEmailValid);
+  };
+
   const handleCloseSuccessDialog = () => {
     setOpenSuccessDialog(false);
   };
@@ -77,9 +125,10 @@ const StartVerificationOption = () => {
               type="text"
               placeholder="Enter a name"
               value={taskName}
-              onChange={(e) => setTaskName(e.target.value)}
+              onChange={(e) => handleTaskChange(e.target.value)}
             />
           </InputWrapper>
+          {taskError && <Error>{taskError}</Error>}
         </InputGroup>
 
         <InputGroup>
@@ -88,15 +137,16 @@ const StartVerificationOption = () => {
             <InputField
               placeholder="Enter email addresses one per line or comma-separated"
               value={emailAddresses}
-              onChange={(e) => setEmailAddresses(e.target.value)}
+              onChange={(e) => handleEmailChange(e.target.value)}
             />
           </InputWrapper>
+          {emailError && <Error>{emailError}</Error>}
         </InputGroup>
 
         <VerificationButton
           type="button"
           onClick={handleStartVerification}
-          disabled={isVerifying || !parseEmailsInput(emailAddresses)}
+          disabled={isVerifying || !isFormValid}
         >
           <ButtonContent>{isVerifying ? "Verifying..." : "Start Verification"}</ButtonContent>
         </VerificationButton>
@@ -104,6 +154,9 @@ const StartVerificationOption = () => {
       <SuccessDialog
         isOpen={openSuccessDialog}
         onClose={handleCloseSuccessDialog}
+        textMessage='The verification process will start automatically within a few
+              moments. You will get the credits refunded for all the emails with
+              "unknown" status.'
       />
     </CardContainer>
   );

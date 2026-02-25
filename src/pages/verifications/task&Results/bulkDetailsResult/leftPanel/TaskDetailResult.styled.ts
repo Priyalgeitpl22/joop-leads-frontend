@@ -71,6 +71,7 @@ export const LegendWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing.sm};
+  white-space: nowrap;
 `;
 
 export const LegendItem = styled.div`

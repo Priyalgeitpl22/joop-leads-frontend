@@ -1,9 +1,11 @@
+import { useParams } from "react-router-dom";
+import * as XLSX from "xlsx";
 import ConfirmDialog from "../../../../common/DeleteDialog";
 import {
   CardContainer,
   Title,
-  SelectWrapper,
-  Select,
+  // SelectWrapper,
+  // Select,
   ButtonRow,
   DownloadButton,
   SeparatorText,
@@ -12,16 +14,70 @@ import {
   InfoText,
   DownloadIcon,
 } from "./DownloadResult.styled";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { emailVerificationService } from "../../../../../services/email.verification.service";
 
 const DownloadResult = () => {
-
+  const { taskId } = useParams<{ taskId: string }>();
+  const [fileUrl, setFileUrl] = useState<string | null>(null);
   const [openConfirmDeleteDialog, setOpenConfirmDeleteDialog] = useState(false);
 
   const handleConfirmDelete = () => {
     setOpenConfirmDeleteDialog(false);
   };
-  
+
+  useEffect(() => {
+    if (!taskId) return;
+
+    const loadBatchDetails = async () => {
+      try {
+        const result = await emailVerificationService.getBatchDetails(taskId);
+
+        if (result && typeof result === "object" && "csvResultFile" in result) {
+          setFileUrl(result.csvResultFile as string);
+        }
+      } catch (error) {
+        console.error("Failed to fetch batch details:", error);
+      }
+    };
+
+    loadBatchDetails();
+  }, [taskId]);
+
+  const downloadCSV = async () => {
+    if (!fileUrl) return;
+
+    const response = await fetch(fileUrl);
+    const blob = await response.blob();
+    const buffer = await blob.arrayBuffer();
+    const workbook = XLSX.read(buffer, { type: "array" });
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const csv = XLSX.utils.sheet_to_csv(sheet);
+    const csvBlob = new Blob([csv], { type: "text/csv" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(csvBlob);
+    link.download = "verification-results.csv";
+    link.click();
+  };
+
+  const downloadJSON = async () => {
+    if (!fileUrl) return;
+
+    const response = await fetch(fileUrl);
+    const blob = await response.blob();
+    const buffer = await blob.arrayBuffer();
+    const workbook = XLSX.read(buffer, { type: "array" });
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const json = XLSX.utils.sheet_to_json(sheet);
+    const jsonBlob = new Blob([JSON.stringify(json, null, 2)], {
+      type: "application/json",
+    });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(jsonBlob);
+    link.download = "verification-results.json";
+    link.click();
+  };
+
   return (
     <CardContainer>
       <Title>Download Categorized Results</Title>
@@ -32,19 +88,19 @@ const DownloadResult = () => {
         height={170}
       />
 
-      <SelectWrapper>
+      {/* <SelectWrapper>
         <Select>
           <option>All - Include all type of results</option>
           <option>Valid Only</option>
           <option>Invalid Only</option>
           <option>Safe Only</option>
         </Select>
-      </SelectWrapper>
+      </SelectWrapper> */}
 
       <ButtonRow>
-        <DownloadButton>Download CSV</DownloadButton>
+        <DownloadButton onClick={downloadCSV}>Download CSV</DownloadButton>
         <SeparatorText>or</SeparatorText>
-        <DownloadButton>Download XLSX</DownloadButton>
+        <DownloadButton onClick={downloadJSON}>Download JSON</DownloadButton>
       </ButtonRow>
 
       <DeleteText>
