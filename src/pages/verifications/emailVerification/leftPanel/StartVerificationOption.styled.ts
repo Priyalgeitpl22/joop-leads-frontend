@@ -2,7 +2,6 @@ import styled from "styled-components";
 
 export const ButtonContent = styled.span<{ $isLoading?: boolean }>`
   opacity: ${({ $isLoading }) => ($isLoading ? 0.7 : 1)};
-  color: ${({ theme }) => theme.colors.text.inverse};
 `;
 
 export const Form = styled.form`
@@ -93,7 +92,7 @@ export const VerificationButton = styled.button`
   height: 52px;
   margin-top: ${({ theme }) => theme.spacing.xl};
   background: ${({ theme }) => theme.colors.primary.main};
-  color: ${({ theme }) => theme.colors.primary.contrast};
+  color: ${({ theme }) => theme.colors.text.inverse};
   font-size: ${({ theme }) => theme.typography.fontSize.lg};
   font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
   border: none;
@@ -104,7 +103,19 @@ export const VerificationButton = styled.button`
     transform: translateY(-2px);
     box-shadow: 0 8px 24px ${({ theme }) => theme.colors.primary.main}40;
   }
+  &:disabled {
+    background: ${({ theme }) => theme.colors.background.tertiary};
+    color: ${({ theme }) => theme.colors.text.tertiary};
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
 `;
+
+export const Error = styled.div`
+  color: ${({ theme }) => theme.colors.error.main};
+  font-size: ${({ theme }) => theme.typography.fontSize.xs};
+  margin-top: ${({theme}) => theme.spacing.xs};
+`
 
 export const InputField = styled.textarea`
   width: 100%;

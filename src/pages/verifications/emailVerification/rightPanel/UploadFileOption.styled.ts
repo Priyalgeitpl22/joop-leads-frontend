@@ -81,6 +81,19 @@ export const StartButton = styled.button`
   border: none;
   cursor: pointer;
   transition: 0.2s;
+
+  &:disabled {
+    background: ${({ theme }) => theme.colors.background.tertiary};
+    color: ${({ theme }) => theme.colors.text.tertiary};
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+`;
+
+export const Error = styled.div`
+  color: ${({ theme }) => theme.colors.error.main};
+  font-size: ${({ theme }) => theme.typography.fontSize.xs};
+  margin-top: -5px;
 `;
 
 export const VerifyButton = styled.button`
@@ -91,6 +104,13 @@ export const VerifyButton = styled.button`
   font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
   cursor: pointer;
   transition: background 0.2s ease;
+
+  &:disabled {
+    background: ${({theme}) => theme.colors.background.tertiary};
+    color: ${({theme}) => theme.colors.text.tertiary};
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
 `;
 
 export const VerifyInput = styled.input`

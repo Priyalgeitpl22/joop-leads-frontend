@@ -28,7 +28,10 @@ function mapEmailToRow(item: unknown, index: number): Record<string, unknown> {
     id: String(id),
     dateVerified: dateStr,
     emailAddress: r.email ?? r.emailAddress ?? "—",
-    verificationMethod: r.verificationMethod ?? r.source ?? "dashboard",
+    verificationMethod:
+      r.verificationMethod ??
+      (r.verificationResult as any)?.verification_mode ??
+      "dashboard",
     status: r.status ?? "—",
     timeTaken: r.timeTaken ?? r.duration ?? r.timeTakenSec ?? "—",
   };
@@ -42,6 +45,7 @@ const TaskAndResults = () => {
   const [loadingBatches, setLoadingBatches] = useState(true);
   const [singleEmails, setSingleEmails] = useState<unknown[]>([]);
   const [loadingSingle, setLoadingSingle] = useState(false);
+  const [emailAnalytics, setEmailAnalytics] = useState<any>(null);
 
   const isBulk = mode === "bulk";
 
@@ -51,8 +55,12 @@ const TaskAndResults = () => {
     const load = async () => {
       setLoadingBatches(true);
       try {
-        const data = await emailVerificationService.getAllBatches();
-        if (!cancelled) setBatches(data);
+        const response: any = await emailVerificationService.getAllBatches();
+        const batchArray = response?.batches ?? [];
+        setBatches(batchArray);
+        if (!cancelled) {
+          setBatches(batchArray);
+        }
       } catch {
         if (!cancelled) setBatches([]);
       } finally {
@@ -121,8 +129,15 @@ const TaskAndResults = () => {
 
   const singleData = singleEmails.map(mapEmailToRow);
 
-  const handleSingleDetails = () => {
-    setOpenVerificationDialog(true)
+  const handleSingleDetails = async (row: Record<string, unknown>) => {
+    const emailId = String(row.id);
+    try {
+      const result = await emailVerificationService.getEmailsAnalytics(emailId);
+      setEmailAnalytics(result);
+      setOpenVerificationDialog(true);
+    } catch (error) {
+      console.error("Failed to fetch email analytics:", error);
+    }
   };
 
   const handleCloseVerificationDialog = () => {
@@ -134,7 +149,7 @@ const TaskAndResults = () => {
     navigate(`/email-verification/task-and-results/bulk-detail/${taskId}`);
   };
 
-  const bulkData = batches.map(mapBatchToRow);
+  const bulkData = Array.isArray(batches) ? batches.map(mapBatchToRow) : [];
 
   return (
     <PageContainer>
@@ -161,7 +176,7 @@ const TaskAndResults = () => {
           isBulk={isBulk}
           onBulkDetails={(row) => handleBulkDetails(row)}
           onSingleDetails={
-            !isBulk ? () => handleSingleDetails() : undefined
+            !isBulk ? (row) => handleSingleDetails(row) : undefined
           }
         />
       </TableSection>
@@ -169,6 +184,7 @@ const TaskAndResults = () => {
       <VerificationDetailDialog
         isOpen={openVerificationDialog}
         onClose={handleCloseVerificationDialog}
+        data={emailAnalytics}
       />
     </PageContainer>
   );

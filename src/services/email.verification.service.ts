@@ -86,6 +86,13 @@ export const emailVerificationService = {
     return { data: [] };
   },
 
+  async getEmailsAnalytics(batchId: string): Promise<GetEmailsStatusParams> {
+    const response = await api.get(`${BASE_URL}/status/${batchId}`);
+    const data = response.data;
+    if (data?.data) return data.data as GetEmailsStatusParams;
+    return data as GetEmailsStatusParams;
+  },
+
   async getBatchDetails(batchId: string): Promise<BatchDetails> {
     const response = await api.get(`${BASE_URL}/${batchId}`);
     const data = response.data;
