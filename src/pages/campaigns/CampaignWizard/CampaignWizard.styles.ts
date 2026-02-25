@@ -314,6 +314,7 @@ export const TableHeader = styled.div`
 
 export const HeaderCell = styled.div<{ align?: string }>`
   text-align: ${({ align }) => align || 'left'};
+  white-space: nowrap;
 `;
 
 export const TableRow = styled.div`

@@ -15,8 +15,12 @@ export const Header = styled.div`
 `;
 
 export const TaskTitle = styled.h3`
+  width: fit-content;
+  margin: 0 auto;
   text-align: center;
   margin-bottom: ${({ theme }) => theme.spacing.md};
+  margin-left: auto;
+  margin-right: auto;
 `;
 
 export const InfoGrid = styled.div`

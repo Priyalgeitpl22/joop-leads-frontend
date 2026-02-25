@@ -3,10 +3,14 @@ import {
   SenderAccountsHeader,
 } from "../CampaignDetails.styled";
 import DataTable from "../../../../components/common/DataTable/DataTable";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { campaignService } from "../../../../services/campaign.service";
 import type { CampaignSenderWithStats } from "../../../../interfaces";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import EmailAccountConnectivityBanner from "./common/EmailAccountConnectivityBanner";
+import { EmailProvider } from "../../../../components/common";
+import { LinkField } from "../../../leads/components/LeadDetailsPanel.styled";
+
 interface SenderAccountsProps {
   campaignId: string;
 }
@@ -18,25 +22,42 @@ const SenderAccounts: React.FC<SenderAccountsProps> = ({ campaignId }) => {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
+  const accountsNeedingReauth = useMemo(() => {
+    return campaignSenders
+      .filter((s) => !s.isActive || !s.isEnabled)
+      .map((s) => ({ email: s.email, accountId: s.accountId }));
+  }, [campaignSenders]);
+
+  const handleReactivate = (accountId?: string) => {
+    if (accountId) navigate(`/accounts/${accountId}`);
+    else navigate("/accounts");
+  };
+
   const columns = [
     { key: "name", label: "Name" },
-    { 
-      key: "email", 
+    {
+      key: "email",
       label: "Email",
       render: (value: unknown, row: Record<string, unknown>) => (
-        <span 
+        <span
           onClick={(e) => {
             e.stopPropagation();
             navigate(`/accounts/${row.id}`);
           }}
-          style={{ color: '#0066cc', cursor: 'pointer' }}
+          style={{ color: "#0066cc", cursor: "pointer" }}
         >
-          {value as string}
+          <LinkField href={`/accounts/${row.id}`}>{value as string}</LinkField>
         </span>
-      )
-    },    { key: "provider", label: "Provider" },
+      ),
+    },
+    {
+      key: "provider",
+      label: "Provider",
+      render: (value: unknown) => (
+        <EmailProvider type={(value as string) ?? ""} size={18} />
+      ),
+    },
     { key: "dailyLimit", label: "Overall Daily Limit/Day" },
-    // { key: "campaignUsed", label: "Campaign Used" },
     { key: "uniqueLeads", label: "Associated Leads" },
   ];
 
@@ -57,6 +78,11 @@ const SenderAccounts: React.FC<SenderAccountsProps> = ({ campaignId }) => {
         <h2>Sender Email Accounts To Check</h2>
       </SenderAccountsHeader>
 
+      <EmailAccountConnectivityBanner
+        accounts={accountsNeedingReauth}
+        onReactivate={handleReactivate}
+      />
+
       <DataTable
         columns={columns}
         showHeader={false}
@@ -64,7 +90,6 @@ const SenderAccounts: React.FC<SenderAccountsProps> = ({ campaignId }) => {
         data={campaignSenders.map((sender: CampaignSenderWithStats) => ({
           id: sender.accountId,
           senderId: sender.accountId,
-          // accountId: sender.accountId,
           name: sender.name,
           email: sender.email,
           provider: sender.provider,

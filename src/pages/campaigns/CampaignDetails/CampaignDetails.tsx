@@ -32,7 +32,7 @@ import Performance from "./components/Performance";
 import SenderAccounts from "./components/SenderAccounts";
 import { TIMEZONES } from "../../../constants";
 import { useSearchParams } from "react-router-dom";
-import { StatusBadge } from "../../../styles/GlobalStyles";
+import { AlertChip } from "../../../components/common";
 
 type TabValue =
   | "performance"
@@ -52,7 +52,7 @@ const CampaignDetailsPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const tabFromUrl = searchParams.get("tab") as TabValue | null;
   const [activeTab, setActiveTab] = useState<TabValue>(
-    tabFromUrl || "performance"
+    tabFromUrl || "performance",
   );
 
   useEffect(() => {
@@ -106,7 +106,8 @@ const CampaignDetailsPage: React.FC = () => {
       case "analytics":
         return (
           <Analytics
-          analyticsData={campaign.analytics as unknown as CampaignAnalytics}
+            senderAccounts={campaign.stoppedDetails?.senderReasons || []}
+            analyticsData={campaign.analytics as unknown as CampaignAnalytics}
           />
         );
       case "inbox":
@@ -120,17 +121,9 @@ const CampaignDetailsPage: React.FC = () => {
           />
         );
       case "lead_list":
-        return (
-          <LeadList
-            campaignId={id || ""}
-          />
-        );
+        return <LeadList campaignId={id || ""} />;
       case "sequences":
-        return (
-          <Sequences
-            campaignId={id || ""}
-          />
-        );
+        return <Sequences campaignId={id || ""} />;
       case "trigger_logs":
         return <TriggerLogs campaignId={id || ""} />;
       case "sender_accounts":
@@ -152,9 +145,9 @@ const CampaignDetailsPage: React.FC = () => {
                   <ArrowLeft size={18} />
                 </button>
                 <h1>{campaign?.name || campaign?.name || "Campaign"}</h1>
-                <StatusBadge $status={campaign?.status}>
+                <AlertChip showIcon={false} variant={campaign?.status === 'STOPPED' || campaign?.status === 'PAUSED' || campaign?.status === 'DRAFT' ? "warning" : "success"}>
                   {campaign?.status || "DRAFT"}
-                </StatusBadge>
+                </AlertChip>
               </CampaignTitle>
 
               <CampaignMeta>

@@ -74,7 +74,7 @@ const getPageConfig = (pathname: string): PageConfig => {
     return { title: 'Settings & Profile', subtitle: 'Manage your preferences' };
   }
   if (pathname.startsWith('/subscription')) {
-    return { title: 'Subscription', subtitle: 'Manage your plan' };
+    return { title: 'Subscription', subtitle: 'Choose the plan that\'s right for you' };
   }
   if (pathname.startsWith('/profile')) {
     return { title: 'My Profile', subtitle: 'Manage your account' };
@@ -82,7 +82,11 @@ const getPageConfig = (pathname: string): PageConfig => {
   return { title: 'Jooper Leads', subtitle: '' };
 };
 
-export const Header: React.FC = () => {
+interface HeaderProps {
+  topOffset?: number;
+}
+
+export const Header: React.FC<HeaderProps> = ({ topOffset = 0 }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { isDarkMode, toggleDarkMode } = useTheme();
@@ -146,7 +150,7 @@ export const Header: React.FC = () => {
   }
 
   return (
-    <HeaderContainer $sidebarCollapsed={sidebarCollapsed}>
+    <HeaderContainer $sidebarCollapsed={sidebarCollapsed} $topOffset={topOffset}>
       <HeaderContent>
         <LeftSection>
           <MenuButton onClick={handleMenuToggle} aria-label="Toggle menu">

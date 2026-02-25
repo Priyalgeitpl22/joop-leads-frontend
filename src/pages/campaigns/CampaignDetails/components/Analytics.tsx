@@ -13,14 +13,45 @@ import {
 } from "./Analytics.styled";
 import { SectionHeaderTitle } from "../../../../styles/GlobalStyles";
 import type { CampaignAnalytics } from "../../../../interfaces";
+import EmailAccountConnectivityBanner from "./common/EmailAccountConnectivityBanner";
+import { emailAccountService } from "../../../../services/email.account.service";
+import type { RootState } from "../../../../store";
+import { useAppSelector } from "../../../../store";
 
 interface AnalyticsProps {
+  senderAccounts: {
+    email: string;
+    reason: string;
+    senderId: string;
+    accountId: string;
+  }[];
   analyticsData: CampaignAnalytics;
 }
 
-export const Analytics: React.FC<AnalyticsProps> = ({ analyticsData }) => {
+export const Analytics: React.FC<AnalyticsProps> = ({
+  senderAccounts,
+  analyticsData,
+}) => {
+  const { currentUser } = useAppSelector((state: RootState) => state.user);
+
+  const handleReactivateAccount = async () => {
+    try {
+      if (!currentUser?.orgId) return;
+      const url = await emailAccountService.getGoogleOAuthUrl(
+        currentUser.orgId,
+      );
+      if (url) window.location.href = url;
+    } catch (err) {
+      console.error("Error fetching Google OAuth URL:", err);
+    }
+  };
+
   return (
     <AnalyticsContainer>
+      <EmailAccountConnectivityBanner
+        accounts={senderAccounts}
+        onReactivate={handleReactivateAccount}
+      />
       <SectionCard>
         <SectionHeader>
           <SectionTitleGroup>
@@ -61,9 +92,7 @@ export const Analytics: React.FC<AnalyticsProps> = ({ analyticsData }) => {
           </StatCard>
 
           <StatCard $borderColor="#a78bfa">
-            <StatValue>
-              {analyticsData.openedCount || 0}
-            </StatValue>
+            <StatValue>{analyticsData.openedCount || 0}</StatValue>
             <StatLabel>
               Unique Opened
               <InfoIconButton

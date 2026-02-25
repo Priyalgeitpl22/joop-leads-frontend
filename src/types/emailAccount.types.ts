@@ -1,3 +1,5 @@
+import { EmailProvider } from "./enums";
+
 export interface IEmailAccount {
   id: string;
   name: string;
@@ -66,6 +68,12 @@ export interface Account {
   replyToAddress?: string;
   warmup: IWarmupSettings;
   signature: string | null;
+  errorDetails: {
+    message: string;
+    provider: EmailProvider;
+  }
+  errorReason: string;
+  erroredAt: string;
 }
 
 

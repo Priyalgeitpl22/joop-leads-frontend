@@ -31,11 +31,17 @@ import {
   LoadingSpinner,
   LoadingText,
 } from "./Subscription.styled";
-import { Alert } from "../../components/common";
 import { GeneralPlanCard } from "./GeneralPlanCard";
-import { type AddonOption, CompletePurchaseModal } from "./CompletePurchaseModal";
-import { PlanComparisonTable, type AddedAddonsMap } from "./PlanComparisonTable";
+import {
+  type AddonOption,
+  CompletePurchaseModal,
+} from "./CompletePurchaseModal";
+import {
+  PlanComparisonTable,
+  type AddedAddonsMap,
+} from "./PlanComparisonTable";
 import { AddOnCode } from "../../services/add-on.plan.service";
+import { AlertChip } from "../../components/common";
 
 function getAddonKey(addon: { code?: string; id: string | number }): string {
   return (addon.code?.toLowerCase() ?? String(addon.id)).trim();
@@ -53,9 +59,8 @@ const PLAN_NAME_MAP: Record<string, string> = {
 
 export const Subscription: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { plans, addons, currentOrgPlan, selectedPlanCode, isLoading } = useAppSelector(
-    (state) => state.subscription,
-  );
+  const { plans, addons, currentOrgPlan, selectedPlanCode, isLoading } =
+    useAppSelector((state) => state.subscription);
   const { currentUser } = useAppSelector((state) => state.user);
 
   const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>(
@@ -66,7 +71,11 @@ export const Subscription: React.FC = () => {
   const [addedAddons, setAddedAddons] = useState<AddedAddonsMap>({});
   const yearlyDiscount = 20;
 
-  const handleAddonToggle = (planCode: string, addonId: string, added: boolean) => {
+  const handleAddonToggle = (
+    planCode: string,
+    addonId: string,
+    added: boolean,
+  ) => {
     setAddedAddons((prev) => {
       const set = new Set(prev[planCode] ?? []);
       if (added) set.add(addonId);
@@ -102,7 +111,13 @@ export const Subscription: React.FC = () => {
   };
 
   const handleCompletePurchaseConfirm = (selection: {
-    addons: { id: string; code: AddOnCode; name: string; enabled: boolean; quantity?: number }[];
+    addons: {
+      id: string;
+      code: AddOnCode;
+      name: string;
+      enabled: boolean;
+      quantity?: number;
+    }[];
     totalCost: number;
   }) => {
     console.log(selection);
@@ -110,7 +125,13 @@ export const Subscription: React.FC = () => {
   };
 
   const handleConfirmContact = async (selection: {
-    addons: { id: string; code: AddOnCode; name: string; enabled: boolean; quantity?: number }[];
+    addons: {
+      id: string;
+      code: AddOnCode;
+      name: string;
+      enabled: boolean;
+      quantity?: number;
+    }[];
     totalCost: number;
   }) => {
     if (!selectedPlanCode) return;
@@ -118,7 +139,10 @@ export const Subscription: React.FC = () => {
       await dispatch(
         contactSales({
           planCode: selectedPlanCode,
-          addOns: selection.addons.map((addon) => addon.name) as AddOnCode[],
+          addOns: selection.addons.map((addon) => ({
+            name: addon.name,
+            code: addon.code,
+          })),
           billingPeriod,
           totalCost: selection.totalCost,
         }),
@@ -155,16 +179,22 @@ export const Subscription: React.FC = () => {
 
   return (
     <PageContainer>
-      {!currentOrgPlan?.isActive && (currentOrgPlan as { isContactSales?: boolean } | null)?.isContactSales && (
-        <Alert
-          type="info"
-          message="Your request for the activation of the subscription plan has been sent successfully. We will contact you shortly. Meanwhile if you want to change your plan, you can do so by contacting our sales team."
-        />
-      )}
+      {!currentOrgPlan?.isActive &&
+        (currentOrgPlan as { isContactSales?: boolean } | null)
+          ?.isContactSales && (
+          <AlertChip
+            variant="info"
+            showIcon={false}
+          >
+            Your request for the activation of the subscription plan has been sent
+            successfully. We will contact you shortly. Meanwhile if you want to
+            change your plan, you can do so by contacting our sales team.
+          </AlertChip>
+        )}
       <GeneralPlanCardWrapper>
         <GeneralPlanCard currentOrgPlan={currentOrgPlan} />
       </GeneralPlanCardWrapper>
-      
+
       <BillingToggleContainer>
         <BillingToggle>
           <BillingOption
@@ -222,20 +252,22 @@ export const Subscription: React.FC = () => {
           return price ?? 0;
         })()}
         planPeriod={billingPeriod === BillingPeriod.YEARLY ? "year" : "month"}
-        onConfirm={handleCompletePurchaseConfirm} 
-        addons={addons.map((addon) => ({
-          id: addon.id as string,
-          code: addon.code as AddOnCode,
-          name: addon.name,
-          title: addon.name,
-          description: addon.description ?? "",
-          pricePerMonth: Number(addon.priceMonthly) || 0,
-          pricePerYear: Number(addon.priceYearly) || 0,
-        })) as AddonOption[]}
+        onConfirm={handleCompletePurchaseConfirm}
+        addons={
+          addons.map((addon) => ({
+            id: addon.id as string,
+            code: addon.code as AddOnCode,
+            name: addon.name,
+            title: addon.name,
+            description: addon.description ?? "",
+            pricePerMonth: Number(addon.priceMonthly) || 0,
+            pricePerYear: Number(addon.priceYearly) || 0,
+          })) as AddonOption[]
+        }
         preselectedAddonIds={preselectedAddonIds}
       />
 
-      {/* Thank You Dialog */}  
+      {/* Thank You Dialog */}
       <DialogOverlay
         $open={thankYouDialogOpen}
         onClick={() => setThankYouDialogOpen(false)}
@@ -243,11 +275,14 @@ export const Subscription: React.FC = () => {
         <DialogContent onClick={(e) => e.stopPropagation()}>
           <DialogTitle>Thank You</DialogTitle>
           <DialogDescription>
-            Thank you for your purchase! We will contact you shortly to complete the
-            process.
+            Thank you for your purchase! We will contact you shortly to complete
+            the process.
           </DialogDescription>
           <DialogActions>
-            <DialogButton $variant="primary" onClick={() => setThankYouDialogOpen(false)}>
+            <DialogButton
+              $variant="primary"
+              onClick={() => setThankYouDialogOpen(false)}
+            >
               OK
             </DialogButton>
           </DialogActions>

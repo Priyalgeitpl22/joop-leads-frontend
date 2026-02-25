@@ -17,7 +17,7 @@ export interface PlanWithFeatures extends IPlan {
 
 export interface ContactSalesPayload {
   planCode: string;
-  addOns: string[];
+  addOns: {name: string, code: AddOnCode}[];
   billingPeriod: BillingPeriod;
   totalCost: number;
 }

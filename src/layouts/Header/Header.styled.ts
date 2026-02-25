@@ -4,9 +4,9 @@ const SIDEBAR_WIDTH = 260;
 const SIDEBAR_COLLAPSED_WIDTH = 72;
 const HEADER_HEIGHT = 72;
 
-export const HeaderContainer = styled.header<{ $sidebarCollapsed: boolean }>`
+export const HeaderContainer = styled.header<{ $sidebarCollapsed: boolean; $topOffset?: number }>`
   position: fixed;
-  top: 0;
+  top: ${({ $topOffset = 0 }) => $topOffset}px;
   left: ${({ $sidebarCollapsed }) =>
     $sidebarCollapsed ? SIDEBAR_COLLAPSED_WIDTH : SIDEBAR_WIDTH}px;
   right: 0;

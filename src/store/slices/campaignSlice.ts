@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
+import type { PayloadAction, ActionReducerMapBuilder } from '@reduxjs/toolkit';
 import { campaignService } from '../../services/campaign.service';
 import type { Campaign, CampaignStatus, SequenceAnalytics } from '../../interfaces';
 import toast from 'react-hot-toast';
@@ -162,7 +162,7 @@ export const changeCampaignStatus = createAsyncThunk(
   }
 );
 
-// Slice – explicit CampaignState avoids "Type instantiation is excessively deep" (many thunks)
+// Slice – ActionReducerMapBuilder<CampaignState> on extraReducers avoids deep type instantiation
 const campaignSlice = createSlice({
   name: 'campaign',
   initialState,
@@ -174,10 +174,10 @@ const campaignSlice = createSlice({
       state.currentCampaign = null;
     },
     setCurrentCampaign: (state, action: PayloadAction<Campaign>) => {
-      (state as CampaignState).currentCampaign = action.payload;
+      state.currentCampaign = action.payload;
     },
   },
-  extraReducers: (builder) => {
+  extraReducers: (builder: ActionReducerMapBuilder<CampaignState>) => {
     // Fetch All Campaigns
     builder
       .addCase(fetchCampaigns.pending, (state) => {
@@ -186,7 +186,7 @@ const campaignSlice = createSlice({
       })
       .addCase(fetchCampaigns.fulfilled, (state, action) => {
         state.isLoading = false;
-        (state as CampaignState).campaigns = action.payload as unknown as Campaign[];
+        state.campaigns = (action.payload ?? []) as Campaign[];
       })
       .addCase(fetchCampaigns.rejected, (state, action) => {
         state.isLoading = false;
@@ -201,7 +201,7 @@ const campaignSlice = createSlice({
       })
       .addCase(fetchCampaignById.fulfilled, (state, action) => {
         state.isLoading = false;
-        (state as CampaignState).currentCampaign = action.payload as unknown as Campaign;
+        state.currentCampaign = action.payload as Campaign;
       })
       .addCase(fetchCampaignById.rejected, (state, action) => {
         state.isLoading = false;
@@ -214,10 +214,13 @@ const campaignSlice = createSlice({
         state.isLoading = true;
         state.error = null;
       })
-      // .addCase(deleteCampaign.fulfilled, (state, action) => {
-      //   state.isLoading = false;
-      //   (state as CampaignState).campaigns = state.campaigns.filter((c) => c.id !== action.payload) as Campaign[];
-      // })
+      .addCase(deleteCampaign.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.campaigns = state.campaigns.filter((c) => c.id !== action.payload);
+        if (state.currentCampaign?.id === action.payload) {
+          state.currentCampaign = null;
+        }
+      })
       .addCase(deleteCampaign.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
@@ -231,9 +234,9 @@ const campaignSlice = createSlice({
       })
       .addCase(changeCampaignStatus.fulfilled, (state, action) => {
         state.isLoading = false;
-        const prev = state.currentCampaign as Campaign | null;
-        (state as CampaignState).currentCampaign = prev
-          ? { ...prev, status: action.payload.status as CampaignStatus }
+        const prev = state.currentCampaign;
+        state.currentCampaign = prev
+          ? { ...prev, status: action.payload.status }
           : null;
         toast.success('Campaign status changed successfully');
       })
@@ -250,6 +253,10 @@ const campaignSlice = createSlice({
           campaign.status = action.payload.status as CampaignStatus;
           campaign.updatedAt = new Date().toISOString();
         }
+        if (state.currentCampaign?.id === action.payload.id) {
+          state.currentCampaign.status = action.payload.status as CampaignStatus;
+          state.currentCampaign.updatedAt = new Date().toISOString();
+        }
       });
 
     // Rename Campaign
@@ -259,6 +266,10 @@ const campaignSlice = createSlice({
         if (campaign) {
           campaign.name = action.payload.name;
           campaign.updatedAt = new Date().toISOString();
+        }
+        if (state.currentCampaign?.id === action.payload.id) {
+          state.currentCampaign.name = action.payload.name;
+          state.currentCampaign.updatedAt = new Date().toISOString();
         }
       });
 
@@ -270,7 +281,7 @@ const campaignSlice = createSlice({
       })
       .addCase(searchCampaigns.fulfilled, (state, action) => {
         state.isLoading = false;
-        (state as CampaignState).campaigns = action.payload as unknown as Campaign[];
+        state.campaigns = (action.payload ?? []) as Campaign[];
       })
       .addCase(searchCampaigns.rejected, (state, action) => {
         state.isLoading = false;
@@ -285,7 +296,7 @@ const campaignSlice = createSlice({
       })
       .addCase(fetchTriggerLogs.fulfilled, (state, action) => {
         state.isLoading = false;
-        (state as CampaignState).triggerLogs = action.payload as unknown as Logs[];
+        state.triggerLogs = (action.payload ?? []) as Logs[];
       })
       .addCase(fetchTriggerLogs.rejected, (state, action) => {
         state.isLoading = false;
@@ -300,7 +311,8 @@ const campaignSlice = createSlice({
       })
       .addCase(fetchUpcomingTriggers.fulfilled, (state, action) => {
         state.isLoading = false;
-        (state as CampaignState).upcomingTriggers = action.payload as unknown as Logs[];
+        const raw = action.payload as unknown;
+        state.upcomingTriggers = Array.isArray(raw) ? (raw as Logs[]) : ((raw as { upcomingTriggers?: Logs[] })?.upcomingTriggers ?? []);
       })
       .addCase(fetchUpcomingTriggers.rejected, (state, action) => {
         state.isLoading = false;
@@ -315,7 +327,8 @@ const campaignSlice = createSlice({
       })
       .addCase(getSequenceAnalytics.fulfilled, (state, action) => {
         state.isLoadingSequenceAnalytics = false;
-        (state as CampaignState).sequenceAnalytics = action.payload as unknown as SequenceAnalytics[];
+        const raw = action.payload as unknown;
+        state.sequenceAnalytics = Array.isArray(raw) ? (raw as SequenceAnalytics[]) : ((raw as { data?: SequenceAnalytics[] })?.data ?? []);
       })
       .addCase(getSequenceAnalytics.rejected, (state, action) => {
         state.isLoadingSequenceAnalytics = false;

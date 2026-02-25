@@ -79,7 +79,11 @@ const bottomNavItems: NavItemConfig[] = [
   { title: 'Users', icon: <UserCog size={20} />, path: '/users' },
 ];
 
-export const Sidebar: React.FC = () => {
+interface SidebarProps {
+  topOffset?: number;
+}
+
+export const Sidebar: React.FC<SidebarProps> = ({ topOffset = 0 }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useAppDispatch();
@@ -123,7 +127,7 @@ export const Sidebar: React.FC = () => {
   };
 
   return (
-    <SidebarContainer $collapsed={sidebarCollapsed}>
+    <SidebarContainer $collapsed={sidebarCollapsed} $topOffset={topOffset}>
       <SidebarHeader $collapsed={sidebarCollapsed}>
         {!sidebarCollapsed ? (
           <>

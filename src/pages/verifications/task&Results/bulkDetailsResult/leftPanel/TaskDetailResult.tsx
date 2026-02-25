@@ -140,7 +140,6 @@ const TaskDetailResult = () => {
     <CardContainer>
       <Header>
         <TaskTitle>Task: {batch?.fileName ?? batch?.name ?? taskId ?? "—"}</TaskTitle>
-
         <InfoGrid>
           <InfoColumn>
             <p>
