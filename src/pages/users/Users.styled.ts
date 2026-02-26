@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { Upload } from "lucide-react";
 
 // ============================================================================
 // Page Layout
@@ -288,6 +289,19 @@ export const Button = styled.button<{ $variant?: 'primary' | 'secondary' | 'dang
     opacity: 0.6;
     cursor: not-allowed;
   }
+`;
+
+export const ButtonWrapper = styled.button`
+  background: transparent;
+  border: none;
+  cursor: pointer;
+`;
+
+export const UploadIcon = styled(Upload)`
+  height: ${({ theme }) => theme.typography.fontSize.lg};
+  width: ${({ theme }) => theme.typography.fontSize.xl};
+  color: ${({ theme }) => theme.colors.primary.main};
+  margin-top: ${({theme}) => theme.spacing.xs}
 `;
 
 export const AddUserButton = styled.button`

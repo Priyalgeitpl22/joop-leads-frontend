@@ -72,6 +72,23 @@ export const userService = {
   },
 
   /**
+   * resend activation link
+   */
+  async resendActivationLink(data: { email: string }): Promise<{
+    code: number;
+    message: string;
+    data?: IUser;
+  }> {
+    const response = await api.post<{
+      code: number;
+      message: string;
+      data?: IUser;
+    }>("/auth/resend-activation-email", data);
+
+    return response.data;
+  },
+
+  /**
    * Delete user by ID
    */
   async deleteUser(id: string): Promise<void> {

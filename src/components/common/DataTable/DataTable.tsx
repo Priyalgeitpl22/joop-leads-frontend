@@ -651,7 +651,6 @@ export function DataTable({
                         onClick={(e) => e.stopPropagation()}
                       >
                         <RowActions>
-                          {customRowActions?.(row)}
                           {isBulk && showDetails && (
                             <>
                               <RowActionButton
@@ -689,6 +688,7 @@ export function DataTable({
                               <Trash2 size={16} />
                             </RowActionButton>
                           )}
+                          {customRowActions?.(row)}
                         </RowActions>
                       </TableCell>
                     )}
