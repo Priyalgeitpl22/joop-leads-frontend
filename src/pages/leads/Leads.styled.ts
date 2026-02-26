@@ -103,6 +103,28 @@ export const ActionButton = styled.button`
   }
 `;
 
+export const AddButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: ${({ theme }) => theme.spacing.sm};
+  height: 40px;
+  padding: 0 ${({ theme }) => theme.spacing.lg};
+  background: ${({ theme }) => theme.colors.primary.main};
+  color: ${({ theme }) => theme.colors.text.inverse};
+  font-size: ${({ theme }) => theme.typography.fontSize.md};
+  font-weight: ${({ theme }) => theme.typography.fontWeight.medium};
+  border: 1px solid ${({ theme }) => theme.colors.border.main};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  cursor: pointer;
+  transition: all ${({ theme }) => theme.transitions.fast};
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.primary.dark};
+    border-color: ${({ theme }) => theme.colors.primary.main};
+  }
+`;
+
 const spin = keyframes`
   from {
     transform: rotate(0deg);

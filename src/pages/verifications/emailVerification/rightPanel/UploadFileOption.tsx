@@ -21,6 +21,7 @@ import {
 import { emailVerificationService } from "../../../../services/email.verification.service";
 import VerificationDetailDialog from "../../VerificationDetailDialog";
 import SuccessDialog from "../SuccessDialog";
+import { useNavigate } from "react-router-dom";
 
 const validateEmails = (input: string) => {
   if (!input.trim()) return false;
@@ -43,6 +44,7 @@ const validateFile = (file: File) => {
 };
 
 const UploadFileOption = () => {
+  const navigate = useNavigate();
   const [fileName, setFileName] = useState("No file chosen");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -157,6 +159,10 @@ const UploadFileOption = () => {
     setOpenSuccessDialog(false);
   }
 
+  const handleGoToTask = () => {
+    navigate(`/email-verification/task-and-results`);
+  };
+
   return (
     <>
       <VerifyInputWrapper>
@@ -232,6 +238,7 @@ const UploadFileOption = () => {
           isOpen={openSuccessDialog}
           onClose={handleCloseSuccessDialog}
           textMessage='You have successfully submitted the emails. Now the verification will start automatically within few moments. Please note that, the required credits has been deducted from your account. However, after the verification completes, you will get credits refund for all the emails with "unknown" status.'
+          onGoToTask={handleGoToTask}
         />
       </CardContainer>
     </>

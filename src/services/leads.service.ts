@@ -1,4 +1,5 @@
 import type { Lead } from "../interfaces";
+import type { ICreateLead } from "../types/lead.types";
 import { api } from "./api";
 
 const BASE_URL = '/lead';
@@ -13,7 +14,7 @@ export const leadsService = {
         const response = await api.get(`${BASE_URL}/${id}`);
         return response.data;
     },
-    createLead: async (lead: Lead) => {
+    createLead: async (lead: ICreateLead) => {
         const response = await api.post(`${BASE_URL}`, lead);
         return response.data;
     },

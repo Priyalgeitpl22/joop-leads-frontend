@@ -15,6 +15,7 @@ import {
   Error
 } from "./StartVerificationOption.styled";
 import { emailVerificationService } from "../../../../services/email.verification.service";
+import { useNavigate } from "react-router-dom";
 
 function parseEmailsInput(text: string): string {
   return text
@@ -25,6 +26,7 @@ function parseEmailsInput(text: string): string {
 }
 
 const StartVerificationOption = () => {
+  const navigate = useNavigate();
   const [taskName, setTaskName] = useState("");
   const [emailAddresses, setEmailAddresses] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
@@ -113,6 +115,10 @@ const StartVerificationOption = () => {
     setOpenSuccessDialog(false);
   };
 
+  const handleGoToTask = () => {
+     navigate(`/email-verification/task-and-results`);
+  }
+
   return (
     <CardContainer>
       <OptionTitle>Option 1: Direct Submit Email Addresses</OptionTitle>
@@ -157,6 +163,7 @@ const StartVerificationOption = () => {
         textMessage='The verification process will start automatically within a few
               moments. You will get the credits refunded for all the emails with
               "unknown" status.'
+        onGoToTask={handleGoToTask}
       />
     </CardContainer>
   );

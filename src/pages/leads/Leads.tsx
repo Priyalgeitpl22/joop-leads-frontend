@@ -3,6 +3,7 @@ import { Users } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { LeadDetailsPanel } from "./components";
 import {
+  AddButton,
   PageContainer,
 } from "./Leads.styled";
 import {
@@ -16,6 +17,7 @@ import { useAppSelector } from "../../store";
 import { DataTable } from "../../components/common";
 import type { Lead } from "../../interfaces";
 import ConfirmDialog from "../common/DeleteDialog";
+import AddLeadDialog from "./components/AddLeadDialog";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -34,6 +36,7 @@ export const Leads: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [leadToDelete, setLeadToDelete] = useState<Lead | null>(null);
   const [deleteType, setDeleteType] = useState<DeleteType>(null);
+  const [isAddLeadOpen, setIsAddLeadOpen] = useState(false);
 
   const isDeleteDialogOpen = deleteType !== null;
 
@@ -132,6 +135,14 @@ export const Leads: React.FC = () => {
     };
   };
 
+  const headerActions = (
+    <AddButton
+      onClick={() => setIsAddLeadOpen(true)}
+    >
+      Add Lead
+    </AddButton>
+  );
+
   const columns = [
     { key: "email", label: "Email" },
     { key: "firstName", label: "First Name" },
@@ -172,6 +183,7 @@ export const Leads: React.FC = () => {
         emptyTitle="No leads found"
         emptyMessage="Get started by importing leads or adding them manually."
         emptyIcon={<Users size={40} />}
+        headerActions={headerActions}
         showSaveButton={false}
         handleSaveSenderAccounts={() => {}}
       />
@@ -202,6 +214,10 @@ export const Leads: React.FC = () => {
         confirmText="Delete"
         onClose={handleCancelDelete}
         onConfirm={handleConfirmDelete}
+      />
+      <AddLeadDialog
+        isOpen={isAddLeadOpen}
+        onClose={() => setIsAddLeadOpen(false)}
       />
     </PageContainer>
   );

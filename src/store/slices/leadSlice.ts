@@ -73,7 +73,7 @@ export const createLead = createAsyncThunk(
   'lead/create',
   async (data: ICreateLead, { rejectWithValue }) => {
     try {
-      const response = await leadsService.createLead(data as Lead);
+      const response = await leadsService.createLead(data);
       return response;
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } };
