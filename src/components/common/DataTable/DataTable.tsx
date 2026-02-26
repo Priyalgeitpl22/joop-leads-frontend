@@ -666,7 +666,7 @@ export function DataTable({
                               onClick={() => onSingleDetails?.(row)}
                               title="View Details"
                             >
-                              <LinkField href={`/accounts/${row.id}`}>View Details</LinkField>
+                              View Details
                             </RowActionButton>
                           )}
 
