@@ -27,6 +27,8 @@ import {
   FormSelect,
   Button,
   AddUserButton,
+  ButtonWrapper,
+  UploadIcon,
 } from "./Users.styled";
 import { UserRole } from "../../types/enums";
 import { userService } from "../../services/user.service";
@@ -168,6 +170,17 @@ export const Users: React.FC = () => {
     setUserToDelete(null);
   };
 
+  const handleResendActivation = async (user: IUser) => {
+    try {
+      await userService.resendActivationLink({email: user.email});
+      toast.success(`Activation link sent to ${user.email}`);
+    } catch (error: any) {
+      toast.error(
+        error?.response?.data?.message || 'Failed to resend activation link',
+      );
+    }
+  };
+
   const columns: Column[] = useMemo(
     () => [
       {
@@ -240,6 +253,26 @@ export const Users: React.FC = () => {
     setIsAddModalOpen(true);
   }, []);
 
+  const renderCustomRowActions = useCallback(
+    (row: Record<string, unknown>) => {
+      const user = row as unknown as IUser;
+
+      if (currentUser?.role !== UserRole.ADMIN) return null;
+
+      if (user.isVerified) return null;
+
+      return (
+        <ButtonWrapper
+          onClick={() => handleResendActivation(user)}
+          title='Resend Activation Link'
+        >
+          <UploadIcon />
+        </ButtonWrapper>
+      );
+    },
+    [currentUser],
+  );
+
   const headerActions = useMemo(
     () => (
       <AddUserButton onClick={handleOpenAddModal}>
@@ -274,6 +307,7 @@ export const Users: React.FC = () => {
           currentUser?.role === UserRole.ADMIN ? handleDeleteClick : undefined
         }
         onBulkDelete={handleBulkDelete}
+        customRowActions={renderCustomRowActions}
         paginated={true}
         pageSize={ITEMS_PER_PAGE}
         pageSizeOptions={[10, 25, 50]}
@@ -348,15 +382,15 @@ export const Users: React.FC = () => {
                 onChange={handleInputChange}
                 disabled={isSubmitting}
               >
-                {Object.values(UserRole).map(
-                  (role) =>
-                    role !== UserRole.ADMIN && (
-                      <option value={role}>
-                        {role.charAt(0).toUpperCase() +
-                          role.slice(1).toLowerCase()}
-                      </option>
-                    )
-                )}
+                {Object.values(UserRole).filter(
+                  (role) => role !== UserRole.ADMIN)
+                  .map((role) => (
+                    <option key={role} value={role}>
+                      {role.charAt(0).toUpperCase() +
+                        role.slice(1).toLowerCase()}
+                    </option>
+                  )
+                  )}
               </FormSelect>
             </FormGroup>
           </ModalBody>
