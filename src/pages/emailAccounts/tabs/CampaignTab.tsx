@@ -16,7 +16,6 @@ import {
   Spinner,
 } from './CampaignTab.styled';
 import { StatusBadge } from '../../../components/common';
-import { getCampaignStatusLabel } from '../../../utils/labels';
 
 interface CampaignTabProps {
   accountId: string;
@@ -94,8 +93,8 @@ export const CampaignTab: React.FC<CampaignTabProps> = ({ accountId }) => {
               <TableRow key={campaignSender.id}>
                 <TableCell>{campaignSender.name || 'Unnamed Campaign'}</TableCell>
                 <TableCell>
-                  <StatusBadge $status={campaignSender.campaign?.status || ''}>
-                    {getCampaignStatusLabel(campaignSender.campaign?.status || '')}
+                  <StatusBadge $status={campaignSender?.status?.toLowerCase() || ''}>
+                    {campaignSender?.status?.toLowerCase()}
                   </StatusBadge>
                 </TableCell>
                 <TableCell>{formatDate(campaignSender.createdAt)}</TableCell>
