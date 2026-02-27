@@ -2,6 +2,7 @@ import { api } from "./api";
 
 export interface IAddOnPlan {
     id: number;
+    addOnId: number;
     code: AddOnCode;
     name: string;
     description: string | null;

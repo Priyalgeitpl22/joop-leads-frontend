@@ -20,6 +20,13 @@ const baseTokens = {
     xxl: '48px',
     p80: '80%'
   },
+  maxWidth: {
+    sm: '640px',
+    md: '768px',
+    lg: '1024px',
+    xl: '1280px',
+    '2xl': '1536px',
+  },
   typography: {
     fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
     fontSize: {
@@ -117,6 +124,10 @@ export const indigoLight = {
       tertiary: '#888888',
       inverse: '#ffffff',
       grey: '#a5a5a5',
+      warning: '#ea580c',
+      error: '#ef4444',
+      success: '#22c55e',
+      info: '#3b82f6'
     },
     border: {
       light: '#f0f0f0',

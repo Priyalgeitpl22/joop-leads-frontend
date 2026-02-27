@@ -26,7 +26,7 @@ export const Tab = styled.button<{ $isActive?: boolean }>`
   border: none;
   border-bottom: 2px solid
     ${({ $isActive, theme }) =>
-      $isActive ? theme.colors.primary.main : "transparent"};
+    $isActive ? theme.colors.primary.main : "transparent"};
   color: ${({ $isActive, theme }) =>
     $isActive ? theme.colors.primary.main : theme.colors.text.secondary};
   font-size: ${({ theme }) => theme.typography.fontSize.md};
@@ -39,10 +39,18 @@ export const Tab = styled.button<{ $isActive?: boolean }>`
   }
 `;
 
-export const VerificationContent = styled.div`
+export const VerificationContent = styled.div<{ $disabled?: boolean }>`
   min-height: 70vh;
   display: flex;
   gap: ${({ theme }) => theme.spacing.md};
+
+  ${({ $disabled, theme }) =>
+    $disabled && `  
+    background: ${theme.colors.background.tertiary};
+    color: ${theme.colors.text.tertiary};
+    cursor: not-allowed;
+    opacity: 0.7;
+  `}
 `;
 
 export const LeftPanel = styled.div`

@@ -14,6 +14,7 @@ import {
   PasswordUpdateDescription,
   ButtonRow,
   UpdatePasswordButton,
+  SectionCard,
 } from "./AttentionRequiredTab.styled";
 import type { Account } from "../../../types/emailAccount.types";
 import {
@@ -21,8 +22,7 @@ import {
   EmailAccountType,
 } from "../../../types/emailAccount.types";
 
-const DEFAULT_SMTP_ERROR =
-  "Refresh token expired or revoked";
+const DEFAULT_SMTP_ERROR = "Refresh token expired or revoked";
 
 interface AttentionRequiredTabProps {
   accountId: string;
@@ -38,14 +38,16 @@ export const AttentionRequiredTab: React.FC<AttentionRequiredTabProps> = ({
 }) => {
   const showDisconnect =
     emailAccount.state === EmailAccountState.REAUTH_REQUIRED;
-  const accountWithError = emailAccount as Account & { errorDetails?: { message?: string } };
-  const errorMessage = accountWithError.errorDetails?.message || DEFAULT_SMTP_ERROR;
+  const accountWithError = emailAccount as Account & {
+    errorDetails?: { message?: string };
+  };
+  const errorMessage =
+    accountWithError.errorDetails?.message || DEFAULT_SMTP_ERROR;
 
   return (
     <AttentionRequiredContainer>
-      <IntroText>
-        Resolve the following to start sending again.
-      </IntroText>
+      <SectionCard>
+      <IntroText>Resolve the following to start sending again.</IntroText>
 
       <Section>
         <SectionHeading>Your account got disconnected</SectionHeading>
@@ -71,12 +73,14 @@ export const AttentionRequiredTab: React.FC<AttentionRequiredTabProps> = ({
       <Section>
         <StepCard>
           <PasswordUpdateSection>
+
             <PasswordUpdateHeading>
               Password was updated
+              <PasswordUpdateDescription>
+                Your app password or main account password was updated.
+              </PasswordUpdateDescription>
             </PasswordUpdateHeading>
-            <PasswordUpdateDescription>
-              Your app password or main account password was updated.
-            </PasswordUpdateDescription>
+
             <ButtonRow>
               {(emailAccount.type === EmailAccountType.SMTP ||
                 emailAccount.type === EmailAccountType.IMAP) && (
@@ -86,7 +90,10 @@ export const AttentionRequiredTab: React.FC<AttentionRequiredTabProps> = ({
               )}
               {(emailAccount.type === EmailAccountType.GMAIL ||
                 emailAccount.type === EmailAccountType.OUTLOOK) && (
-                <UpdatePasswordButton type="button" onClick={onReactivateAccount}>
+                <UpdatePasswordButton
+                  type="button"
+                  onClick={onReactivateAccount}
+                >
                   Reactivate Account
                 </UpdatePasswordButton>
               )}
@@ -94,6 +101,7 @@ export const AttentionRequiredTab: React.FC<AttentionRequiredTabProps> = ({
           </PasswordUpdateSection>
         </StepCard>
       </Section>
+      </SectionCard>
     </AttentionRequiredContainer>
   );
 };

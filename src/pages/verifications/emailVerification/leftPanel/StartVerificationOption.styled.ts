@@ -131,4 +131,8 @@ export const InputField = styled.textarea`
   &::placeholder {
     color: ${({ theme }) => theme.colors.text.tertiary};
   }
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 `;

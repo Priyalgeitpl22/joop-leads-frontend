@@ -21,3 +21,5 @@ export { StatusBadge } from "./StatusBadge";
 export type { StatusBadgeStyledProps, StatusBadgeVariant } from "./StatusBadge";
 export { EmailProvider } from "./EmailProvider";
 export type { EmailProviderProps, EmailProviderType } from "./EmailProvider";
+export { AlertBanner } from "./AlertBanner";
+export type { AlertBannerProps, AlertBannerType } from "./AlertBanner";

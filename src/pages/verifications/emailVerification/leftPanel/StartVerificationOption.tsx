@@ -25,7 +25,7 @@ function parseEmailsInput(text: string): string {
     .join(",");
 }
 
-const StartVerificationOption = () => {
+const StartVerificationOption = ({ emailVerificationAddOn }: { emailVerificationAddOn: boolean | undefined }) => {
   const navigate = useNavigate();
   const [taskName, setTaskName] = useState("");
   const [emailAddresses, setEmailAddresses] = useState("");
@@ -130,6 +130,7 @@ const StartVerificationOption = () => {
             <Input
               type="text"
               placeholder="Enter a name"
+              disabled={!emailVerificationAddOn}
               value={taskName}
               onChange={(e) => handleTaskChange(e.target.value)}
             />
@@ -142,6 +143,7 @@ const StartVerificationOption = () => {
           <InputWrapper>
             <InputField
               placeholder="Enter email addresses one per line or comma-separated"
+              disabled={!emailVerificationAddOn}
               value={emailAddresses}
               onChange={(e) => handleEmailChange(e.target.value)}
             />
@@ -152,7 +154,7 @@ const StartVerificationOption = () => {
         <VerificationButton
           type="button"
           onClick={handleStartVerification}
-          disabled={isVerifying || !isFormValid}
+          disabled={isVerifying || !isFormValid || !emailVerificationAddOn}
         >
           <ButtonContent>{isVerifying ? "Verifying..." : "Start Verification"}</ButtonContent>
         </VerificationButton>

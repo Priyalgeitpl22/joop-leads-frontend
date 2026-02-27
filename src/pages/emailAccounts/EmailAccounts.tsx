@@ -22,7 +22,12 @@ import {
 import toast from "react-hot-toast";
 import { campaignSenderService } from "../../services/campaign.sender.service";
 import DeleteDialog from "../common/DeleteDialog";
-import { AlertChip, Dialog, EmailProvider } from "../../components/common";
+import {
+  AlertBanner,
+  AlertChip,
+  Dialog,
+  EmailProvider,
+} from "../../components/common";
 
 type TabType = "accounts";
 
@@ -112,16 +117,23 @@ export const EmailAccounts: React.FC = () => {
       key: "warmupEnabled",
       label: "Warmup Enabled",
       render: (value: unknown) => (
-        <AlertChip variant={value === "Yes" ? "success" : "info"} showIcon={false}>
+        <AlertChip
+          variant={value === "Yes" ? "success" : "info"}
+          showIcon={false}
+        >
           {value as string}
         </AlertChip>
       ),
     },
-    { key: "reputation", label: "Reputation", render: (value: unknown) => (
-      <AlertChip variant="success" showIcon={false}>
-        {value as string}
-      </AlertChip>
-    )},
+    {
+      key: "reputation",
+      label: "Reputation",
+      render: (value: unknown) => (
+        <AlertChip variant="success" showIcon={false}>
+          {value as string}
+        </AlertChip>
+      ),
+    },
   ];
 
   const handleRowClick = (row: Record<string, unknown>) => {
@@ -187,8 +199,19 @@ export const EmailAccounts: React.FC = () => {
     setAccountToDelete(null);
   };
 
+  const erroredAccounts = filteredAccounts.filter(
+    (account) => account.state === EmailAccountState.REAUTH_REQUIRED,
+  );
+
   return (
     <PageContainer>
+      {erroredAccounts && (
+        <AlertBanner
+          title="Mailbox Issue Detected"
+          detail={`${erroredAccounts.length} accounts need attention`}
+          type="warning"
+        />
+      )}
       <TabsContainer>
         <TabsList>
           <Tab

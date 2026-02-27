@@ -468,7 +468,7 @@ export const WarmupTab: React.FC<WarmupTabProps> = ({ accountId, emailAccount, o
       )}
 
       <ButtonRow>
-        <Button onClick={handleSave} disabled={isSaving}>
+        <Button onClick={handleSave} disabled={isSaving || !formData.enabled}>
           {isSaving && <Spinner />}
           {isSaving ? 'Updating...' : 'Update'}
         </Button>

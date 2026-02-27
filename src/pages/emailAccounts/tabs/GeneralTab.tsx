@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Check, AlertCircle } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { emailAccountService } from '../../../services/email.account.service';
@@ -98,12 +98,13 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ accountId, emailAccount,
   const [isVerifying, setIsVerifying] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [initialFormData, setInitialFormData] = useState<FormData | null>(null);
 
   const isGmailOrOutlook = emailAccount?.type === 'gmail' || emailAccount?.type === 'outlook';
 
   useEffect(() => {
     if (emailAccount) {
-      setFormData({
+      const loaded: FormData = {
         fromName: emailAccount.name || '',
         fromEmail: emailAccount.email || '',
         userName: emailAccount.smtp?.auth?.user || '',
@@ -122,10 +123,17 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ accountId, emailAccount,
         imapPort: emailAccount.imap?.port?.toString() || '993',
         imapSecurity: emailAccount.imap?.secure ? 'ssl' : 'tls',
         signature: emailAccount.signature || '',
-      });
+      };
+      setFormData(loaded);
+      setInitialFormData(loaded);
       setIsLoading(false);
     }
   }, [emailAccount]);
+
+  const hasChanges = useMemo(() => {
+    if (initialFormData == null) return false;
+    return JSON.stringify(formData) !== JSON.stringify(initialFormData);
+  }, [formData, initialFormData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
@@ -277,6 +285,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ accountId, emailAccount,
       if (response.code === 200 && response.data) {
         await senderAccountService.updateSenderAccount(accountId, payload as Account);
         toast.success('Email account updated successfully!');
+        setInitialFormData(formData);
         onUpdate?.(response.data as Account);
       } else {
         toast.error(response.message);
@@ -565,7 +574,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ accountId, emailAccount,
       )}
 
       <ButtonRow>
-        <Button $variant="success" onClick={handleSave} disabled={isSaving}>
+        <Button $variant="success" onClick={handleSave} disabled={isSaving || !hasChanges || formData.fromName === '' || formData.fromEmail === ''}>
           {isSaving && <Spinner />}
           {isSaving ? 'Updating...' : 'Update'}
         </Button>

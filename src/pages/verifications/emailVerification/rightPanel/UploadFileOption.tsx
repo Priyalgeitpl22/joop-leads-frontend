@@ -43,7 +43,7 @@ const validateFile = (file: File) => {
   return fileExtension ? allowedExtensions.includes(fileExtension) : false;
 };
 
-const UploadFileOption = () => {
+const UploadFileOption = ({ emailVerificationAddOn }: { emailVerificationAddOn: boolean | undefined }) => {
   const navigate = useNavigate();
   const [fileName, setFileName] = useState("No file chosen");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -171,6 +171,7 @@ const UploadFileOption = () => {
         </IconContainer>
 
         <VerifyInput
+          disabled={!emailVerificationAddOn}
           placeholder="Enter email(s) — one or comma-separated"
           value={emailInput}
           onChange={handleEmailChange}
@@ -179,7 +180,7 @@ const UploadFileOption = () => {
         <VerifyButton
           type="button"
           onClick={handleSingleVerification}
-          disabled={isVerifying || !isEmailValid}
+          disabled={!emailVerificationAddOn || isVerifying || !isEmailValid}
         >
           {isVerifying ? "Verifying..." : "Verify"}
         </VerifyButton>
@@ -201,10 +202,10 @@ const UploadFileOption = () => {
           columns.
         </Description>
 
-        <CheckboxRow>
+        {emailVerificationAddOn && <CheckboxRow>
           <input type="checkbox" />
           Remove duplicate rows (only if all the columns are same).
-        </CheckboxRow>
+        </CheckboxRow>}
 
         <FileUploadContainer>
           <HiddenFileInput
@@ -212,9 +213,12 @@ const UploadFileOption = () => {
             id="fileUpload"
             accept=".txt,.csv"
             onChange={handleFileChange}
+            disabled={!emailVerificationAddOn}
           />
 
-          <ChooseFileButton htmlFor="fileUpload">Choose file</ChooseFileButton>
+          <ChooseFileButton htmlFor="fileUpload" $disabled={!emailVerificationAddOn}>
+            Choose file
+          </ChooseFileButton>
 
           <FileName>{fileName}</FileName>
           {fileError && (
@@ -224,7 +228,7 @@ const UploadFileOption = () => {
           <StartButton
             type="button"
             onClick={handleStartVerification}
-            disabled={!selectedFile || isUploading || !!fileError}
+            disabled={!emailVerificationAddOn || !selectedFile || isUploading || !!fileError}
           >
             {isUploading ? "Uploading..." : "Start Verification"}
           </StartButton>

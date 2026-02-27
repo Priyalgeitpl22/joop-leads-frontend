@@ -1,4 +1,5 @@
 import { UserRole } from './enums';
+import type { IAddOnPlan } from '../services/add-on.plan.service';
 export { UserRole };
 
 export interface IUser {
@@ -16,6 +17,7 @@ export interface IUser {
   createdAt: string;
   updatedAt?: string;
   planDetails?: any;
+  addOns?: IAddOnPlan[];
 }
 
 export interface UpdateUserData {

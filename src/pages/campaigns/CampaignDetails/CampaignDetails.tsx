@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Edit2, MoreHorizontal, Check, ArrowLeft } from "lucide-react";
@@ -51,9 +51,17 @@ const CampaignDetailsPage: React.FC = () => {
   const campaign = currentCampaign as unknown as Campaign;
   const [searchParams, setSearchParams] = useSearchParams();
   const tabFromUrl = searchParams.get("tab") as TabValue | null;
-  const [activeTab, setActiveTab] = useState<TabValue>(
-    tabFromUrl || "performance",
-  );
+  const validTabs: TabValue[] = [
+    "performance",
+    "analytics",
+    "inbox",
+    "lead_list",
+    "sequences",
+    "trigger_logs",
+    "sender_accounts",
+  ];
+  const activeTab: TabValue =
+    tabFromUrl && validTabs.includes(tabFromUrl) ? tabFromUrl : "performance";
 
   useEffect(() => {
     if (id) {
@@ -102,7 +110,14 @@ const CampaignDetailsPage: React.FC = () => {
   const renderTabContent = () => {
     switch (activeTab) {
       case "performance":
-        return <Performance campaign={campaign} onViewTriggerLogs={() => {}} />;
+        return (
+          <Performance
+            campaign={campaign}
+            onViewTriggerLogs={() => {
+              navigate(`/campaigns/${id}?tab=trigger_logs`);
+            }}
+          />
+        );
       case "analytics":
         return (
           <Analytics
@@ -145,7 +160,16 @@ const CampaignDetailsPage: React.FC = () => {
                   <ArrowLeft size={18} />
                 </button>
                 <h1>{campaign?.name || campaign?.name || "Campaign"}</h1>
-                <AlertChip showIcon={false} variant={campaign?.status === 'STOPPED' || campaign?.status === 'PAUSED' || campaign?.status === 'DRAFT' ? "warning" : "success"}>
+                <AlertChip
+                  showIcon={false}
+                  variant={
+                    campaign?.status === "STOPPED" ||
+                    campaign?.status === "PAUSED" ||
+                    campaign?.status === "DRAFT"
+                      ? "warning"
+                      : "success"
+                  }
+                >
                   {campaign?.status || "DRAFT"}
                 </AlertChip>
               </CampaignTitle>
@@ -192,10 +216,7 @@ const CampaignDetailsPage: React.FC = () => {
             <Tab
               key={tabItem.value}
               $isActive={activeTab === tabItem.value}
-              onClick={() => {
-                setActiveTab(tabItem.value);
-                setSearchParams({ tab: tabItem.value });
-              }}
+              onClick={() => setSearchParams({ tab: tabItem.value })}
             >
               {tabItem.label}
               {tabItem.count !== undefined && ` (${tabItem.count})`}

@@ -36,10 +36,16 @@ export const CheckboxRow = styled.label`
   color: ${({ theme }) => theme.colors.text.secondary};
   margin-bottom: ${({ theme }) => theme.spacing.lg};
   cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;
 
 export const FileUploadContainer = styled.div`
   display: flex;
+  height: 52px;
   align-items: stretch;
   border: 1px solid ${({ theme }) => theme.colors.border.main};
   border-radius: ${({ theme }) => theme.borderRadius.md};
@@ -51,7 +57,7 @@ export const HiddenFileInput = styled.input`
   display: none;
 `;
 
-export const ChooseFileButton = styled.label`
+export const ChooseFileButton = styled.label<{ $disabled?: boolean }>`
   padding: ${({ theme }) => theme.spacing.md};
   background: ${({ theme }) => theme.colors.background.secondary};
   cursor: pointer;
@@ -62,6 +68,16 @@ export const ChooseFileButton = styled.label`
   &:hover {
     background: ${({ theme }) => theme.colors.background.tertiary};
   }
+
+  ${({ $disabled, theme }) =>
+    $disabled &&
+    `
+    background: ${theme.colors.background.tertiary};
+    color: ${theme.colors.text.tertiary};
+    cursor: not-allowed;
+    opacity: 0.7;
+    pointer-events: none;
+  `}
 `;
 
 export const FileName = styled.div`

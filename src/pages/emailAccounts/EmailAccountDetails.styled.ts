@@ -6,7 +6,7 @@ const spin = keyframes`
 
 export const PageContainer = styled.div`
   padding: 0;
-  min-height: 100%;
+  height: 100%;
 `;
 
 export const HeaderRow = styled.div`
@@ -70,7 +70,7 @@ export const TabAttention = styled.button<{ $isActive?: boolean }>`
   background: none;
   border: none;
   border-bottom: 2px solid ${({ $isActive }) => ($isActive ? '#ea580c' : 'transparent')};
-  color: ${({ theme }) => theme.colors.text.secondary};
+  color: ${({ theme }) => theme.colors.text.warning};
   font-size: ${({ theme }) => theme.typography.fontSize.sm};
   font-weight: ${({ theme }) => theme.typography.fontWeight.medium};
   cursor: pointer;
@@ -78,7 +78,7 @@ export const TabAttention = styled.button<{ $isActive?: boolean }>`
   margin-bottom: -1px;
 
   &:hover {
-    color: ${({ theme }) => theme.colors.primary.main};
+    color: ${({ theme }) => theme.colors.text.warning};
   }
 `;
 
@@ -89,7 +89,7 @@ export const EmailDisplay = styled.span`
 `;
 
 export const ContentContainer = styled.div`
-  min-height: 400px;
+  height: 100%;
 `;
 
 export const LoadingContainer = styled.div`

@@ -2,8 +2,12 @@ import styled from 'styled-components';
 
 export const AttentionRequiredContainer = styled.div`
   color: ${({ theme }) => theme.colors.text.primary};
-  max-width: 680px;
-  padding: ${({ theme }) => theme.spacing.lg} 0;
+  max-width: ${({ theme }) => theme.maxWidth.xl};
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  width: 100% !important;
+  flex: 1 !important;
 `;
 
 export const IntroText = styled.p`
@@ -27,9 +31,9 @@ export const SectionHeading = styled.h2`
 
 export const DisconnectErrorBlock = styled.div`
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: ${({ theme }) => theme.spacing.md};
-  padding: ${({ theme }) => theme.spacing.lg} ${({ theme }) => theme.spacing.xl};
+  padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.lg};
   background: #FEF2F2;
   border: 1px solid #FECACA;
   border-radius: ${({ theme }) => theme.borderRadius.lg};
@@ -41,8 +45,8 @@ export const ErrorIconWrap = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   border-radius: ${({ theme }) => theme.borderRadius.md};
   background: rgba(220, 38, 38, 0.1);
   color: #DC2626;
@@ -57,7 +61,7 @@ export const ErrorMessage = styled.p`
 `;
 
 export const StepCard = styled.div`
-  padding: ${({ theme }) => theme.spacing.xl};
+  padding: ${({ theme }) => theme.spacing.md};
   background: ${({ theme }) => theme.colors.background.primary};
   border: 1px solid ${({ theme }) => theme.colors.border.light};
   border-radius: ${({ theme }) => theme.borderRadius.lg};
@@ -68,8 +72,8 @@ export const StepNumber = styled.span`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   margin-right: ${({ theme }) => theme.spacing.sm};
   font-size: ${({ theme }) => theme.typography.fontSize.sm};
   font-weight: 700;
@@ -80,13 +84,28 @@ export const StepNumber = styled.span`
 
 export const PasswordUpdateSection = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
   gap: ${({ theme }) => theme.spacing.sm};
+`;
+
+export const SectionCard = styled.div`
+  background: ${({ theme }) => theme.colors.background.primary};
+  border: 1px solid ${({ theme }) => theme.colors.border.light};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  padding: ${({ theme }) => theme.spacing.md};
+  margin-bottom: ${({ theme }) => theme.spacing.md};
+  width: 100% !important;
+  flex: 1 !important;
 `;
 
 export const PasswordUpdateHeading = styled.h3`
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: ${({ theme }) => theme.spacing.sm};
+  justify-content: space-between;
   font-size: ${({ theme }) => theme.typography.fontSize.lg};
   font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
   color: ${({ theme }) => theme.colors.text.primary};
@@ -95,9 +114,10 @@ export const PasswordUpdateHeading = styled.h3`
 
 export const PasswordUpdateDescription = styled.p`
   margin: 0 0 ${({ theme }) => theme.spacing.md} 0;
-  font-size: ${({ theme }) => theme.typography.fontSize.md};
+  font-size: ${({ theme }) => theme.typography.fontSize.sm};
   color: ${({ theme }) => theme.colors.text.secondary};
   line-height: 1.6;
+  font-weight: ${({ theme }) => theme.typography.fontWeight.normal};
 `;
 
 export const ButtonRow = styled.div`
