@@ -16,7 +16,7 @@ const validatePhone = (phone: string) => {
   const cleanedPhone = phone.trim();
 
   if (!cleanedPhone) {
-    return { isValid: false, message: "Phone number is required" };
+    return { isValid: false, message: "" };
   }
 
   const phoneRegex = /^\+?[1-9]\d{7,14}$/;
@@ -35,7 +35,7 @@ const validatePhone = (phone: string) => {
 const AddLeadDialog = ({ isOpen, onClose }: AddLeadDialogProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState({
+  const initialFormState = {
     firstName: "",
     lastName: "",
     email: "",
@@ -43,15 +43,17 @@ const AddLeadDialog = ({ isOpen, onClose }: AddLeadDialogProps) => {
     linkedinUrl: "",
     website: "",
     orgId: "",
-  });
-  const [errors, setErrors] = useState({
+  };
+  const initialErrorState = {
     firstName: "",
     lastName: "",
     email: "",
     phone: "",
     linkedinUrl: "",
     website: "",
-  });
+  };
+  const [formData, setFormData] = useState(initialFormState);
+  const [errors, setErrors] = useState(initialErrorState);
 
   const isFormValid = () => {
     return (
@@ -159,6 +161,8 @@ const AddLeadDialog = ({ isOpen, onClose }: AddLeadDialogProps) => {
       setIsSubmitting(true);
       await dispatch(createLead(formData)).unwrap();
       toast.success("Lead created successfully");
+      setFormData(initialFormState);
+      setErrors(initialErrorState);
       onClose();
       await dispatch(fetchAllLeads()).unwrap();
     } catch (error: any) {
