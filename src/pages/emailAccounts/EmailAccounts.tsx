@@ -205,7 +205,7 @@ export const EmailAccounts: React.FC = () => {
 
   return (
     <PageContainer>
-      {erroredAccounts && (
+      {erroredAccounts.length > 0 && (
         <AlertBanner
           title="Mailbox Issue Detected"
           detail={`${erroredAccounts.length} accounts need attention`}
