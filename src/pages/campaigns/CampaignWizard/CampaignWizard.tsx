@@ -90,7 +90,7 @@ import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../../store";
 import type { UploadCounts } from "../../../interfaces";
 import { WIZARD_STEPS, CONTACT_FIELD_OPTIONS } from "../../../constants";
-import { fetchCampaignById } from "../../../store/slices/campaignSlice";
+import { clearCurrentCampaign, fetchCampaignById } from "../../../store/slices/campaignSlice";
 import type { ICreateSequence } from "../../../types/sequence.types";
 import OptionsMenu from "../../../components/common/OptionsMenu";
 import ConfirmDialog from "../../common/DeleteDialog";
@@ -134,12 +134,18 @@ export const CampaignWizard: React.FC = () => {
 
 
   useEffect(() => {
-    if (!id || id === "new") return;
+    if (!id) return;
+    if (id === "new") {
+      dispatch(clearCurrentCampaign());
+      setSequences([]);
+      setCurrentStepIndex(0);
+      return;
+    }
 
     if (!currentCampaign || currentCampaign.id !== id) {
       dispatch(fetchCampaignById(id));
     }
-  }, [id, dispatch, currentStepIndex]);
+  }, [id, dispatch]);
 
   useEffect(() => {
     if (!currentCampaign?.id) return;
