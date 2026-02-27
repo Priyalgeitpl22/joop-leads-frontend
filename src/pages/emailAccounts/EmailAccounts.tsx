@@ -11,6 +11,9 @@ import {
   Tab,
   TabsActions,
   AddButton,
+  SearchBar,
+  SearchIcon,
+  SearchInput,
 } from "./EmailAccounts.styled";
 import DataTable from "../../components/common/DataTable/DataTable";
 import { useNavigate } from "react-router-dom";
@@ -28,6 +31,7 @@ import {
   Dialog,
   EmailProvider,
 } from "../../components/common";
+import { Search } from "lucide-react";
 
 type TabType = "accounts";
 
@@ -76,6 +80,13 @@ export const EmailAccounts: React.FC = () => {
   const [accountHasActiveCampaign, setAccountHasActiveCampaign] =
     useState(false);
   const [activeCampaignNames, setActiveCampaignNames] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredData = filteredAccounts.filter(
+    (account) =>
+      account.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      account.email.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
 
   const handleAddAccount = () => {
     setIsAddAccountDialogOpen(true);
@@ -223,12 +234,22 @@ export const EmailAccounts: React.FC = () => {
         </TabsList>
 
         <TabsActions>
+          <SearchBar>
+            <SearchIcon>
+              <Search size={18} />
+            </SearchIcon>
+            <SearchInput
+              placeholder="Search Email Account"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </SearchBar>
           <AddButton onClick={handleAddAccount}>Add Account</AddButton>
         </TabsActions>
       </TabsContainer>
       <DataTable
         columns={columns}
-        data={(filteredAccounts || []).map((account) => ({
+        data={(filteredData || []).map((account) => ({
           ...account,
           senderId: account.id,
           id: account._id,
@@ -242,9 +263,7 @@ export const EmailAccounts: React.FC = () => {
           reputation: account.warmup?.reputation || 0,
         }))}
         loading={isLoading}
-        searchable={true}
-        searchPlaceholder="Search Email Account"
-        searchKeys={["name", "email"]}
+        searchable={false}
         showRowActions
         onRowClick={handleRowClick}
         onEdit={handleEditAccount}
