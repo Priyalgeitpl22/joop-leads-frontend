@@ -444,18 +444,35 @@ export const CampaignWizard: React.FC = () => {
       return false;
     }
 
-    const response = await campaignService.addSequencesToCampaign({
-      campaignId: campaignId || campaign.id || "",
-      sequences: sequences as unknown as Sequence[],
-    } as unknown as ICreateSequence);
+    try {
+      const response = await campaignService.addSequencesToCampaign({
+        campaignId: campaignId || campaign.id || "",
+        sequences: sequences as unknown as Sequence[],
+      } as unknown as ICreateSequence);
 
-    if (response.code === 200) {
-      setCampaignId(response.data.campaign_id);
-      toast.success("Sequences saved successfully!");
-      return true;
+      if (response.code === 200) {
+        setCampaignId(response.data.campaign_id);
+        toast.success("Sequences saved successfully!");
+        return true;
+      }
+      toast.error("Failed to save sequences");
+      return false;
+    } catch (error: any) {
+      if (error?.response?.status === 413) {
+        toast.error(
+          "Email content is too large. Please reduce the content and try again.",
+        );
+        return false;
+      }
+
+      toast.error(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Failed to save sequences",
+      );
+
+      return false;
     }
-    toast.error("Failed to save sequences");
-    return false;
   };
 
   const handleScheduleCampaign = async () => {
