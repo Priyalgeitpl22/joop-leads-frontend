@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Download, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
 import {
   InboxContainer,
   InboxCard,
   InboxHeader,
-  DownloadButton,
-  FilterGroup,
-  FilterLabel,
-  StyledSelect,
   LeadNameCell,
   LeadAvatar,
   LeadInfo,
@@ -24,7 +20,7 @@ import {
 import { campaignService } from "../../../../services/campaign.service";
 import type { CampaignInbox } from "../../../../interfaces";
 import { ActionButtons } from "./LeadList.styled";
-import { DataTable } from "../../../../components/common";
+import { DataTable, FilterPanelPopover, SearchBox, type FilterPanelFieldConfig, type FilterPanelValues } from "../../../../components/common";
 import { formatDateWithGMT } from "../../../../utils/date";
 import { StatusBadge } from "../../../../components/common";
 import { getLeadStatusLabel } from "../../../../utils/labels";
@@ -51,14 +47,25 @@ interface InboxProps {
   onDownloadCsv?: () => void;
 }
 
+const filterConfig: FilterPanelFieldConfig[] = [
+  {
+    key: "status",
+    label: "Status",
+    options: [
+      { value: "sent", label: "Sent" },
+    ],
+  },
+];
+
 export const Inbox: React.FC<InboxProps> = ({
   campaignId,
   plainText,
-  onDownloadCsv,
 }) => {
-  const [campaignSequence, setCampaignSequence] = useState("All");
-  const [sequenceStatus, setSequenceStatus] = useState("All");
   const [inboxMessages, setInboxMessages] = useState<CampaignInbox[]>([]);
+  const [filterValues, setFilterValues] = useState<FilterPanelValues>({
+    status: null,
+  });
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const loadData = async () => {
@@ -76,14 +83,6 @@ export const Inbox: React.FC<InboxProps> = ({
       .join("")
       .toUpperCase()
       .slice(0, 2);
-  };
-
-  const handleDownloadCsv = () => {
-    if (onDownloadCsv) {
-      onDownloadCsv();
-    } else {
-      console.log("Download Inbox CSV");
-    }
   };
 
   const columns = [
@@ -190,36 +189,17 @@ export const Inbox: React.FC<InboxProps> = ({
             Campaign Inbox ({inboxMessages.length})
           </InboxHeaderTitle>
           <ActionButtons>
-            <DownloadButton onClick={handleDownloadCsv}>
-              <Download size={16} />
-              Download as CSV
-            </DownloadButton>
-            <FilterGroup>
-              <FilterLabel>Campaign Sequence</FilterLabel>
-              <StyledSelect
-                value={campaignSequence}
-                onChange={(e) => setCampaignSequence(e.target.value)}
-              >
-                <option value="All">All</option>
-                <option value="1">Sequence 1</option>
-                <option value="2">Sequence 2</option>
-                <option value="3">Sequence 3</option>
-              </StyledSelect>
-            </FilterGroup>
-            <FilterGroup>
-              <FilterLabel>Sequence Status</FilterLabel>
-              <StyledSelect
-                value={sequenceStatus}
-                onChange={(e) => setSequenceStatus(e.target.value)}
-              >
-                <option value="All">All</option>
-                <option value="sent">Sent</option>
-                <option value="opened">Opened</option>
-                <option value="clicked">Clicked</option>
-                <option value="replied">Replied</option>
-                <option value="bounced">Bounced</option>
-              </StyledSelect>
-            </FilterGroup>
+            <SearchBox
+              placeholder="Search campaign inbox..."
+              value={searchQuery}
+              onChange={setSearchQuery}
+            />
+            <FilterPanelPopover
+              filters={filterConfig}
+              values={filterValues}
+              onApply={setFilterValues}
+              triggerLabel="Open filters"
+            />
           </ActionButtons>
         </InboxHeader>
 

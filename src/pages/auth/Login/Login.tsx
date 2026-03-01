@@ -164,10 +164,9 @@ export const Login: React.FC = () => {
         setFormError(result.message || 'Login failed. Please try again.');
       }
     } catch (error: unknown) {
-      const err = error as { response?: { data?: { message?: string } }; message?: string };
-      const message =
-        err?.response?.data?.message ?? err?.message ?? 'Login failed. Please check your credentials.';
-      setFormError(typeof message === 'string' ? message : 'Login failed. Please check your credentials.');
+      const err = error as string;
+      const message = err || 'Login failed. Please check your credentials.';
+      setFormError(message);
     } finally {
       setIsSubmitting(false);
     }

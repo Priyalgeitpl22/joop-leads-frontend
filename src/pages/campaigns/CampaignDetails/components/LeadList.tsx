@@ -1,14 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { Search, Download, Filter, Users, Mail, Linkedin, Globe, Lock, Check, Circle } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import {
+  Users,
+  Mail,
+  Linkedin,
+  Globe,
+  Lock,
+  Check,
+  Circle,
+} from "lucide-react";
 import {
   LeadListContainer,
   LeadListCard,
   LeadListHeader,
-  SearchBox,
-  SearchIcon,
-  SearchInput,
   ActionButtons,
-  ActionButton,
   LeadListTable,
   TableHeader,
   TableHeaderCell,
@@ -38,12 +42,19 @@ import {
   EmptyStateIcon,
   EmptyStateTitle,
   EmptyStateDescription,
-} from './LeadList.styled';
-import type { CampaignLead } from '../../../../interfaces';
-import campaignService from '../../../../services/campaign.service';
-import { StatusBadge } from "../../../../components/common";
+} from "./LeadList.styled";
+import type { CampaignLead } from "../../../../interfaces";
+import campaignService from "../../../../services/campaign.service";
+import {
+  StatusBadge,
+  type FilterPanelFieldConfig,
+  FilterPanelPopover,
+  SearchBox,
+  type FilterPanelValues,
+} from "../../../../components/common";
 import { SectionHeaderTitle } from "../../../../styles/GlobalStyles";
-import { LinkField } from '../../../leads/components/LeadDetailsPanel.styled';
+import { LinkField } from "../../../leads/components/LeadDetailsPanel.styled";
+import { LeadStatus } from "../../../../types/enums";
 export interface LeadListItem {
   id: string;
   firstName: string;
@@ -53,7 +64,7 @@ export interface LeadListItem {
   website?: string;
   emailProvider?: string;
   lockStatus?: string;
-  status: 'active' | 'inprogress' | 'completed' | 'blocked' | 'unsubscribed';
+  status: "active" | "inprogress" | "completed" | "blocked" | "unsubscribed";
   currentSequence: number;
   totalSequences: number;
   emailAccountUsed: string;
@@ -61,21 +72,45 @@ export interface LeadListItem {
 
 interface LeadListProps {
   campaignId: string;
-  onExport?: () => void;
 }
 
-export const LeadList: React.FC<LeadListProps> = ({
-  campaignId,
-  onExport,
-}) => {
-  const [searchQuery, setSearchQuery] = useState('');
+const filterConfig: FilterPanelFieldConfig[] = [
+  {
+    key: "status",
+    label: "Status",
+    options: [
+      { value: LeadStatus.PENDING, label: "Pending" },
+      { value: LeadStatus.SENT, label: "Sent" },
+      { value: LeadStatus.OPENED, label: "Opened" },
+      { value: LeadStatus.CLICKED, label: "Clicked" },
+      { value: LeadStatus.REPLIED, label: "Replied" },
+      { value: LeadStatus.BOUNCED, label: "Bounced" },
+    ],
+    placeholder: "All statuses",
+  },
+  // {
+  //   key: "sequence",
+  //   label: "Sequence",
+  //   type: "multi",
+  //   options: campaign?.sequences?.map((sequence) => ({ value: sequence.id, label: sequence.name })),
+  //   placeholder: "All sequences",
+  // },
+];
+
+export const LeadList: React.FC<LeadListProps> = ({ campaignId }) => {
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedLeads, setSelectedLeads] = useState<Set<string>>(new Set());
   const [campaignLeads, setCampaignLeads] = useState<CampaignLead[]>([]);
+  const [filterValues, setFilterValues] = useState<FilterPanelValues>({
+    status: null,
+  });
 
   useEffect(() => {
-    campaignService.getLeadsGroupedBySender(campaignId).then((response) => {
-      setCampaignLeads(response.data?.groupedLeads || []);
-    });
+    campaignService
+      .getLeadsGroupedBySender(campaignId, filterValues)
+      .then((response) => {
+        setCampaignLeads(response.data?.groupedLeads || []);
+      });
   }, [campaignId]);
 
   const handleSelectLead = (leadId: string) => {
@@ -88,15 +123,10 @@ export const LeadList: React.FC<LeadListProps> = ({
     setSelectedLeads(newSelected);
   };
 
-  const handleExport = () => {
-    if (onExport) {
-      onExport();
-    } else {
-      console.log('Export campaignLeads');
-    }
-  };
-
-  const renderSequenceSteps = (currentSequence: number, totalSequences: number) => {
+  const renderSequenceSteps = (
+    currentSequence: number,
+    totalSequences: number,
+  ) => {
     const steps = [];
     for (let i = 1; i <= totalSequences; i++) {
       if (i < currentSequence) {
@@ -104,20 +134,18 @@ export const LeadList: React.FC<LeadListProps> = ({
           <SequenceStepCompleted key={i}>
             <Check size={12} />
             {i}. Email
-          </SequenceStepCompleted>
+          </SequenceStepCompleted>,
         );
       } else if (i === currentSequence) {
         steps.push(
           <SequenceStepActive key={i}>
             <Circle size={12} fill="currentColor" />
             {i}. Email
-          </SequenceStepActive>
+          </SequenceStepActive>,
         );
       } else {
         steps.push(
-          <SequenceStepPending key={i}>
-            {i}. Email
-          </SequenceStepPending>
+          <SequenceStepPending key={i}>{i}. Email</SequenceStepPending>,
         );
       }
     }
@@ -131,25 +159,18 @@ export const LeadList: React.FC<LeadListProps> = ({
           <SectionHeaderTitle>Lead List</SectionHeaderTitle>
 
           <ActionButtons>
-            <SearchBox>
-              <SearchIcon>
-                <Search size={16} />
-              </SearchIcon>
-              <SearchInput
-                type="text"
+              <SearchBox
                 placeholder="Search campaign leads..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={setSearchQuery}
+                minWidth="250px"
               />
-            </SearchBox>
-            <ActionButton>
-              <Filter size={16} />
-              Filter
-            </ActionButton>
-            <ActionButton onClick={handleExport}>
-              <Download size={16} />
-              Export
-            </ActionButton>
+            <FilterPanelPopover
+              filters={filterConfig}
+              values={filterValues}
+              onApply={setFilterValues}
+              triggerLabel="Open filters"
+            />
           </ActionButtons>
         </LeadListHeader>
 
@@ -174,7 +195,8 @@ export const LeadList: React.FC<LeadListProps> = ({
                       />
                       <LeadInfo>
                         <LeadName>
-                          {campaignLead?.lead.firstName} {campaignLead?.lead.lastName}
+                          {campaignLead?.lead.firstName}{" "}
+                          {campaignLead?.lead.lastName}
                         </LeadName>
                         <LeadEmail>
                           <Mail size={14} />
@@ -189,53 +211,100 @@ export const LeadList: React.FC<LeadListProps> = ({
                             <Linkedin size={16} />
                           </OtherDetailIcon>
                           {campaignLead?.lead.linkedinUrl ? (
-                            <LinkField href={campaignLead?.lead.linkedinUrl} target="_blank" rel="noopener noreferrer">
-                              <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis" }}>
+                            <LinkField
+                              href={campaignLead?.lead.linkedinUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <span
+                                style={{
+                                  flex: 1,
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                }}
+                              >
                                 {campaignLead?.lead.linkedinUrl}
                               </span>
                             </LinkField>
-                          ) : <OtherDetailText>--</OtherDetailText>}
+                          ) : (
+                            <OtherDetailText>--</OtherDetailText>
+                          )}
                         </OtherDetailItem>
                         <OtherDetailItem>
                           <OtherDetailIcon>
                             <Globe size={16} />
                           </OtherDetailIcon>
                           {campaignLead?.lead.website ? (
-                            <LinkField href={campaignLead?.lead.website} target="_blank" rel="noopener noreferrer">
-                              <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis" }}>
+                            <LinkField
+                              href={campaignLead?.lead.website}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <span
+                                style={{
+                                  flex: 1,
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                }}
+                              >
                                 {campaignLead?.lead.website}
                               </span>
                             </LinkField>
-                          ) : <OtherDetailText>--</OtherDetailText>}
+                          ) : (
+                            <OtherDetailText>--</OtherDetailText>
+                          )}
                         </OtherDetailItem>
                         <OtherDetailItem>
                           <OtherDetailIcon>
                             <Mail size={16} />
                           </OtherDetailIcon>
-                          <LinkField href={`/accounts/${campaignLead?.lead.email}`}>{campaignLead?.lead.email || '--'}</LinkField>
+                          <LinkField
+                            href={`/accounts/${campaignLead?.lead.email}`}
+                          >
+                            {campaignLead?.lead.email || "--"}
+                          </LinkField>
                         </OtherDetailItem>
                         <OtherDetailItem>
                           <OtherDetailIcon>
                             <Lock size={16} />
                           </OtherDetailIcon>
-                          <StatusBadge $status={campaignLead?.lead.isBlocked ? 'blocked' : 'active'}>{campaignLead?.lead.isBlocked ? 'Blocked' : 'Active'}</StatusBadge>
+                          <StatusBadge
+                            $status={
+                              campaignLead?.lead.isBlocked
+                                ? "blocked"
+                                : "active"
+                            }
+                          >
+                            {campaignLead?.lead.isBlocked
+                              ? "Blocked"
+                              : "Active"}
+                          </StatusBadge>
                         </OtherDetailItem>
                       </OtherDetailsList>
                     </OtherDetailsCell>
                     <StatusCell>
-                      <StatusBadge $status={campaignLead?.leadStatus || ''}>{campaignLead?.leadStatus || ''}</StatusBadge>
+                      <StatusBadge $status={campaignLead?.leadStatus || ""}>
+                        {campaignLead?.leadStatus || ""}
+                      </StatusBadge>
                     </StatusCell>
                   </TableRow>
                   <TableRow $isDetailRow>
                     <TableCell colSpan={3}>
                       <SequenceSection>
                         <SequenceLabel>Sequence Status:</SequenceLabel>
-                        {renderSequenceSteps(campaignLead?.currentSequenceStep || 0, campaignLead.totalSequences || 0)}
+                        {renderSequenceSteps(
+                          campaignLead?.currentSequenceStep || 0,
+                          campaignLead.totalSequences || 0,
+                        )}
                       </SequenceSection>
                       {campaignLead?.senders?.map((sender: any) => (
                         <EmailAccountSection key={sender.senderEmail}>
-                          <EmailAccountLabel>Email Account Used:</EmailAccountLabel>
-                          <EmailAccountValue>{sender.senderEmail}</EmailAccountValue>
+                          <EmailAccountLabel>
+                            Email Account Used:
+                          </EmailAccountLabel>
+                          <EmailAccountValue>
+                            {sender.senderEmail}
+                          </EmailAccountValue>
                         </EmailAccountSection>
                       ))}
                     </TableCell>
@@ -252,8 +321,8 @@ export const LeadList: React.FC<LeadListProps> = ({
             <EmptyStateTitle>No campaign Leads found</EmptyStateTitle>
             <EmptyStateDescription>
               {searchQuery
-                ? 'Try adjusting your search criteria'
-                : 'Add campaignLeads to your campaign to see them here'}
+                ? "Try adjusting your search criteria"
+                : "Add campaignLeads to your campaign to see them here"}
             </EmptyStateDescription>
           </EmptyState>
         )}
@@ -263,4 +332,3 @@ export const LeadList: React.FC<LeadListProps> = ({
 };
 
 export default LeadList;
-

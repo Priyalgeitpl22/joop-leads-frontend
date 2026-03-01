@@ -23,3 +23,16 @@ export { EmailProvider } from "./EmailProvider";
 export type { EmailProviderProps, EmailProviderType } from "./EmailProvider";
 export { AlertBanner } from "./AlertBanner";
 export type { AlertBannerProps, AlertBannerType } from "./AlertBanner";
+export { SearchBox } from "./SearchBox";
+export type { SearchBoxProps } from "./SearchBox";
+export { Filters, FilterPanelPopover } from "./Filters";
+export type {
+  FiltersProps,
+  FilterConfig,
+  FilterOptionItem,
+  FilterValues,
+  FilterPanelPopoverProps,
+  FilterPanelFieldConfig,
+  FilterPanelOption,
+  FilterPanelValues,
+} from "./Filters";

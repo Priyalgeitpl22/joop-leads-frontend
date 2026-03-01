@@ -227,8 +227,8 @@ export const campaignService = {
     return response.data;
   },
 
-  async getLeadsGroupedBySender(campaignId: string): Promise<ApiResponse<{ groupedLeads: CampaignLead[] }>> {
-    const response = await api.get(`${BASE_URL}/${campaignId}/leads/grouped-by-sender`);
+  async getLeadsGroupedBySender(campaignId: string, filters: { status?: string, senquenceStep?: number }): Promise<ApiResponse<{ groupedLeads: CampaignLead[] }>> {
+    const response = await api.post(`${BASE_URL}/${campaignId}/leads/grouped-by-sender`, filters);
     return response.data;
   },
 

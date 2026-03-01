@@ -28,6 +28,7 @@ import {
   Dialog,
   EmailProvider,
 } from "../../components/common";
+import { MailIcon } from "lucide-react";
 
 type TabType = "accounts";
 
@@ -249,6 +250,9 @@ export const EmailAccounts: React.FC = () => {
         onRowClick={handleRowClick}
         onEdit={handleEditAccount}
         onDelete={(row) => handleDeleteClick(row as unknown as Account)}
+        emptyTitle="No Email Accounts Found"
+        emptyMessage="Looks like you haven’t connected any email accounts. Add one to start sending and receiving emails."
+        emptyIcon={<MailIcon size={24} />}
       />
 
       <AddAccountDialog

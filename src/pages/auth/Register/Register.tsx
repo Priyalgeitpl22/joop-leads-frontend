@@ -252,7 +252,7 @@ export const Register: React.FC = () => {
       <RightPanel>
         <FormContainer>
           <Title>Start your free trial</Title>
-          <Subtitle>No credit card required • 14 days free</Subtitle>
+          <Subtitle>No credit card required • 30 days free trial</Subtitle>
 
           <Form onSubmit={handleSubmit}>
             <InputGroup>
