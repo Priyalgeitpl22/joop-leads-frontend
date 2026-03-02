@@ -43,6 +43,8 @@ import {
   FormError,
   Divider,
 } from './Login.styled';
+import authService from '../../../services/auth.service';
+import { GoogleButton } from '../Register/Register.styled';
 
 // Validation helpers
 const validateEmail = (email: string): { isValid: boolean; message: string } => {
@@ -353,6 +355,10 @@ export const Login: React.FC = () => {
                 </ButtonLoader>
               )}
             </LoginButton>
+            <GoogleButton onClick={() => authService.initiateGoogleLogin()}>
+              <img src="/Images/google.png" alt="Google" width={18} height={18} />
+              Continue with Google
+            </GoogleButton>
           </Form>
 
           <Divider>

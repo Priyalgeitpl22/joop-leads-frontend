@@ -504,3 +504,20 @@ export const TermsText = styled.p`
   }
 `;
 
+export const GoogleButton = styled.button`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing.sm};
+  justify-content: center;
+  padding: ${({ theme }) => theme.borderRadius.lg} ${({ theme }) => theme.spacing.xs};
+  border: 1px solid ${({ theme }) => theme.colors.border.dark};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  &:hover {
+    transform: translateY(-2px);
+    background: ${({ theme }) => theme.colors.background.secondary};
+    box-shadow: 0 8px 24px ${({ theme }) => theme.colors.primary.light}20;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+`;

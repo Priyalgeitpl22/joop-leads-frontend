@@ -12,7 +12,7 @@ export const authService = {
       email: credentials.email.toLowerCase(),
       password: credentials.password,
     });
-    
+
     if (response.data.token) {
       Cookies.set(config.auth.tokenKey, response.data.token, {
         expires: 7, // 7 days
@@ -20,7 +20,7 @@ export const authService = {
         sameSite: 'strict',
       });
     }
-    
+
     return response.data;
   },
 
@@ -83,7 +83,7 @@ export const authService = {
       email: data.email.toLowerCase(),
       otp: data.otp,
     });
-    
+
     if (response.data.token) {
       Cookies.set(config.auth.tokenKey, response.data.token, {
         expires: 7,
@@ -91,7 +91,7 @@ export const authService = {
         sameSite: 'strict',
       });
     }
-    
+
     return response.data;
   },
 
@@ -118,7 +118,7 @@ export const authService = {
    */
   async activateAccount(data: ActivateAccountData): Promise<AuthResponse> {
     const response = await api.post<AuthResponse>('/auth/activate', data);
-    
+
     if (response.data.token) {
       Cookies.set(config.auth.tokenKey, response.data.token, {
         expires: 7,
@@ -126,7 +126,7 @@ export const authService = {
         sameSite: 'strict',
       });
     }
-    
+
     return response.data;
   },
 
@@ -142,6 +142,13 @@ export const authService = {
    */
   getToken(): string | undefined {
     return Cookies.get(config.auth.tokenKey);
+  },
+
+  /**
+   * Browser redirect to Google OAuth
+   */
+  initiateGoogleLogin(): void {
+    window.location.href = `${import.meta.env.VITE_BASE_URL}/oauth/google`;
   },
 };
 

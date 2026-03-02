@@ -29,6 +29,7 @@ import { fetchCurrentUser } from "./store/slices/userSlice";
 import EmailVerification from "./pages/verifications/emailVerification/EmailVerification";
 import TaskAndResults from "./pages/verifications/task&Results/Task&Results";
 import BulkDetailsResult from "./pages/verifications/task&Results/bulkDetailsResult/BulkDetailsResult";
+import OAuthSuccess from "./pages/auth/OAuthSuccess.tsx";
 
 const PUBLIC_ROUTES = ['/login', '/register', '/forgot-password', '/reset-password', '/verify-otp', '/activate-account'];
 
@@ -92,6 +93,7 @@ function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/verify-otp" element={<VerifyOTP />} />
         <Route path="/activate-account" element={<ActivateAccount />} />
+        <Route path="/oauth/success" element={<OAuthSuccess />} />
 
         {/* Full-page protected routes (without MainLayout) */}
         <Route
