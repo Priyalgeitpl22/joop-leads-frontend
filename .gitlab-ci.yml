@@ -1,8 +1,9 @@
 # GitLab CI/CD: build Docker image, push to registry, deploy to dev/prod server
 #
 # Required CI/CD variables (Settings → CI/CD → Variables):
-#   DEV_SERVER_HOST, DEV_SERVER_USER, DEV_SSH_PRIVATE_KEY
-#   PROD_SERVER_HOST, PROD_SERVER_USER, PROD_SSH_PRIVATE_KEY
+#   SSH_PRIVATE_KEY        - one key for both servers (add its public key to both)
+#   DEV_SERVER_HOST, DEV_SERVER_USER
+#   PROD_SERVER_HOST, PROD_SERVER_USER
 #
 # On each server: docker login once to GitLab Registry (Deploy Token with read_registry)
 #   docker login -u <deploy-token-user> -p <deploy-token> registry.gitlab.com
@@ -14,6 +15,7 @@ stages:
 variables:
   DOCKER_TLS_CERTDIR: "/certs"
   CONTAINER_NAME: jooper-frontend
+  DEV_SERVER_USER: root
 
 # ---------- Build & push Docker image: dev (staging) ----------
 build:dev:
@@ -55,7 +57,7 @@ deploy:dev:
   before_script:
     - apk add --no-cache openssh-client
     - eval $(ssh-agent -s)
-    - echo "$DEV_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh && chmod 700 ~/.ssh
     - ssh-keyscan -H "$DEV_SERVER_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
   script:
@@ -81,7 +83,7 @@ deploy:prod:
   before_script:
     - apk add --no-cache openssh-client
     - eval $(ssh-agent -s)
-    - echo "$PROD_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh && chmod 700 ~/.ssh
     - ssh-keyscan -H "$PROD_SERVER_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
   script:
