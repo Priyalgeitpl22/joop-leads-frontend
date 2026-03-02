@@ -13,14 +13,11 @@ In your project: **Settings → CI/CD → Variables**. Add:
 
 | Variable | Description | Protected / Masked |
 |----------|-------------|---------------------|
-| **Dev server** | | |
+| `SSH_PRIVATE_KEY` | One SSH private key for both servers (add its public key to both servers) | ✅ Masked |
 | `DEV_SERVER_HOST` | Dev server hostname or IP | — |
-| `DEV_SERVER_USER` | SSH user (e.g. `root`, `deploy`) | — |
-| `DEV_SSH_PRIVATE_KEY` | SSH private key for dev server | ✅ Masked |
-| **Prod server** | | |
+| `DEV_SERVER_USER` | SSH user on dev server (e.g. `root`, `deploy`) | — |
 | `PROD_SERVER_HOST` | Prod server hostname or IP | — |
-| `PROD_SERVER_USER` | SSH user | — |
-| `PROD_SSH_PRIVATE_KEY` | SSH private key for prod server | ✅ Masked, Protected |
+| `PROD_SERVER_USER` | SSH user on prod server | — |
 
 GitLab provides `CI_REGISTRY`, `CI_REGISTRY_IMAGE`, `CI_REGISTRY_USER`, `CI_REGISTRY_PASSWORD` automatically. Ensure **Container Registry** is enabled for the project.
 
