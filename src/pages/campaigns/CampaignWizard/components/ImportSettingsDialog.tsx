@@ -105,6 +105,7 @@ const SectionTitle = styled.h4`
 
 const SettingItem = styled.div<{ $isOn: boolean }>`
   display: flex;
+  gap: ${({ theme }) => theme.spacing.sm};
   align-items: center;
   justify-content: space-between;
   padding: ${({ theme }) => theme.spacing.md};
