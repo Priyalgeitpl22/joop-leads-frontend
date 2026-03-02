@@ -9,21 +9,23 @@ COPY package*.json ./
 RUN npm ci
 
 COPY . .
-
-RUN npm run build  
+RUN npm run build
 
 
 ############################
 # 2️⃣ Production Stage
 ############################
-FROM node:20-alpine
+FROM nginx:alpine
 
-WORKDIR /app
+# Remove default nginx config
+RUN rm -rf /etc/nginx/conf.d/default.conf
 
-RUN npm install -g serve
+# Copy custom nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-COPY --from=builder /app/dist ./dist
+# Copy built files
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-EXPOSE 5173
+EXPOSE 80
 
-CMD ["serve", "-s", "dist", "-l", "5173"]
+CMD ["nginx", "-g", "daemon off;"]
