@@ -195,7 +195,7 @@ export const Login: React.FC = () => {
             </LogoIcon>
             <LogoText>Jooper Leads</LogoText>
           </LogoContainer>
-          <Tagline>Welcome back! Sign in to continue your email automation journey.</Tagline>
+          <Tagline>Welcomeeeee back! Sign in to continue your email automation journey.</Tagline>
         </BrandSection>
 
         <StatsGrid>
