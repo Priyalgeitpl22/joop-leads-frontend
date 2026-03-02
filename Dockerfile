@@ -1,7 +1,12 @@
 ############################
 # 1️⃣ Build Stage
+# BUILD_MODE=production (default) → npm run build (.env.production)
+# BUILD_MODE=staging        → npm run build:staging (.env.staging)
 ############################
 FROM node:20-alpine AS builder
+
+ARG BUILD_MODE=production
+ENV BUILD_MODE=${BUILD_MODE}
 
 WORKDIR /app
 
@@ -9,7 +14,7 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
-RUN npm run build
+RUN if [ "$BUILD_MODE" = "staging" ]; then npm run build:staging; else npm run build; fi
 
 
 ############################

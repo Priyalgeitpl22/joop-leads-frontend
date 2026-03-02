@@ -1,0 +1,102 @@
+# GitLab CI/CD: build Docker image, push to registry, deploy to dev/prod server
+#
+# Required CI/CD variables (Settings → CI/CD → Variables):
+#   DEV_SERVER_HOST, DEV_SERVER_USER, DEV_SSH_PRIVATE_KEY
+#   PROD_SERVER_HOST, PROD_SERVER_USER, PROD_SSH_PRIVATE_KEY
+#
+# On each server: docker login once to GitLab Registry (Deploy Token with read_registry)
+#   docker login -u <deploy-token-user> -p <deploy-token> registry.gitlab.com
+
+stages:
+  - build
+  - deploy
+
+variables:
+  DOCKER_TLS_CERTDIR: "/certs"
+  CONTAINER_NAME: jooper-frontend
+
+# ---------- Build & push Docker image: dev (staging) ----------
+build:dev:
+  stage: build
+  image: docker:24
+  services:
+    - docker:24-dind
+  variables:
+    IMAGE_TAG: "${CI_REGISTRY_IMAGE}:dev"
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+  script:
+    - docker build --build-arg BUILD_MODE=staging -t "$IMAGE_TAG" .
+    - docker push "$IMAGE_TAG"
+  only:
+    - dev
+
+# ---------- Build & push Docker image: prod ----------
+build:prod:
+  stage: build
+  image: docker:24
+  services:
+    - docker:24-dind
+  variables:
+    IMAGE_TAG: "${CI_REGISTRY_IMAGE}:latest"
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+  script:
+    - docker build --build-arg BUILD_MODE=production -t "$IMAGE_TAG" .
+    - docker push "$IMAGE_TAG"
+  only:
+    - main
+    - prod
+
+# ---------- Deploy to dev server (pull image, run container) ----------
+deploy:dev:
+  stage: deploy
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache openssh-client
+    - eval $(ssh-agent -s)
+    - echo "$DEV_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh && chmod 700 ~/.ssh
+    - ssh-keyscan -H "$DEV_SERVER_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
+  script:
+    - |
+      ssh ${DEV_SERVER_USER}@${DEV_SERVER_HOST} "
+        docker pull ${CI_REGISTRY_IMAGE}:dev &&
+        docker stop ${CONTAINER_NAME} 2>/dev/null || true &&
+        docker rm ${CONTAINER_NAME} 2>/dev/null || true &&
+        docker run -d -p 80:80 --name ${CONTAINER_NAME} --restart unless-stopped ${CI_REGISTRY_IMAGE}:dev
+      "
+  needs:
+    - build:dev
+  only:
+    - dev
+  environment:
+    name: development
+    url: https://${DEV_SERVER_HOST}
+
+# ---------- Deploy to prod server ----------
+deploy:prod:
+  stage: deploy
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache openssh-client
+    - eval $(ssh-agent -s)
+    - echo "$PROD_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh && chmod 700 ~/.ssh
+    - ssh-keyscan -H "$PROD_SERVER_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
+  script:
+    - |
+      ssh ${PROD_SERVER_USER}@${PROD_SERVER_HOST} "
+        docker pull ${CI_REGISTRY_IMAGE}:latest &&
+        docker stop ${CONTAINER_NAME} 2>/dev/null || true &&
+        docker rm ${CONTAINER_NAME} 2>/dev/null || true &&
+        docker run -d -p 80:80 --name ${CONTAINER_NAME} --restart unless-stopped ${CI_REGISTRY_IMAGE}:latest
+      "
+  needs:
+    - build:prod
+  only:
+    - main
+    - prod
+  environment:
+    name: production
+    url: https://${PROD_SERVER_HOST}

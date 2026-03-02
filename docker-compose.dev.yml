@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5173:5173"
+    volumes:
+      # Mount source for hot reload
+      - .:/app
+      # Keep container node_modules (don't overwrite with host's)
+      - /app/node_modules
+    env_file:
+      - .env.development
+    environment:
+      - NODE_ENV=development
+    stdin_open: true
+    tty: true
