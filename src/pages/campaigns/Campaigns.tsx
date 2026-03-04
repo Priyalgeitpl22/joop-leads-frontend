@@ -65,6 +65,18 @@ import {
   StatValue,
   StatLabel,
   CampaignWrapper,
+  FilterContainer,
+  FilterHeader,
+  FilterTitle,
+  ClearAll,
+  Section,
+  Label,
+  StyledSelect,
+  Footer,
+  CancelButton,
+  ApplyButton,
+  StyledMultiSelect,
+  StyledMenuItem,
 } from "./Campaigns.styled";
 import type { Campaign, CampaignStatus } from "../../interfaces";
 import CircularProgressWithStatus from "../../components/common/CircularProgress";
@@ -72,6 +84,7 @@ import { OptionsMenu, Dialog, Button, Input, AlertChip } from "../../components/
 import { deleteCampaign } from "../../store/slices/campaignSlice";
 import { toast } from "react-hot-toast";
 import { getStoppedReasonLabel } from "../../utils/labels";
+import { Checkbox, ListItemText, Menu } from "@mui/material"
 
 export const Campaigns: React.FC = () => {
   const navigate = useNavigate();
@@ -84,7 +97,20 @@ export const Campaigns: React.FC = () => {
   const [renameDialogOpen, setRenameDialogOpen] = useState(false);
   const [campaignToRename, setCampaignToRename] = useState<Campaign | null>(null);
   const [newName, setNewName] = useState<string>("");
+  const [filterOpen, setFilterOpen] = useState<null | HTMLElement>(null);
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
   const isSearching = searchQuery.trim().length > 0;
+  const isFilterOpen = Boolean(filterOpen);
+
+  const campaignStatuses = [
+    'DRAFT',
+    'SCHEDULED',
+    'ACTIVE',
+    'PAUSED',
+    'STOPPED',
+    'COMPLETED',
+    'ARCHIVED',
+  ];
   
   const handleDeleteClick = (campaign: Campaign) => {
     setCampaignToDelete(campaign);
@@ -149,6 +175,14 @@ export const Campaigns: React.FC = () => {
     } catch (error) {
       console.error("Search failed:", error);
     }
+  };
+
+  const handleMenuOpen1 = (event: any) => {
+    setFilterOpen(event.currentTarget);
+  };
+
+  const handleFilterClose = () => {
+    setFilterOpen(null);
   };
 
   const formatDate = (dateValue: Date | string) => {
@@ -273,9 +307,63 @@ export const Campaigns: React.FC = () => {
             Email Sent, Opened...
             <ChevronDown size={14} />
           </ColumnDropdown>
-          <FilterButton>
+          <FilterButton onClick={handleMenuOpen1}>
             <Filter size={18} />
           </FilterButton>
+          <Menu
+            anchorEl={filterOpen}
+            open={isFilterOpen}
+            onClose={handleFilterClose}
+            MenuListProps={{
+              sx: {
+                py: 0,
+              },
+            }}
+          >
+            <FilterContainer>
+              <FilterHeader>
+                <FilterTitle>Filter</FilterTitle>
+                <ClearAll>Clear all</ClearAll>
+              </FilterHeader>
+
+              <Section>
+                <Label>Campaign Status</Label>
+
+                <StyledMultiSelect
+                  multiple
+                  displayEmpty
+                  value={selectedStatuses}
+                  onChange={(e) =>
+                    setSelectedStatuses(e.target.value as string[])
+                  }
+                  renderValue={(selected) =>
+                    (selected as string[]).length === 0
+                      ? "Select status"
+                      : (selected as string[]).join(", ")
+                  }
+                >
+                  {campaignStatuses.map((status) => (
+                    <StyledMenuItem key={status} value={status}>
+                      <Checkbox checked={selectedStatuses.includes(status)} />
+                      <ListItemText primary={status} />
+                    </StyledMenuItem>
+                  ))}
+                </StyledMultiSelect>
+              </Section>
+
+              <Section>
+                <Label>Team Member</Label>
+                <StyledSelect>
+                  <option value="">Select team member</option>
+                </StyledSelect>
+              </Section>
+
+              <Footer>
+                <CancelButton onClick={handleFilterClose}>Cancel</CancelButton>
+                <ApplyButton variant="contained">Apply</ApplyButton>
+              </Footer>
+            </FilterContainer>
+          </Menu>
           <SearchBar>
             <SearchIcon>
               <Search size={18} />
@@ -361,7 +449,7 @@ export const Campaigns: React.FC = () => {
                 </StatItem>
                 <OptionsMenu
                   items={[
-                  campaign.status === 'PAUSED' 
+                    campaign.status === 'PAUSED'
                     ? { id: 'resume', label: 'Resume Campaign', icon: <PlayCircle size={18} />, onClick: () => dispatch(changeCampaignStatus({ id: campaign.id, status: 'ACTIVE' as CampaignStatus })) } 
                     : { id: 'pause', label: 'Pause Campaign', icon: <PauseCircle size={18} />, onClick: () => dispatch(changeCampaignStatus({ id: campaign.id, status: 'PAUSED' as CampaignStatus })) },
                   { id: 'stop', label: 'Stop Campaign', icon: <StopCircle size={18} />, onClick: () => dispatch(changeCampaignStatus({ id: campaign.id, status: 'STOPPED' as CampaignStatus })) },
@@ -374,7 +462,7 @@ export const Campaigns: React.FC = () => {
                 />
               </CampaignStats>
             </CampaignRow>
-        )))}
+          )))}
       </CampaignTable>
 
       <Dialog

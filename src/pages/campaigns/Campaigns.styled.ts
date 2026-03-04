@@ -1,4 +1,5 @@
 import styled, { keyframes } from 'styled-components';
+import { Button, MenuItem, Select } from '@mui/material';
 
 export const PageContainer = styled.div`
   padding: 0;
@@ -448,6 +449,108 @@ export const FilterButton = styled.button`
   &:hover {
     border-color: ${({ theme }) => theme.colors.primary.main};
     color: ${({ theme }) => theme.colors.primary.main};
+  }
+`;
+
+export const FilterContainer = styled.div`
+  width: 360px;
+  padding: ${({theme}) => theme.spacing.md};
+  background: ${({theme}) => theme.colors.background.primary};
+`;
+
+export const FilterHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: ${({ theme }) => theme.spacing.sm};
+`;
+
+export const FilterTitle = styled.h3`
+  font-size: ${({ theme }) => theme.typography.fontSize.md};
+  font-weight: ${({ theme }) => theme.typography.fontWeight.bold};
+  margin: 0;
+`;
+
+export const ClearAll = styled.span`
+  font-size: ${({ theme }) => theme.typography.fontSize.md};
+  color: ${({ theme }) => theme.colors.primary.main};
+  cursor: pointer;
+  font-weight: ${({ theme }) => theme.typography.fontWeight.medium};
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+export const StyledMultiSelect = styled(Select)`
+  width: 100%;
+  height: 40px;
+  background: ${({ theme }) => theme.colors.background.secondary} !important;
+  border: 1px solid ${({ theme }) => theme.colors.border.light};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  & .MuiSelect-select {
+    color: ${({ theme }) => theme.colors.text.primary} !important;
+    font-size: ${({ theme }) => theme.typography.fontSize.md} !important;
+    font-weight: ${({ theme }) =>
+      theme.typography.fontWeight.medium} !important;
+    padding: ${({ theme }) => theme.spacing.xs} !important;
+  }
+`;
+
+export const StyledMenuItem = styled(MenuItem)`
+  font-size: ${({ theme }) => theme.typography.fontSize.sm};
+  color: ${({ theme }) => theme.colors.primary.contrast};
+`;
+
+export const Section = styled.div`
+  margin-bottom: ${({theme}) => theme.spacing.md};
+`;
+
+export const Label = styled.div`
+  font-size: ${({theme}) => theme.typography.fontSize.md};
+  font-weight: ${({theme}) => theme.typography.fontWeight.medium};
+  margin-bottom: ${({theme}) => theme.spacing.sm};
+  color: ${({theme}) => theme.colors.text.secondary};
+`;
+
+export const StyledSelect = styled.select`
+  width: 100%;
+  padding: ${({ theme }) => theme.spacing.sm};
+  border-radius: ${({ theme }) => theme.borderRadius.sm};
+  border: 1px solid ${({ theme }) => theme.colors.border.main} !important;
+  background: ${({ theme }) => theme.colors.background.secondary} !important;
+  font-size: ${({ theme }) => theme.typography.fontSize.md};
+  color: ${({ theme }) => theme.colors.text.primary} !important;
+  outline: none;
+
+  &:focus {
+    border-color: ${({ theme }) => theme.colors.primary.main};
+    background: ${({ theme }) => theme.colors.background.primary};
+  }
+`;
+
+export const Footer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: ${({ theme }) => theme.spacing.sm};
+  margin-top: ${({ theme }) => theme.spacing.sm};
+  padding-top: ${({ theme }) => theme.spacing.md};
+  border-top: 1px solid ${({theme}) => theme.colors.border.main};
+`;
+
+export const CancelButton = styled(Button)`
+  text-transform: none !important;
+  background: ${({theme}) => theme.colors.background.tertiary} !important;
+  color: ${({theme}) => theme.colors.text.secondary} !important;
+`;
+
+export const ApplyButton = styled(Button)`
+  text-transform: none !important;
+  background: ${({ theme }) => theme.colors.primary.main} !important;
+  color: ${({ theme }) => theme.colors.background.primary} !important;
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.primary.dark};
   }
 `;
 

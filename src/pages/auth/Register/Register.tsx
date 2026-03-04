@@ -44,7 +44,9 @@ import {
   InputValidationIcon,
   // TermsText,
   Divider,
+  GoogleButton,
 } from './Register.styled';
+import authService from '../../../services/auth.service';
 
 // Validation helpers
 const validateFullName = (name: string) => {
@@ -413,7 +415,10 @@ export const Register: React.FC = () => {
                 </ButtonLoader>
               )}
             </RegisterButton>
-
+            <GoogleButton onClick={() => authService.initiateGoogleLogin()}>
+              <img src="/Images/google.png" alt="Google" width={18} height={18} />
+              Continue with Google
+            </GoogleButton>
             {/* <TermsText>
               By signing up, you agree to our{' '}
               <a href="/terms">Terms of Service</a> and{' '}

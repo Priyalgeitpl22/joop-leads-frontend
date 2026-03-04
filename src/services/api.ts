@@ -4,6 +4,7 @@ import Cookies from 'js-cookie';
 import { config } from '../config';
 import { store } from '../store';
 import { forceLogout } from '../store/slices/authSlice';
+import { useNavigate } from 'react-router-dom';
 
 export const api = axios.create({
   baseURL: config.api.baseUrl,
@@ -30,8 +31,9 @@ const addAuthToken = (axiosConfig: InternalAxiosRequestConfig): InternalAxiosReq
 };
 
 const handleUnauthorized = () => {
+  const navigate = useNavigate();
   store.dispatch(forceLogout());
-  window.location.href = '/login';
+  navigate('/login');
 };
 
 /** Notify the app to show the limit-reached dialog (e.g. App listens for this event). */

@@ -90,7 +90,7 @@ import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../../store";
 import type { UploadCounts } from "../../../interfaces";
 import { WIZARD_STEPS, CONTACT_FIELD_OPTIONS } from "../../../constants";
-import { fetchCampaignById } from "../../../store/slices/campaignSlice";
+import { clearCurrentCampaign, fetchCampaignById } from "../../../store/slices/campaignSlice";
 import type { ICreateSequence } from "../../../types/sequence.types";
 import OptionsMenu from "../../../components/common/OptionsMenu";
 import ConfirmDialog from "../../common/DeleteDialog";
@@ -134,12 +134,18 @@ export const CampaignWizard: React.FC = () => {
 
 
   useEffect(() => {
-    if (!id || id === "new") return;
+    if (!id) return;
+    if (id === "new") {
+      dispatch(clearCurrentCampaign());
+      setSequences([]);
+      setCurrentStepIndex(0);
+      return;
+    }
 
     if (!currentCampaign || currentCampaign.id !== id) {
       dispatch(fetchCampaignById(id));
     }
-  }, [id, dispatch, currentStepIndex]);
+  }, [id, dispatch]);
 
   useEffect(() => {
     if (!currentCampaign?.id) return;
@@ -438,18 +444,35 @@ export const CampaignWizard: React.FC = () => {
       return false;
     }
 
-    const response = await campaignService.addSequencesToCampaign({
-      campaignId: campaignId || campaign.id || "",
-      sequences: sequences as unknown as Sequence[],
-    } as unknown as ICreateSequence);
+    try {
+      const response = await campaignService.addSequencesToCampaign({
+        campaignId: campaignId || campaign.id || "",
+        sequences: sequences as unknown as Sequence[],
+      } as unknown as ICreateSequence);
 
-    if (response.code === 200) {
-      setCampaignId(response.data.campaign_id);
-      toast.success("Sequences saved successfully!");
-      return true;
+      if (response.code === 200) {
+        setCampaignId(response.data.campaign_id);
+        toast.success("Sequences saved successfully!");
+        return true;
+      }
+      toast.error("Failed to save sequences");
+      return false;
+    } catch (error: any) {
+      if (error?.response?.status === 413) {
+        toast.error(
+          "Email content is too large. Please reduce the content and try again.",
+        );
+        return false;
+      }
+
+      toast.error(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Failed to save sequences",
+      );
+
+      return false;
     }
-    toast.error("Failed to save sequences");
-    return false;
   };
 
   const handleScheduleCampaign = async () => {
